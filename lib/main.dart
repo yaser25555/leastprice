@@ -16,6 +16,9 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return _GlobalRuntimeErrorScreen(details: details);
+  };
 
   String? firebaseBootstrapNotice;
 
@@ -156,6 +159,106 @@ class LeastPriceApp extends StatelessWidget {
               firebaseReady: firebaseBootstrapNotice == null,
               bootstrapNotice: firebaseBootstrapNotice,
             ),
+    );
+  }
+}
+
+class _GlobalRuntimeErrorScreen extends StatelessWidget {
+  const _GlobalRuntimeErrorScreen({
+    required this.details,
+  });
+
+  final FlutterErrorDetails details;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Material(
+        color: const Color(0xFFF5FBF8),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x140C3B2E),
+                      blurRadius: 24,
+                      offset: Offset(0, 14),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          color: Color(0xFFD14B4B),
+                          size: 32,
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'حدث خطأ أثناء بناء الواجهة',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF17332B),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'بدلاً من الصفحة البيضاء، يعرض التطبيق الآن سبب الخطأ ليسهل علينا إصلاحه بسرعة.',
+                      style: TextStyle(
+                        color: Color(0xFF61756D),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FBFA),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0xFFE2EBE7)),
+                      ),
+                      child: SelectableText(
+                        details.exceptionAsString(),
+                        style: const TextStyle(
+                          color: Color(0xFF24443B),
+                          fontWeight: FontWeight.w700,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      details.library ?? 'Flutter',
+                      style: const TextStyle(
+                        color: Color(0xFF7B8E86),
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -1408,6 +1511,31 @@ String? _normalizeEmailAddress(String rawEmail) {
 
   const pattern = r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$';
   return RegExp(pattern, caseSensitive: false).hasMatch(value) ? value : null;
+}
+
+String _normalizedImageUrl(
+  String? rawUrl, {
+  String fallbackLabel = 'LeastPrice',
+}) {
+  final value = (rawUrl ?? '').trim();
+  if (value.isEmpty) {
+    return value;
+  }
+
+  const brokenTokens = <String>[
+    'photo-1570194065650-d99fb4d8a5c8',
+    'photo-1556228578-dd6c36f7737d',
+    'photo-1588405748880-12d1d2a59df9',
+  ];
+
+  for (final token in brokenTokens) {
+    if (value.contains(token)) {
+      final encoded = Uri.encodeComponent(fallbackLabel);
+      return 'https://placehold.co/900x600/EAF3EF/17332B?text=$encoded';
+    }
+  }
+
+  return value;
 }
 
 String _arabicAuthMessage(FirebaseAuthException error) {
@@ -7453,7 +7581,10 @@ class AdBannerItem {
       id: _stringValue(json['id']) ?? '',
       title: _stringValue(json['title']) ?? 'عرض متجر',
       subtitle: _stringValue(json['subtitle']) ?? 'خصومات يومية داخل أرخص سعر',
-      imageUrl: _stringValue(json['imageUrl']) ?? '',
+      imageUrl: _normalizedImageUrl(
+        _stringValue(json['imageUrl']) ?? '',
+        fallbackLabel: _stringValue(json['title']) ?? 'LeastPrice Banner',
+      ),
       targetUrl: _stringValue(json['targetUrl']) ?? '',
       storeName: _stringValue(json['storeName']) ?? 'متجر متعاقد',
       active: _boolValue(json['active'], defaultValue: true),
@@ -7826,14 +7957,18 @@ class ProductComparison {
       categoryLabel: categoryLabel,
       expensiveName: expensiveName,
       expensivePrice: _doubleValue(json['expensivePrice'] ?? expensive['price']),
-      expensiveImageUrl:
-          _stringValue(json['expensiveImageUrl'] ?? expensive['imageUrl']) ?? '',
+      expensiveImageUrl: _normalizedImageUrl(
+        _stringValue(json['expensiveImageUrl'] ?? expensive['imageUrl']) ?? '',
+        fallbackLabel: expensiveName,
+      ),
       alternativeName: alternativeName,
       alternativePrice:
           _doubleValue(json['alternativePrice'] ?? alternative['price']),
-      alternativeImageUrl:
-          _stringValue(json['alternativeImageUrl'] ?? alternative['imageUrl']) ??
-              '',
+      alternativeImageUrl: _normalizedImageUrl(
+        _stringValue(json['alternativeImageUrl'] ?? alternative['imageUrl']) ??
+            '',
+        fallbackLabel: alternativeName,
+      ),
       buyUrl: AffiliateLinkService.attachAffiliateTag(
         _stringValue(json['buyUrl']) ?? '',
       ),
