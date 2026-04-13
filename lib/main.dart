@@ -4548,9 +4548,13 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final sectionHeight = math.max(520.0, constraints.maxHeight - 64);
+
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -4587,7 +4591,8 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
             ],
           ),
           const SizedBox(height: 18),
-          Expanded(
+          SizedBox(
+            height: sectionHeight,
             child: _AdminDashboardSectionCard(
               child: StreamBuilder<List<AdBannerItem>>(
                 stream: widget.catalogService.watchAdminAdBanners(),
@@ -4726,7 +4731,9 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
             ),
           ),
         ],
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -4847,9 +4854,13 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final sectionHeight = math.max(520.0, constraints.maxHeight - 64);
+
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -4886,7 +4897,8 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
             ],
           ),
           const SizedBox(height: 18),
-          Expanded(
+          SizedBox(
+            height: sectionHeight,
             child: _AdminDashboardSectionCard(
               child: StreamBuilder<List<ProductComparison>>(
                 stream: widget.catalogService.watchAllProducts(),
@@ -5035,7 +5047,9 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
             ),
           ),
         ],
-      ),
+          ),
+        );
+      },
     );
   }
 }
