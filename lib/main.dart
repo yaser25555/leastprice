@@ -4584,7 +4584,14 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final sectionHeight = math.max(520.0, constraints.maxHeight - 64);
+        final fallbackHeight = math.max(
+          520.0,
+          MediaQuery.sizeOf(context).height - 220,
+        );
+        final availableHeight = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : fallbackHeight;
+        final sectionHeight = math.max(520.0, availableHeight - 64);
 
         return Padding(
           padding: const EdgeInsets.all(24),
@@ -4890,7 +4897,14 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final sectionHeight = math.max(520.0, constraints.maxHeight - 64);
+        final fallbackHeight = math.max(
+          520.0,
+          MediaQuery.sizeOf(context).height - 220,
+        );
+        final availableHeight = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : fallbackHeight;
+        final sectionHeight = math.max(520.0, availableHeight - 64);
 
         return Padding(
           padding: const EdgeInsets.all(24),
