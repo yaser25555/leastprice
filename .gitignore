@@ -3,6 +3,9 @@
 .flutter-plugins-dependencies
 .packages
 .puro/
+.idea/
+.metadata
+*.iml
 build/
 
 android/.gradle/

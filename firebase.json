@@ -1,6 +1,1 @@
-{
-  "functions": {
-    "source": "functions",
-    "runtime": "nodejs20"
-  }
-}
+{"firestore":{"rules":"firestore.rules"},"functions":{"source":"functions","runtime":"nodejs20"},"flutter":{"platforms":{"android":{"default":{"projectId":"leastprice-yaser","appId":"1:46896031630:android:b34fd14acbec6556f2a6df","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"leastprice-yaser","configurations":{"android":"1:46896031630:android:b34fd14acbec6556f2a6df","web":"1:46896031630:web:f45faba915e461eef2a6df"}}}}}}

@@ -12,21 +12,53 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'firebase_options.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   String? firebaseBootstrapNotice;
 
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (_) {
     firebaseBootstrapNotice =
-        'تعذر تهيئة Firebase حالياً. تأكد من ربط المشروع بملفات Android وCloud Firestore قبل تشغيل التطبيق.';
+        'تعذر تهيئة Firebase حالياً. تأكد من اكتمال ملفات FlutterFire وإعداد مشروع Firebase على المنصة الحالية.';
   }
 
   runApp(
     LeastPriceApp(firebaseBootstrapNotice: firebaseBootstrapNotice),
   );
+}
+
+bool _isAdminDashboardRequest([Uri? uri]) {
+  final target = uri ?? Uri.base;
+  final path = '/${target.pathSegments.join('/')}';
+  final fragment = target.fragment;
+
+  return _isAdminPathToken(path) ||
+      _isAdminPathToken(fragment) ||
+      target.queryParameters['admin'] == '1' ||
+      target.queryParameters['view']?.toLowerCase() == 'admin';
+}
+
+bool _isAdminPathToken(String? rawValue) {
+  final value = (rawValue ?? '').trim().toLowerCase().replaceAll('\\', '/');
+  if (value.isEmpty) {
+    return false;
+  }
+
+  return value == 'admin' ||
+      value == '/admin' ||
+      value.endsWith('/admin') ||
+      value.startsWith('/admin?');
+}
+
+bool _isAllowedAdminEmail(String? email) {
+  return (email ?? '').trim().toLowerCase() ==
+      LeastPriceDataConfig.adminEmail.toLowerCase();
 }
 
 class LeastPriceApp extends StatelessWidget {
@@ -115,10 +147,15 @@ class LeastPriceApp extends StatelessWidget {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      home: AuthGate(
-        firebaseReady: firebaseBootstrapNotice == null,
-        bootstrapNotice: firebaseBootstrapNotice,
-      ),
+      home: _isAdminDashboardRequest()
+          ? AdminDashboardAuthGate(
+              firebaseReady: firebaseBootstrapNotice == null,
+              bootstrapNotice: firebaseBootstrapNotice,
+            )
+          : AuthGate(
+              firebaseReady: firebaseBootstrapNotice == null,
+              bootstrapNotice: firebaseBootstrapNotice,
+            ),
     );
   }
 }
@@ -153,11 +190,6 @@ class AuthGate extends StatelessWidget {
 
         if (user.isAnonymous) {
           return const _LegacyAnonymousSessionCleanupScreen();
-        }
-
-        final usesEmailFlow = user.email?.trim().isNotEmpty == true;
-        if (usesEmailFlow && !user.emailVerified) {
-          return _EmailVerificationPendingScreen(user: user);
         }
 
         return AuthenticatedBootstrap(
@@ -234,6 +266,441 @@ class _AuthenticatedBootstrapState extends State<AuthenticatedBootstrap> {
   }
 }
 
+class AdminDashboardAuthGate extends StatelessWidget {
+  const AdminDashboardAuthGate({
+    super.key,
+    required this.firebaseReady,
+    this.bootstrapNotice,
+  });
+
+  final bool firebaseReady;
+  final String? bootstrapNotice;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!firebaseReady) {
+      return _FirebaseSetupScreen(message: bootstrapNotice);
+    }
+
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const _AuthLoadingScreen(
+            title: 'جارٍ تجهيز لوحة التحكم',
+            message: 'نربط لوحة الإدارة بخدمات Firebase ونجهز صلاحيات المشرف.',
+          );
+        }
+
+        final user = snapshot.data;
+        if (user == null) {
+          return const AdminLoginScreen();
+        }
+
+        if (!_isAllowedAdminEmail(user.email)) {
+          return _AdminAccessDeniedScreen(user: user);
+        }
+
+        return AdminDashboardScreen(adminUser: user);
+      },
+    );
+  }
+}
+
+class AdminLoginScreen extends StatefulWidget {
+  const AdminLoginScreen({super.key});
+
+  @override
+  State<AdminLoginScreen> createState() => _AdminLoginScreenState();
+}
+
+class _AdminLoginScreenState extends State<AdminLoginScreen> {
+  final TextEditingController _emailController = TextEditingController(
+    text: LeastPriceDataConfig.adminEmail,
+  );
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isSubmitting = false;
+  bool _obscurePassword = true;
+  String? _statusMessage;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final normalizedEmail = _normalizeEmailAddress(_emailController.text);
+    final password = _passwordController.text.trim();
+
+    if (normalizedEmail == null) {
+      setState(() {
+        _statusMessage = 'أدخل بريد المشرف الإلكتروني بصيغة صحيحة.';
+      });
+      return;
+    }
+
+    if (!_isAllowedAdminEmail(normalizedEmail)) {
+      setState(() {
+        _statusMessage =
+            'هذه اللوحة مقيدة ببريد المشرف ${LeastPriceDataConfig.adminEmail} فقط.';
+      });
+      return;
+    }
+
+    if (password.isEmpty) {
+      setState(() {
+        _statusMessage = 'أدخل كلمة المرور للمتابعة.';
+      });
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _statusMessage = null;
+    });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: normalizedEmail,
+        password: password,
+      );
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+        _statusMessage = 'تم تسجيل دخول المشرف بنجاح.';
+      });
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+        _statusMessage = _arabicAuthMessage(error);
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+        _statusMessage = 'تعذر فتح لوحة التحكم حالياً: $error';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x140C3B2E),
+                    blurRadius: 28,
+                    offset: Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.dashboard_customize_rounded,
+                    size: 52,
+                    color: Color(0xFF0F8F6F),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'لوحة تحكم LeastPrice',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF16352B),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'سجّل ببريد المشرف لإدارة البنرات والمنتجات مباشرة من المتصفح. هذه اللوحة محمية ببريد ${LeastPriceDataConfig.adminEmail}.',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF61756D),
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'بريد المشرف',
+                      prefixIcon: Icon(Icons.alternate_email_rounded),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'كلمة المرور',
+                      prefixIcon: const Icon(Icons.lock_rounded),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_rounded
+                              : Icons.visibility_off_rounded,
+                        ),
+                      ),
+                    ),
+                    onSubmitted: (_) => _isSubmitting ? null : _submit(),
+                  ),
+                  if (_statusMessage != null) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF2FBF7),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0xFFD6EEE6)),
+                      ),
+                      child: Text(
+                        _statusMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF245044),
+                          fontWeight: FontWeight.w700,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: _isSubmitting ? null : _submit,
+                    icon: _isSubmitting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.login_rounded),
+                    label: Text(
+                      _isSubmitting ? 'جارٍ الدخول...' : 'دخول المشرف',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AdminAccessDeniedScreen extends StatelessWidget {
+  const _AdminAccessDeniedScreen({
+    required this.user,
+  });
+
+  final User user;
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x140C3B2E),
+                    blurRadius: 28,
+                    offset: Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Icon(
+                    Icons.lock_person_rounded,
+                    size: 52,
+                    color: Color(0xFFE0675A),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'هذا الحساب ليس مشرفاً',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF16352B),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'البريد الحالي هو ${user.email ?? 'غير معروف'}، بينما اللوحة مسموحة فقط للبريد ${LeastPriceDataConfig.adminEmail}.',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF61756D),
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  ElevatedButton.icon(
+                    onPressed: _signOut,
+                    icon: const Icon(Icons.logout_rounded),
+                    label: const Text('تسجيل الخروج'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AdminDashboardScreen extends StatelessWidget {
+  const AdminDashboardScreen({
+    super.key,
+    required this.adminUser,
+  });
+
+  final User adminUser;
+
+  @override
+  Widget build(BuildContext context) {
+    const service = FirestoreCatalogService();
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF4FBF8),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 0,
+          titleSpacing: 24,
+          toolbarHeight: 82,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'لوحة تحكم LeastPrice',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF16352B),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                adminUser.email ?? LeastPriceDataConfig.adminEmail,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF5D746B),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton.icon(
+              onPressed: () => FirebaseAuth.instance.signOut(),
+              icon: const Icon(Icons.logout_rounded),
+              label: const Text('خروج'),
+            ),
+            const SizedBox(width: 16),
+          ],
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(56),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24, 0, 24, 12),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: TabBar(
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  tabs: [
+                    Tab(
+                      icon: Icon(Icons.view_carousel_rounded),
+                      text: 'البنرات',
+                    ),
+                    Tab(
+                      icon: Icon(Icons.inventory_2_rounded),
+                      text: 'المنتجات',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            _AdminBannersTable(catalogService: service),
+            _AdminProductsTable(catalogService: service),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AdminDashboardSectionCard extends StatelessWidget {
+  const _AdminDashboardSectionCard({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x110C3B2E),
+            blurRadius: 22,
+            offset: Offset(0, 12),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -281,7 +748,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (normalizedEmail == null) {
       messenger.showSnackBar(
         const SnackBar(
-          content: Text('أدخل بريداً إلكترونياً صحيحاً لاستلام رابط التفعيل.'),
+          content: Text('أدخل بريداً إلكترونياً صحيحاً لتسجيل الدخول وإنشاء الحساب.'),
         ),
       );
       return;
@@ -327,19 +794,13 @@ class _LoginScreenState extends State<LoginScreen> {
         requiredPhoneNumber: normalizedPhone,
         emailAddress: normalizedEmail,
       );
-
-      if (_isRegisterMode && !user.emailVerified) {
-        await user.sendEmailVerification();
-      }
-
-      await user.reload();
       if (!mounted) return;
 
       setState(() {
         _isSubmitting = false;
         _statusMessage = _isRegisterMode
-            ? 'أنشأنا الحساب وأرسلنا رابط التفعيل إلى $normalizedEmail. افتح بريدك ثم اضغط "تحققت من البريد".'
-            : 'تم تسجيل الدخول. إذا لم يكن البريد مفعلاً فسنوجّهك مباشرة إلى شاشة التفعيل.';
+            ? 'تم إنشاء الحساب بنجاح. يمكنك الدخول مباشرة باستخدام البريد الإلكتروني وكلمة المرور.'
+            : 'تم تسجيل الدخول بنجاح.';
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -397,8 +858,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final emerald = Theme.of(context).colorScheme.primary;
-
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(
@@ -569,7 +1028,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 10),
                           const Text(
-                            'التفعيل سيتم عبر رسالة بريد إلكتروني من Firebase بدلاً من SMS لتقليل التكلفة. افتح البريد ثم اضغط رابط التفعيل.',
+                            'رقم الجوال إلزامي لحفظ ملفك والتواصل التجاري، أما تسجيل الدخول فيعتمد على البريد الإلكتروني وكلمة المرور فقط دون الحاجة إلى تفعيل الحساب.',
                             style: TextStyle(
                               color: Color(0xFF6C7D76),
                               fontSize: 12.8,
@@ -618,7 +1077,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               _isSubmitting
                                   ? 'جارٍ التنفيذ...'
                                   : (_isRegisterMode
-                                      ? 'إنشاء الحساب وإرسال رابط التفعيل'
+                                      ? 'إنشاء الحساب'
                                       : 'تسجيل الدخول'),
                             ),
                           ),
@@ -890,7 +1349,7 @@ class _EmailVerificationPendingScreenState
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2.2),
                           )
-                        : const Icon(Icons.outgoing_mail_rounded),
+                        : const Icon(Icons.forward_to_inbox_rounded),
                     label: const Text('إعادة إرسال رابط التفعيل'),
                   ),
                   TextButton(
@@ -964,6 +1423,14 @@ String _arabicAuthMessage(FirebaseAuthException error) {
       return 'بيانات الدخول غير صحيحة. تأكد من البريد وكلمة المرور.';
     case 'wrong-password':
       return 'كلمة المرور غير صحيحة.';
+    case 'operation-not-allowed':
+      return 'تسجيل الدخول بالبريد الإلكتروني وكلمة المرور غير مفعّل في Firebase Authentication بعد. فعّل مزود Email/Password من لوحة Firebase ثم أعد المحاولة.';
+    case 'internal-error':
+      final details = (error.message ?? '').toUpperCase();
+      if (details.contains('CONFIGURATION_NOT_FOUND')) {
+        return 'إعدادات Firebase Authentication غير مكتملة لهذا النوع من تسجيل الدخول. فعّل Email/Password من Firebase Console ثم أعد المحاولة.';
+      }
+      return 'حدث خطأ داخلي في Firebase Authentication. تحقق من إعدادات تسجيل الدخول ثم أعد المحاولة.';
     case 'too-many-requests':
       return 'تم إجراء محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.';
     case 'network-request-failed':
@@ -1517,15 +1984,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         );
       }
     } finally {
-      if (!mounted ||
-          _normalizeArabic(trimmedQuery) != _normalizeArabic(_query) ||
-          requestedCategoryId != _selectedCategoryId) {
-        return;
+      if (mounted &&
+          _normalizeArabic(trimmedQuery) == _normalizeArabic(_query) &&
+          requestedCategoryId == _selectedCategoryId) {
+        setState(() {
+          _isSearchingOnline = false;
+        });
       }
-
-      setState(() {
-        _isSearchingOnline = false;
-      });
     }
   }
 
@@ -1745,10 +2210,11 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         ),
       );
     } finally {
-      if (!mounted) return;
-      setState(() {
-        _isRefreshing = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isRefreshing = false;
+        });
+      }
     }
   }
 
@@ -1992,7 +2458,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     return topSavings
         .take(math.min(3, topSavings.length))
-        .fold<double>(0, (sum, item) => sum + item.savingsAmount);
+        .fold<double>(0, (total, item) => total + item.savingsAmount);
   }
 
   Future<void> _inviteFriend(List<ProductComparison> products) async {
@@ -3857,6 +4323,1184 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
+class _AdminBannersTable extends StatefulWidget {
+  const _AdminBannersTable({
+    required this.catalogService,
+  });
+
+  final FirestoreCatalogService catalogService;
+
+  @override
+  State<_AdminBannersTable> createState() => _AdminBannersTableState();
+}
+
+class _AdminBannersTableState extends State<_AdminBannersTable> {
+  Future<void> _openEditor({AdBannerItem? initialBanner}) async {
+    final banner = await showDialog<AdBannerItem>(
+      context: context,
+      builder: (context) => _AdminBannerEditorDialog(initialBanner: initialBanner),
+    );
+
+    if (banner == null || !mounted) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.saveAdBanner(banner);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            initialBanner == null
+                ? 'تمت إضافة البنر بنجاح.'
+                : 'تم تحديث البنر بنجاح.',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حفظ البنر حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _publishBanner(AdBannerItem banner) async {
+    try {
+      await widget.catalogService.publishAdBanner(banner.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث lastUpdated للبنر بنجاح.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر نشر البنر حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _deleteBanner(AdBannerItem banner) async {
+    final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('حذف البنر'),
+            content: Text('هل تريد حذف البنر "${banner.title}" نهائياً؟'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('إلغاء'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('حذف'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.deleteAdBanner(banner.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم حذف البنر.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حذف البنر حالياً: $error')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'إدارة البنرات الإعلانية',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF16352B),
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'أضف أو عدّل أو احذف البنرات في مجموعة ad_banners، ثم استخدم زر النشر لتحديث lastUpdated.',
+                      style: TextStyle(
+                        color: Color(0xFF667C74),
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () => _openEditor(),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('إضافة بنر'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Expanded(
+            child: _AdminDashboardSectionCard(
+              child: StreamBuilder<List<AdBannerItem>>(
+                stream: widget.catalogService.watchAdminAdBanners(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          'تعذر تحميل البنرات من Firestore: ${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Color(0xFF5D746B)),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final banners = snapshot.data ?? const <AdBannerItem>[];
+                  if (banners.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'لا توجد بنرات بعد. أضف أول بنر من الزر العلوي.',
+                        style: TextStyle(
+                          color: Color(0xFF5D746B),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    scrollDirection: Axis.horizontal,
+                    child: SingleChildScrollView(
+                      child: DataTable(
+                        columnSpacing: 18,
+                        headingRowColor: WidgetStateProperty.all(
+                          const Color(0xFFF2FBF7),
+                        ),
+                        columns: const [
+                          DataColumn(label: Text('المتجر')),
+                          DataColumn(label: Text('العنوان')),
+                          DataColumn(label: Text('الترتيب')),
+                          DataColumn(label: Text('الحالة')),
+                          DataColumn(label: Text('الصورة')),
+                          DataColumn(label: Text('الإجراءات')),
+                        ],
+                        rows: banners.map((banner) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(banner.storeName)),
+                              DataCell(
+                                SizedBox(
+                                  width: 240,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        banner.title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      if (banner.subtitle.trim().isNotEmpty)
+                                        Text(
+                                          banner.subtitle,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Color(0xFF667C74),
+                                            fontSize: 12.5,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              DataCell(Text(banner.order.toString())),
+                              DataCell(
+                                _AdminStatusChip(
+                                  label: banner.active ? 'نشط' : 'مخفي',
+                                  color: banner.active
+                                      ? const Color(0xFF0F8F6F)
+                                      : const Color(0xFF9A6B6B),
+                                ),
+                              ),
+                              DataCell(
+                                _AdminNetworkThumbnail(
+                                  imageUrl: banner.imageUrl,
+                                  label: banner.title,
+                                ),
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 250,
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      OutlinedButton(
+                                        onPressed: () =>
+                                            _openEditor(initialBanner: banner),
+                                        child: const Text('تعديل'),
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: () => _publishBanner(banner),
+                                        child: const Text('نشر'),
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: () => _deleteBanner(banner),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor:
+                                              const Color(0xFFC24E4E),
+                                        ),
+                                        child: const Text('حذف'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AdminProductsTable extends StatefulWidget {
+  const _AdminProductsTable({
+    required this.catalogService,
+  });
+
+  final FirestoreCatalogService catalogService;
+
+  @override
+  State<_AdminProductsTable> createState() => _AdminProductsTableState();
+}
+
+class _AdminProductsTableState extends State<_AdminProductsTable> {
+  Future<void> _openEditor({ProductComparison? initialProduct}) async {
+    final product = await showDialog<ProductComparison>(
+      context: context,
+      builder: (context) =>
+          _AdminProductEditorDialog(initialProduct: initialProduct),
+    );
+
+    if (product == null || !mounted) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.saveProduct(product);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            initialProduct == null
+                ? 'تمت إضافة المنتج بنجاح.'
+                : 'تم تحديث المنتج بنجاح.',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حفظ المنتج حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _publishProduct(ProductComparison product) async {
+    final documentId = product.documentId;
+    if (documentId == null || documentId.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('احفظ المنتج أولاً قبل نشره.')),
+      );
+      return;
+    }
+
+    try {
+      await widget.catalogService.publishProduct(documentId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث lastUpdated للمنتج بنجاح.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر نشر المنتج حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _deleteProduct(ProductComparison product) async {
+    final documentId = product.documentId;
+    if (documentId == null || documentId.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('هذا المنتج غير مرتبط بوثيقة Firestore.')),
+      );
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('حذف المنتج'),
+            content: Text(
+              'هل تريد حذف "${product.expensiveName}" و"${product.alternativeName}" نهائياً؟',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('إلغاء'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('حذف'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.deleteProduct(documentId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم حذف المنتج.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حذف المنتج حالياً: $error')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'إدارة المنتجات',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF16352B),
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'عدّل الأسماء والأسعار والصور مباشرة في مجموعة products، ثم استخدم زر النشر لتحديث lastUpdated.',
+                      style: TextStyle(
+                        color: Color(0xFF667C74),
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () => _openEditor(),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('إضافة منتج'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Expanded(
+            child: _AdminDashboardSectionCard(
+              child: StreamBuilder<List<ProductComparison>>(
+                stream: widget.catalogService.watchAllProducts(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          'تعذر تحميل المنتجات من Firestore: ${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Color(0xFF5D746B)),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final products = snapshot.data ?? const <ProductComparison>[];
+                  if (products.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'لا توجد منتجات بعد. أضف أول منتج من الزر العلوي.',
+                        style: TextStyle(
+                          color: Color(0xFF5D746B),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    scrollDirection: Axis.horizontal,
+                    child: SingleChildScrollView(
+                      child: DataTable(
+                        columnSpacing: 18,
+                        headingRowColor: WidgetStateProperty.all(
+                          const Color(0xFFF2FBF7),
+                        ),
+                        columns: const [
+                          DataColumn(label: Text('القسم')),
+                          DataColumn(label: Text('المنتج المرجعي')),
+                          DataColumn(label: Text('سعره')),
+                          DataColumn(label: Text('الخيار المقارن')),
+                          DataColumn(label: Text('سعره')),
+                          DataColumn(label: Text('الصور')),
+                          DataColumn(label: Text('الرابط')),
+                          DataColumn(label: Text('الإجراءات')),
+                        ],
+                        rows: products.map((product) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(product.categoryLabel)),
+                              DataCell(
+                                SizedBox(
+                                  width: 220,
+                                  child: Text(
+                                    product.expensiveName,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              DataCell(Text(formatAmountValue(product.expensivePrice))),
+                              DataCell(
+                                SizedBox(
+                                  width: 220,
+                                  child: Text(
+                                    product.alternativeName,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(formatAmountValue(product.alternativePrice)),
+                              ),
+                              DataCell(
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _AdminNetworkThumbnail(
+                                      imageUrl: product.expensiveImageUrl,
+                                      label: product.expensiveName,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _AdminNetworkThumbnail(
+                                      imageUrl: product.alternativeImageUrl,
+                                      label: product.alternativeName,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 160,
+                                  child: Text(
+                                    product.buyUrl.trim().isEmpty
+                                        ? 'بدون رابط'
+                                        : product.buyUrl,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 270,
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      OutlinedButton(
+                                        onPressed: () =>
+                                            _openEditor(initialProduct: product),
+                                        child: const Text('تعديل'),
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: () => _publishProduct(product),
+                                        child: const Text('نشر'),
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: () => _deleteProduct(product),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor:
+                                              const Color(0xFFC24E4E),
+                                        ),
+                                        child: const Text('حذف'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AdminStatusChip extends StatelessWidget {
+  const _AdminStatusChip({
+    required this.label,
+    required this.color,
+  });
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+class _AdminNetworkThumbnail extends StatelessWidget {
+  const _AdminNetworkThumbnail({
+    required this.imageUrl,
+    required this.label,
+  });
+
+  final String imageUrl;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl.trim().isEmpty) {
+      return Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF2FBF7),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(Icons.image_not_supported_rounded),
+      );
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.network(
+        imageUrl,
+        width: 52,
+        height: 52,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: 52,
+            height: 52,
+            color: const Color(0xFFF2FBF7),
+            alignment: Alignment.center,
+            child: Text(
+              label.trim().isNotEmpty ? label.trim()[0] : '?',
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _AdminBannerEditorDialog extends StatefulWidget {
+  const _AdminBannerEditorDialog({
+    this.initialBanner,
+  });
+
+  final AdBannerItem? initialBanner;
+
+  @override
+  State<_AdminBannerEditorDialog> createState() => _AdminBannerEditorDialogState();
+}
+
+class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final TextEditingController _storeNameController;
+  late final TextEditingController _titleController;
+  late final TextEditingController _subtitleController;
+  late final TextEditingController _imageUrlController;
+  late final TextEditingController _targetUrlController;
+  late final TextEditingController _orderController;
+  late bool _active;
+
+  @override
+  void initState() {
+    super.initState();
+    final banner = widget.initialBanner;
+    _storeNameController = TextEditingController(text: banner?.storeName ?? '');
+    _titleController = TextEditingController(text: banner?.title ?? '');
+    _subtitleController = TextEditingController(text: banner?.subtitle ?? '');
+    _imageUrlController = TextEditingController(text: banner?.imageUrl ?? '');
+    _targetUrlController = TextEditingController(text: banner?.targetUrl ?? '');
+    _orderController = TextEditingController(
+      text: banner?.order.toString() ?? '1',
+    );
+    _active = banner?.active ?? true;
+  }
+
+  @override
+  void dispose() {
+    _storeNameController.dispose();
+    _titleController.dispose();
+    _subtitleController.dispose();
+    _imageUrlController.dispose();
+    _targetUrlController.dispose();
+    _orderController.dispose();
+    super.dispose();
+  }
+
+  String? _validateRequired(String? value, String label) {
+    if (value == null || value.trim().isEmpty) {
+      return '$label مطلوب.';
+    }
+    return null;
+  }
+
+  String? _validateUrl(String? value, {bool required = false}) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return required ? 'هذا الرابط مطلوب.' : null;
+    }
+
+    final uri = Uri.tryParse(trimmed);
+    if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
+      return 'أدخل رابطاً صالحاً يبدأ بـ http أو https.';
+    }
+    return null;
+  }
+
+  void _save() {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    Navigator.of(context).pop(
+      AdBannerItem(
+        id: widget.initialBanner?.id ?? '',
+        title: _titleController.text.trim(),
+        subtitle: _subtitleController.text.trim(),
+        imageUrl: _imageUrlController.text.trim(),
+        targetUrl: _targetUrlController.text.trim(),
+        storeName: _storeNameController.text.trim(),
+        active: _active,
+        order: int.tryParse(_orderController.text.trim()) ?? 1,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.initialBanner == null
+                        ? 'إضافة بنر جديد'
+                        : 'تعديل البنر',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF16352B),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  TextFormField(
+                    controller: _storeNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'اسم المتجر',
+                      prefixIcon: Icon(Icons.storefront_rounded),
+                    ),
+                    validator: (value) => _validateRequired(value, 'اسم المتجر'),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      labelText: 'عنوان البنر',
+                      prefixIcon: Icon(Icons.campaign_rounded),
+                    ),
+                    validator: (value) => _validateRequired(value, 'عنوان البنر'),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _subtitleController,
+                    maxLines: 2,
+                    decoration: const InputDecoration(
+                      labelText: 'الوصف المختصر',
+                      prefixIcon: Icon(Icons.subject_rounded),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _imageUrlController,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      labelText: 'رابط الصورة',
+                      prefixIcon: Icon(Icons.image_rounded),
+                    ),
+                    validator: (value) => _validateUrl(value, required: true),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _targetUrlController,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      labelText: 'رابط الوجهة',
+                      prefixIcon: Icon(Icons.link_rounded),
+                    ),
+                    validator: _validateUrl,
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _orderController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'الترتيب',
+                      prefixIcon: Icon(Icons.format_list_numbered_rounded),
+                    ),
+                    validator: (value) {
+                      final parsed = int.tryParse(value?.trim() ?? '');
+                      if (parsed == null || parsed < 0) {
+                        return 'أدخل رقماً صحيحاً للترتيب.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    value: _active,
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('البنر نشط'),
+                    subtitle: const Text('البنرات غير النشطة لن تظهر للمستخدمين.'),
+                    onChanged: (value) {
+                      setState(() {
+                        _active = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('إلغاء'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _save,
+                          child: const Text('حفظ'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AdminProductEditorDialog extends StatefulWidget {
+  const _AdminProductEditorDialog({
+    this.initialProduct,
+  });
+
+  final ProductComparison? initialProduct;
+
+  @override
+  State<_AdminProductEditorDialog> createState() => _AdminProductEditorDialogState();
+}
+
+class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final TextEditingController _expensiveNameController;
+  late final TextEditingController _expensivePriceController;
+  late final TextEditingController _expensiveImageUrlController;
+  late final TextEditingController _alternativeNameController;
+  late final TextEditingController _alternativePriceController;
+  late final TextEditingController _alternativeImageUrlController;
+  late final TextEditingController _buyUrlController;
+  late String _selectedCategoryId;
+  late final List<ProductCategory> _categories;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialProduct;
+    _expensiveNameController = TextEditingController(
+      text: initial?.expensiveName ?? '',
+    );
+    _expensivePriceController = TextEditingController(
+      text: initial != null ? initial.expensivePrice.toString() : '',
+    );
+    _expensiveImageUrlController = TextEditingController(
+      text: initial?.expensiveImageUrl ?? '',
+    );
+    _alternativeNameController = TextEditingController(
+      text: initial?.alternativeName ?? '',
+    );
+    _alternativePriceController = TextEditingController(
+      text: initial != null ? initial.alternativePrice.toString() : '',
+    );
+    _alternativeImageUrlController = TextEditingController(
+      text: initial?.alternativeImageUrl ?? '',
+    );
+    _buyUrlController = TextEditingController(text: initial?.buyUrl ?? '');
+
+    _categories = ProductCategoryCatalog.defaults
+        .where((category) => category.id != ProductCategoryCatalog.allId)
+        .toList();
+
+    final currentCategoryId =
+        initial?.categoryId ?? ProductCategoryCatalog.defaults[1].id;
+    if (!_categories.any((category) => category.id == currentCategoryId)) {
+      _categories.insert(
+        0,
+        ProductCategoryCatalog.lookup(
+          currentCategoryId,
+          fallbackLabel: initial?.categoryLabel ?? currentCategoryId,
+        ),
+      );
+    }
+    _selectedCategoryId = currentCategoryId;
+  }
+
+  @override
+  void dispose() {
+    _expensiveNameController.dispose();
+    _expensivePriceController.dispose();
+    _expensiveImageUrlController.dispose();
+    _alternativeNameController.dispose();
+    _alternativePriceController.dispose();
+    _alternativeImageUrlController.dispose();
+    _buyUrlController.dispose();
+    super.dispose();
+  }
+
+  String? _validateRequired(String? value, String label) {
+    if (value == null || value.trim().isEmpty) {
+      return '$label مطلوب.';
+    }
+    return null;
+  }
+
+  String? _validatePrice(String? value, String label) {
+    final parsed = double.tryParse(value?.trim() ?? '');
+    if (parsed == null || parsed <= 0) {
+      return 'أدخل قيمة صحيحة لـ $label.';
+    }
+    return null;
+  }
+
+  String? _validateUrl(String? value) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return null;
+    }
+
+    final uri = Uri.tryParse(trimmed);
+    if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
+      return 'أدخل رابطاً صالحاً يبدأ بـ http أو https.';
+    }
+    return null;
+  }
+
+  List<String> _composeTags(ProductCategory category) {
+    final tags = <String>{
+      category.label,
+      _expensiveNameController.text.trim(),
+      _alternativeNameController.text.trim(),
+      ...?widget.initialProduct?.tags,
+    };
+
+    return tags.where((tag) => tag.trim().isNotEmpty).toList();
+  }
+
+  void _save() {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    final selectedCategory = ProductCategoryCatalog.lookup(_selectedCategoryId);
+    final initial = widget.initialProduct;
+
+    Navigator.of(context).pop(
+      ProductComparison(
+        documentId: initial?.documentId,
+        categoryId: selectedCategory.id,
+        categoryLabel: selectedCategory.label,
+        expensiveName: _expensiveNameController.text.trim(),
+        expensivePrice: double.parse(_expensivePriceController.text.trim()),
+        expensiveImageUrl: _expensiveImageUrlController.text.trim(),
+        alternativeName: _alternativeNameController.text.trim(),
+        alternativePrice: double.parse(_alternativePriceController.text.trim()),
+        alternativeImageUrl: _alternativeImageUrlController.text.trim(),
+        buyUrl: _buyUrlController.text.trim(),
+        rating: initial?.rating ?? 0,
+        reviewCount: initial?.reviewCount ?? 0,
+        tags: _composeTags(selectedCategory),
+        fragranceNotes: initial?.fragranceNotes,
+        activeIngredients: initial?.activeIngredients,
+        localLocationLabel: initial?.localLocationLabel,
+        localLocationUrl: initial?.localLocationUrl,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 620),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.initialProduct == null
+                        ? 'إضافة منتج جديد'
+                        : 'تعديل المنتج',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF16352B),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedCategoryId,
+                    decoration: const InputDecoration(
+                      labelText: 'القسم',
+                      prefixIcon: Icon(Icons.category_rounded),
+                    ),
+                    items: _categories
+                        .map(
+                          (category) => DropdownMenuItem<String>(
+                            value: category.id,
+                            child: Text(category.label),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        _selectedCategoryId = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _expensiveNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'اسم المنتج المرجعي',
+                      prefixIcon: Icon(Icons.inventory_2_outlined),
+                    ),
+                    validator: (value) =>
+                        _validateRequired(value, 'اسم المنتج المرجعي'),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _expensivePriceController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'سعر المنتج المرجعي',
+                      prefixIcon: Icon(Icons.attach_money_rounded),
+                    ),
+                    validator: (value) =>
+                        _validatePrice(value, 'سعر المنتج المرجعي'),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _expensiveImageUrlController,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      labelText: 'رابط صورة المنتج المرجعي',
+                      prefixIcon: Icon(Icons.image_search_rounded),
+                    ),
+                    validator: _validateUrl,
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _alternativeNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'اسم الخيار المقارن',
+                      prefixIcon: Icon(Icons.swap_horiz_rounded),
+                    ),
+                    validator: (value) =>
+                        _validateRequired(value, 'اسم الخيار المقارن'),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _alternativePriceController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'سعر الخيار المقارن',
+                      prefixIcon: Icon(Icons.savings_rounded),
+                    ),
+                    validator: (value) =>
+                        _validatePrice(value, 'سعر الخيار المقارن'),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _alternativeImageUrlController,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      labelText: 'رابط صورة الخيار المقارن',
+                      prefixIcon: Icon(Icons.image_search_rounded),
+                    ),
+                    validator: _validateUrl,
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _buyUrlController,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      labelText: 'رابط الشراء أو الإعلان',
+                      prefixIcon: Icon(Icons.link_rounded),
+                    ),
+                    validator: _validateUrl,
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('إلغاء'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _save,
+                          child: const Text('حفظ'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class AdminProductDraft {
   const AdminProductDraft({
     required this.referenceName,
@@ -4480,10 +6124,11 @@ class LeastPriceDataConfig {
   static const String searchRequestsCollectionName = 'search_requests';
   static const String systemHealthCollectionName = 'system_health';
   static const String systemHealthDocumentId = 'daily_price_bot';
-  static const String? remoteJsonUrl =
+  static const String remoteJsonUrl =
       'https://your-domain.com/leastprice-feed.json';
   static const String assetJsonPath = 'assets/data/products.json';
   static const String appShareUrl = 'https://leastprice.app';
+  static const String adminEmail = 'yaser.haroon79@gmail.com';
   static const String adminPassword = 'leastprice123';
   static const String affiliateTag = 'myid-21';
   static const String originalOnSaleTag = 'المنتج الأصلي عليه عرض حالياً';
@@ -5016,7 +6661,7 @@ class SmartSearchDiscoveryService {
         ? ''
         : '${ProductCategoryCatalog.lookup(selectedCategoryId).label} ';
 
-    return '$query ${categoryHint}سعر مكونات السعودية '
+    return '$query $categoryHintسعر مكونات السعودية '
         'site:amazon.sa OR site:noon.com OR site:nahdionline.com OR site:al-dawaa.com OR site:hungerstation.com OR site:jahez.net OR site:mrsool.co';
   }
 
@@ -5041,7 +6686,7 @@ class SmartSearchDiscoveryService {
     }
 
     final inferredCategoryId = selectedCategoryId == ProductCategoryCatalog.allId
-        ? ProductCategoryCatalog.inferId('${query} ${item.title} ${item.snippet}')
+        ? ProductCategoryCatalog.inferId('$query ${item.title} ${item.snippet}')
         : selectedCategoryId;
     final category = ProductCategoryCatalog.lookup(
       inferredCategoryId,
@@ -5266,6 +6911,14 @@ class FirestoreCatalogService {
     });
   }
 
+  Stream<List<AdBannerItem>> watchAdminAdBanners() {
+    return _adBannersCollection.snapshots().map((snapshot) {
+      final banners = snapshot.docs.map(AdBannerItem.fromFirestore).toList()
+        ..sort((a, b) => a.order.compareTo(b.order));
+      return banners;
+    });
+  }
+
   Stream<UserSavingsProfile?> watchUserProfile(String userId) {
     return _usersCollection.doc(userId).snapshots().map((snapshot) {
       if (!snapshot.exists) {
@@ -5394,6 +7047,10 @@ class FirestoreCatalogService {
     });
   }
 
+  Stream<List<ProductComparison>> watchAllProducts() {
+    return watchProducts();
+  }
+
   Future<void> refreshProductsFromServer() async {
     await _productsCollection.get(const GetOptions(source: Source.server));
   }
@@ -5404,6 +7061,94 @@ class FirestoreCatalogService {
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  Future<void> saveAdBanner(AdBannerItem banner) async {
+    final data = {
+      ...banner.toFirestoreMap(),
+      'updatedAt': FieldValue.serverTimestamp(),
+      'lastUpdated': FieldValue.serverTimestamp(),
+    };
+
+    if (banner.id.trim().isEmpty) {
+      await _adBannersCollection.add({
+        ...data,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      return;
+    }
+
+    await _adBannersCollection.doc(banner.id).set(
+          data,
+          SetOptions(merge: true),
+        );
+  }
+
+  Future<void> publishAdBanner(String bannerId) async {
+    await _adBannersCollection.doc(bannerId).set(
+      {
+        'lastUpdated': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> deleteAdBanner(String bannerId) async {
+    await _adBannersCollection.doc(bannerId).delete();
+  }
+
+  Future<void> saveProduct(ProductComparison product) async {
+    final data = {
+      'expensiveName': product.expensiveName,
+      'expensivePrice': product.expensivePrice,
+      'expensiveImageUrl': product.expensiveImageUrl,
+      'alternativeName': product.alternativeName,
+      'alternativePrice': product.alternativePrice,
+      'alternativeImageUrl': product.alternativeImageUrl,
+      'buyUrl': product.buyUrl.trim().isEmpty
+          ? ''
+          : AffiliateLinkService.attachAffiliateTag(product.buyUrl),
+      'category': product.categoryLabel,
+      'categoryId': product.categoryId,
+      'rating': product.rating,
+      'reviewCount': product.reviewCount,
+      'tags': product.tags,
+      'fragranceNotes': product.fragranceNotes ?? '',
+      'activeIngredients': product.activeIngredients ?? '',
+      'localLocationLabel': product.localLocationLabel ?? '',
+      'localLocationUrl': product.localLocationUrl ?? '',
+      'updatedAt': FieldValue.serverTimestamp(),
+      'lastUpdated': FieldValue.serverTimestamp(),
+    };
+
+    final documentId = product.documentId?.trim() ?? '';
+    if (documentId.isEmpty) {
+      await _productsCollection.add({
+        ...data,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      return;
+    }
+
+    await _productsCollection.doc(documentId).set(
+          data,
+          SetOptions(merge: true),
+        );
+  }
+
+  Future<void> publishProduct(String documentId) async {
+    await _productsCollection.doc(documentId).set(
+      {
+        'lastUpdated': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> deleteProduct(String documentId) async {
+    await _productsCollection.doc(documentId).delete();
   }
 
   Future<void> submitSearchRequest({
@@ -5542,9 +7287,8 @@ class ProductRepository {
 
   Future<ProductLoadResult> loadProducts() async {
     String? notice;
-    final remoteUrl = LeastPriceDataConfig.remoteJsonUrl?.trim();
-    final hasConfiguredRemoteUrl = remoteUrl != null &&
-        remoteUrl.isNotEmpty &&
+    final remoteUrl = LeastPriceDataConfig.remoteJsonUrl.trim();
+    final hasConfiguredRemoteUrl = remoteUrl.isNotEmpty &&
         !remoteUrl.contains('your-domain.com');
 
     if (hasConfiguredRemoteUrl) {
@@ -5561,7 +7305,7 @@ class ProductRepository {
       } catch (_) {
         notice = 'تعذر تحميل أحدث الأسعار من الرابط الخارجي، لذلك تم استخدام مصدر بديل.';
       }
-    } else if (remoteUrl != null && remoteUrl.isNotEmpty) {
+    } else if (remoteUrl.isNotEmpty) {
       notice =
           'تم تفعيل remoteJsonUrl كرابط نموذجي. استبدله برابطك الحقيقي لبدء التحكم عن بعد بالبيانات.';
     }
@@ -5682,6 +7426,28 @@ class AdBannerItem {
   final bool active;
   final int order;
 
+  AdBannerItem copyWith({
+    String? id,
+    String? title,
+    String? subtitle,
+    String? imageUrl,
+    String? targetUrl,
+    String? storeName,
+    bool? active,
+    int? order,
+  }) {
+    return AdBannerItem(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      imageUrl: imageUrl ?? this.imageUrl,
+      targetUrl: targetUrl ?? this.targetUrl,
+      storeName: storeName ?? this.storeName,
+      active: active ?? this.active,
+      order: order ?? this.order,
+    );
+  }
+
   factory AdBannerItem.fromJson(Map<String, dynamic> json) {
     return AdBannerItem(
       id: _stringValue(json['id']) ?? '',
@@ -5702,6 +7468,18 @@ class AdBannerItem {
       ...?document.data(),
       'id': document.id,
     });
+  }
+
+  Map<String, dynamic> toFirestoreMap() {
+    return {
+      'title': title,
+      'subtitle': subtitle,
+      'imageUrl': imageUrl,
+      'targetUrl': targetUrl,
+      'storeName': storeName,
+      'active': active,
+      'order': order,
+    };
   }
 
   static const List<AdBannerItem> mockData = [
