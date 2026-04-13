@@ -767,13 +767,47 @@ class AdminDashboardScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
-            _AdminBannersTable(catalogService: service),
-            _AdminProductsTable(catalogService: service),
-          ],
+        body: Builder(
+          builder: (context) {
+            final controller = DefaultTabController.of(context);
+            return AnimatedBuilder(
+              animation: controller,
+              builder: (context, _) {
+                final selectedIndex = controller.index;
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  child: selectedIndex == 0
+                      ? const _AdminDashboardTabContent(
+                          key: ValueKey('admin-banners-tab'),
+                          child: _AdminBannersTable(catalogService: service),
+                        )
+                      : const _AdminDashboardTabContent(
+                          key: ValueKey('admin-products-tab'),
+                          child: _AdminProductsTable(catalogService: service),
+                        ),
+                );
+              },
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class _AdminDashboardTabContent extends StatelessWidget {
+  const _AdminDashboardTabContent({
+    super.key,
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: child,
     );
   }
 }
