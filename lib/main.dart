@@ -404,7 +404,7 @@ class AdminDashboardAuthGate extends StatelessWidget {
           return _AdminAccessDeniedScreen(user: user);
         }
 
-        return AdminDashboardScreen(adminUser: user);
+        return AdminControlCenter(adminUser: user);
       },
     );
   }
@@ -779,6 +779,655 @@ class AdminDashboardScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AdminControlCenter extends StatelessWidget {
+  const AdminControlCenter({
+    super.key,
+    required this.adminUser,
+  });
+
+  final User adminUser;
+
+  @override
+  Widget build(BuildContext context) {
+    const service = FirestoreCatalogService();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4FBF8),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
+        titleSpacing: 24,
+        toolbarHeight: 82,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'لوحة تحكم LeastPrice',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF16352B),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              adminUser.email ?? LeastPriceDataConfig.adminEmail,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF5D746B),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: () => FirebaseAuth.instance.signOut(),
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text('خروج'),
+          ),
+          const SizedBox(width: 16),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: const [
+            _AdminBannerManagerPanel(catalogService: service),
+            SizedBox(height: 24),
+            _AdminProductManagerPanel(catalogService: service),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AdminBannerManagerPanel extends StatefulWidget {
+  const _AdminBannerManagerPanel({
+    required this.catalogService,
+  });
+
+  final FirestoreCatalogService catalogService;
+
+  @override
+  State<_AdminBannerManagerPanel> createState() =>
+      _AdminBannerManagerPanelState();
+}
+
+class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
+  Future<void> _openEditor({AdBannerItem? initialBanner}) async {
+    final banner = await showDialog<AdBannerItem>(
+      context: context,
+      builder: (context) => _AdminBannerEditorDialog(initialBanner: initialBanner),
+    );
+
+    if (banner == null || !mounted) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.saveAdBanner(banner);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            initialBanner == null
+                ? 'تمت إضافة البنر بنجاح.'
+                : 'تم تحديث البنر بنجاح.',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حفظ البنر حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _publishBanner(AdBannerItem banner) async {
+    try {
+      await widget.catalogService.publishAdBanner(banner.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث lastUpdated للبنر بنجاح.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر نشر البنر حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _deleteBanner(AdBannerItem banner) async {
+    final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('حذف البنر'),
+            content: Text('هل تريد حذف البنر "${banner.title}" نهائياً؟'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('إلغاء'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('حذف'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.deleteAdBanner(banner.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم حذف البنر.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حذف البنر حالياً: $error')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'إدارة البنرات الإعلانية',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF16352B),
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    'أضف أو عدّل أو احذف البنرات في ad_banners مع نشر التحديث فوراً للمستخدمين.',
+                    style: TextStyle(
+                      color: Color(0xFF667C74),
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton.icon(
+              onPressed: () => _openEditor(),
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('إضافة بنر'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        _AdminDashboardSectionCard(
+          child: StreamBuilder<List<AdBannerItem>>(
+            stream: widget.catalogService.watchAdminAdBanners(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(40),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'تعذر تحميل البنرات من Firestore: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Color(0xFF5D746B)),
+                  ),
+                );
+              }
+
+              final banners = snapshot.data ?? const <AdBannerItem>[];
+              if (banners.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Text(
+                    'لا توجد بنرات بعد. أضف أول بنر من الزر العلوي.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF5D746B),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  children: banners.map((banner) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FCFA),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0xFFE2EFEA)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _AdminNetworkThumbnail(
+                            imageUrl: banner.imageUrl,
+                            label: banner.title,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  banner.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFF17332B),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                if (banner.subtitle.trim().isNotEmpty)
+                                  Text(
+                                    banner.subtitle,
+                                    style: const TextStyle(
+                                      color: Color(0xFF61756D),
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    _AdminStatusChip(
+                                      label: banner.active ? 'نشط' : 'مخفي',
+                                      color: banner.active
+                                          ? const Color(0xFF0F8F6F)
+                                          : const Color(0xFF9A6B6B),
+                                    ),
+                                    _AdminStatusChip(
+                                      label: 'الترتيب ${banner.order}',
+                                      color: const Color(0xFF375F54),
+                                    ),
+                                  ],
+                                ),
+                                if (banner.targetUrl.trim().isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    banner.targetUrl,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF6D8079),
+                                      fontSize: 12.5,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: 210,
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () =>
+                                      _openEditor(initialBanner: banner),
+                                  child: const Text('تعديل'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () => _publishBanner(banner),
+                                  child: const Text('نشر'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () => _deleteBanner(banner),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: const Color(0xFFC24E4E),
+                                  ),
+                                  child: const Text('حذف'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AdminProductManagerPanel extends StatefulWidget {
+  const _AdminProductManagerPanel({
+    required this.catalogService,
+  });
+
+  final FirestoreCatalogService catalogService;
+
+  @override
+  State<_AdminProductManagerPanel> createState() =>
+      _AdminProductManagerPanelState();
+}
+
+class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
+  Future<void> _openEditor({ProductComparison? initialProduct}) async {
+    final product = await showDialog<ProductComparison>(
+      context: context,
+      builder: (context) =>
+          _AdminProductEditorDialog(initialProduct: initialProduct),
+    );
+
+    if (product == null || !mounted) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.saveProduct(product);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            initialProduct == null
+                ? 'تمت إضافة المنتج بنجاح.'
+                : 'تم تحديث المنتج بنجاح.',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حفظ المنتج حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _publishProduct(ProductComparison product) async {
+    final documentId = product.documentId;
+    if (documentId == null || documentId.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('احفظ المنتج أولاً قبل نشره.')),
+      );
+      return;
+    }
+
+    try {
+      await widget.catalogService.publishProduct(documentId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث lastUpdated للمنتج بنجاح.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر نشر المنتج حالياً: $error')),
+      );
+    }
+  }
+
+  Future<void> _deleteProduct(ProductComparison product) async {
+    final documentId = product.documentId;
+    if (documentId == null || documentId.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('هذا المنتج غير مرتبط بوثيقة Firestore.')),
+      );
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('حذف المنتج'),
+            content: Text(
+              'هل تريد حذف "${product.expensiveName}" و"${product.alternativeName}" نهائياً؟',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('إلغاء'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('حذف'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await widget.catalogService.deleteProduct(documentId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم حذف المنتج.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تعذر حذف المنتج حالياً: $error')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'إدارة المنتجات',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF16352B),
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    'عدّل الأسماء والأسعار والصور ثم انشر التحديث ليظهر فوراً داخل التطبيق.',
+                    style: TextStyle(
+                      color: Color(0xFF667C74),
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton.icon(
+              onPressed: () => _openEditor(),
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('إضافة منتج'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        _AdminDashboardSectionCard(
+          child: StreamBuilder<List<ProductComparison>>(
+            stream: widget.catalogService.watchAllProducts(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(40),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'تعذر تحميل المنتجات من Firestore: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Color(0xFF5D746B)),
+                  ),
+                );
+              }
+
+              final products = snapshot.data ?? const <ProductComparison>[];
+              if (products.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Text(
+                    'لا توجد منتجات بعد. أضف أول منتج من الزر العلوي.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF5D746B),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  children: products.map((product) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FCFA),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0xFFE2EFEA)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _AdminNetworkThumbnail(
+                                imageUrl: product.expensiveImageUrl,
+                                label: product.expensiveName,
+                              ),
+                              const SizedBox(width: 10),
+                              _AdminNetworkThumbnail(
+                                imageUrl: product.alternativeImageUrl,
+                                label: product.alternativeName,
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.categoryLabel,
+                                      style: const TextStyle(
+                                        color: Color(0xFF6A7C74),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '${product.expensiveName}  •  ${formatAmountValue(product.expensivePrice)}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        color: Color(0xFF17332B),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '${product.alternativeName}  •  ${formatAmountValue(product.alternativePrice)}',
+                                      style: const TextStyle(
+                                        color: Color(0xFF436459),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    if (product.buyUrl.trim().isNotEmpty) ...[
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        product.buyUrl,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: Color(0xFF6D8079),
+                                          fontSize: 12.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              OutlinedButton(
+                                onPressed: () =>
+                                    _openEditor(initialProduct: product),
+                                child: const Text('تعديل'),
+                              ),
+                              OutlinedButton(
+                                onPressed: () => _publishProduct(product),
+                                child: const Text('نشر'),
+                              ),
+                              OutlinedButton(
+                                onPressed: () => _deleteProduct(product),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFFC24E4E),
+                                ),
+                                child: const Text('حذف'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
