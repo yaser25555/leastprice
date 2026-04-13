@@ -4582,20 +4582,21 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final fallbackHeight = math.max(
-          520.0,
-          MediaQuery.sizeOf(context).height - 220,
-        );
-        final availableHeight = constraints.maxHeight.isFinite
-            ? constraints.maxHeight
-            : fallbackHeight;
-        final sectionHeight = math.max(520.0, availableHeight - 64);
+    try {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final fallbackHeight = math.max(
+            520.0,
+            MediaQuery.sizeOf(context).height - 220,
+          );
+          final availableHeight = constraints.maxHeight.isFinite
+              ? constraints.maxHeight
+              : fallbackHeight;
+          final sectionHeight = math.max(520.0, availableHeight - 64);
 
-        return Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -4772,10 +4773,15 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
             ),
           ),
         ],
-          ),
-        );
-      },
-    );
+            ),
+          );
+        },
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Admin banners table build failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      return _AdminBuildFailurePanel(message: error.toString());
+    }
   }
 }
 
@@ -4895,20 +4901,21 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final fallbackHeight = math.max(
-          520.0,
-          MediaQuery.sizeOf(context).height - 220,
-        );
-        final availableHeight = constraints.maxHeight.isFinite
-            ? constraints.maxHeight
-            : fallbackHeight;
-        final sectionHeight = math.max(520.0, availableHeight - 64);
+    try {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final fallbackHeight = math.max(
+            520.0,
+            MediaQuery.sizeOf(context).height - 220,
+          );
+          final availableHeight = constraints.maxHeight.isFinite
+              ? constraints.maxHeight
+              : fallbackHeight;
+          final sectionHeight = math.max(520.0, availableHeight - 64);
 
-        return Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -5095,9 +5102,65 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
             ),
           ),
         ],
+            ),
+          );
+        },
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Admin products table build failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      return _AdminBuildFailurePanel(message: error.toString());
+    }
+  }
+}
+
+class _AdminBuildFailurePanel extends StatelessWidget {
+  const _AdminBuildFailurePanel({
+    required this.message,
+  });
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: _AdminDashboardSectionCard(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline_rounded,
+                  color: Color(0xFFD14B4B),
+                  size: 34,
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  'تعذر بناء واجهة الإدارة',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF17332B),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color(0xFF5D746B),
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
