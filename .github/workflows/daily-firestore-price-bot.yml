@@ -1,0 +1,51 @@
+name: Daily Firestore Price Bot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  price-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements-daily-bot.txt
+
+      - name: Write Firebase service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          payload = os.environ["FIREBASE_SERVICE_ACCOUNT_JSON"]
+          target = Path(os.environ["RUNNER_TEMP"]) / "leastprice-service-account.json"
+          target.write_text(payload, encoding="utf-8")
+
+          github_env = Path(os.environ["GITHUB_ENV"])
+          with github_env.open("a", encoding="utf-8") as handle:
+              handle.write(f"GOOGLE_APPLICATION_CREDENTIALS={target}\n")
+          PY
+
+      - name: Run daily Firestore automation
+        env:
+          FIREBASE_PROJECT_ID: leastprice-yaser
+          SEARCH_PROVIDER: serper
+          PRODUCTS_COLLECTION: products
+          POPULAR_PRODUCTS_COLLECTION: popular_products
+          SEARCH_REQUESTS_COLLECTION: search_requests
+          SYSTEM_HEALTH_COLLECTION: system_health
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+        run: python scripts/daily_firestore_price_bot.py --search-request-limit 20

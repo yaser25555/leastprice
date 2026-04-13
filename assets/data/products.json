@@ -1,0 +1,110 @@
+{
+  "referral": {
+    "inviteCode": "LP-REMOTE-501",
+    "invitedFriendsCount": 12,
+    "shareBaseUrl": "https://leastprice.app",
+    "inviteMessageTemplate": "أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}"
+  },
+  "products": [
+    {
+      "categoryId": "restaurants",
+      "categoryLabel": "مطاعم",
+      "expensiveName": "وجبة بيج ماك من سلسلة عالمية",
+      "expensivePrice": 26.0,
+      "expensiveImageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
+      "alternativeName": "برجر مدخن من مطعم برجر الشرقية - الخبر",
+      "alternativePrice": 18.0,
+      "alternativeImageUrl": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80",
+      "buyUrl": "https://www.hungerstation.com/sa-en",
+      "rating": 4.9,
+      "reviewCount": 278,
+      "localLocationLabel": "الخبر - طريق الأمير تركي - مطعم برجر الشرقية",
+      "localLocationUrl": "https://maps.google.com/?q=Khobar+burger+restaurant",
+      "tags": [
+        "بيج ماك",
+        "مطاعم",
+        "برجر",
+        "الخبر"
+      ]
+    },
+    {
+      "categoryId": "perfumes",
+      "categoryLabel": "عطور",
+      "expensiveName": "Dior Sauvage Eau de Parfum",
+      "expensivePrice": 520.0,
+      "expensiveImageUrl": "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80",
+      "alternativeName": "بديل سافاج من نخبة العود",
+      "alternativePrice": 189.0,
+      "alternativeImageUrl": "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=80",
+      "buyUrl": "https://www.amazon.sa/s?k=sauvage+alternative",
+      "rating": 4.9,
+      "reviewCount": 312,
+      "fragranceNotes": "برغموت، فلفل سيشوان، أمبروكسان، لمسة خشبية منعشة",
+      "tags": [
+        "سافاج",
+        "عطور",
+        "نخبة العود",
+        "بديل سعودي"
+      ]
+    },
+    {
+      "categoryId": "cosmetics",
+      "categoryLabel": "تجميل",
+      "expensiveName": "The Ordinary Niacinamide 10% Serum",
+      "expensivePrice": 69.0,
+      "expensiveImageUrl": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=900&q=80",
+      "alternativeName": "سيروم محلي نياسيناميد من لاب سعودي",
+      "alternativePrice": 34.0,
+      "alternativeImageUrl": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?auto=format&fit=crop&w=900&q=80",
+      "buyUrl": "https://www.noon.com/saudi-en/search?q=niacinamide+serum",
+      "rating": 4.6,
+      "reviewCount": 143,
+      "activeIngredients": "Niacinamide 10% + Zinc PCA لتنظيم الدهون وتقليل مظهر المسام",
+      "tags": [
+        "نياسيناميد",
+        "سيروم",
+        "بشرة",
+        "بديل محلي"
+      ]
+    },
+    {
+      "categoryId": "pharmacy",
+      "categoryLabel": "صيدلية",
+      "expensiveName": "CeraVe Moisturizing Cream",
+      "expensivePrice": 89.0,
+      "expensiveImageUrl": "https://images.unsplash.com/photo-1556228578-dd6c36f7737d?auto=format&fit=crop&w=900&q=80",
+      "alternativeName": "مرطب بديل من الصيدلية المحلية",
+      "alternativePrice": 44.0,
+      "alternativeImageUrl": "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80",
+      "buyUrl": "https://www.nahdionline.com",
+      "rating": 4.7,
+      "reviewCount": 221,
+      "activeIngredients": "سيراميدات + هيالورونيك أسيد + بانثينول لدعم حاجز البشرة",
+      "tags": [
+        "سيرافي",
+        "مرطب",
+        "نهدي",
+        "صيدلية"
+      ]
+    },
+    {
+      "categoryId": "coffee",
+      "categoryLabel": "قهوة",
+      "expensiveName": "نسكافيه جولد 200 جم",
+      "expensivePrice": 48.95,
+      "expensiveImageUrl": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80",
+      "alternativeName": "قهوة باجة السعودية 250 جم",
+      "alternativePrice": 24.5,
+      "alternativeImageUrl": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80",
+      "buyUrl": "https://www.amazon.sa/s?k=%D9%82%D9%87%D9%88%D8%A9+%D8%A8%D8%A7%D8%AC%D8%A9",
+      "rating": 4.6,
+      "reviewCount": 184,
+      "tags": [
+        "نسكافيه",
+        "قهوة فورية",
+        "باجة",
+        "توفير"
+      ]
+    }
+  ]
+}
