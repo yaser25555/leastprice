@@ -404,7 +404,7 @@ class AdminDashboardAuthGate extends StatelessWidget {
           return _AdminAccessDeniedScreen(user: user);
         }
 
-        return AdminControlCenter(adminUser: user);
+        return AdminDashboardScreen(adminUser: user);
       },
     );
   }
@@ -704,80 +704,633 @@ class AdminDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     const service = FirestoreCatalogService();
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF4FBF8),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          elevation: 0,
-          titleSpacing: 24,
-          toolbarHeight: 82,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'لوحة تحكم LeastPrice',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF16352B),
-                ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4FBF8),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
+        titleSpacing: 24,
+        toolbarHeight: 82,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'لوحة تحكم LeastPrice',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF16352B),
               ),
-              const SizedBox(height: 4),
-              Text(
-                adminUser.email ?? LeastPriceDataConfig.adminEmail,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF5D746B),
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              adminUser.email ?? LeastPriceDataConfig.adminEmail,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF5D746B),
+                fontWeight: FontWeight.w600,
               ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: () => FirebaseAuth.instance.signOut(),
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text('خروج'),
+          ),
+          const SizedBox(width: 16),
+        ],
+      ),
+      body: _AdminDashboardBody(service: service),
+    );
+  }
+}
+
+class _AdminDashboardBody extends StatefulWidget {
+  const _AdminDashboardBody({required this.service});
+  final FirestoreCatalogService service;
+
+  @override
+  State<_AdminDashboardBody> createState() => _AdminDashboardBodyState();
+}
+
+class _AdminDashboardBodyState extends State<_AdminDashboardBody>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Material(
+          color: Colors.white,
+          child: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(icon: Icon(Icons.view_carousel_rounded), text: 'البنرات'),
+              Tab(icon: Icon(Icons.inventory_2_rounded), text: 'المنتجات'),
             ],
           ),
-          actions: [
-            TextButton.icon(
-              onPressed: () => FirebaseAuth.instance.signOut(),
-              icon: const Icon(Icons.logout_rounded),
-              label: const Text('خروج'),
-            ),
-            const SizedBox(width: 16),
-          ],
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(56),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(24, 0, 24, 12),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TabBar(
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  tabs: [
-                    Tab(
-                      icon: Icon(Icons.view_carousel_rounded),
-                      text: 'البنرات',
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _AdminSimpleBannersPanel(service: widget.service),
+              _AdminSimpleProductsPanel(service: widget.service),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── لوحة البنرات البسيطة ────────────────────────────────────────────────────
+class _AdminSimpleBannersPanel extends StatefulWidget {
+  const _AdminSimpleBannersPanel({required this.service});
+  final FirestoreCatalogService service;
+
+  @override
+  State<_AdminSimpleBannersPanel> createState() =>
+      _AdminSimpleBannersPanelState();
+}
+
+class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
+  Future<void> _add() async {
+    final banner = await showDialog<AdBannerItem>(
+      context: context,
+      builder: (_) => const _AdminBannerEditorDialog(),
+    );
+    if (banner == null || !mounted) return;
+    try {
+      await widget.service.saveAdBanner(banner);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تمت إضافة البنر بنجاح.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+      }
+    }
+  }
+
+  Future<void> _edit(AdBannerItem banner) async {
+    final updated = await showDialog<AdBannerItem>(
+      context: context,
+      builder: (_) => _AdminBannerEditorDialog(initialBanner: banner),
+    );
+    if (updated == null || !mounted) return;
+    try {
+      await widget.service.saveAdBanner(updated);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم تحديث البنر بنجاح.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+      }
+    }
+  }
+
+  Future<void> _delete(AdBannerItem banner) async {
+    final ok = await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('حذف البنر'),
+            content: Text('هل تريد حذف "${banner.title}"؟'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('إلغاء')),
+              ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('حذف')),
+            ],
+          ),
+        ) ??
+        false;
+    if (!ok || !mounted) return;
+    try {
+      await widget.service.deleteAdBanner(banner.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم حذف البنر.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+      }
+    }
+  }
+
+  Future<void> _publishMockToFirestore() async {
+    try {
+      for (final b in AdBannerItem.mockData) {
+        await widget.service.saveAdBanner(b);
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم نشر البنرات التجريبية في Firestore.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ أثناء النشر: $e')));
+      }
+    }
+  }
+
+  Widget _buildBannerCard(AdBannerItem b, {bool isMock = false}) {
+    return Card(
+      color: isMock ? const Color(0xFFFFF8E1) : null,
+      child: ListTile(
+        leading: b.imageUrl.isNotEmpty
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(b.imageUrl,
+                    width: 56, height: 56, fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.image_not_supported_rounded)),
+              )
+            : const Icon(Icons.image_rounded, size: 40),
+        title: Text(b.title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(
+            isMock ? '📦 تجريبي — ${b.storeName}' : b.storeName,
+            style: TextStyle(
+                color: isMock ? Colors.orange[800] : null)),
+        trailing: isMock
+            ? ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    await widget.service.saveAdBanner(b);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text('تم نشر "${b.title}" في Firestore.')),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('خطأ: $e')));
+                    }
+                  }
+                },
+                icon: const Icon(Icons.cloud_upload_rounded, size: 18),
+                label: const Text('نشر'),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                      icon: const Icon(Icons.edit_rounded),
+                      onPressed: () => _edit(b)),
+                  IconButton(
+                      icon: const Icon(Icons.delete_rounded,
+                          color: Colors.red),
+                      onPressed: () => _delete(b)),
+                ],
+              ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4FBF8),
+      body: StreamBuilder<List<AdBannerItem>>(
+        stream: widget.service.watchAdminAdBanners(),
+        builder: (context, snap) {
+          final isLoading = snap.connectionState == ConnectionState.waiting;
+          final firestoreList = snap.data ?? [];
+          final isMock = !isLoading && firestoreList.isEmpty;
+          final displayList =
+              isMock ? AdBannerItem.mockData : firestoreList;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    const Text(
+                      'البنرات الإعلانية',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF16352B)),
                     ),
-                    Tab(
-                      icon: Icon(Icons.inventory_2_rounded),
-                      text: 'المنتجات',
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isMock)
+                          OutlinedButton.icon(
+                            onPressed: _publishMockToFirestore,
+                            icon: const Icon(Icons.cloud_upload_rounded),
+                            label: const Text('نشر الكل في Firestore'),
+                          ),
+                        if (isMock) const SizedBox(width: 8),
+                        FilledButton.icon(
+                          onPressed: _add,
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('إضافة بنر'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: const [
-              _AdminBannersTable(catalogService: service),
-              SizedBox(height: 24),
-              _AdminProductsTable(catalogService: service),
+              if (isMock)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded,
+                          color: Colors.orange, size: 20),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Firestore فارغة — تعرض البنرات التجريبية. اضغط "نشر" لحفظها.',
+                          style: TextStyle(color: Colors.orange),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (snap.hasError)
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text('خطأ: ${snap.error}',
+                      style: const TextStyle(color: Colors.red)),
+                ),
+              if (isLoading)
+                const Expanded(
+                    child: Center(child: CircularProgressIndicator()))
+              else
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                    itemCount: displayList.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, i) =>
+                        _buildBannerCard(displayList[i], isMock: isMock),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _add,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('إضافة بنر'),
+      ),
+    );
+  }
+}
+
+// ─── لوحة المنتجات البسيطة ───────────────────────────────────────────────────
+class _AdminSimpleProductsPanel extends StatefulWidget {
+  const _AdminSimpleProductsPanel({required this.service});
+  final FirestoreCatalogService service;
+
+  @override
+  State<_AdminSimpleProductsPanel> createState() =>
+      _AdminSimpleProductsPanelState();
+}
+
+class _AdminSimpleProductsPanelState
+    extends State<_AdminSimpleProductsPanel> {
+  Future<void> _add() async {
+    final product = await showDialog<ProductComparison>(
+      context: context,
+      builder: (_) => const _AdminProductEditorDialog(),
+    );
+    if (product == null || !mounted) return;
+    try {
+      await widget.service.saveProduct(product);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تمت إضافة المنتج بنجاح.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+      }
+    }
+  }
+
+  Future<void> _edit(ProductComparison product) async {
+    final updated = await showDialog<ProductComparison>(
+      context: context,
+      builder: (_) => _AdminProductEditorDialog(initialProduct: product),
+    );
+    if (updated == null || !mounted) return;
+    try {
+      await widget.service.saveProduct(updated);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم تحديث المنتج بنجاح.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+      }
+    }
+  }
+
+  Future<void> _delete(ProductComparison product) async {
+    final docId = product.documentId;
+    if (docId == null) return;
+    final ok = await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('حذف المنتج'),
+            content: Text('هل تريد حذف "${product.expensiveName}"؟'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('إلغاء')),
+              ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('حذف')),
             ],
           ),
+        ) ??
+        false;
+    if (!ok || !mounted) return;
+    try {
+      await widget.service.deleteProduct(docId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم حذف المنتج.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+      }
+    }
+  }
+
+  Future<void> _publishMockToFirestore() async {
+    try {
+      for (final p in ProductComparison.mockData) {
+        await widget.service.saveProduct(p);
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم نشر المنتجات التجريبية في Firestore.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ أثناء النشر: $e')));
+      }
+    }
+  }
+
+  Widget _buildProductCard(ProductComparison p, {bool isMock = false}) {
+    return Card(
+      color: isMock ? const Color(0xFFFFF8E1) : null,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: const Color(0xFF16352B),
+          child: Text(
+            p.categoryLabel.isNotEmpty ? p.categoryLabel[0] : '؟',
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
         ),
+        title: Text(
+          '${p.expensiveName}  →  ${p.alternativeName}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+        ),
+        subtitle: Text(
+          isMock
+              ? '📦 تجريبي — ${p.categoryLabel} | ${p.expensivePrice} ر.س  →  ${p.alternativePrice} ر.س'
+              : '${p.categoryLabel} | ${p.expensivePrice} ر.س  →  ${p.alternativePrice} ر.س',
+          style: TextStyle(color: isMock ? Colors.orange[800] : null),
+        ),
+        trailing: isMock
+            ? ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    await widget.service.saveProduct(p);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('تم نشر "${p.expensiveName}".')),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text('خطأ: $e')));
+                    }
+                  }
+                },
+                icon: const Icon(Icons.cloud_upload_rounded, size: 18),
+                label: const Text('نشر'),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                      icon: const Icon(Icons.edit_rounded),
+                      onPressed: () => _edit(p)),
+                  IconButton(
+                      icon: const Icon(Icons.delete_rounded,
+                          color: Colors.red),
+                      onPressed: () => _delete(p)),
+                ],
+              ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4FBF8),
+      body: StreamBuilder<List<ProductComparison>>(
+        stream: widget.service.watchAllProducts(),
+        builder: (context, snap) {
+          final isLoading = snap.connectionState == ConnectionState.waiting;
+          final firestoreList = snap.data ?? [];
+          final isMock = !isLoading && firestoreList.isEmpty;
+          final displayList =
+              isMock ? ProductComparison.mockData : firestoreList;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    const Text(
+                      'بطاقات المقارنة',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF16352B)),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isMock)
+                          OutlinedButton.icon(
+                            onPressed: _publishMockToFirestore,
+                            icon: const Icon(Icons.cloud_upload_rounded),
+                            label: const Text('نشر الكل في Firestore'),
+                          ),
+                        if (isMock) const SizedBox(width: 8),
+                        FilledButton.icon(
+                          onPressed: _add,
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('إضافة منتج'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (isMock)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded,
+                          color: Colors.orange, size: 20),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Firestore فارغة — تعرض المنتجات التجريبية. اضغط "نشر" لحفظها.',
+                          style: TextStyle(color: Colors.orange),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (snap.hasError)
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text('خطأ: ${snap.error}',
+                      style: const TextStyle(color: Colors.red)),
+                ),
+              if (isLoading)
+                const Expanded(
+                    child: Center(child: CircularProgressIndicator()))
+              else
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                    itemCount: displayList.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (_, i) =>
+                        _buildProductCard(displayList[i], isMock: isMock),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _add,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('إضافة منتج'),
       ),
     );
   }
@@ -7001,8 +7554,14 @@ class LeastPriceDataConfig {
       'https://your-domain.com/leastprice-feed.json';
   static const String assetJsonPath = 'assets/data/products.json';
   static const String appShareUrl = 'https://leastprice.app';
-  static const String adminEmail = 'yaser.haroon79@gmail.com';
-  static const String adminPassword = 'leastprice123';
+  static const String adminEmail = String.fromEnvironment(
+    'ADMIN_EMAIL',
+    defaultValue: 'yaser.haroon79@gmail.com',
+  );
+  static const String adminPassword = String.fromEnvironment(
+    'ADMIN_PASSWORD',
+    defaultValue: 'leastprice123',
+  );
   static const String affiliateTag = 'myid-21';
   static const String originalOnSaleTag = 'المنتج الأصلي عليه عرض حالياً';
   static const SearchProviderType searchProviderType = SearchProviderType.serper;

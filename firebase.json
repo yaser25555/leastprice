@@ -1,1 +1,48 @@
-{"firestore":{"rules":"firestore.rules"},"functions":{"source":"functions","runtime":"nodejs20"},"flutter":{"platforms":{"android":{"default":{"projectId":"leastprice-yaser","appId":"1:46896031630:android:b34fd14acbec6556f2a6df","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"leastprice-yaser","configurations":{"android":"1:46896031630:android:b34fd14acbec6556f2a6df","web":"1:46896031630:web:f45faba915e461eef2a6df"}}}}}}
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|wasm)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        ]
+      },
+      {
+        "source": "/index.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      }
+    ]
+  },
+  "firestore": { "rules": "firestore.rules" },
+  "functions": { "source": "functions", "runtime": "nodejs20" },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "leastprice-yaser",
+          "appId": "1:46896031630:android:b34fd14acbec6556f2a6df",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "leastprice-yaser",
+          "configurations": {
+            "android": "1:46896031630:android:b34fd14acbec6556f2a6df",
+            "web": "1:46896031630:web:f45faba915e461eef2a6df"
+          }
+        }
+      }
+    }
+  }
+}
