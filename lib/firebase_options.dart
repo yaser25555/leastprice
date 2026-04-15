@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:46896031630:web:f45faba915e461eef2a6df',
     messagingSenderId: '46896031630',
     projectId: 'leastprice-yaser',
-    authDomain: 'leastprice-yaser.firebaseapp.com',
+    authDomain: 'leastprice-yaser.web.app',
     storageBucket: 'leastprice-yaser.firebasestorage.app',
     measurementId: 'G-P3NWPSRHHP',
   );

@@ -2726,10 +2726,14 @@ String _normalizedImageUrl(
 }) {
   final value = (rawUrl ?? '').trim();
 
-  // ← الإصلاح: رابط فارغ أو غير صالح → placeholder بدلاً من نص فارغ
-  // نص فارغ يتحول لرابط الصفحة الحالية عند تمريره لـ NetworkImage
-  if (value.isEmpty ||
-      !value.startsWith('http://') && !value.startsWith('https://')) {
+  // رابط فارغ أو localhost أو غير صالح → placeholder آمنة
+  final isLocalhost = value.contains('localhost') ||
+      value.contains('127.0.0.1') ||
+      value.contains('0.0.0.0');
+  final isValidScheme =
+      value.startsWith('http://') || value.startsWith('https://');
+
+  if (value.isEmpty || isLocalhost || !isValidScheme) {
     final encoded = Uri.encodeComponent(
         fallbackLabel.isNotEmpty ? fallbackLabel : 'LeastPrice');
     return 'https://placehold.co/900x600/EAF3EF/17332B?text=$encoded';
