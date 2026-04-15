@@ -2725,8 +2725,14 @@ String _normalizedImageUrl(
   String fallbackLabel = 'LeastPrice',
 }) {
   final value = (rawUrl ?? '').trim();
-  if (value.isEmpty) {
-    return value;
+
+  // ← الإصلاح: رابط فارغ أو غير صالح → placeholder بدلاً من نص فارغ
+  // نص فارغ يتحول لرابط الصفحة الحالية عند تمريره لـ NetworkImage
+  if (value.isEmpty ||
+      !value.startsWith('http://') && !value.startsWith('https://')) {
+    final encoded = Uri.encodeComponent(
+        fallbackLabel.isNotEmpty ? fallbackLabel : 'LeastPrice');
+    return 'https://placehold.co/900x600/EAF3EF/17332B?text=$encoded';
   }
 
   const brokenTokens = <String>[
