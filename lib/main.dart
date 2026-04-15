@@ -14,6 +14,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'firebase_options.dart';
 
+// ── Language System ──────────────────────────────────────────────────────────
+final ValueNotifier<String> appLang = ValueNotifier<String>('ar');
+
+bool get _isAr => appLang.value == 'ar';
+
+String tr(String ar, String en) => _isAr ? ar : en;
+
+// ────────────────────────────────────────────────────────────────────────────
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ErrorWidget.builder = (FlutterErrorDetails details) {
@@ -88,9 +97,13 @@ class LeastPriceApp extends StatelessWidget {
       surface: Colors.white,
     );
 
-    return MaterialApp(
+    return ValueListenableBuilder<String>(
+      valueListenable: appLang,
+      builder: (context, lang, _) {
+        final isEnglish = lang == 'en';
+        return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'أرخص سعر - LeastPrice',
+      title: isEnglish ? 'LeastPrice' : 'أرخص سعر',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: scheme,
@@ -149,7 +162,7 @@ class LeastPriceApp extends StatelessWidget {
       ),
       builder: (context, child) {
         return Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: isEnglish ? TextDirection.ltr : TextDirection.rtl,
           child: child ?? const SizedBox.shrink(),
         );
       },
@@ -162,6 +175,8 @@ class LeastPriceApp extends StatelessWidget {
               firebaseReady: firebaseBootstrapNotice == null,
               bootstrapNotice: firebaseBootstrapNotice,
             ),
+    );
+      }, // end ValueListenableBuilder
     );
   }
 }
@@ -4382,7 +4397,7 @@ class _HeaderSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'مرحباً $currentUserLabel',
+                              tr('مرحباً', 'Hello') + ' $currentUserLabel',
                               style: const TextStyle(
                                 color: Color(0xD9FFFFFF),
                                 fontSize: 13.5,
@@ -4393,7 +4408,35 @@ class _HeaderSection extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
+                      ValueListenableBuilder<String>(
+                        valueListenable: appLang,
+                        builder: (context, lang, _) => GestureDetector(
+                          onTap: () {
+                            appLang.value =
+                                lang == 'ar' ? 'en' : 'ar';
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0x1AFFFFFF),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                  color: const Color(0x33FFFFFF)),
+                            ),
+                            child: Text(
+                              lang == 'ar' ? 'EN' : 'عر',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
                       IconButton(
                         onPressed: onLogoutTap,
                         style: IconButton.styleFrom(
@@ -4401,14 +4444,17 @@ class _HeaderSection extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         icon: const Icon(Icons.logout_rounded),
-                        tooltip: 'تسجيل الخروج',
+                        tooltip: tr('تسجيل الخروج', 'Sign Out'),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'واجهة تجارية تجمع عروض المتاجر، المقارنات اليومية، والدعوات الذكية في مكان واحد.',
-                    style: TextStyle(
+                  Text(
+                    tr(
+                      'واجهة تجارية تجمع عروض المتاجر، المقارنات اليومية، والدعوات الذكية في مكان واحد.',
+                      'Compare prices, find the best deals, and save money on every purchase.',
+                    ),
+                    style: const TextStyle(
                       color: Color(0xD9FFFFFF),
                       fontSize: 13.5,
                       height: 1.45,
@@ -4423,7 +4469,7 @@ class _HeaderSection extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'ابحث عن منتج مثل: نسكافيه، كرافت، هاينز...',
+                      hintText: tr('ابحث عن منتج مثل: نسكافيه، كرافت، هاينز...', 'Search for a product e.g. Nescafe, Kraft, Heinz...'),
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: hasQuery
                           ? IconButton(
@@ -4563,7 +4609,7 @@ class _HeaderSection extends StatelessWidget {
                             Expanded(
                               child: _InviteMetric(
                                 icon: Icons.savings_rounded,
-                                label: '$estimatedSavingsText ر.س توفير',
+                                label: '$estimatedSavingsText ${tr('ر.س توفير', 'SAR saved')}',
                               ),
                             ),
                           ],
@@ -9733,7 +9779,7 @@ String? _mergeNotices(String? current, String? incoming) {
 }
 
 String formatPrice(double price) {
-  return '${formatAmountValue(price)} ر.س';
+  return '${formatAmountValue(price)} ${tr('ر.س', 'SAR')}';
 }
 
 String formatAmountValue(double amount) {

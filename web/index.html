@@ -29,18 +29,23 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>leastprice</title>
+  <title>أرخص سعر | LeastPrice</title>
+  <meta name="description" content="مقارنة أسعار المنتجات في السوق السعودي - LeastPrice">
   <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E8711A">
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  <script>
+    // Force service worker update on every load
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        var updatePromises = registrations.map(function(reg) {
+          return reg.update();
+        });
+        return Promise.all(updatePromises);
+      });
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
