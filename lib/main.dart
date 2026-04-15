@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -28,7 +28,7 @@ Future<void> main() async {
     );
   } catch (_) {
     firebaseBootstrapNotice =
-        'ØªØ¹Ø°Ø± ØªÙ‡ÙŠØ¦Ø© Firebase Ø­Ø§Ù„ÙŠØ§Ù‹. ØªØ£ÙƒØ¯ Ù…Ù† Ø§ÙƒØªÙ…Ø§Ù„ Ù…Ù„ÙØ§Øª FlutterFire ÙˆØ¥Ø¹Ø¯Ø§Ø¯ Ù…Ø´Ø±ÙˆØ¹ Firebase Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù†ØµØ© Ø§Ù„Ø­Ø§Ù„ÙŠØ©.';
+        'تعذر تهيئة Firebase حالياً. تأكد من اكتمال ملفات FlutterFire وإعداد مشروع Firebase على المنصة الحالية.';
   }
 
   runApp(
@@ -83,12 +83,14 @@ class LeastPriceApp extends StatelessWidget {
     ).copyWith(
       primary: orange,
       secondary: navy,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
       surface: Colors.white,
     );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Ø£Ø±Ø®Øµ Ø³Ø¹Ø± - LeastPrice',
+      title: 'أرخص سعر - LeastPrice',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: scheme,
@@ -209,7 +211,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                         SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Ø­Ø¯Ø« Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ø¨Ù†Ø§Ø¡ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø©',
+                            'حدث خطأ أثناء بناء الواجهة',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
@@ -221,7 +223,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'Ø¨Ø¯Ù„Ø§Ù‹ Ù…Ù† Ø§Ù„ØµÙØ­Ø© Ø§Ù„Ø¨ÙŠØ¶Ø§Ø¡ØŒ ÙŠØ¹Ø±Ø¶ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¢Ù† Ø³Ø¨Ø¨ Ø§Ù„Ø®Ø·Ø£ Ù„ÙŠØ³Ù‡Ù„ Ø¹Ù„ÙŠÙ†Ø§ Ø¥ØµÙ„Ø§Ø­Ù‡ Ø¨Ø³Ø±Ø¹Ø©.',
+                      'بدلاً من الصفحة البيضاء، يعرض التطبيق الآن سبب الخطأ ليسهل علينا إصلاحه بسرعة.',
                       style: TextStyle(
                         color: Color(0xFF61756D),
                         height: 1.5,
@@ -339,14 +341,14 @@ class _AuthenticatedBootstrapState extends State<AuthenticatedBootstrap> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const _AuthLoadingScreen(
-            title: 'Ø¬Ø§Ø±Ù ØªØ¬Ù‡ÙŠØ² Ø­Ø³Ø§Ø¨Ùƒ',
-            message: 'Ù†Ø±Ø¨Ø· Ù…Ù„ÙÙƒ Ø§Ù„Ø´Ø®ØµÙŠ ÙˆØ§Ù„Ø¯Ø¹ÙˆØ§Øª ÙˆØ§Ù„Ø¹Ø±ÙˆØ¶ Ù‚Ø¨Ù„ ÙØªØ­ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.',
+            title: 'جارٍ تجهيز حسابك',
+            message: 'نربط ملفك الشخصي والدعوات والعروض قبل فتح التطبيق.',
           );
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
           return _AuthBootstrapErrorScreen(
-            message: 'ØªØ¹Ø°Ø± ØªØ¬Ù‡ÙŠØ² Ù…Ù„Ù Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ù…Ù† Firestore. ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø§ØªØµØ§Ù„ Ø«Ù… Ø¬Ø±Ù‘Ø¨ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.',
+            message: 'تعذر تجهيز ملف المستخدم من Firestore. تأكد من الاتصال ثم جرّب مرة أخرى.',
             onRetry: () {
               setState(() {
                 _bootstrapFuture = _catalogService.ensureUserProfile(
@@ -391,8 +393,8 @@ class AdminDashboardAuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const _AuthLoadingScreen(
-            title: 'Ø¬Ø§Ø±Ù ØªØ¬Ù‡ÙŠØ² Ù„ÙˆØ­Ø© Ø§Ù„ØªØ­ÙƒÙ…',
-            message: 'Ù†Ø±Ø¨Ø· Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø¨Ø®Ø¯Ù…Ø§Øª Firebase ÙˆÙ†Ø¬Ù‡Ø² ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ù…Ø´Ø±Ù.',
+            title: 'جارٍ تجهيز لوحة التحكم',
+            message: 'نربط لوحة الإدارة بخدمات Firebase ونجهز صلاحيات المشرف.',
           );
         }
 
@@ -440,7 +442,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
     if (normalizedEmail == null) {
       setState(() {
-        _statusMessage = 'Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯ Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø¨ØµÙŠØºØ© ØµØ­ÙŠØ­Ø©.';
+        _statusMessage = 'أدخل بريد المشرف الإلكتروني بصيغة صحيحة.';
       });
       return;
     }
@@ -448,14 +450,14 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     if (!_isAllowedAdminEmail(normalizedEmail)) {
       setState(() {
         _statusMessage =
-            'Ù‡Ø°Ù‡ Ø§Ù„Ù„ÙˆØ­Ø© Ù…Ù‚ÙŠØ¯Ø© Ø¨Ø¨Ø±ÙŠØ¯ Ø§Ù„Ù…Ø´Ø±Ù ${LeastPriceDataConfig.adminEmail} ÙÙ‚Ø·.';
+            'هذه اللوحة مقيدة ببريد المشرف ${LeastPriceDataConfig.adminEmail} فقط.';
       });
       return;
     }
 
     if (password.isEmpty) {
       setState(() {
-        _statusMessage = 'Ø£Ø¯Ø®Ù„ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø©.';
+        _statusMessage = 'أدخل كلمة المرور للمتابعة.';
       });
       return;
     }
@@ -473,7 +475,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       if (!mounted) return;
       setState(() {
         _isSubmitting = false;
-        _statusMessage = 'ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ø´Ø±Ù Ø¨Ù†Ø¬Ø§Ø­.';
+        _statusMessage = 'تم تسجيل دخول المشرف بنجاح.';
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -485,7 +487,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       if (!mounted) return;
       setState(() {
         _isSubmitting = false;
-        _statusMessage = 'ØªØ¹Ø°Ø± ÙØªØ­ Ù„ÙˆØ­Ø© Ø§Ù„ØªØ­ÙƒÙ… Ø­Ø§Ù„ÙŠØ§Ù‹: $error';
+        _statusMessage = 'تعذر فتح لوحة التحكم حالياً: $error';
       });
     }
   }
@@ -522,7 +524,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Ù„ÙˆØ­Ø© ØªØ­ÙƒÙ… LeastPrice',
+                    'لوحة تحكم LeastPrice',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 24,
@@ -532,7 +534,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Ø³Ø¬Ù‘Ù„ Ø¨Ø¨Ø±ÙŠØ¯ Ø§Ù„Ù…Ø´Ø±Ù Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¨Ù†Ø±Ø§Øª ÙˆØ§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­. Ù‡Ø°Ù‡ Ø§Ù„Ù„ÙˆØ­Ø© Ù…Ø­Ù…ÙŠØ© Ø¨Ø¨Ø±ÙŠØ¯ ${LeastPriceDataConfig.adminEmail}.',
+                    'سجّل ببريد المشرف لإدارة البنرات والمنتجات مباشرة من المتصفح. هذه اللوحة محمية ببريد ${LeastPriceDataConfig.adminEmail}.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Color(0xFF61756D),
@@ -544,7 +546,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
-                      labelText: 'Ø¨Ø±ÙŠØ¯ Ø§Ù„Ù…Ø´Ø±Ù',
+                      labelText: 'بريد المشرف',
                       prefixIcon: Icon(Icons.alternate_email_rounded),
                     ),
                   ),
@@ -553,7 +555,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±',
+                      labelText: 'كلمة المرور',
                       prefixIcon: const Icon(Icons.lock_rounded),
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -604,7 +606,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           )
                         : const Icon(Icons.login_rounded),
                     label: Text(
-                      _isSubmitting ? 'Ø¬Ø§Ø±Ù Ø§Ù„Ø¯Ø®ÙˆÙ„...' : 'Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ø´Ø±Ù',
+                      _isSubmitting ? 'جارٍ الدخول...' : 'دخول المشرف',
                     ),
                   ),
                 ],
@@ -660,7 +662,7 @@ class _AdminAccessDeniedScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ Ù„ÙŠØ³ Ù…Ø´Ø±ÙØ§Ù‹',
+                    'هذا الحساب ليس مشرفاً',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 22,
@@ -670,7 +672,7 @@ class _AdminAccessDeniedScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø­Ø§Ù„ÙŠ Ù‡Ùˆ ${user.email ?? 'ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ'}ØŒ Ø¨ÙŠÙ†Ù…Ø§ Ø§Ù„Ù„ÙˆØ­Ø© Ù…Ø³Ù…ÙˆØ­Ø© ÙÙ‚Ø· Ù„Ù„Ø¨Ø±ÙŠØ¯ ${LeastPriceDataConfig.adminEmail}.',
+                    'البريد الحالي هو ${user.email ?? 'غير معروف'}، بينما اللوحة مسموحة فقط للبريد ${LeastPriceDataConfig.adminEmail}.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Color(0xFF61756D),
@@ -681,7 +683,7 @@ class _AdminAccessDeniedScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: _signOut,
                     icon: const Icon(Icons.logout_rounded),
-                    label: const Text('ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬'),
+                    label: const Text('تسجيل الخروج'),
                   ),
                 ],
               ),
@@ -717,7 +719,7 @@ class AdminDashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Ù„ÙˆØ­Ø© ØªØ­ÙƒÙ… LeastPrice',
+              'لوحة تحكم LeastPrice',
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 color: Color(0xFF1B2F5E),
@@ -738,7 +740,7 @@ class AdminDashboardScreen extends StatelessWidget {
           TextButton.icon(
             onPressed: () => FirebaseAuth.instance.signOut(),
             icon: const Icon(Icons.logout_rounded),
-            label: const Text('Ø®Ø±ÙˆØ¬'),
+            label: const Text('خروج'),
           ),
           const SizedBox(width: 16),
         ],
@@ -781,8 +783,8 @@ class _AdminDashboardBodyState extends State<_AdminDashboardBody>
           child: TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(icon: Icon(Icons.view_carousel_rounded), text: 'Ø§Ù„Ø¨Ù†Ø±Ø§Øª'),
-              Tab(icon: Icon(Icons.inventory_2_rounded), text: 'Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª'),
+              Tab(icon: Icon(Icons.view_carousel_rounded), text: 'البنرات'),
+              Tab(icon: Icon(Icons.inventory_2_rounded), text: 'المنتجات'),
             ],
           ),
         ),
@@ -800,7 +802,7 @@ class _AdminDashboardBodyState extends State<_AdminDashboardBody>
   }
 }
 
-// â”€â”€â”€ Ù„ÙˆØ­Ø© Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ø§Ù„Ø¨Ø³ÙŠØ·Ø© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── لوحة البنرات البسيطة ────────────────────────────────────────────────────
 class _AdminSimpleBannersPanel extends StatefulWidget {
   const _AdminSimpleBannersPanel({required this.service});
   final FirestoreCatalogService service;
@@ -821,13 +823,13 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
       await widget.service.saveAdBanner(banner);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.')),
+          const SnackBar(content: Text('تمت إضافة البنر بنجاح.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
       }
     }
   }
@@ -842,13 +844,13 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
       await widget.service.saveAdBanner(updated);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.')),
+          const SnackBar(content: Text('تم تحديث البنر بنجاح.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
       }
     }
   }
@@ -857,15 +859,15 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
     final ok = await showDialog<bool>(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text('Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±'),
-            content: Text('Ù‡Ù„ ØªØ±ÙŠØ¯ Ø­Ø°Ù "${banner.title}"ØŸ'),
+            title: const Text('حذف البنر'),
+            content: Text('هل تريد حذف "${banner.title}"؟'),
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Ø¥Ù„ØºØ§Ø¡')),
+                  child: const Text('إلغاء')),
               ElevatedButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Ø­Ø°Ù')),
+                  child: const Text('حذف')),
             ],
           ),
         ) ??
@@ -875,13 +877,13 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
       await widget.service.deleteAdBanner(banner.id);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ… Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±.')),
+          const SnackBar(content: Text('تم حذف البنر.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
       }
     }
   }
@@ -893,13 +895,13 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ… Ù†Ø´Ø± Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ø§Ù„ØªØ¬Ø±ÙŠØ¨ÙŠØ© ÙÙŠ Firestore.')),
+          const SnackBar(content: Text('تم نشر البنرات التجريبية في Firestore.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ø§Ù„Ù†Ø´Ø±: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ أثناء النشر: $e')));
       }
     }
   }
@@ -920,7 +922,7 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
         title: Text(b.title,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(
-            isMock ? 'ðŸ“¦ ØªØ¬Ø±ÙŠØ¨ÙŠ â€” ${b.storeName}' : b.storeName,
+            isMock ? '📦 تجريبي — ${b.storeName}' : b.storeName,
             style: TextStyle(
                 color: isMock ? Colors.orange[800] : null)),
         trailing: isMock
@@ -932,18 +934,18 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                             content:
-                                Text('ØªÙ… Ù†Ø´Ø± "${b.title}" ÙÙŠ Firestore.')),
+                                Text('تم نشر "${b.title}" في Firestore.')),
                       );
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+                          SnackBar(content: Text('خطأ: $e')));
                     }
                   }
                 },
                 icon: const Icon(Icons.cloud_upload_rounded, size: 18),
-                label: const Text('Ù†Ø´Ø±'),
+                label: const Text('نشر'),
               )
             : Row(
                 mainAxisSize: MainAxisSize.min,
@@ -986,7 +988,7 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
                   runSpacing: 8,
                   children: [
                     const Text(
-                      'Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†ÙŠØ©',
+                      'البنرات الإعلانية',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
@@ -999,13 +1001,13 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
                           OutlinedButton.icon(
                             onPressed: _publishMockToFirestore,
                             icon: const Icon(Icons.cloud_upload_rounded),
-                            label: const Text('Ù†Ø´Ø± Ø§Ù„ÙƒÙ„ ÙÙŠ Firestore'),
+                            label: const Text('نشر الكل في Firestore'),
                           ),
                         if (isMock) const SizedBox(width: 8),
                         FilledButton.icon(
                           onPressed: _add,
                           icon: const Icon(Icons.add_rounded),
-                          label: const Text('Ø¥Ø¶Ø§ÙØ© Ø¨Ù†Ø±'),
+                          label: const Text('إضافة بنر'),
                         ),
                       ],
                     ),
@@ -1028,7 +1030,7 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Firestore ÙØ§Ø±ØºØ© â€” ØªØ¹Ø±Ø¶ Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ø§Ù„ØªØ¬Ø±ÙŠØ¨ÙŠØ©. Ø§Ø¶ØºØ· "Ù†Ø´Ø±" Ù„Ø­ÙØ¸Ù‡Ø§.',
+                          'Firestore فارغة — تعرض البنرات التجريبية. اضغط "نشر" لحفظها.',
                           style: TextStyle(color: Colors.orange),
                         ),
                       ),
@@ -1038,7 +1040,7 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
               if (snap.hasError)
                 Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text('Ø®Ø·Ø£: ${snap.error}',
+                  child: Text('خطأ: ${snap.error}',
                       style: const TextStyle(color: Colors.red)),
                 ),
               if (isLoading)
@@ -1061,13 +1063,13 @@ class _AdminSimpleBannersPanelState extends State<_AdminSimpleBannersPanel> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _add,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Ø¥Ø¶Ø§ÙØ© Ø¨Ù†Ø±'),
+        label: const Text('إضافة بنر'),
       ),
     );
   }
 }
 
-// â”€â”€â”€ Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„Ø¨Ø³ÙŠØ·Ø© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── لوحة المنتجات البسيطة ───────────────────────────────────────────────────
 class _AdminSimpleProductsPanel extends StatefulWidget {
   const _AdminSimpleProductsPanel({required this.service});
   final FirestoreCatalogService service;
@@ -1089,13 +1091,13 @@ class _AdminSimpleProductsPanelState
       await widget.service.saveProduct(product);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.')),
+          const SnackBar(content: Text('تمت إضافة المنتج بنجاح.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
       }
     }
   }
@@ -1110,13 +1112,13 @@ class _AdminSimpleProductsPanelState
       await widget.service.saveProduct(updated);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.')),
+          const SnackBar(content: Text('تم تحديث المنتج بنجاح.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
       }
     }
   }
@@ -1127,15 +1129,15 @@ class _AdminSimpleProductsPanelState
     final ok = await showDialog<bool>(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text('Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬'),
-            content: Text('Ù‡Ù„ ØªØ±ÙŠØ¯ Ø­Ø°Ù "${product.expensiveName}"ØŸ'),
+            title: const Text('حذف المنتج'),
+            content: Text('هل تريد حذف "${product.expensiveName}"؟'),
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Ø¥Ù„ØºØ§Ø¡')),
+                  child: const Text('إلغاء')),
               ElevatedButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Ø­Ø°Ù')),
+                  child: const Text('حذف')),
             ],
           ),
         ) ??
@@ -1145,13 +1147,13 @@ class _AdminSimpleProductsPanelState
       await widget.service.deleteProduct(docId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬.')),
+          const SnackBar(content: Text('تم حذف المنتج.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ: $e')));
       }
     }
   }
@@ -1163,13 +1165,13 @@ class _AdminSimpleProductsPanelState
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('ØªÙ… Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„ØªØ¬Ø±ÙŠØ¨ÙŠØ© ÙÙŠ Firestore.')),
+          const SnackBar(content: Text('تم نشر المنتجات التجريبية في Firestore.')),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ø§Ù„Ù†Ø´Ø±: $e')));
+            .showSnackBar(SnackBar(content: Text('خطأ أثناء النشر: $e')));
       }
     }
   }
@@ -1181,18 +1183,18 @@ class _AdminSimpleProductsPanelState
         leading: CircleAvatar(
           backgroundColor: const Color(0xFF1B2F5E),
           child: Text(
-            p.categoryLabel.isNotEmpty ? p.categoryLabel[0] : 'ØŸ',
+            p.categoryLabel.isNotEmpty ? p.categoryLabel[0] : '؟',
             style: const TextStyle(color: Colors.white, fontSize: 12),
           ),
         ),
         title: Text(
-          '${p.expensiveName}  â†’  ${p.alternativeName}',
+          '${p.expensiveName}  →  ${p.alternativeName}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
         subtitle: Text(
           isMock
-              ? 'ðŸ“¦ ØªØ¬Ø±ÙŠØ¨ÙŠ â€” ${p.categoryLabel} | ${p.expensivePrice} Ø±.Ø³  â†’  ${p.alternativePrice} Ø±.Ø³'
-              : '${p.categoryLabel} | ${p.expensivePrice} Ø±.Ø³  â†’  ${p.alternativePrice} Ø±.Ø³',
+              ? '📦 تجريبي — ${p.categoryLabel} | ${p.expensivePrice} ر.س  →  ${p.alternativePrice} ر.س'
+              : '${p.categoryLabel} | ${p.expensivePrice} ر.س  →  ${p.alternativePrice} ر.س',
           style: TextStyle(color: isMock ? Colors.orange[800] : null),
         ),
         trailing: isMock
@@ -1202,18 +1204,18 @@ class _AdminSimpleProductsPanelState
                     await widget.service.saveProduct(p);
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('ØªÙ… Ù†Ø´Ø± "${p.expensiveName}".')),
+                        SnackBar(content: Text('تم نشر "${p.expensiveName}".')),
                       );
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('Ø®Ø·Ø£: $e')));
+                          .showSnackBar(SnackBar(content: Text('خطأ: $e')));
                     }
                   }
                 },
                 icon: const Icon(Icons.cloud_upload_rounded, size: 18),
-                label: const Text('Ù†Ø´Ø±'),
+                label: const Text('نشر'),
               )
             : Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1256,7 +1258,7 @@ class _AdminSimpleProductsPanelState
                   runSpacing: 8,
                   children: [
                     const Text(
-                      'Ø¨Ø·Ø§Ù‚Ø§Øª Ø§Ù„Ù…Ù‚Ø§Ø±Ù†Ø©',
+                      'بطاقات المقارنة',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
@@ -1269,13 +1271,13 @@ class _AdminSimpleProductsPanelState
                           OutlinedButton.icon(
                             onPressed: _publishMockToFirestore,
                             icon: const Icon(Icons.cloud_upload_rounded),
-                            label: const Text('Ù†Ø´Ø± Ø§Ù„ÙƒÙ„ ÙÙŠ Firestore'),
+                            label: const Text('نشر الكل في Firestore'),
                           ),
                         if (isMock) const SizedBox(width: 8),
                         FilledButton.icon(
                           onPressed: _add,
                           icon: const Icon(Icons.add_rounded),
-                          label: const Text('Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬'),
+                          label: const Text('إضافة منتج'),
                         ),
                       ],
                     ),
@@ -1298,7 +1300,7 @@ class _AdminSimpleProductsPanelState
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Firestore ÙØ§Ø±ØºØ© â€” ØªØ¹Ø±Ø¶ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„ØªØ¬Ø±ÙŠØ¨ÙŠØ©. Ø§Ø¶ØºØ· "Ù†Ø´Ø±" Ù„Ø­ÙØ¸Ù‡Ø§.',
+                          'Firestore فارغة — تعرض المنتجات التجريبية. اضغط "نشر" لحفظها.',
                           style: TextStyle(color: Colors.orange),
                         ),
                       ),
@@ -1308,7 +1310,7 @@ class _AdminSimpleProductsPanelState
               if (snap.hasError)
                 Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text('Ø®Ø·Ø£: ${snap.error}',
+                  child: Text('خطأ: ${snap.error}',
                       style: const TextStyle(color: Colors.red)),
                 ),
               if (isLoading)
@@ -1331,7 +1333,7 @@ class _AdminSimpleProductsPanelState
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _add,
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬'),
+        label: const Text('إضافة منتج'),
       ),
     );
   }
@@ -1361,7 +1363,7 @@ class AdminControlCenter extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Ù„ÙˆØ­Ø© ØªØ­ÙƒÙ… LeastPrice',
+              'لوحة تحكم LeastPrice',
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 color: Color(0xFF1B2F5E),
@@ -1382,7 +1384,7 @@ class AdminControlCenter extends StatelessWidget {
           TextButton.icon(
             onPressed: () => FirebaseAuth.instance.signOut(),
             icon: const Icon(Icons.logout_rounded),
-            label: const Text('Ø®Ø±ÙˆØ¬'),
+            label: const Text('خروج'),
           ),
           const SizedBox(width: 16),
         ],
@@ -1432,15 +1434,15 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
         SnackBar(
           content: Text(
             initialBanner == null
-                ? 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.'
-                : 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.',
+                ? 'تمت إضافة البنر بنجاح.'
+                : 'تم تحديث البنر بنجاح.',
           ),
         ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¨Ù†Ø± Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حفظ البنر حالياً: $error')),
       );
     }
   }
@@ -1450,12 +1452,12 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
       await widget.catalogService.publishAdBanner(banner.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« lastUpdated Ù„Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.')),
+        const SnackBar(content: Text('تم تحديث lastUpdated للبنر بنجاح.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ù†Ø´Ø± Ø§Ù„Ø¨Ù†Ø± Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر نشر البنر حالياً: $error')),
       );
     }
   }
@@ -1464,16 +1466,16 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±'),
-            content: Text('Ù‡Ù„ ØªØ±ÙŠØ¯ Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø± "${banner.title}" Ù†Ù‡Ø§Ø¦ÙŠØ§Ù‹ØŸ'),
+            title: const Text('حذف البنر'),
+            content: Text('هل تريد حذف البنر "${banner.title}" نهائياً؟'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                child: const Text('إلغاء'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Ø­Ø°Ù'),
+                child: const Text('حذف'),
               ),
             ],
           ),
@@ -1488,12 +1490,12 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
       await widget.catalogService.deleteAdBanner(banner.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±.')),
+        const SnackBar(content: Text('تم حذف البنر.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø± Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حذف البنر حالياً: $error')),
       );
     }
   }
@@ -1510,7 +1512,7 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†ÙŠØ©',
+                    'إدارة البنرات الإعلانية',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -1519,7 +1521,7 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
                   ),
                   SizedBox(height: 6),
                   Text(
-                    'Ø£Ø¶Ù Ø£Ùˆ Ø¹Ø¯Ù‘Ù„ Ø£Ùˆ Ø§Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±Ø§Øª ÙÙŠ ad_banners Ù…Ø¹ Ù†Ø´Ø± Ø§Ù„ØªØ­Ø¯ÙŠØ« ÙÙˆØ±Ø§Ù‹ Ù„Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†.',
+                    'أضف أو عدّل أو احذف البنرات في ad_banners مع نشر التحديث فوراً للمستخدمين.',
                     style: TextStyle(
                       color: Color(0xFF667C74),
                       height: 1.45,
@@ -1532,7 +1534,7 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
             ElevatedButton.icon(
               onPressed: () => _openEditor(),
               icon: const Icon(Icons.add_rounded),
-              label: const Text('Ø¥Ø¶Ø§ÙØ© Ø¨Ù†Ø±'),
+              label: const Text('إضافة بنر'),
             ),
           ],
         ),
@@ -1552,7 +1554,7 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
                 return Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ù…Ù† Firestore: ${snapshot.error}',
+                    'تعذر تحميل البنرات من Firestore: ${snapshot.error}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Color(0xFF6B7A9A)),
                   ),
@@ -1564,7 +1566,7 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
                 return const Padding(
                   padding: EdgeInsets.all(24),
                   child: Text(
-                    'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨Ù†Ø±Ø§Øª Ø¨Ø¹Ø¯. Ø£Ø¶Ù Ø£ÙˆÙ„ Ø¨Ù†Ø± Ù…Ù† Ø§Ù„Ø²Ø± Ø§Ù„Ø¹Ù„ÙˆÙŠ.',
+                    'لا توجد بنرات بعد. أضف أول بنر من الزر العلوي.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFF6B7A9A),
@@ -1620,13 +1622,13 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
                                   runSpacing: 8,
                                   children: [
                                     _AdminStatusChip(
-                                      label: banner.active ? 'Ù†Ø´Ø·' : 'Ù…Ø®ÙÙŠ',
+                                      label: banner.active ? 'نشط' : 'مخفي',
                                       color: banner.active
                                           ? const Color(0xFFE8711A)
                                           : const Color(0xFF9A6B6B),
                                     ),
                                     _AdminStatusChip(
-                                      label: 'Ø§Ù„ØªØ±ØªÙŠØ¨ ${banner.order}',
+                                      label: 'الترتيب ${banner.order}',
                                       color: const Color(0xFF375F54),
                                     ),
                                   ],
@@ -1656,18 +1658,18 @@ class _AdminBannerManagerPanelState extends State<_AdminBannerManagerPanel> {
                                 OutlinedButton(
                                   onPressed: () =>
                                       _openEditor(initialBanner: banner),
-                                  child: const Text('ØªØ¹Ø¯ÙŠÙ„'),
+                                  child: const Text('تعديل'),
                                 ),
                                 OutlinedButton(
                                   onPressed: () => _publishBanner(banner),
-                                  child: const Text('Ù†Ø´Ø±'),
+                                  child: const Text('نشر'),
                                 ),
                                 OutlinedButton(
                                   onPressed: () => _deleteBanner(banner),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: const Color(0xFFC24E4E),
                                   ),
-                                  child: const Text('Ø­Ø°Ù'),
+                                  child: const Text('حذف'),
                                 ),
                               ],
                             ),
@@ -1717,15 +1719,15 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
         SnackBar(
           content: Text(
             initialProduct == null
-                ? 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.'
-                : 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.',
+                ? 'تمت إضافة المنتج بنجاح.'
+                : 'تم تحديث المنتج بنجاح.',
           ),
         ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ù…Ù†ØªØ¬ Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حفظ المنتج حالياً: $error')),
       );
     }
   }
@@ -1734,7 +1736,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
     final documentId = product.documentId;
     if (documentId == null || documentId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ø§Ø­ÙØ¸ Ø§Ù„Ù…Ù†ØªØ¬ Ø£ÙˆÙ„Ø§Ù‹ Ù‚Ø¨Ù„ Ù†Ø´Ø±Ù‡.')),
+        const SnackBar(content: Text('احفظ المنتج أولاً قبل نشره.')),
       );
       return;
     }
@@ -1743,12 +1745,12 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
       await widget.catalogService.publishProduct(documentId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« lastUpdated Ù„Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.')),
+        const SnackBar(content: Text('تم تحديث lastUpdated للمنتج بنجاح.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر نشر المنتج حالياً: $error')),
       );
     }
   }
@@ -1757,7 +1759,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
     final documentId = product.documentId;
     if (documentId == null || documentId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ ØºÙŠØ± Ù…Ø±ØªØ¨Ø· Ø¨ÙˆØ«ÙŠÙ‚Ø© Firestore.')),
+        const SnackBar(content: Text('هذا المنتج غير مرتبط بوثيقة Firestore.')),
       );
       return;
     }
@@ -1765,18 +1767,18 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬'),
+            title: const Text('حذف المنتج'),
             content: Text(
-              'Ù‡Ù„ ØªØ±ÙŠØ¯ Ø­Ø°Ù "${product.expensiveName}" Ùˆ"${product.alternativeName}" Ù†Ù‡Ø§Ø¦ÙŠØ§Ù‹ØŸ',
+              'هل تريد حذف "${product.expensiveName}" و"${product.alternativeName}" نهائياً؟',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                child: const Text('إلغاء'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Ø­Ø°Ù'),
+                child: const Text('حذف'),
               ),
             ],
           ),
@@ -1791,12 +1793,12 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
       await widget.catalogService.deleteProduct(documentId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬.')),
+        const SnackBar(content: Text('تم حذف المنتج.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬ Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حذف المنتج حالياً: $error')),
       );
     }
   }
@@ -1813,7 +1815,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª',
+                    'إدارة المنتجات',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -1822,7 +1824,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                   ),
                   SizedBox(height: 6),
                   Text(
-                    'Ø¹Ø¯Ù‘Ù„ Ø§Ù„Ø£Ø³Ù…Ø§Ø¡ ÙˆØ§Ù„Ø£Ø³Ø¹Ø§Ø± ÙˆØ§Ù„ØµÙˆØ± Ø«Ù… Ø§Ù†Ø´Ø± Ø§Ù„ØªØ­Ø¯ÙŠØ« Ù„ÙŠØ¸Ù‡Ø± ÙÙˆØ±Ø§Ù‹ Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.',
+                    'عدّل الأسماء والأسعار والصور ثم انشر التحديث ليظهر فوراً داخل التطبيق.',
                     style: TextStyle(
                       color: Color(0xFF667C74),
                       height: 1.45,
@@ -1835,7 +1837,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
             ElevatedButton.icon(
               onPressed: () => _openEditor(),
               icon: const Icon(Icons.add_rounded),
-              label: const Text('Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬'),
+              label: const Text('إضافة منتج'),
             ),
           ],
         ),
@@ -1855,7 +1857,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                 return Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ù† Firestore: ${snapshot.error}',
+                    'تعذر تحميل المنتجات من Firestore: ${snapshot.error}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Color(0xFF6B7A9A)),
                   ),
@@ -1867,7 +1869,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                 return const Padding(
                   padding: EdgeInsets.all(24),
                   child: Text(
-                    'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ø¨Ø¹Ø¯. Ø£Ø¶Ù Ø£ÙˆÙ„ Ù…Ù†ØªØ¬ Ù…Ù† Ø§Ù„Ø²Ø± Ø§Ù„Ø¹Ù„ÙˆÙŠ.',
+                    'لا توجد منتجات بعد. أضف أول منتج من الزر العلوي.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFF6B7A9A),
@@ -1918,7 +1920,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      '${product.expensiveName}  â€¢  ${formatAmountValue(product.expensivePrice)}',
+                                      '${product.expensiveName}  •  ${formatAmountValue(product.expensivePrice)}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w900,
                                         color: Color(0xFF17332B),
@@ -1926,7 +1928,7 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      '${product.alternativeName}  â€¢  ${formatAmountValue(product.alternativePrice)}',
+                                      '${product.alternativeName}  •  ${formatAmountValue(product.alternativePrice)}',
                                       style: const TextStyle(
                                         color: Color(0xFF436459),
                                         fontWeight: FontWeight.w700,
@@ -1957,18 +1959,18 @@ class _AdminProductManagerPanelState extends State<_AdminProductManagerPanel> {
                               OutlinedButton(
                                 onPressed: () =>
                                     _openEditor(initialProduct: product),
-                                child: const Text('ØªØ¹Ø¯ÙŠÙ„'),
+                                child: const Text('تعديل'),
                               ),
                               OutlinedButton(
                                 onPressed: () => _publishProduct(product),
-                                child: const Text('Ù†Ø´Ø±'),
+                                child: const Text('نشر'),
                               ),
                               OutlinedButton(
                                 onPressed: () => _deleteProduct(product),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFFC24E4E),
                                 ),
-                                child: const Text('Ø­Ø°Ù'),
+                                child: const Text('حذف'),
                               ),
                             ],
                           ),
@@ -2050,7 +2052,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (normalizedPhone == null) {
       messenger.showSnackBar(
         const SnackBar(
-          content: Text('Ø±Ù‚Ù… Ø§Ù„Ø¬ÙˆØ§Ù„ Ø¥Ù„Ø²Ø§Ù…ÙŠ. Ø£Ø¯Ø®Ù„Ù‡ Ø¨ØµÙŠØºØ© 05XXXXXXXX Ø£Ùˆ +9665XXXXXXXX.'),
+          content: Text('رقم الجوال إلزامي. أدخله بصيغة 05XXXXXXXX أو +9665XXXXXXXX.'),
         ),
       );
       return;
@@ -2059,7 +2061,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (normalizedEmail == null) {
       messenger.showSnackBar(
         const SnackBar(
-          content: Text('Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ø§Ù‹ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ§Ù‹ ØµØ­ÙŠØ­Ø§Ù‹ Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ ÙˆØ¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨.'),
+          content: Text('أدخل بريداً إلكترونياً صحيحاً لتسجيل الدخول وإنشاء الحساب.'),
         ),
       );
       return;
@@ -2068,7 +2070,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (password.length < 6) {
       messenger.showSnackBar(
         const SnackBar(
-          content: Text('ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙŠØ¬Ø¨ Ø£Ù† ØªÙƒÙˆÙ† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„.'),
+          content: Text('كلمة المرور يجب أن تكون 6 أحرف على الأقل.'),
         ),
       );
       return;
@@ -2096,7 +2098,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = credential.user;
       if (user == null) {
-        throw const FormatException('Ù„Ù… ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø¬Ù„Ø³Ø© Ù…Ø³ØªØ®Ø¯Ù… ÙÙŠ Firebase.');
+        throw const FormatException('لم يتم إنشاء جلسة مستخدم في Firebase.');
       }
 
       await _catalogService.ensureUserProfile(
@@ -2110,8 +2112,8 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isSubmitting = false;
         _statusMessage = _isRegisterMode
-            ? 'ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ù†Ø¬Ø§Ø­. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù…Ø¨Ø§Ø´Ø±Ø© Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.'
-            : 'ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ù†Ø¬Ø§Ø­.';
+            ? 'تم إنشاء الحساب بنجاح. يمكنك الدخول مباشرة باستخدام البريد الإلكتروني وكلمة المرور.'
+            : 'تم تسجيل الدخول بنجاح.';
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -2123,7 +2125,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       setState(() {
         _isSubmitting = false;
-        _statusMessage = 'ØªØ¹Ø°Ø± Ø¥ÙƒÙ…Ø§Ù„ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø­Ø§Ù„ÙŠØ§Ù‹: $error';
+        _statusMessage = 'تعذر إكمال تسجيل الدخول حالياً: $error';
       });
     }
   }
@@ -2133,7 +2135,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (normalizedEmail == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Ø£Ø¯Ø®Ù„ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø£ÙˆÙ„Ø§Ù‹ Ù„Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.'),
+          content: Text('أدخل البريد الإلكتروني أولاً لإرسال رابط إعادة تعيين كلمة المرور.'),
         ),
       );
       return;
@@ -2150,7 +2152,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isSendingPasswordReset = false;
         _statusMessage =
-            'Ø£Ø±Ø³Ù„Ù†Ø§ Ø¥Ù„Ù‰ $normalizedEmail Ø±Ø§Ø¨Ø·Ø§Ù‹ Ù„Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±. Ø§ÙØ­Øµ Ø§Ù„Ø¨Ø±ÙŠØ¯ ÙˆØµÙ†Ø¯ÙˆÙ‚ Ø§Ù„Ø±Ø³Ø§Ø¦Ù„ ØºÙŠØ± Ø§Ù„Ù…Ø±ØºÙˆØ¨Ø©.';
+            'أرسلنا إلى $normalizedEmail رابطاً لإعادة تعيين كلمة المرور. افحص البريد وصندوق الرسائل غير المرغوبة.';
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -2162,7 +2164,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       setState(() {
         _isSendingPasswordReset = false;
-        _statusMessage = 'ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø§Ø³ØªØ¹Ø§Ø¯Ø© ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±: $error';
+        _statusMessage = 'تعذر إرسال رابط استعادة كلمة المرور: $error';
       });
     }
   }
@@ -2225,7 +2227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      'Ø£Ø±Ø®Øµ Ø³Ø¹Ø± - LeastPrice',
+                                      'أرخص سعر - LeastPrice',
                                       style: TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.w900,
@@ -2235,8 +2237,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(height: 6),
                                     Text(
                                       _isRegisterMode
-                                          ? 'Ø£Ù†Ø´Ø¦ Ø­Ø³Ø§Ø¨Ùƒ Ø¨Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù…Ø¹ Ø±Ù‚Ù… Ø¬ÙˆØ§Ù„ Ø¥Ù„Ø²Ø§Ù…ÙŠ.'
-                                          : 'Ø³Ø¬Ù‘Ù„ Ø¯Ø®ÙˆÙ„Ùƒ Ø¨Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±ØŒ ÙˆØ³ÙŠØ¨Ù‚Ù‰ Ø±Ù‚Ù… Ø§Ù„Ø¬ÙˆØ§Ù„ Ø¥Ù„Ø²Ø§Ù…ÙŠØ§Ù‹ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ù„Ù.',
+                                          ? 'أنشئ حسابك بالإيميل وكلمة المرور مع رقم جوال إلزامي.'
+                                          : 'سجّل دخولك بالإيميل وكلمة المرور، وسيبقى رقم الجوال إلزامياً داخل الملف.',
                                       style: const TextStyle(
                                         color: Color(0xFF61756D),
                                         height: 1.45,
@@ -2259,7 +2261,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Expanded(
                                   child: _ModeToggleButton(
                                     selected: _isRegisterMode,
-                                    label: 'Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨',
+                                    label: 'إنشاء حساب',
                                     onTap: () {
                                       setState(() {
                                         _isRegisterMode = true;
@@ -2271,7 +2273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Expanded(
                                   child: _ModeToggleButton(
                                     selected: !_isRegisterMode,
-                                    label: 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„',
+                                    label: 'تسجيل الدخول',
                                     onTap: () {
                                       setState(() {
                                         _isRegisterMode = false;
@@ -2288,7 +2290,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: const InputDecoration(
-                              labelText: 'Ø±Ù‚Ù… Ø§Ù„Ø¬ÙˆØ§Ù„ - Ø¥Ù„Ø²Ø§Ù…ÙŠ',
+                              labelText: 'رقم الجوال - إلزامي',
                               hintText: '05XXXXXXXX',
                               prefixIcon: Icon(Icons.phone_android_rounded),
                             ),
@@ -2299,7 +2301,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: const [AutofillHints.email],
                             decoration: const InputDecoration(
-                              labelText: 'Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ',
+                              labelText: 'البريد الإلكتروني',
                               hintText: 'name@example.com',
                               prefixIcon: Icon(Icons.alternate_email_rounded),
                             ),
@@ -2310,8 +2312,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             obscureText: _obscurePassword,
                             autofillHints: const [AutofillHints.password],
                             decoration: InputDecoration(
-                              labelText: 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±',
-                              hintText: '6 Ø£Ø­Ø±Ù Ø£Ùˆ Ø£ÙƒØ«Ø±',
+                              labelText: 'كلمة المرور',
+                              hintText: '6 أحرف أو أكثر',
                               prefixIcon: const Icon(Icons.lock_rounded),
                               suffixIcon: IconButton(
                                 onPressed: () {
@@ -2332,14 +2334,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: _referralController,
                             textCapitalization: TextCapitalization.characters,
                             decoration: const InputDecoration(
-                              labelText: 'ÙƒÙˆØ¯ Ø§Ù„Ø¯Ø¹ÙˆØ© - Ø§Ø®ØªÙŠØ§Ø±ÙŠ',
+                              labelText: 'كود الدعوة - اختياري',
                               hintText: 'LP-AB12',
                               prefixIcon: Icon(Icons.card_giftcard_rounded),
                             ),
                           ),
                           const SizedBox(height: 10),
                           const Text(
-                            'Ø±Ù‚Ù… Ø§Ù„Ø¬ÙˆØ§Ù„ Ø¥Ù„Ø²Ø§Ù…ÙŠ Ù„Ø­ÙØ¸ Ù…Ù„ÙÙƒ ÙˆØ§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠØŒ Ø£Ù…Ø§ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ ÙÙŠØ¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙÙ‚Ø· Ø¯ÙˆÙ† Ø§Ù„Ø­Ø§Ø¬Ø© Ø¥Ù„Ù‰ ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø­Ø³Ø§Ø¨.',
+                            'رقم الجوال إلزامي لحفظ ملفك والتواصل التجاري، أما تسجيل الدخول فيعتمد على البريد الإلكتروني وكلمة المرور فقط دون الحاجة إلى تفعيل الحساب.',
                             style: TextStyle(
                               color: Color(0xFF6C7D76),
                               fontSize: 12.8,
@@ -2386,10 +2388,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                             label: Text(
                               _isSubmitting
-                                  ? 'Ø¬Ø§Ø±Ù Ø§Ù„ØªÙ†ÙÙŠØ°...'
+                                  ? 'جارٍ التنفيذ...'
                                   : (_isRegisterMode
-                                      ? 'Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨'
-                                      : 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„'),
+                                      ? 'إنشاء الحساب'
+                                      : 'تسجيل الدخول'),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -2404,7 +2406,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: CircularProgressIndicator(strokeWidth: 2.2),
                                   )
                                 : const Icon(Icons.mark_email_read_rounded),
-                            label: const Text('Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±'),
+                            label: const Text('إرسال رابط إعادة تعيين كلمة المرور'),
                           ),
                         ],
                       ),
@@ -2474,8 +2476,8 @@ class _LegacyAnonymousSessionCleanupScreenState
   @override
   Widget build(BuildContext context) {
     return const _AuthLoadingScreen(
-      title: 'Ø¬Ø§Ø±Ù Ø¥Ù†Ù‡Ø§Ø¡ Ø§Ù„Ø¬Ù„Ø³Ø© Ø§Ù„Ù‚Ø¯ÙŠÙ…Ø©',
-      message: 'Ù†Ø­Ø¯Ù‘Ø« Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¥Ù„Ù‰ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø­ØªÙ‰ ØªØ¸Ù‡Ø± Ù„Ùƒ Ø´Ø§Ø´Ø© Ø§Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©.',
+      title: 'جارٍ إنهاء الجلسة القديمة',
+      message: 'نحدّث طريقة الدخول إلى البريد الإلكتروني حتى تظهر لك شاشة التسجيل الجديدة.',
     );
   }
 }
@@ -2512,8 +2514,8 @@ class _EmailVerificationPendingScreenState
       setState(() {
         _isRefreshing = false;
         _statusMessage = refreshedUser?.emailVerified == true
-            ? 'ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø¨Ù†Ø¬Ø§Ø­. Ø³Ù†Ù†Ù‚Ù„Ùƒ Ø§Ù„Ø¢Ù† Ø¥Ù„Ù‰ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.'
-            : 'Ù„Ù… ÙŠØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø¨Ø¹Ø¯. Ø§ÙØªØ­ Ø§Ù„Ø±Ø³Ø§Ù„Ø© Ø§Ù„ÙˆØ§Ø±Ø¯Ø© Ø«Ù… Ø§Ø±Ø¬Ø¹ ÙˆØ§Ø¶ØºØ· "ØªØ­Ù‚Ù‚Øª Ù…Ù† Ø§Ù„Ø¨Ø±ÙŠØ¯".';
+            ? 'تم التحقق من البريد الإلكتروني بنجاح. سننقلك الآن إلى التطبيق.'
+            : 'لم يتم تفعيل البريد بعد. افتح الرسالة الواردة ثم ارجع واضغط "تحققت من البريد".';
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -2525,7 +2527,7 @@ class _EmailVerificationPendingScreenState
       if (!mounted) return;
       setState(() {
         _isRefreshing = false;
-        _statusMessage = 'ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ« Ø­Ø§Ù„Ø© Ø§Ù„ØªÙØ¹ÙŠÙ„: $error';
+        _statusMessage = 'تعذر تحديث حالة التفعيل: $error';
       });
     }
   }
@@ -2542,7 +2544,7 @@ class _EmailVerificationPendingScreenState
       setState(() {
         _isResending = false;
         _statusMessage =
-            'Ø£Ø¹Ø¯Ù†Ø§ Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø§Ù„ØªÙØ¹ÙŠÙ„ Ø¥Ù„Ù‰ ${widget.user.email ?? 'Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ'}. Ø§ÙØ­Øµ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø£Ø³Ø§Ø³ÙŠ ÙˆØ§Ù„Ø±Ø³Ø§Ø¦Ù„ ØºÙŠØ± Ø§Ù„Ù…Ø±ØºÙˆØ¨Ø©.';
+            'أعدنا إرسال رابط التفعيل إلى ${widget.user.email ?? 'بريدك الإلكتروني'}. افحص البريد الأساسي والرسائل غير المرغوبة.';
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -2554,7 +2556,7 @@ class _EmailVerificationPendingScreenState
       if (!mounted) return;
       setState(() {
         _isResending = false;
-        _statusMessage = 'ØªØ¹Ø°Ø± Ø¥Ø¹Ø§Ø¯Ø© Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø© Ø§Ù„ØªÙØ¹ÙŠÙ„: $error';
+        _statusMessage = 'تعذر إعادة إرسال رسالة التفعيل: $error';
       });
     }
   }
@@ -2595,7 +2597,7 @@ class _EmailVerificationPendingScreenState
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'ÙØ¹Ù‘Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø£ÙˆÙ„Ø§Ù‹',
+                    'فعّل بريدك الإلكتروني أولاً',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 23,
@@ -2605,7 +2607,7 @@ class _EmailVerificationPendingScreenState
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Ø£Ø±Ø³Ù„Ù†Ø§ Ø±Ø§Ø¨Ø· ØªÙØ¹ÙŠÙ„ Ø¥Ù„Ù‰ ${widget.user.email ?? 'Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ'}. Ø§Ù„ØªÙØ¹ÙŠÙ„ Ø¹Ø¨Ø± Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø£ÙˆÙØ± Ù…Ù† Ø±Ø³Ø§Ø¦Ù„ Ø§Ù„Ø¬ÙˆØ§Ù„ØŒ Ù„Ø°Ù„Ùƒ Ù„Ù† Ù†Ø¯Ø®Ù„Ùƒ Ù‚Ø¨Ù„ ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„.',
+                    'أرسلنا رابط تفعيل إلى ${widget.user.email ?? 'بريدك الإلكتروني'}. التفعيل عبر البريد أوفر من رسائل الجوال، لذلك لن ندخلك قبل تأكيد الإيميل.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Color(0xFF61756D),
@@ -2647,7 +2649,7 @@ class _EmailVerificationPendingScreenState
                             ),
                           )
                         : const Icon(Icons.verified_rounded),
-                    label: const Text('ØªØ­Ù‚Ù‚Øª Ù…Ù† Ø§Ù„Ø¨Ø±ÙŠØ¯'),
+                    label: const Text('تحققت من البريد'),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
@@ -2661,11 +2663,11 @@ class _EmailVerificationPendingScreenState
                             child: CircularProgressIndicator(strokeWidth: 2.2),
                           )
                         : const Icon(Icons.forward_to_inbox_rounded),
-                    label: const Text('Ø¥Ø¹Ø§Ø¯Ø© Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø§Ù„ØªÙØ¹ÙŠÙ„'),
+                    label: const Text('إعادة إرسال رابط التفعيل'),
                   ),
                   TextButton(
                     onPressed: _isRefreshing || _isResending ? null : _signOut,
-                    child: const Text('Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø¢Ø®Ø±'),
+                    child: const Text('استخدام بريد إلكتروني آخر'),
                   ),
                 ],
               ),
@@ -2727,7 +2729,7 @@ String _normalizedImageUrl(
 }) {
   final value = (rawUrl ?? '').trim();
 
-  // Ø±Ø§Ø¨Ø· ÙØ§Ø±Øº Ø£Ùˆ localhost Ø£Ùˆ ØºÙŠØ± ØµØ§Ù„Ø­ â†’ placeholder Ø¢Ù…Ù†Ø©
+  // رابط فارغ أو localhost أو غير صالح → placeholder آمنة
   final isLocalhost = value.contains('localhost') ||
       value.contains('127.0.0.1') ||
       value.contains('0.0.0.0');
@@ -2759,30 +2761,30 @@ String _normalizedImageUrl(
 String _arabicAuthMessage(FirebaseAuthException error) {
   switch (error.code) {
     case 'invalid-email':
-      return 'ØµÙŠØºØ© Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØºÙŠØ± ØµØ­ÙŠØ­Ø©.';
+      return 'صيغة البريد الإلكتروني غير صحيحة.';
     case 'email-already-in-use':
-      return 'Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ù…Ø³ØªØ®Ø¯Ù… Ø¨Ø§Ù„ÙØ¹Ù„. Ø¬Ø±Ù‘Ø¨ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø¯Ù„Ø§Ù‹ Ù…Ù† Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø¬Ø¯ÙŠØ¯.';
+      return 'هذا البريد مستخدم بالفعل. جرّب تسجيل الدخول بدلاً من إنشاء حساب جديد.';
     case 'weak-password':
-      return 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø¶Ø¹ÙŠÙØ© Ø¬Ø¯Ø§Ù‹. Ø§Ø®ØªØ± ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ø£Ù‚ÙˆÙ‰.';
+      return 'كلمة المرور ضعيفة جداً. اختر كلمة مرور أقوى.';
     case 'user-not-found':
     case 'invalid-credential':
-      return 'Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„ ØºÙŠØ± ØµØ­ÙŠØ­Ø©. ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø¨Ø±ÙŠØ¯ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.';
+      return 'بيانات الدخول غير صحيحة. تأكد من البريد وكلمة المرور.';
     case 'wrong-password':
-      return 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± ØµØ­ÙŠØ­Ø©.';
+      return 'كلمة المرور غير صحيحة.';
     case 'operation-not-allowed':
-      return 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± Ù…ÙØ¹Ù‘Ù„ ÙÙŠ Firebase Authentication Ø¨Ø¹Ø¯. ÙØ¹Ù‘Ù„ Ù…Ø²ÙˆØ¯ Email/Password Ù…Ù† Ù„ÙˆØ­Ø© Firebase Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.';
+      return 'تسجيل الدخول بالبريد الإلكتروني وكلمة المرور غير مفعّل في Firebase Authentication بعد. فعّل مزود Email/Password من لوحة Firebase ثم أعد المحاولة.';
     case 'internal-error':
       final details = (error.message ?? '').toUpperCase();
       if (details.contains('CONFIGURATION_NOT_FOUND')) {
-        return 'Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Firebase Authentication ØºÙŠØ± Ù…ÙƒØªÙ…Ù„Ø© Ù„Ù‡Ø°Ø§ Ø§Ù„Ù†ÙˆØ¹ Ù…Ù† ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„. ÙØ¹Ù‘Ù„ Email/Password Ù…Ù† Firebase Console Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.';
+        return 'إعدادات Firebase Authentication غير مكتملة لهذا النوع من تسجيل الدخول. فعّل Email/Password من Firebase Console ثم أعد المحاولة.';
       }
-      return 'Ø­Ø¯Ø« Ø®Ø·Ø£ Ø¯Ø§Ø®Ù„ÙŠ ÙÙŠ Firebase Authentication. ØªØ­Ù‚Ù‚ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.';
+      return 'حدث خطأ داخلي في Firebase Authentication. تحقق من إعدادات تسجيل الدخول ثم أعد المحاولة.';
     case 'too-many-requests':
-      return 'ØªÙ… Ø¥Ø¬Ø±Ø§Ø¡ Ù…Ø­Ø§ÙˆÙ„Ø§Øª ÙƒØ«ÙŠØ±Ø©. Ø§Ù†ØªØ¸Ø± Ù‚Ù„ÙŠÙ„Ø§Ù‹ Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.';
+      return 'تم إجراء محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.';
     case 'network-request-failed':
-      return 'ØªØ¹Ø°Ø± Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù€ Firebase Ø­Ø§Ù„ÙŠØ§Ù‹. ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.';
+      return 'تعذر الاتصال بـ Firebase حالياً. تحقق من الإنترنت ثم أعد المحاولة.';
     default:
-      return error.message ?? 'Ø­Ø¯Ø« Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ù…ØµØ§Ø¯Ù‚Ø©. Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.';
+      return error.message ?? 'حدث خطأ في المصادقة. حاول مرة أخرى.';
   }
 }
 
@@ -2801,7 +2803,7 @@ DateTime? _dateTimeValue(Object? value) {
 
 String _formatHealthTimestamp(DateTime? value) {
   if (value == null) {
-    return 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø£ÙˆÙ„ ØªØ­Ø¯ÙŠØ«';
+    return 'بانتظار أول تحديث';
   }
 
   final local = value.toLocal();
@@ -2814,8 +2816,8 @@ String _formatHealthTimestamp(DateTime? value) {
 
 class _AuthLoadingScreen extends StatelessWidget {
   const _AuthLoadingScreen({
-    this.title = 'Ø¬Ø§Ø±Ù Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„',
-    this.message = 'Ù†Ø¬Ù‡Ø² Ø¬Ù„Ø³Ø© Firebase ÙˆÙ†Ø±Ø¨Ø· Ø­Ø³Ø§Ø¨Ùƒ Ø¨Ø§Ù„ØªØ·Ø¨ÙŠÙ‚...',
+    this.title = 'جارٍ الاتصال بخدمات الدخول',
+    this.message = 'نجهز جلسة Firebase ونربط حسابك بالتطبيق...',
   });
 
   final String title;
@@ -2895,7 +2897,7 @@ class _FirebaseSetupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 const Text(
-                  'Firebase ØºÙŠØ± Ø¬Ø§Ù‡Ø²',
+                  'Firebase غير جاهز',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
@@ -2905,7 +2907,7 @@ class _FirebaseSetupScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   message ??
-                      'ØªØ¹Ø°Ø± ØªÙ‡ÙŠØ¦Ø© Firebase Ø­Ø§Ù„ÙŠØ§Ù‹. Ø£ÙƒÙ…Ù„ Ø¥Ø¹Ø¯Ø§Ø¯ Ø§Ù„Ù…ØµØ§Ø¯Ù‚Ø© ÙˆFirestore Ø«Ù… Ø£Ø¹Ø¯ ØªØ´ØºÙŠÙ„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.',
+                      'تعذر تهيئة Firebase حالياً. أكمل إعداد المصادقة وFirestore ثم أعد تشغيل التطبيق.',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color(0xFF63766F),
@@ -2961,7 +2963,7 @@ class _AuthBootstrapErrorScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 const Text(
-                  'ØªØ¹Ø°Ø± ÙØªØ­ Ø­Ø³Ø§Ø¨Ùƒ',
+                  'تعذر فتح حسابك',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
@@ -2981,13 +2983,13 @@ class _AuthBootstrapErrorScreen extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©'),
+                  label: const Text('إعادة المحاولة'),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
                   onPressed: onSignOut,
                   icon: const Icon(Icons.logout_rounded),
-                  label: const Text('ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬'),
+                  label: const Text('تسجيل الخروج'),
                 ),
               ],
             ),
@@ -3025,16 +3027,16 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       const SmartSearchDiscoveryService();
   final Connectivity _connectivity = Connectivity();
   final List<String> _quickSearchTags = const [
-    'Ù‚Ù‡ÙˆØ©',
-    'Ù…Ø·Ø§Ø¹Ù…',
-    'Ø¹Ø·ÙˆØ±',
-    'Ù…Ø­Ø§Ù…Øµ',
-    'ØªØ¬Ù…ÙŠÙ„',
-    'ØµÙŠØ¯Ù„ÙŠØ©',
-    'Ù…Ù†Ø¸ÙØ§Øª',
-    'Ø£Ù„Ø¨Ø§Ù†',
-    'Ù…Ø¹Ù„Ø¨Ø§Øª',
-    'Ø´Ø§ÙŠ',
+    'قهوة',
+    'مطاعم',
+    'عطور',
+    'محامص',
+    'تجميل',
+    'صيدلية',
+    'منظفات',
+    'ألبان',
+    'معلبات',
+    'شاي',
   ];
 
   late Stream<List<ProductComparison>> _productsStream;
@@ -3066,7 +3068,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     _searchController.addListener(_handleSearchChanged);
     _userProfile = widget.initialUserProfile;
     _dataNotice = widget.bootstrapNotice;
-    _dataSourceLabel = widget.firebaseReady ? 'Cloud Firestore' : 'Ø¨ÙŠØ§Ù†Ø§Øª Ø¨Ø¯ÙŠÙ„Ø©';
+    _dataSourceLabel = widget.firebaseReady ? 'Cloud Firestore' : 'بيانات بديلة';
     _productsStream = _buildProductsStream();
 
     if (widget.firebaseReady) {
@@ -3115,7 +3117,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
           _dataNotice = _mergeNotices(
             widget.bootstrapNotice,
             result.notice ??
-                'ÙŠØªÙ… Ø¹Ø±Ø¶ Ø¨ÙŠØ§Ù†Ø§Øª Ø¨Ø¯ÙŠÙ„Ø© Ø­Ø§Ù„ÙŠØ§Ù‹ Ø­ØªÙ‰ ÙŠÙƒØªÙ…Ù„ Ø±Ø¨Ø· Firebase Ø¹Ù„Ù‰ Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø².',
+                'يتم عرض بيانات بديلة حالياً حتى يكتمل ربط Firebase على هذا الجهاز.',
           );
         });
       }
@@ -3125,10 +3127,10 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       debugPrint('LeastPrice fallback catalog failed: $error');
       if (mounted) {
         setState(() {
-          _dataSourceLabel = 'Ø¨ÙŠØ§Ù†Ø§Øª ØªØ¬Ø±ÙŠØ¨ÙŠØ©';
+          _dataSourceLabel = 'بيانات تجريبية';
           _dataNotice = _mergeNotices(
             widget.bootstrapNotice,
-            'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¨Ø¯ÙŠÙ„Ø©ØŒ Ù„Ø°Ø§ ØªÙ… Ø§Ù„Ø±Ø¬ÙˆØ¹ Ø¥Ù„Ù‰ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªØ¬Ø±ÙŠØ¨ÙŠØ© Ø§Ù„Ù…Ø¯Ù…Ø¬Ø©.',
+            'تعذر تحميل البيانات البديلة، لذا تم الرجوع إلى البيانات التجريبية المدمجة.',
           );
         });
       }
@@ -3175,7 +3177,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       if (!mounted) return;
       setState(() {
         _dataNotice =
-            'ØªØ¹Ø°Ø± Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø­Ø§Ù„Ø© Ø§Ù„Ø´Ø¨ÙƒØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ØŒ Ù„ÙƒÙ† Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø³ÙŠØ­Ø§ÙˆÙ„ Ù…ØªØ§Ø¨Ø¹Ø© ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø³Ø­Ø§Ø¨ÙŠØ©.';
+            'تعذر التحقق من حالة الشبكة تلقائياً، لكن التطبيق سيحاول متابعة تحميل البيانات السحابية.';
       });
     }
   }
@@ -3314,7 +3316,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       setState(() {
         _smartSearchSuggestions = const <ProductComparison>[];
         _smartSearchNotice =
-            'ØªØ¹Ø°Ø± Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ø°ÙƒÙŠ Ù…Ù† Ø§Ù„ÙˆÙŠØ¨ Ø­Ø§Ù„ÙŠØ§Ù‹. Ø³Ù†ÙˆØ§ØµÙ„ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ© ÙˆØ³Ù†Ø³Ø¬Ù„ Ø·Ù„Ø¨Ùƒ Ø¥Ù† Ù„Ø²Ù….';
+            'تعذر إكمال البحث الذكي من الويب حالياً. سنواصل الاعتماد على القاعدة الحالية وسنسجل طلبك إن لزم.';
       });
 
       if (_shouldQueueSearchDemand(
@@ -3403,7 +3405,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
       setState(() {
         _searchDemandNotice =
-            'Ø³Ø¬Ù„Ù†Ø§ Ø·Ù„Ø¨ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† "${query.trim()}"ØŒ ÙˆØ³ÙŠØ³ØªØ®Ø¯Ù…Ù‡ Ø±ÙˆØ¨ÙˆØª Ø§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„ÙŠÙˆÙ…ÙŠ Ù„Ø¥Ø¶Ø§ÙØ© Ù‡Ø°Ø§ Ø§Ù„ØµÙ†Ù Ø£Ùˆ Ø£ÙØ¶Ù„ Ù…Ù‚Ø§Ø±Ù†Ø© Ù„Ù‡ ÙÙŠ Ø§Ù„Ø¬ÙˆÙ„Ø© Ø§Ù„Ù‚Ø§Ø¯Ù…Ø©.';
+            'سجلنا طلب البحث عن "${query.trim()}"، وسيستخدمه روبوت التحديث اليومي لإضافة هذا الصنف أو أفضل مقارنة له في الجولة القادمة.';
       });
     } catch (error) {
       _submittedSearchRequestKeys.remove(requestKey);
@@ -3417,7 +3419,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
       setState(() {
         _searchDemandNotice =
-            'ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø·Ù„Ø¨ Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ø¢Ù†. ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø§ØªØµØ§Ù„ Ø«Ù… Ø¬Ø±Ù‘Ø¨ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰ØŒ Ø£Ùˆ Ø§Ø³Ø­Ø¨ Ù„Ù„ØªØ­Ø¯ÙŠØ« Ù„Ø§Ø­Ù‚Ø§Ù‹.';
+            'تعذر تسجيل طلب البحث الآن. تحقق من الاتصال ثم جرّب مرة أخرى، أو اسحب للتحديث لاحقاً.';
       });
     }
   }
@@ -3449,8 +3451,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     setState(() {
       _hasInternet = hasInternet;
       _dataNotice = hasInternet
-          ? 'Ø¹Ø§Ø¯ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø´Ø¨ÙƒØ©. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø³Ø­Ø¨ Ù„Ù„Ø£Ø³ÙÙ„ Ù„Ù„ØªØ£ÙƒØ¯ Ù…Ù† Ø¬Ù„Ø¨ Ø£Ø­Ø¯Ø« Ø§Ù„Ø£Ø³Ø¹Ø§Ø± Ù…Ù† Firestore.'
-          : 'Ø§Ù„Ø§ØªØµØ§Ù„ ØºÙŠØ± Ù…ØªÙˆÙØ± Ø­Ø§Ù„ÙŠØ§Ù‹. Ø³Ù†Ø¹Ø±Ø¶ Ø¢Ø®Ø± Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø®Ø²Ù†Ø©ØŒ ÙˆØ¹Ù†Ø¯ Ø¹ÙˆØ¯Ø© Ø§Ù„Ø´Ø¨ÙƒØ© ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø³Ø­Ø¨ Ù„Ù„ØªØ­Ø¯ÙŠØ«.';
+          ? 'عاد الاتصال بالشبكة. يمكنك السحب للأسفل للتأكد من جلب أحدث الأسعار من Firestore.'
+          : 'الاتصال غير متوفر حالياً. سنعرض آخر البيانات المخزنة، وعند عودة الشبكة يمكنك السحب للتحديث.';
     });
 
     if (!showFeedback) {
@@ -3461,8 +3463,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       SnackBar(
         content: Text(
           hasInternet
-              ? 'ØªÙ…Øª Ø§Ø³ØªØ¹Ø§Ø¯Ø© Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø´Ø¨ÙƒØ©.'
-              : 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª Ø­Ø§Ù„ÙŠØ§Ù‹.',
+              ? 'تمت استعادة الاتصال بالشبكة.'
+              : 'لا يوجد اتصال بالإنترنت حالياً.',
         ),
       ),
     );
@@ -3497,7 +3499,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Ø£ÙƒÙ…Ù„ Ø¥Ø¹Ø¯Ø§Ø¯ Firebase Ø£ÙˆÙ„Ø§Ù‹ Ø­ØªÙ‰ ÙŠØªÙ…ÙƒÙ† Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ù…Ù† Ø§Ù„ØªØ­Ø¯ÙŠØ« Ù…Ù† Cloud Firestore.',
+            'أكمل إعداد Firebase أولاً حتى يتمكن التطبيق من التحديث من Cloud Firestore.',
           ),
         ),
       );
@@ -3509,7 +3511,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø§ØªØµØ§Ù„ Ø­Ø§Ù„ÙŠØ§Ù‹. Ø³Ù†Ø¹Ø±Ø¶ Ø¢Ø®Ø± Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ§Ø­Ø© Ø­ØªÙ‰ ØªØ¹ÙˆØ¯ Ø§Ù„Ø´Ø¨ÙƒØ©.',
+            'لا يوجد اتصال حالياً. سنعرض آخر البيانات المتاحة حتى تعود الشبكة.',
           ),
         ),
       );
@@ -3522,7 +3524,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     setState(() {
       _isRefreshing = true;
-      _dataNotice = 'ÙŠØªÙ… Ø§Ù„Ø¢Ù† Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø£Ø­Ø¯Ø« Ø§Ù„Ø£Ø³Ø¹Ø§Ø± ÙˆØ§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ù† Cloud Firestore.';
+      _dataNotice = 'يتم الآن التحقق من أحدث الأسعار والمنتجات من Cloud Firestore.';
     });
 
     try {
@@ -3530,13 +3532,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       if (!mounted) return;
 
       setState(() {
-        _dataNotice = 'ØªÙ…Øª Ù…Ø²Ø§Ù…Ù†Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø³Ø­Ø§Ø¨ÙŠØ© Ø¨Ù†Ø¬Ø§Ø­.';
+        _dataNotice = 'تمت مزامنة البيانات السحابية بنجاح.';
       });
 
       if (showSuccessMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ù† Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª Ø¨Ù†Ø¬Ø§Ø­.'),
+            content: Text('تم تحديث قائمة المنتجات من الإنترنت بنجاح.'),
           ),
         );
       }
@@ -3545,13 +3547,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
       setState(() {
         _dataNotice =
-            'ØªØ¹Ø°Ø± Ø¬Ù„Ø¨ Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ« Ù…Ù† Cloud Firestore Ø­Ø§Ù„ÙŠØ§Ù‹. Ø³Ù†ÙˆØ§ØµÙ„ Ø¹Ø±Ø¶ Ø¢Ø®Ø± Ù†Ø³Ø®Ø© Ù…ØªØ§Ø­Ø© Ù„Ø¯ÙŠÙƒ.';
+            'تعذر جلب آخر تحديث من Cloud Firestore حالياً. سنواصل عرض آخر نسخة متاحة لديك.';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'ØªØ¹Ø°Ø± Ø§Ù„ÙˆØµÙˆÙ„ Ø¥Ù„Ù‰ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø­Ø§Ù„ÙŠØ§Ù‹. ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø§ØªØµØ§Ù„ Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ø³Ø­Ø¨.',
+            'تعذر الوصول إلى قاعدة البيانات حالياً. تحقق من الاتصال ثم أعد السحب.',
           ),
         ),
       );
@@ -3607,7 +3609,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     return ProductCategoryCatalog.lookup(
       _selectedCategoryId,
-      fallbackLabel: fallbackLabel ?? 'Ø§Ù„ÙƒÙ„',
+      fallbackLabel: fallbackLabel ?? 'الكل',
     ).label;
   }
 
@@ -3743,7 +3745,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
           !AffiliateLinkService.isSupportedStore(preparedUri)) {
         messenger.showSnackBar(
           const SnackBar(
-            content: Text('Ø§Ù„Ø±Ø§Ø¨Ø· Ø§Ù„Ø­Ø§Ù„ÙŠ Ù„Ø§ ÙŠÙˆØ¬Ù‘Ù‡ Ø¥Ù„Ù‰ Ù…ØªØ¬Ø± Ø³Ø¹ÙˆØ¯ÙŠ Ù…Ø¯Ø¹ÙˆÙ….'),
+            content: Text('الرابط الحالي لا يوجّه إلى متجر سعودي مدعوم.'),
           ),
         );
         return;
@@ -3756,13 +3758,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
       if (!opened && mounted) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('ØªØ¹Ø°Ø± ÙØªØ­ Ø±Ø§Ø¨Ø· Ø§Ù„Ø´Ø±Ø§Ø¡ Ø­Ø§Ù„ÙŠØ§Ù‹.')),
+          const SnackBar(content: Text('تعذر فتح رابط الشراء حالياً.')),
         );
       }
     } catch (_) {
       if (!mounted) return;
       messenger.showSnackBar(
-        const SnackBar(content: Text('Ø§Ù„Ø±Ø§Ø¨Ø· ØºÙŠØ± ØµØ§Ù„Ø­ Ø£Ùˆ ØºÙŠØ± Ù…ØªØ§Ø­ Ø­Ø§Ù„ÙŠØ§Ù‹.')),
+        const SnackBar(content: Text('الرابط غير صالح أو غير متاح حالياً.')),
       );
     }
   }
@@ -3771,7 +3773,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     if (!product.hasBuyUrl) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø±Ø§Ø¨Ø· Ø´Ø±Ø§Ø¡ Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù† Ø­Ø§Ù„ÙŠØ§Ù‹.'),
+          content: Text('لا يوجد رابط شراء لهذا الإعلان حالياً.'),
         ),
       );
       return Future<void>.value();
@@ -3785,13 +3787,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
   void _shareSavings(ProductComparison product) {
     final message = product.hasOriginalOfferTag
-        ? 'ÙˆØ¬Ø¯Øª Ø¹Ø±Ø¶Ø§Ù‹ Ù…Ù…ÙŠØ²Ø§Ù‹ Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ø£ØµÙ„ÙŠ Ø¯Ø§Ø®Ù„ ØªØ·Ø¨ÙŠÙ‚ Ø£Ø±Ø®Øµ Ø³Ø¹Ø±! '
-            'Ø´Ø§Ù‡Ø¯ Ø§Ù„Ù…Ù‚Ø§Ø±Ù†Ø© Ø§Ù„Ø¢Ù†: ${_userProfile.shareBaseUrl}'
-        : 'Ø´Ø§Ù‡Ø¯Øª Ù‡Ø°Ø§ Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø§Ù‚ØªØµØ§Ø¯ÙŠ ÙÙŠ ØªØ·Ø¨ÙŠÙ‚ Ø£Ø±Ø®Øµ Ø³Ø¹Ø± ÙˆÙˆÙØ±Øª '
-            '${formatAmountValue(product.savingsAmount)} Ø±ÙŠØ§Ù„! '
-            'Ø­Ù…Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¢Ù†: ${_userProfile.shareBaseUrl}';
+        ? 'وجدت عرضاً مميزاً على المنتج الأصلي داخل تطبيق أرخص سعر! '
+            'شاهد المقارنة الآن: ${_userProfile.shareBaseUrl}'
+        : 'شاهدت هذا الخيار الاقتصادي في تطبيق أرخص سعر ووفرت '
+            '${formatAmountValue(product.savingsAmount)} ريال! '
+            'حمل التطبيق الآن: ${_userProfile.shareBaseUrl}';
 
-    Share.share(message, subject: 'Ø£Ø±Ø®Øµ Ø³Ø¹Ø± - LeastPrice');
+    Share.share(message, subject: 'أرخص سعر - LeastPrice');
   }
 
   double _estimatedInviteSavingsFor(List<ProductComparison> products) {
@@ -3818,7 +3820,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     await Share.share(
       message,
-      subject: 'Ø§Ø¯Ø¹Ù ØµØ¯ÙŠÙ‚Ø§Ù‹ Ù„Ù„ØªÙˆÙÙŠØ± Ù…Ø¹ Ø£Ø±Ø®Øµ Ø³Ø¹Ø±',
+      subject: 'ادعُ صديقاً للتوفير مع أرخص سعر',
     );
   }
 
@@ -3827,7 +3829,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø±Ø§Ø¨Ø· Ù…ÙØ¹Ù„ Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù† Ø­Ø§Ù„ÙŠØ§Ù‹.'),
+          content: Text('لا يوجد رابط مفعل لهذا الإعلان حالياً.'),
         ),
       );
       return;
@@ -3857,7 +3859,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'ØªÙ… ØªØ³Ø¬ÙŠÙ„ ØªÙ‚ÙŠÙŠÙ…Ùƒ Ù„Ù€ "${product.alternativeName}" ÙˆØªØ­Ø¯ÙŠØ«Ù‡ Ø¹Ù„Ù‰ Ø§Ù„Ø³Ø­Ø§Ø¨Ø©.',
+            'تم تسجيل تقييمك لـ "${product.alternativeName}" وتحديثه على السحابة.',
           ),
         ),
       );
@@ -3866,7 +3868,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø­Ø§Ù„ÙŠØ§Ù‹. ØªØ£ÙƒØ¯ Ù…Ù† Ø£Ù† Ø§Ù„Ù…Ù†ØªØ¬ Ù…Ø±ØªØ¨Ø· Ø¨ÙˆØ«ÙŠÙ‚Ø© Firestore.',
+            'تعذر حفظ التقييم حالياً. تأكد من أن المنتج مرتبط بوثيقة Firestore.',
           ),
         ),
       );
@@ -3894,12 +3896,12 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       setState(() {
         _selectedCategoryId = ProductCategoryCatalog.allId;
         _dataNotice =
-            'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬ Ø¥Ù„Ù‰ Cloud Firestore ÙˆØ³ÙŠØ¸Ù‡Ø± Ù…Ø¨Ø§Ø´Ø±Ø© Ù„ÙƒÙ„ Ù…Ù† ÙŠØ³ØªØ®Ø¯Ù… Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.';
+            'تمت إضافة المنتج إلى Cloud Firestore وسيظهر مباشرة لكل من يستخدم التطبيق.';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© "${product.alternativeName}" Ø¨Ù†Ø¬Ø§Ø­.'),
+          content: Text('تمت إضافة "${product.alternativeName}" بنجاح.'),
         ),
       );
     } catch (_) {
@@ -3907,7 +3909,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'ØªØ¹Ø°Ø± Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬ Ø¥Ù„Ù‰ Cloud Firestore. ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø£Ùˆ Ø§Ù„Ø§ØªØµØ§Ù„.',
+            'تعذر إضافة المنتج إلى Cloud Firestore. تحقق من الإعدادات أو الاتصال.',
           ),
         ),
       );
@@ -3918,7 +3920,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ ÙŠØ­ØªØ§Ø¬ ØªÙ‡ÙŠØ¦Ø© Firebase ÙˆCloud Firestore Ø£ÙˆÙ„Ø§Ù‹ Ù‚Ø¨Ù„ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.',
+          'التطبيق يحتاج تهيئة Firebase وCloud Firestore أولاً قبل استخدام قاعدة البيانات.',
         ),
       ),
     );
@@ -3929,7 +3931,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.small(
         heroTag: 'admin-dashboard-fab',
-        tooltip: 'Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„',
+        tooltip: 'لوحة المسؤول',
         backgroundColor: const Color(0xE60F8F6F),
         foregroundColor: Colors.white,
         onPressed: widget.firebaseReady
@@ -3973,7 +3975,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                               ? _userProfile.phoneNumber
                               : (widget.currentUser.email?.trim().isNotEmpty == true
                                   ? widget.currentUser.email!.trim()
-                                  : 'Ù…Ø³ØªØ®Ø¯Ù… Ù…ÙˆØ«Ù‘Ù‚'),
+                                  : 'مستخدم موثّق'),
                       banners: _activeBanners,
                       searchController: _searchController,
                       resultsCount: filteredProducts.length,
@@ -4001,9 +4003,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       sliver: SliverToBoxAdapter(
                         child: _StatusBanner(
                           icon: Icons.wifi_off_rounded,
-                          title: 'Ø§Ù„Ø§ØªØµØ§Ù„ ØºÙŠØ± Ù…ØªÙˆÙØ±',
+                          title: 'الاتصال غير متوفر',
                           message:
-                              'Ø³ÙŠØ¹Ø±Ø¶ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¢Ø®Ø± Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø­ÙÙˆØ¸Ø©ØŒ ÙˆØ¹Ù†Ø¯ Ø¹ÙˆØ¯Ø© Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø³Ø­Ø¨ Ù„Ù„Ø£Ø³ÙÙ„ Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø£Ø³Ø¹Ø§Ø±.',
+                              'سيعرض التطبيق آخر البيانات المحفوظة، وعند عودة الإنترنت يمكنك السحب للأسفل لتحديث الأسعار.',
                           backgroundColor: Color(0xFFFFF8E8),
                           borderColor: Color(0xFFF2D38D),
                           accentColor: Color(0xFF9A6700),
@@ -4016,9 +4018,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       sliver: SliverToBoxAdapter(
                         child: _StatusBanner(
                           icon: Icons.cloud_off_rounded,
-                          title: 'Firebase ØºÙŠØ± Ù…Ù‡ÙŠØ£',
+                          title: 'Firebase غير مهيأ',
                           message:
-                              'Ø£Ø¶Ù Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Firebase ÙˆÙ…Ù„ÙØ§Øª Android Ø«Ù… Ø£Ø¹Ø¯ ØªØ´ØºÙŠÙ„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ù„ÙŠØ¨Ø¯Ø£ Ø¬Ù„Ø¨ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ù† Cloud Firestore.',
+                              'أضف إعدادات Firebase وملفات Android ثم أعد تشغيل التطبيق ليبدأ جلب المنتجات من Cloud Firestore.',
                           backgroundColor: Color(0xFFFFF1F0),
                           borderColor: Color(0xFFF4C7C3),
                           accentColor: Color(0xFFB44B42),
@@ -4031,9 +4033,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       sliver: SliverToBoxAdapter(
                         child: _StatusBanner(
                           icon: Icons.cloud_off_rounded,
-                          title: 'ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª',
+                          title: 'تعذر قراءة البيانات',
                           message:
-                              'Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† Ø§Ù„ÙˆØµÙˆÙ„ Ø¥Ù„Ù‰ Cloud Firestore Ø­Ø§Ù„ÙŠØ§Ù‹. ØªØ£ÙƒØ¯ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯ Ø§Ù„Ù‚Ø§Ø¹Ø¯Ø© ÙˆØ§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø´Ø¨ÙƒØ© Ø«Ù… Ø¬Ø±Ù‘Ø¨ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.',
+                              'لم نتمكن من الوصول إلى Cloud Firestore حالياً. تأكد من إعداد القاعدة والاتصال بالشبكة ثم جرّب مرة أخرى.',
                           backgroundColor: Color(0xFFFFF1F0),
                           borderColor: Color(0xFFF4C7C3),
                           accentColor: Color(0xFFB44B42),
@@ -4108,8 +4110,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                         children: [
                           Text(
                             hasQuery
-                                ? 'Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† "${_query.trim()}"'
-                                : 'ÙŠØªÙ… Ø§Ù„Ø¢Ù† Ø¬Ù„Ø¨ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ù† Cloud Firestore Ù…Ø¹ Ø¨Ø« Ù„Ø­Ø¸ÙŠ Ù„Ø£ÙŠ ØªØ­Ø¯ÙŠØ« Ø¬Ø¯ÙŠØ¯.',
+                                ? 'نتائج البحث عن "${_query.trim()}"'
+                                : 'يتم الآن جلب المنتجات مباشرة من Cloud Firestore مع بث لحظي لأي تحديث جديد.',
                             style: TextStyle(
                               color: Colors.grey.shade700,
                               fontSize: 13.5,
@@ -4131,7 +4133,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           if (_isRefreshing) ...[
                             const SizedBox(height: 6),
                             const Text(
-                              'Ø¬Ø§Ø±Ù Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø£Ø­Ø¯Ø« Ø§Ù„Ø£Ø³Ø¹Ø§Ø± Ù…Ù† Ø§Ù„Ø®Ø§Ø¯Ù…...',
+                              'جارٍ التحقق من أحدث الأسعار من الخادم...',
                               style: TextStyle(
                                 color: Color(0xFF9A6700),
                                 fontSize: 12.8,
@@ -4142,7 +4144,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           if (_isSearchingOnline) ...[
                             const SizedBox(height: 6),
                             const Text(
-                              'Ø¬Ø§Ø±Ù Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ø°ÙƒÙŠ Ù…Ù† Ø§Ù„ÙˆÙŠØ¨ Ø¹Ù† Ù…Ù‚Ø§Ø±Ù†Ø§Øª ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ Ø§Ù„Ù‚Ø§Ø¹Ø¯Ø©...',
+                              'جارٍ البحث الذكي من الويب عن مقارنات غير موجودة في القاعدة...',
                               style: TextStyle(
                                 color: Color(0xFF0B7A5E),
                                 fontSize: 12.8,
@@ -4177,7 +4179,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           if (snapshot.hasError && products.isNotEmpty) ...[
                             const SizedBox(height: 6),
                             const Text(
-                              'Ø­Ø¯Ø«Øª Ù…Ø´ÙƒÙ„Ø© Ù…Ø¤Ù‚ØªØ© ÙÙŠ Ø§Ù„Ù…Ø²Ø§Ù…Ù†Ø©ØŒ Ù„ÙƒÙ† ØªÙ… Ø§Ù„Ø¥Ø¨Ù‚Ø§Ø¡ Ø¹Ù„Ù‰ Ø¢Ø®Ø± Ø¨ÙŠØ§Ù†Ø§Øª Ù…ØªØ§Ø­Ø©.',
+                              'حدثت مشكلة مؤقتة في المزامنة، لكن تم الإبقاء على آخر بيانات متاحة.',
                               style: TextStyle(
                                 color: Color(0xFFB44B42),
                                 fontSize: 12.8,
@@ -4371,7 +4373,7 @@ class _HeaderSection extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Ø£Ø±Ø®Øµ Ø³Ø¹Ø± - LeastPrice',
+                              'أرخص سعر - LeastPrice',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -4380,7 +4382,7 @@ class _HeaderSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Ù…Ø±Ø­Ø¨Ø§Ù‹ $currentUserLabel',
+                              'مرحباً $currentUserLabel',
                               style: const TextStyle(
                                 color: Color(0xD9FFFFFF),
                                 fontSize: 13.5,
@@ -4399,13 +4401,13 @@ class _HeaderSection extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         icon: const Icon(Icons.logout_rounded),
-                        tooltip: 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬',
+                        tooltip: 'تسجيل الخروج',
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'ÙˆØ§Ø¬Ù‡Ø© ØªØ¬Ø§Ø±ÙŠØ© ØªØ¬Ù…Ø¹ Ø¹Ø±ÙˆØ¶ Ø§Ù„Ù…ØªØ§Ø¬Ø±ØŒ Ø§Ù„Ù…Ù‚Ø§Ø±Ù†Ø§Øª Ø§Ù„ÙŠÙˆÙ…ÙŠØ©ØŒ ÙˆØ§Ù„Ø¯Ø¹ÙˆØ§Øª Ø§Ù„Ø°ÙƒÙŠØ© ÙÙŠ Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.',
+                    'واجهة تجارية تجمع عروض المتاجر، المقارنات اليومية، والدعوات الذكية في مكان واحد.',
                     style: TextStyle(
                       color: Color(0xD9FFFFFF),
                       fontSize: 13.5,
@@ -4421,7 +4423,7 @@ class _HeaderSection extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Ø§Ø¨Ø­Ø« Ø¹Ù† Ù…Ù†ØªØ¬ Ù…Ø«Ù„: Ù†Ø³ÙƒØ§ÙÙŠÙ‡ØŒ ÙƒØ±Ø§ÙØªØŒ Ù‡Ø§ÙŠÙ†Ø²...',
+                      hintText: 'ابحث عن منتج مثل: نسكافيه، كرافت، هاينز...',
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: hasQuery
                           ? IconButton(
@@ -4440,7 +4442,7 @@ class _HeaderSection extends StatelessWidget {
                     const SizedBox(height: 18),
                   ],
                   const Text(
-                    'Ø§Ù„Ø£Ù‚Ø³Ø§Ù… Ø§Ù„Ø¨Ø§Ø±Ø²Ø©',
+                    'الأقسام البارزة',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
@@ -4492,11 +4494,11 @@ class _HeaderSection extends StatelessWidget {
                     children: [
                       _StatPill(
                         icon: Icons.inventory_2_outlined,
-                        label: '$resultsCount Ù†ØªÙŠØ¬Ø©',
+                        label: '$resultsCount نتيجة',
                       ),
                       _StatPill(
                         icon: Icons.bolt_rounded,
-                        label: hasQuery ? 'Ø¨Ø­Ø« Ù…Ø¨Ø§Ø´Ø±' : 'Ø¨Ø­Ø« Ø°ÙƒÙŠ',
+                        label: hasQuery ? 'بحث مباشر' : 'بحث ذكي',
                       ),
                       _StatPill(
                         icon: Icons.cloud_done_rounded,
@@ -4523,7 +4525,7 @@ class _HeaderSection extends StatelessWidget {
                           children: [
                             const Expanded(
                               child: Text(
-                                'Ù…Ù„Ù Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ÙˆØ¯Ø¹ÙˆØ§Øª Ø§Ù„ØªÙˆÙÙŠØ±',
+                                'ملف المستخدم ودعوات التوفير',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -4532,7 +4534,7 @@ class _HeaderSection extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'ÙƒÙˆØ¯Ùƒ: $inviteCode',
+                              'كودك: $inviteCode',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
@@ -4542,7 +4544,7 @@ class _HeaderSection extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Ø´Ø§Ø±Ùƒ Ø±Ø§Ø¨Ø· Ø§Ù„Ø¯Ø¹ÙˆØ© Ø§Ù„Ø®Ø§Øµ Ø¨Ùƒ ÙˆÙˆØ³Ù‘Ø¹ Ø¯Ø§Ø¦Ø±Ø© Ø§Ù„ØªÙˆÙÙŠØ± Ø¨ÙŠÙ† Ø£ØµØ¯Ù‚Ø§Ø¦Ùƒ.',
+                          'شارك رابط الدعوة الخاص بك ووسّع دائرة التوفير بين أصدقائك.',
                           style: TextStyle(
                             color: Color(0xD9FFFFFF),
                             height: 1.4,
@@ -4554,14 +4556,14 @@ class _HeaderSection extends StatelessWidget {
                             Expanded(
                               child: _InviteMetric(
                                 icon: Icons.group_add_rounded,
-                                label: '$invitedFriendsCount Ø¯Ø¹ÙˆØ©',
+                                label: '$invitedFriendsCount دعوة',
                               ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: _InviteMetric(
                                 icon: Icons.savings_rounded,
-                                label: '$estimatedSavingsText Ø±.Ø³ ØªÙˆÙÙŠØ±',
+                                label: '$estimatedSavingsText ر.س توفير',
                               ),
                             ),
                           ],
@@ -4577,7 +4579,7 @@ class _HeaderSection extends StatelessWidget {
                               backgroundColor: const Color(0x10FFFFFF),
                             ),
                             icon: const Icon(Icons.share_rounded),
-                            label: const Text('Ø§Ø¯Ø¹Ù ØµØ¯ÙŠÙ‚Ø§Ù‹ Ù„Ù„ØªÙˆÙÙŠØ±'),
+                            label: const Text('ادعُ صديقاً للتوفير'),
                           ),
                         ),
                       ],
@@ -4931,7 +4933,7 @@ class ComparisonCard extends StatelessWidget {
                   return Column(
                     children: [
                       ProductPane(
-                        label: 'Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£Ø¹Ù„Ù‰ Ø³Ø¹Ø±Ø§Ù‹',
+                        label: 'الخيار الأعلى سعراً',
                         name: comparison.expensiveName,
                         price: comparison.expensivePrice,
                         imageUrl: comparison.expensiveImageUrl,
@@ -4947,7 +4949,7 @@ class ComparisonCard extends StatelessWidget {
                         ),
                       ),
                       ProductPane(
-                        label: 'Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©',
+                        label: 'الخيار الأفضل قيمة',
                         name: comparison.alternativeName,
                         price: comparison.alternativePrice,
                         imageUrl: comparison.alternativeImageUrl,
@@ -4962,7 +4964,7 @@ class ComparisonCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ProductPane(
-                        label: 'Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£Ø¹Ù„Ù‰ Ø³Ø¹Ø±Ø§Ù‹',
+                        label: 'الخيار الأعلى سعراً',
                         name: comparison.expensiveName,
                         price: comparison.expensivePrice,
                         imageUrl: comparison.expensiveImageUrl,
@@ -4980,7 +4982,7 @@ class ComparisonCard extends StatelessWidget {
                     ),
                     Expanded(
                       child: ProductPane(
-                        label: 'Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©',
+                        label: 'الخيار الأفضل قيمة',
                         name: comparison.alternativeName,
                         price: comparison.alternativePrice,
                         imageUrl: comparison.alternativeImageUrl,
@@ -4996,7 +4998,7 @@ class ComparisonCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF6EF),
+                color: const Color(0xFFF5F7FF),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Row(
@@ -5009,8 +5011,8 @@ class ComparisonCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       comparison.hasOriginalOfferTag
-                          ? 'Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ø£ØµÙ„ÙŠ Ø£ØµØ¨Ø­ Ø§Ù„Ø£Ø±Ø®Øµ Ø­Ø§Ù„ÙŠØ§Ù‹ØŒ Ù„Ø°Ù„Ùƒ Ù†Ù†ØµØ­ Ø¨Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¹Ø±Ø¶ Ù‚Ø¨Ù„ Ø§Ù„Ø´Ø±Ø§Ø¡.'
-                          : 'ÙØ±Ù‚ Ø§Ù„Ø³Ø¹Ø±: ${formatPrice(comparison.savingsAmount)} Ù„ØµØ§Ù„Ø­ Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©.',
+                          ? 'المنتج الأصلي أصبح الأرخص حالياً، لذلك ننصح بمراجعة العرض قبل الشراء.'
+                          : 'فرق السعر: ${formatPrice(comparison.savingsAmount)} لصالح الخيار الأفضل قيمة.',
                       style: const TextStyle(
                         color: Color(0xFF224238),
                         fontWeight: FontWeight.w700,
@@ -5046,7 +5048,7 @@ class ComparisonCard extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: onShareTap,
                           icon: const Icon(Icons.share_rounded),
-                          label: const Text('Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„ØªÙˆÙÙŠØ±'),
+                          label: const Text('مشاركة التوفير'),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -5057,8 +5059,8 @@ class ComparisonCard extends StatelessWidget {
                           icon: const Icon(Icons.shopping_cart_checkout_rounded),
                           label: Text(
                             comparison.hasBuyUrl
-                                ? 'ÙØªØ­ Ø±Ø§Ø¨Ø· Ø§Ù„Ø´Ø±Ø§Ø¡'
-                                : 'Ø¨Ø¯ÙˆÙ† Ø±Ø§Ø¨Ø· Ø´Ø±Ø§Ø¡',
+                                ? 'فتح رابط الشراء'
+                                : 'بدون رابط شراء',
                           ),
                         ),
                       ),
@@ -5072,7 +5074,7 @@ class ComparisonCard extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: onShareTap,
                         icon: const Icon(Icons.share_rounded),
-                        label: const Text('Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„ØªÙˆÙÙŠØ±'),
+                        label: const Text('مشاركة التوفير'),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -5082,8 +5084,8 @@ class ComparisonCard extends StatelessWidget {
                         icon: const Icon(Icons.shopping_cart_checkout_rounded),
                         label: Text(
                           comparison.hasBuyUrl
-                              ? 'ÙØªØ­ Ø±Ø§Ø¨Ø· Ø§Ù„Ø´Ø±Ø§Ø¡'
-                              : 'Ø¨Ø¯ÙˆÙ† Ø±Ø§Ø¨Ø· Ø´Ø±Ø§Ø¡',
+                              ? 'فتح رابط الشراء'
+                              : 'بدون رابط شراء',
                         ),
                       ),
                     ),
@@ -5213,8 +5215,8 @@ class _RatingSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reviewText = comparison.reviewCount > 0
-        ? '${comparison.rating.toStringAsFixed(1)} â­ - ${comparison.reviewCount} ØªÙ‚ÙŠÙŠÙ…'
-        : 'Ø§Ø¨Ø¯Ø£ Ø£ÙˆÙ„ ØªÙ‚ÙŠÙŠÙ… Ù„Ù‡Ø°Ø§ Ø§Ù„Ø®ÙŠØ§Ø±';
+        ? '${comparison.rating.toStringAsFixed(1)} ⭐ - ${comparison.reviewCount} تقييم'
+        : 'ابدأ أول تقييم لهذا الخيار';
 
     return InkWell(
       onTap: onTap,
@@ -5243,7 +5245,7 @@ class _RatingSummary extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Ø§Ø¶ØºØ· Ø¹Ù„Ù‰ Ø§Ù„Ù†Ø¬ÙˆÙ… Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø¬ÙˆØ¯Ø© ÙˆØ§Ù„Ù‚ÙŠÙ…Ø© Ù…Ù‚Ø§Ø±Ù†Ø© Ø¨Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø£Ø¹Ù„Ù‰ Ø³Ø¹Ø±Ø§Ù‹.',
+                    'اضغط على النجوم لتقييم الجودة والقيمة مقارنة بالخيار الأعلى سعراً.',
                     style: TextStyle(
                       color: Color(0xFF8B7331),
                       fontSize: 12.8,
@@ -5322,25 +5324,25 @@ class _ComparisonInsights extends StatelessWidget {
               comparison.fragranceNotes!.trim().isNotEmpty)
             _InsightRow(
               icon: Icons.spa_rounded,
-              title: 'Ù†ÙˆØªØ© Ø§Ù„Ø¹Ø·Ø±',
+              title: 'نوتة العطر',
               value: comparison.fragranceNotes!,
             ),
           if (comparison.activeIngredients != null &&
               comparison.activeIngredients!.trim().isNotEmpty)
             _InsightRow(
               icon: Icons.science_rounded,
-              title: 'Ø§Ù„Ù…Ø§Ø¯Ø© Ø§Ù„ÙØ¹Ø§Ù„Ø©',
+              title: 'المادة الفعالة',
               value: comparison.activeIngredients!,
             ),
           if (comparison.localLocationLabel != null &&
               comparison.localLocationLabel!.trim().isNotEmpty)
             _InsightRow(
               icon: Icons.place_rounded,
-              title: 'Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…ØªØ¬Ø±',
+              title: 'موقع المتجر',
               value: comparison.localLocationLabel!,
               actionLabel: comparison.localLocationUrl == null
                   ? null
-                  : 'Ø±Ø§Ø¨Ø· Ø§Ù„Ù…ÙˆÙ‚Ø¹',
+                  : 'رابط الموقع',
               onActionTap: onLocationTap,
             ),
         ],
@@ -5431,7 +5433,7 @@ class _SavingBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        'ÙˆÙØ±Øª $savingsPercent%',
+        'وفرت $savingsPercent%',
         style: const TextStyle(
           color: Colors.white,
           fontSize: 14.5,
@@ -5455,7 +5457,7 @@ class _SuperSavingBadge extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF0C56B)),
       ),
       child: const Text(
-        'ØªÙˆÙÙŠØ± Ø®Ø§Ø±Ù‚',
+        'توفير خارق',
         style: TextStyle(
           color: Color(0xFF9A6700),
           fontWeight: FontWeight.w800,
@@ -5478,7 +5480,7 @@ class _OriginalOnSaleBadge extends StatelessWidget {
         border: Border.all(color: const Color(0xFFA6D0F2)),
       ),
       child: const Text(
-        'Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ø£ØµÙ„ÙŠ Ø¹Ù„ÙŠÙ‡ Ø¹Ø±Ø¶ Ø­Ø§Ù„ÙŠØ§Ù‹',
+        'المنتج الأصلي عليه عرض حالياً',
         style: TextStyle(
           color: Color(0xFF185A8B),
           fontWeight: FontWeight.w800,
@@ -5604,19 +5606,19 @@ class _EmptyState extends StatelessWidget {
 
     final title = hasQuery
         ? hasQueuedSearchDemand
-            ? 'ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø·Ù„Ø¨ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† "${query.trim()}".'
-            : 'Ù†Ø­Ø¶Ù‘Ø± Ù„Ùƒ Ù†ØªØ§Ø¦Ø¬ Ø£Ø¯Ù‚ Ø¹Ù† "${query.trim()}".'
+            ? 'تم تسجيل طلب البحث عن "${query.trim()}".'
+            : 'نحضّر لك نتائج أدق عن "${query.trim()}".'
         : hasCategoryFilter
-            ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ø­Ø§Ù„ÙŠØ§Ù‹ Ø¶Ù…Ù† ØªØµÙ†ÙŠÙ "$selectedCategoryLabel".'
-            : 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ù…ØªØ§Ø­Ø© Ø­Ø§Ù„ÙŠØ§Ù‹.';
+            ? 'لا توجد منتجات حالياً ضمن تصنيف "$selectedCategoryLabel".'
+            : 'لا توجد منتجات متاحة حالياً.';
 
     final description = hasQuery
         ? hasQueuedSearchDemand
             ? searchDemandNotice!
             : hasCategoryFilter
-                ? 'Ù‚Ø¯ ÙŠÙƒÙˆÙ† Ø§Ù„Ù…Ù†ØªØ¬ Ù…ÙˆØ¬ÙˆØ¯Ø§Ù‹ ÙÙŠ ØªØµÙ†ÙŠÙ Ø¢Ø®Ø±ØŒ ÙˆÙŠÙ…ÙƒÙ†Ùƒ Ø¥Ø¹Ø§Ø¯Ø© Ø¶Ø¨Ø· Ø§Ù„ÙÙ„Ø§ØªØ± Ø§Ù„Ø¢Ù†. ÙˆØ¥Ø°Ø§ ÙƒØ§Ù† ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯ Ø¨Ø¹Ø¯ØŒ ÙØ³Ù†Ø³Ø¬Ù„ Ø·Ù„Ø¨Ù‡ Ù„ÙŠØ¶ÙŠÙÙ‡ Ø±ÙˆØ¨ÙˆØª Ø§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„ÙŠÙˆÙ…ÙŠ Ù„Ø§Ø­Ù‚Ø§Ù‹.'
-                : 'Ø¥Ø°Ø§ Ù„Ù… ÙŠÙƒÙ† Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ Ù…ÙˆØ¬ÙˆØ¯Ø§Ù‹ Ø¨Ø¹Ø¯ ÙÙŠ Ø§Ù„Ù‚Ø§Ø¹Ø¯Ø© Ø£Ùˆ ÙÙŠ Ù†ØªØ§Ø¦Ø¬ Ø§Ù„ÙˆÙŠØ¨ Ø§Ù„Ù„Ø­Ø¸ÙŠØ©ØŒ ÙØ³ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø·Ù„Ø¨Ùƒ Ù„Ø¥Ø¶Ø§ÙØªÙ‡ ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ ÙÙŠ Ø§Ù„Ø¬ÙˆÙ„Ø© Ø§Ù„Ù‚Ø§Ø¯Ù…Ø©.'
-        : 'ÙŠÙ…ÙƒÙ†Ùƒ ØªØºÙŠÙŠØ± Ø§Ù„ØªØµÙ†ÙŠÙ Ø£Ùˆ Ø§Ù„Ø¨Ø­Ø« Ø¹Ù† Ø§Ø³Ù… Ø§Ù„Ù…Ù†ØªØ¬ Ø£Ùˆ Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù† Ø£Ùˆ Ø­ØªÙ‰ Ø§Ù„Ù…ÙƒÙˆÙ‘Ù†Ø§Øª Ù„Ø¥Ø¸Ù‡Ø§Ø± Ø§Ù„Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ù…Ù†Ø§Ø³Ø¨Ø©.';
+                ? 'قد يكون المنتج موجوداً في تصنيف آخر، ويمكنك إعادة ضبط الفلاتر الآن. وإذا كان غير موجود بعد، فسنسجل طلبه ليضيفه روبوت التحديث اليومي لاحقاً.'
+                : 'إذا لم يكن هذا المنتج موجوداً بعد في القاعدة أو في نتائج الويب اللحظية، فسيتم تسجيل طلبك لإضافته تلقائياً في الجولة القادمة.'
+        : 'يمكنك تغيير التصنيف أو البحث عن اسم المنتج أو الخيار المقارن أو حتى المكوّنات لإظهار النتائج المناسبة.';
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -5661,7 +5663,7 @@ class _EmptyState extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: onReset,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Ø¥Ø¹Ø§Ø¯Ø© Ø¶Ø¨Ø· Ø§Ù„ÙÙ„Ø§ØªØ±'),
+            label: const Text('إعادة ضبط الفلاتر'),
           ),
         ],
       ),
@@ -5698,15 +5700,15 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
         SnackBar(
           content: Text(
             initialBanner == null
-                ? 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.'
-                : 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.',
+                ? 'تمت إضافة البنر بنجاح.'
+                : 'تم تحديث البنر بنجاح.',
           ),
         ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¨Ù†Ø± Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حفظ البنر حالياً: $error')),
       );
     }
   }
@@ -5716,12 +5718,12 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
       await widget.catalogService.publishAdBanner(banner.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« lastUpdated Ù„Ù„Ø¨Ù†Ø± Ø¨Ù†Ø¬Ø§Ø­.')),
+        const SnackBar(content: Text('تم تحديث lastUpdated للبنر بنجاح.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ù†Ø´Ø± Ø§Ù„Ø¨Ù†Ø± Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر نشر البنر حالياً: $error')),
       );
     }
   }
@@ -5730,16 +5732,16 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±'),
-            content: Text('Ù‡Ù„ ØªØ±ÙŠØ¯ Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø± "${banner.title}" Ù†Ù‡Ø§Ø¦ÙŠØ§Ù‹ØŸ'),
+            title: const Text('حذف البنر'),
+            content: Text('هل تريد حذف البنر "${banner.title}" نهائياً؟'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                child: const Text('إلغاء'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Ø­Ø°Ù'),
+                child: const Text('حذف'),
               ),
             ],
           ),
@@ -5754,12 +5756,12 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
       await widget.catalogService.deleteAdBanner(banner.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±.')),
+        const SnackBar(content: Text('تم حذف البنر.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø± Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حذف البنر حالياً: $error')),
       );
     }
   }
@@ -5790,7 +5792,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†ÙŠØ©',
+                      'إدارة البنرات الإعلانية',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -5799,7 +5801,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      'Ø£Ø¶Ù Ø£Ùˆ Ø¹Ø¯Ù‘Ù„ Ø£Ùˆ Ø§Ø­Ø°Ù Ø§Ù„Ø¨Ù†Ø±Ø§Øª ÙÙŠ Ù…Ø¬Ù…ÙˆØ¹Ø© ad_bannersØŒ Ø«Ù… Ø§Ø³ØªØ®Ø¯Ù… Ø²Ø± Ø§Ù„Ù†Ø´Ø± Ù„ØªØ­Ø¯ÙŠØ« lastUpdated.',
+                      'أضف أو عدّل أو احذف البنرات في مجموعة ad_banners، ثم استخدم زر النشر لتحديث lastUpdated.',
                       style: TextStyle(
                         color: Color(0xFF667C74),
                         height: 1.45,
@@ -5812,7 +5814,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
               ElevatedButton.icon(
                 onPressed: () => _openEditor(),
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Ø¥Ø¶Ø§ÙØ© Ø¨Ù†Ø±'),
+                label: const Text('إضافة بنر'),
               ),
             ],
           ),
@@ -5832,7 +5834,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                       child: Padding(
                         padding: const EdgeInsets.all(24),
                         child: Text(
-                          'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨Ù†Ø±Ø§Øª Ù…Ù† Firestore: ${snapshot.error}',
+                          'تعذر تحميل البنرات من Firestore: ${snapshot.error}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Color(0xFF6B7A9A)),
                         ),
@@ -5844,7 +5846,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                   if (banners.isEmpty) {
                     return const Center(
                       child: Text(
-                        'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨Ù†Ø±Ø§Øª Ø¨Ø¹Ø¯. Ø£Ø¶Ù Ø£ÙˆÙ„ Ø¨Ù†Ø± Ù…Ù† Ø§Ù„Ø²Ø± Ø§Ù„Ø¹Ù„ÙˆÙŠ.',
+                        'لا توجد بنرات بعد. أضف أول بنر من الزر العلوي.',
                         style: TextStyle(
                           color: Color(0xFF6B7A9A),
                           fontWeight: FontWeight.w700,
@@ -5863,12 +5865,12 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                           const Color(0xFFF2FBF7),
                         ),
                         columns: const [
-                          DataColumn(label: Text('Ø§Ù„Ù…ØªØ¬Ø±')),
-                          DataColumn(label: Text('Ø§Ù„Ø¹Ù†ÙˆØ§Ù†')),
-                          DataColumn(label: Text('Ø§Ù„ØªØ±ØªÙŠØ¨')),
-                          DataColumn(label: Text('Ø§Ù„Ø­Ø§Ù„Ø©')),
-                          DataColumn(label: Text('Ø§Ù„ØµÙˆØ±Ø©')),
-                          DataColumn(label: Text('Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª')),
+                          DataColumn(label: Text('المتجر')),
+                          DataColumn(label: Text('العنوان')),
+                          DataColumn(label: Text('الترتيب')),
+                          DataColumn(label: Text('الحالة')),
+                          DataColumn(label: Text('الصورة')),
+                          DataColumn(label: Text('الإجراءات')),
                         ],
                         rows: banners.map((banner) {
                           return DataRow(
@@ -5906,7 +5908,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                               DataCell(Text(banner.order.toString())),
                               DataCell(
                                 _AdminStatusChip(
-                                  label: banner.active ? 'Ù†Ø´Ø·' : 'Ù…Ø®ÙÙŠ',
+                                  label: banner.active ? 'نشط' : 'مخفي',
                                   color: banner.active
                                       ? const Color(0xFFE8711A)
                                       : const Color(0xFF9A6B6B),
@@ -5928,11 +5930,11 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                                       OutlinedButton(
                                         onPressed: () =>
                                             _openEditor(initialBanner: banner),
-                                        child: const Text('ØªØ¹Ø¯ÙŠÙ„'),
+                                        child: const Text('تعديل'),
                                       ),
                                       OutlinedButton(
                                         onPressed: () => _publishBanner(banner),
-                                        child: const Text('Ù†Ø´Ø±'),
+                                        child: const Text('نشر'),
                                       ),
                                       OutlinedButton(
                                         onPressed: () => _deleteBanner(banner),
@@ -5940,7 +5942,7 @@ class _AdminBannersTableState extends State<_AdminBannersTable> {
                                           foregroundColor:
                                               const Color(0xFFC24E4E),
                                         ),
-                                        child: const Text('Ø­Ø°Ù'),
+                                        child: const Text('حذف'),
                                       ),
                                     ],
                                   ),
@@ -5999,15 +6001,15 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
         SnackBar(
           content: Text(
             initialProduct == null
-                ? 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.'
-                : 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.',
+                ? 'تمت إضافة المنتج بنجاح.'
+                : 'تم تحديث المنتج بنجاح.',
           ),
         ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ù…Ù†ØªØ¬ Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حفظ المنتج حالياً: $error')),
       );
     }
   }
@@ -6016,7 +6018,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
     final documentId = product.documentId;
     if (documentId == null || documentId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ø§Ø­ÙØ¸ Ø§Ù„Ù…Ù†ØªØ¬ Ø£ÙˆÙ„Ø§Ù‹ Ù‚Ø¨Ù„ Ù†Ø´Ø±Ù‡.')),
+        const SnackBar(content: Text('احفظ المنتج أولاً قبل نشره.')),
       );
       return;
     }
@@ -6025,12 +6027,12 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
       await widget.catalogService.publishProduct(documentId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… ØªØ­Ø¯ÙŠØ« lastUpdated Ù„Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.')),
+        const SnackBar(content: Text('تم تحديث lastUpdated للمنتج بنجاح.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر نشر المنتج حالياً: $error')),
       );
     }
   }
@@ -6039,7 +6041,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
     final documentId = product.documentId;
     if (documentId == null || documentId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ ØºÙŠØ± Ù…Ø±ØªØ¨Ø· Ø¨ÙˆØ«ÙŠÙ‚Ø© Firestore.')),
+        const SnackBar(content: Text('هذا المنتج غير مرتبط بوثيقة Firestore.')),
       );
       return;
     }
@@ -6047,18 +6049,18 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬'),
+            title: const Text('حذف المنتج'),
             content: Text(
-              'Ù‡Ù„ ØªØ±ÙŠØ¯ Ø­Ø°Ù "${product.expensiveName}" Ùˆ"${product.alternativeName}" Ù†Ù‡Ø§Ø¦ÙŠØ§Ù‹ØŸ',
+              'هل تريد حذف "${product.expensiveName}" و"${product.alternativeName}" نهائياً؟',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                child: const Text('إلغاء'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Ø­Ø°Ù'),
+                child: const Text('حذف'),
               ),
             ],
           ),
@@ -6073,12 +6075,12 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
       await widget.catalogService.deleteProduct(documentId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬.')),
+        const SnackBar(content: Text('تم حذف المنتج.')),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ØªØ¹Ø°Ø± Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬ Ø­Ø§Ù„ÙŠØ§Ù‹: $error')),
+        SnackBar(content: Text('تعذر حذف المنتج حالياً: $error')),
       );
     }
   }
@@ -6109,7 +6111,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª',
+                      'إدارة المنتجات',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -6118,7 +6120,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      'Ø¹Ø¯Ù‘Ù„ Ø§Ù„Ø£Ø³Ù…Ø§Ø¡ ÙˆØ§Ù„Ø£Ø³Ø¹Ø§Ø± ÙˆØ§Ù„ØµÙˆØ± Ù…Ø¨Ø§Ø´Ø±Ø© ÙÙŠ Ù…Ø¬Ù…ÙˆØ¹Ø© productsØŒ Ø«Ù… Ø§Ø³ØªØ®Ø¯Ù… Ø²Ø± Ø§Ù„Ù†Ø´Ø± Ù„ØªØ­Ø¯ÙŠØ« lastUpdated.',
+                      'عدّل الأسماء والأسعار والصور مباشرة في مجموعة products، ثم استخدم زر النشر لتحديث lastUpdated.',
                       style: TextStyle(
                         color: Color(0xFF667C74),
                         height: 1.45,
@@ -6131,7 +6133,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
               ElevatedButton.icon(
                 onPressed: () => _openEditor(),
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬'),
+                label: const Text('إضافة منتج'),
               ),
             ],
           ),
@@ -6151,7 +6153,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                       child: Padding(
                         padding: const EdgeInsets.all(24),
                         child: Text(
-                          'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ù† Firestore: ${snapshot.error}',
+                          'تعذر تحميل المنتجات من Firestore: ${snapshot.error}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: Color(0xFF6B7A9A)),
                         ),
@@ -6163,7 +6165,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                   if (products.isEmpty) {
                     return const Center(
                       child: Text(
-                        'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ø¨Ø¹Ø¯. Ø£Ø¶Ù Ø£ÙˆÙ„ Ù…Ù†ØªØ¬ Ù…Ù† Ø§Ù„Ø²Ø± Ø§Ù„Ø¹Ù„ÙˆÙŠ.',
+                        'لا توجد منتجات بعد. أضف أول منتج من الزر العلوي.',
                         style: TextStyle(
                           color: Color(0xFF6B7A9A),
                           fontWeight: FontWeight.w700,
@@ -6182,14 +6184,14 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                           const Color(0xFFF2FBF7),
                         ),
                         columns: const [
-                          DataColumn(label: Text('Ø§Ù„Ù‚Ø³Ù…')),
-                          DataColumn(label: Text('Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ')),
-                          DataColumn(label: Text('Ø³Ø¹Ø±Ù‡')),
-                          DataColumn(label: Text('Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†')),
-                          DataColumn(label: Text('Ø³Ø¹Ø±Ù‡')),
-                          DataColumn(label: Text('Ø§Ù„ØµÙˆØ±')),
-                          DataColumn(label: Text('Ø§Ù„Ø±Ø§Ø¨Ø·')),
-                          DataColumn(label: Text('Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª')),
+                          DataColumn(label: Text('القسم')),
+                          DataColumn(label: Text('المنتج المرجعي')),
+                          DataColumn(label: Text('سعره')),
+                          DataColumn(label: Text('الخيار المقارن')),
+                          DataColumn(label: Text('سعره')),
+                          DataColumn(label: Text('الصور')),
+                          DataColumn(label: Text('الرابط')),
+                          DataColumn(label: Text('الإجراءات')),
                         ],
                         rows: products.map((product) {
                           return DataRow(
@@ -6240,7 +6242,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                                   width: 160,
                                   child: Text(
                                     product.buyUrl.trim().isEmpty
-                                        ? 'Ø¨Ø¯ÙˆÙ† Ø±Ø§Ø¨Ø·'
+                                        ? 'بدون رابط'
                                         : product.buyUrl,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -6257,11 +6259,11 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                                       OutlinedButton(
                                         onPressed: () =>
                                             _openEditor(initialProduct: product),
-                                        child: const Text('ØªØ¹Ø¯ÙŠÙ„'),
+                                        child: const Text('تعديل'),
                                       ),
                                       OutlinedButton(
                                         onPressed: () => _publishProduct(product),
-                                        child: const Text('Ù†Ø´Ø±'),
+                                        child: const Text('نشر'),
                                       ),
                                       OutlinedButton(
                                         onPressed: () => _deleteProduct(product),
@@ -6269,7 +6271,7 @@ class _AdminProductsTableState extends State<_AdminProductsTable> {
                                           foregroundColor:
                                               const Color(0xFFC24E4E),
                                         ),
-                                        child: const Text('Ø­Ø°Ù'),
+                                        child: const Text('حذف'),
                                       ),
                                     ],
                                   ),
@@ -6323,7 +6325,7 @@ class _AdminBuildFailurePanel extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 const Text(
-                  'ØªØ¹Ø°Ø± Ø¨Ù†Ø§Ø¡ ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©',
+                  'تعذر بناء واجهة الإدارة',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
@@ -6473,7 +6475,7 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
 
   String? _validateRequired(String? value, String label) {
     if (value == null || value.trim().isEmpty) {
-      return '$label Ù…Ø·Ù„ÙˆØ¨.';
+      return '$label مطلوب.';
     }
     return null;
   }
@@ -6481,12 +6483,12 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
   String? _validateUrl(String? value, {bool required = false}) {
     final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) {
-      return required ? 'Ù‡Ø°Ø§ Ø§Ù„Ø±Ø§Ø¨Ø· Ù…Ø·Ù„ÙˆØ¨.' : null;
+      return required ? 'هذا الرابط مطلوب.' : null;
     }
 
     final uri = Uri.tryParse(trimmed);
     if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
-      return 'Ø£Ø¯Ø®Ù„ Ø±Ø§Ø¨Ø·Ø§Ù‹ ØµØ§Ù„Ø­Ø§Ù‹ ÙŠØ¨Ø¯Ø£ Ø¨Ù€ http Ø£Ùˆ https.';
+      return 'أدخل رابطاً صالحاً يبدأ بـ http أو https.';
     }
     return null;
   }
@@ -6528,8 +6530,8 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                 children: [
                   Text(
                     widget.initialBanner == null
-                        ? 'Ø¥Ø¶Ø§ÙØ© Ø¨Ù†Ø± Ø¬Ø¯ÙŠØ¯'
-                        : 'ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ø¨Ù†Ø±',
+                        ? 'إضافة بنر جديد'
+                        : 'تعديل البنر',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -6540,26 +6542,26 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                   TextFormField(
                     controller: _storeNameController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ø³Ù… Ø§Ù„Ù…ØªØ¬Ø±',
+                      labelText: 'اسم المتجر',
                       prefixIcon: Icon(Icons.storefront_rounded),
                     ),
-                    validator: (value) => _validateRequired(value, 'Ø§Ø³Ù… Ø§Ù„Ù…ØªØ¬Ø±'),
+                    validator: (value) => _validateRequired(value, 'اسم المتجر'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _titleController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø¨Ù†Ø±',
+                      labelText: 'عنوان البنر',
                       prefixIcon: Icon(Icons.campaign_rounded),
                     ),
-                    validator: (value) => _validateRequired(value, 'Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø¨Ù†Ø±'),
+                    validator: (value) => _validateRequired(value, 'عنوان البنر'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _subtitleController,
                     maxLines: 2,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ù„ÙˆØµÙ Ø§Ù„Ù…Ø®ØªØµØ±',
+                      labelText: 'الوصف المختصر',
                       prefixIcon: Icon(Icons.subject_rounded),
                     ),
                   ),
@@ -6568,7 +6570,7 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                     controller: _imageUrlController,
                     keyboardType: TextInputType.url,
                     decoration: const InputDecoration(
-                      labelText: 'Ø±Ø§Ø¨Ø· Ø§Ù„ØµÙˆØ±Ø©',
+                      labelText: 'رابط الصورة',
                       prefixIcon: Icon(Icons.image_rounded),
                     ),
                     validator: (value) => _validateUrl(value, required: true),
@@ -6578,7 +6580,7 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                     controller: _targetUrlController,
                     keyboardType: TextInputType.url,
                     decoration: const InputDecoration(
-                      labelText: 'Ø±Ø§Ø¨Ø· Ø§Ù„ÙˆØ¬Ù‡Ø©',
+                      labelText: 'رابط الوجهة',
                       prefixIcon: Icon(Icons.link_rounded),
                     ),
                     validator: _validateUrl,
@@ -6588,13 +6590,13 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                     controller: _orderController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ù„ØªØ±ØªÙŠØ¨',
+                      labelText: 'الترتيب',
                       prefixIcon: Icon(Icons.format_list_numbered_rounded),
                     ),
                     validator: (value) {
                       final parsed = int.tryParse(value?.trim() ?? '');
                       if (parsed == null || parsed < 0) {
-                        return 'Ø£Ø¯Ø®Ù„ Ø±Ù‚Ù…Ø§Ù‹ ØµØ­ÙŠØ­Ø§Ù‹ Ù„Ù„ØªØ±ØªÙŠØ¨.';
+                        return 'أدخل رقماً صحيحاً للترتيب.';
                       }
                       return null;
                     },
@@ -6603,8 +6605,8 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                   SwitchListTile(
                     value: _active,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Ø§Ù„Ø¨Ù†Ø± Ù†Ø´Ø·'),
-                    subtitle: const Text('Ø§Ù„Ø¨Ù†Ø±Ø§Øª ØºÙŠØ± Ø§Ù„Ù†Ø´Ø·Ø© Ù„Ù† ØªØ¸Ù‡Ø± Ù„Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†.'),
+                    title: const Text('البنر نشط'),
+                    subtitle: const Text('البنرات غير النشطة لن تظهر للمستخدمين.'),
                     onChanged: (value) {
                       setState(() {
                         _active = value;
@@ -6617,14 +6619,14 @@ class _AdminBannerEditorDialogState extends State<_AdminBannerEditorDialog> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                          child: const Text('إلغاء'),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _save,
-                          child: const Text('Ø­ÙØ¸'),
+                          child: const Text('حفظ'),
                         ),
                       ),
                     ],
@@ -6718,7 +6720,7 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
 
   String? _validateRequired(String? value, String label) {
     if (value == null || value.trim().isEmpty) {
-      return '$label Ù…Ø·Ù„ÙˆØ¨.';
+      return '$label مطلوب.';
     }
     return null;
   }
@@ -6726,7 +6728,7 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
   String? _validatePrice(String? value, String label) {
     final parsed = double.tryParse(value?.trim() ?? '');
     if (parsed == null || parsed <= 0) {
-      return 'Ø£Ø¯Ø®Ù„ Ù‚ÙŠÙ…Ø© ØµØ­ÙŠØ­Ø© Ù„Ù€ $label.';
+      return 'أدخل قيمة صحيحة لـ $label.';
     }
     return null;
   }
@@ -6739,7 +6741,7 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
 
     final uri = Uri.tryParse(trimmed);
     if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
-      return 'Ø£Ø¯Ø®Ù„ Ø±Ø§Ø¨Ø·Ø§Ù‹ ØµØ§Ù„Ø­Ø§Ù‹ ÙŠØ¨Ø¯Ø£ Ø¨Ù€ http Ø£Ùˆ https.';
+      return 'أدخل رابطاً صالحاً يبدأ بـ http أو https.';
     }
     return null;
   }
@@ -6804,8 +6806,8 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                 children: [
                   Text(
                     widget.initialProduct == null
-                        ? 'Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬ Ø¬Ø¯ÙŠØ¯'
-                        : 'ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬',
+                        ? 'إضافة منتج جديد'
+                        : 'تعديل المنتج',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -6816,7 +6818,7 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                   DropdownButtonFormField<String>(
                     initialValue: _selectedCategoryId,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ù„Ù‚Ø³Ù…',
+                      labelText: 'القسم',
                       prefixIcon: Icon(Icons.category_rounded),
                     ),
                     items: _categories
@@ -6838,11 +6840,11 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                   TextFormField(
                     controller: _expensiveNameController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ø³Ù… Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ',
+                      labelText: 'اسم المنتج المرجعي',
                       prefixIcon: Icon(Icons.inventory_2_outlined),
                     ),
                     validator: (value) =>
-                        _validateRequired(value, 'Ø§Ø³Ù… Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ'),
+                        _validateRequired(value, 'اسم المنتج المرجعي'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
@@ -6851,18 +6853,18 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                       decimal: true,
                     ),
                     decoration: const InputDecoration(
-                      labelText: 'Ø³Ø¹Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ',
+                      labelText: 'سعر المنتج المرجعي',
                       prefixIcon: Icon(Icons.attach_money_rounded),
                     ),
                     validator: (value) =>
-                        _validatePrice(value, 'Ø³Ø¹Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ'),
+                        _validatePrice(value, 'سعر المنتج المرجعي'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _expensiveImageUrlController,
                     keyboardType: TextInputType.url,
                     decoration: const InputDecoration(
-                      labelText: 'Ø±Ø§Ø¨Ø· ØµÙˆØ±Ø© Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ',
+                      labelText: 'رابط صورة المنتج المرجعي',
                       prefixIcon: Icon(Icons.image_search_rounded),
                     ),
                     validator: _validateUrl,
@@ -6871,11 +6873,11 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                   TextFormField(
                     controller: _alternativeNameController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ø³Ù… Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†',
+                      labelText: 'اسم الخيار المقارن',
                       prefixIcon: Icon(Icons.swap_horiz_rounded),
                     ),
                     validator: (value) =>
-                        _validateRequired(value, 'Ø§Ø³Ù… Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†'),
+                        _validateRequired(value, 'اسم الخيار المقارن'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
@@ -6884,18 +6886,18 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                       decimal: true,
                     ),
                     decoration: const InputDecoration(
-                      labelText: 'Ø³Ø¹Ø± Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†',
+                      labelText: 'سعر الخيار المقارن',
                       prefixIcon: Icon(Icons.savings_rounded),
                     ),
                     validator: (value) =>
-                        _validatePrice(value, 'Ø³Ø¹Ø± Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†'),
+                        _validatePrice(value, 'سعر الخيار المقارن'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _alternativeImageUrlController,
                     keyboardType: TextInputType.url,
                     decoration: const InputDecoration(
-                      labelText: 'Ø±Ø§Ø¨Ø· ØµÙˆØ±Ø© Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†',
+                      labelText: 'رابط صورة الخيار المقارن',
                       prefixIcon: Icon(Icons.image_search_rounded),
                     ),
                     validator: _validateUrl,
@@ -6905,7 +6907,7 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                     controller: _buyUrlController,
                     keyboardType: TextInputType.url,
                     decoration: const InputDecoration(
-                      labelText: 'Ø±Ø§Ø¨Ø· Ø§Ù„Ø´Ø±Ø§Ø¡ Ø£Ùˆ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†',
+                      labelText: 'رابط الشراء أو الإعلان',
                       prefixIcon: Icon(Icons.link_rounded),
                     ),
                     validator: _validateUrl,
@@ -6916,14 +6918,14 @@ class _AdminProductEditorDialogState extends State<_AdminProductEditorDialog> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                          child: const Text('إلغاء'),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _save,
-                          child: const Text('Ø­ÙØ¸'),
+                          child: const Text('حفظ'),
                         ),
                       ),
                     ],
@@ -6976,7 +6978,7 @@ class AdminProductDraft {
         normalizedCategory,
         referenceName.trim(),
         comparisonName.trim(),
-        'Ø¥Ø¶Ø§ÙØ© Ù…Ø³Ø¤ÙˆÙ„',
+        'إضافة مسؤول',
       ],
     );
   }
@@ -7007,7 +7009,7 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
   @override
   void initState() {
     super.initState();
-    _categoryController.text = 'Ù‚Ù‡ÙˆØ©';
+    _categoryController.text = 'قهوة';
   }
 
   @override
@@ -7030,7 +7032,7 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
 
     if (_passwordController.text.trim() != LeastPriceDataConfig.adminPassword) {
       setState(() {
-        _passwordError = 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± ØµØ­ÙŠØ­Ø©.';
+        _passwordError = 'كلمة المرور غير صحيحة.';
       });
       return;
     }
@@ -7051,9 +7053,9 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
     return double.tryParse(value.trim()) ?? 0;
   }
 
-  String? _validateRequired(String? value, {String label = 'Ù‡Ø°Ø§ Ø§Ù„Ø­Ù‚Ù„'}) {
+  String? _validateRequired(String? value, {String label = 'هذا الحقل'}) {
     if (value == null || value.trim().isEmpty) {
-      return '$label Ù…Ø·Ù„ÙˆØ¨.';
+      return '$label مطلوب.';
     }
 
     return null;
@@ -7061,12 +7063,12 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
 
   String? _validatePrice(String? value, {required String label}) {
     if (value == null || value.trim().isEmpty) {
-      return '$label Ù…Ø·Ù„ÙˆØ¨.';
+      return '$label مطلوب.';
     }
 
     final parsed = double.tryParse(value.trim());
     if (parsed == null || parsed <= 0) {
-      return 'Ø£Ø¯Ø®Ù„ Ù‚ÙŠÙ…Ø© ØµØ­ÙŠØ­Ø© Ù„Ù€ $label.';
+      return 'أدخل قيمة صحيحة لـ $label.';
     }
 
     return null;
@@ -7079,7 +7081,7 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
 
     final uri = Uri.tryParse(value.trim());
     if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
-      return 'Ø£Ø¯Ø®Ù„ Ø±Ø§Ø¨Ø·Ø§Ù‹ ØµØ§Ù„Ø­Ø§Ù‹ ÙŠØ¨Ø¯Ø£ Ø¨Ù€ http Ø£Ùˆ httpsØŒ Ø£Ùˆ Ø§ØªØ±Ùƒ Ø§Ù„Ø­Ù‚Ù„ ÙØ§Ø±ØºØ§Ù‹.';
+      return 'أدخل رابطاً صالحاً يبدأ بـ http أو https، أو اترك الحقل فارغاً.';
     }
 
     return null;
@@ -7125,7 +7127,7 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø³Ø¤ÙˆÙ„',
+                              'لوحة المسؤول',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
@@ -7134,7 +7136,7 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              'Ø£Ø¶Ù Ù…Ù†ØªØ¬Ø§Ù‹ Ø¬Ø¯ÙŠØ¯Ø§Ù‹ Ù„ÙŠØ¸Ù‡Ø± ÙÙˆØ±Ø§Ù‹ Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.',
+                              'أضف منتجاً جديداً ليظهر فوراً داخل التطبيق.',
                               style: TextStyle(
                                 color: Color(0xFF667C74),
                                 height: 1.4,
@@ -7150,7 +7152,7 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±',
+                      labelText: 'كلمة المرور',
                       prefixIcon: const Icon(Icons.lock_rounded),
                       errorText: _passwordError,
                       suffixIcon: IconButton(
@@ -7174,17 +7176,17 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                       }
                     },
                     validator: (value) =>
-                        _validateRequired(value, label: 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±'),
+                        _validateRequired(value, label: 'كلمة المرور'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _originalNameController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ø³Ù… Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ',
+                      labelText: 'اسم المنتج المرجعي',
                       prefixIcon: Icon(Icons.inventory_2_outlined),
                     ),
                     validator: (value) =>
-                        _validateRequired(value, label: 'Ø§Ø³Ù… Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ'),
+                        _validateRequired(value, label: 'اسم المنتج المرجعي'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
@@ -7193,21 +7195,21 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                       decimal: true,
                     ),
                     decoration: const InputDecoration(
-                      labelText: 'Ø³Ø¹Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ',
+                      labelText: 'سعر المنتج المرجعي',
                       prefixIcon: Icon(Icons.attach_money_rounded),
                     ),
                     validator: (value) =>
-                        _validatePrice(value, label: 'Ø³Ø¹Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ù…Ø±Ø¬Ø¹ÙŠ'),
+                        _validatePrice(value, label: 'سعر المنتج المرجعي'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _alternativeNameController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ø³Ù… Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†',
+                      labelText: 'اسم الخيار المقارن',
                       prefixIcon: Icon(Icons.swap_horiz_rounded),
                     ),
                     validator: (value) =>
-                        _validateRequired(value, label: 'Ø§Ø³Ù… Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†'),
+                        _validateRequired(value, label: 'اسم الخيار المقارن'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
@@ -7216,18 +7218,18 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                       decimal: true,
                     ),
                     decoration: const InputDecoration(
-                      labelText: 'Ø³Ø¹Ø± Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†',
+                      labelText: 'سعر الخيار المقارن',
                       prefixIcon: Icon(Icons.savings_rounded),
                     ),
                     validator: (value) =>
-                        _validatePrice(value, label: 'Ø³Ø¹Ø± Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†'),
+                        _validatePrice(value, label: 'سعر الخيار المقارن'),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _affiliateUrlController,
                     keyboardType: TextInputType.url,
                     decoration: const InputDecoration(
-                      labelText: 'Ø±Ø§Ø¨Ø· Ø§Ù„Ø´Ø±Ø§Ø¡ Ø£Ùˆ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù† (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)',
+                      labelText: 'رابط الشراء أو الإعلان (اختياري)',
                       prefixIcon: Icon(Icons.link_rounded),
                     ),
                     validator: _validateUrl,
@@ -7236,11 +7238,11 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                   TextFormField(
                     controller: _categoryController,
                     decoration: const InputDecoration(
-                      labelText: 'Ø§Ù„Ù‚Ø³Ù…',
+                      labelText: 'القسم',
                       prefixIcon: Icon(Icons.category_rounded),
                     ),
                     validator: (value) =>
-                        _validateRequired(value, label: 'Ø§Ù„Ù‚Ø³Ù…'),
+                        _validateRequired(value, label: 'القسم'),
                   ),
                   const SizedBox(height: 22),
                   Row(
@@ -7248,21 +7250,21 @@ class _AdminAddProductDialogState extends State<_AdminAddProductDialog> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                          child: const Text('إلغاء'),
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _save,
-                          child: const Text('Ø­ÙØ¸'),
+                          child: const Text('حفظ'),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'ÙŠÙ…ÙƒÙ† ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù…Ù† Ø§Ù„Ø«Ø§Ø¨Øª adminPassword Ø¯Ø§Ø®Ù„ LeastPriceDataConfig.',
+                    'يمكن تغيير كلمة المرور من الثابت adminPassword داخل LeastPriceDataConfig.',
                     style: TextStyle(
                       color: Color(0xFF667C74),
                       fontSize: 12.5,
@@ -7311,7 +7313,7 @@ class _RateAlternativeDialogState extends State<_RateAlternativeDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'ØªÙ‚ÙŠÙŠÙ… Ø¬ÙˆØ¯Ø© Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ù…Ù‚Ø§Ø±Ù†',
+              'تقييم جودة الخيار المقارن',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
@@ -7320,7 +7322,7 @@ class _RateAlternativeDialogState extends State<_RateAlternativeDialog> {
             ),
             const SizedBox(height: 8),
             Text(
-              'ÙƒÙŠÙ ØªØ±Ù‰ "${widget.product.alternativeName}" Ù…Ù† Ø­ÙŠØ« Ø§Ù„Ø¬ÙˆØ¯Ø© ÙˆØ§Ù„Ù…ÙƒÙˆÙ‘Ù†Ø§Øª Ù…Ù‚Ø§Ø±Ù†Ø©Ù‹ Ø¨Ù€ "${widget.product.expensiveName}"ØŸ',
+              'كيف ترى "${widget.product.alternativeName}" من حيث الجودة والمكوّنات مقارنةً بـ "${widget.product.expensiveName}"؟',
               style: const TextStyle(
                 color: Color(0xFF667C74),
                 height: 1.5,
@@ -7356,7 +7358,7 @@ class _RateAlternativeDialogState extends State<_RateAlternativeDialog> {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                '${_selectedRating.toStringAsFixed(1)} Ù…Ù† 5',
+                '${_selectedRating.toStringAsFixed(1)} من 5',
                 style: const TextStyle(
                   color: Color(0xFF7A5A00),
                   fontWeight: FontWeight.w800,
@@ -7369,14 +7371,14 @@ class _RateAlternativeDialogState extends State<_RateAlternativeDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Ø¥Ù„ØºØ§Ø¡'),
+                    child: const Text('إلغاء'),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(_selectedRating),
-                    child: const Text('Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…'),
+                    child: const Text('إرسال التقييم'),
                   ),
                 ),
               ],
@@ -7419,8 +7421,8 @@ class UserSavingsProfile {
       referralRewardApplied: false,
       shareBaseUrl: LeastPriceDataConfig.appShareUrl,
       inviteMessageTemplate:
-          'Ø£Ù†Ø§ ÙˆÙØ±Øª {SAVED_AMOUNT} Ø±ÙŠØ§Ù„ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… ØªØ·Ø¨ÙŠÙ‚ Ø£Ø±Ø®Øµ Ø³Ø¹Ø±! '
-          'Ø­Ù…Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¢Ù† ÙˆØ§Ø³ØªØ®Ø¯Ù… ÙƒÙˆØ¯ Ø§Ù„Ø¯Ø¹ÙˆØ© Ø§Ù„Ø®Ø§Øµ Ø¨ÙŠ: {USER_CODE}\n{APP_LINK}',
+          'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
+          'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
     );
   }
 
@@ -7438,8 +7440,8 @@ class UserSavingsProfile {
       shareBaseUrl:
           _stringValue(json['shareBaseUrl']) ?? LeastPriceDataConfig.appShareUrl,
       inviteMessageTemplate: _stringValue(json['inviteMessageTemplate']) ??
-          'Ø£Ù†Ø§ ÙˆÙØ±Øª {SAVED_AMOUNT} Ø±ÙŠØ§Ù„ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… ØªØ·Ø¨ÙŠÙ‚ Ø£Ø±Ø®Øµ Ø³Ø¹Ø±! '
-              'Ø­Ù…Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¢Ù† ÙˆØ§Ø³ØªØ®Ø¯Ù… ÙƒÙˆØ¯ Ø§Ù„Ø¯Ø¹ÙˆØ© Ø§Ù„Ø®Ø§Øµ Ø¨ÙŠ: {USER_CODE}\n{APP_LINK}',
+          'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
+              'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
     );
   }
 
@@ -7526,9 +7528,9 @@ class AutomationHealthStatus {
 
   String get statusLabel {
     if (lastSuccessAt == null) {
-      return 'Ø§Ù„Ø±ÙˆØ¨ÙˆØª: Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø£ÙˆÙ„ ØªØ´ØºÙŠÙ„';
+      return 'الروبوت: بانتظار أول تشغيل';
     }
-    return 'Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ« ${_formatHealthTimestamp(lastSuccessAt)}';
+    return 'آخر تحديث ${_formatHealthTimestamp(lastSuccessAt)}';
   }
 }
 
@@ -7542,11 +7544,11 @@ extension ProductDataSourceLabel on ProductDataSource {
   String get label {
     switch (this) {
       case ProductDataSource.remote:
-        return 'Ø±Ø§Ø¨Ø· Ø®Ø§Ø±Ø¬ÙŠ';
+        return 'رابط خارجي';
       case ProductDataSource.asset:
-        return 'Ù…Ù„Ù JSON';
+        return 'ملف JSON';
       case ProductDataSource.mock:
-        return 'Ø¨ÙŠØ§Ù†Ø§Øª ØªØ¬Ø±ÙŠØ¨ÙŠØ©';
+        return 'بيانات تجريبية';
     }
   }
 }
@@ -7574,7 +7576,7 @@ class LeastPriceDataConfig {
     defaultValue: 'leastprice123',
   );
   static const String affiliateTag = 'myid-21';
-  static const String originalOnSaleTag = 'Ø§Ù„Ù…Ù†ØªØ¬ Ø§Ù„Ø£ØµÙ„ÙŠ Ø¹Ù„ÙŠÙ‡ Ø¹Ø±Ø¶ Ø­Ø§Ù„ÙŠØ§Ù‹';
+  static const String originalOnSaleTag = 'المنتج الأصلي عليه عرض حالياً';
   static const SearchProviderType searchProviderType = SearchProviderType.serper;
   static const String serperApiKey =
       String.fromEnvironment('SERPER_API_KEY', defaultValue: '');
@@ -7684,7 +7686,7 @@ class SmartMonitorService {
     if (!LeastPriceDataConfig.enableAutomaticPriceRefresh) {
       return CatalogRefreshResult(
         products: products,
-        notice: 'Ø§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ Ù„Ù„Ø£Ø³Ø¹Ø§Ø± Ù…Ø¹Ø·Ù„ Ø­Ø§Ù„ÙŠØ§Ù‹ Ù…Ù† Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª.',
+        notice: 'التحديث التلقائي للأسعار معطل حالياً من الإعدادات.',
       );
     }
 
@@ -7693,7 +7695,7 @@ class SmartMonitorService {
       return CatalogRefreshResult(
         products: products,
         notice:
-            'ØªÙ… ØªÙØ¹ÙŠÙ„ Ù…Ù†Ø·Ù‚ Ø§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø°ÙƒÙŠ Ù„Ù„Ø£Ø³Ø¹Ø§Ø±ØŒ Ù„ÙƒÙ†Ù‡ ÙŠØ­ØªØ§Ø¬ Ù…ÙØªØ§Ø­ API ØµØ§Ù„Ø­Ø§Ù‹ Ù„Ù€ Serper Ø£Ùˆ Tavily.',
+            'تم تفعيل منطق التحديث الذكي للأسعار، لكنه يحتاج مفتاح API صالحاً لـ Serper أو Tavily.',
       );
     }
 
@@ -7710,8 +7712,8 @@ class SmartMonitorService {
     return CatalogRefreshResult(
       products: refreshedProducts,
       notice: refreshedCount > 0
-          ? 'ØªÙ… ØªØ­Ø¯ÙŠØ« $refreshedCount Ù…Ù†ØªØ¬Ø§Ù‹ ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ù…Ù† Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ©.'
-          : 'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø£Ø³Ø¹Ø§Ø± Ø£Ø­Ø¯Ø« Ù…Ù† Ù…ÙˆØµÙ„ Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ø­Ø§Ù„ÙŠØŒ ÙØªÙ… Ø§Ù„Ø¥Ø¨Ù‚Ø§Ø¡ Ø¹Ù„Ù‰ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ©.',
+          ? 'تم تحديث $refreshedCount منتجاً تلقائياً من نتائج البحث السعودية.'
+          : 'لم يتم العثور على أسعار أحدث من موصل البحث الحالي، فتم الإبقاء على البيانات الحالية.',
     );
   }
 
@@ -7784,11 +7786,11 @@ class SmartMonitorService {
   }
 
   String _buildExpensiveQuery(ProductComparison product) {
-    return '${product.expensiveName} site:amazon.sa OR site:noon.com Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ© Ø³Ø¹Ø±';
+    return '${product.expensiveName} site:amazon.sa OR site:noon.com السعودية سعر';
   }
 
   String _buildAlternativeQuery(ProductComparison product) {
-    return '${product.alternativeName} Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ© Ø³Ø¹Ø± '
+    return '${product.alternativeName} السعودية سعر '
         'site:noon.com OR site:amazon.sa OR site:nahdionline.com OR site:al-dawaa.com OR site:hungerstation.com OR site:jahez.net';
   }
 
@@ -7835,9 +7837,9 @@ class SmartMonitorService {
   double? _extractPrice(String title, String snippet) {
     final text = '$title $snippet'.replaceAll(',', '');
     final patterns = [
-      RegExp(r'(?:Ø±\.?\s?Ø³|Ø±ÙŠØ§Ù„|SAR)\s*([0-9]+(?:\.[0-9]{1,2})?)',
+      RegExp(r'(?:ر\.?\s?س|ريال|SAR)\s*([0-9]+(?:\.[0-9]{1,2})?)',
           caseSensitive: false),
-      RegExp(r'([0-9]+(?:\.[0-9]{1,2})?)\s*(?:Ø±\.?\s?Ø³|Ø±ÙŠØ§Ù„|SAR)',
+      RegExp(r'([0-9]+(?:\.[0-9]{1,2})?)\s*(?:ر\.?\s?س|ريال|SAR)',
           caseSensitive: false),
     ];
 
@@ -8045,7 +8047,7 @@ class SmartSearchDiscoveryService {
       return const SmartSearchDiscoveryResult(
         products: <ProductComparison>[],
         notice:
-            'Ù„ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ø°ÙƒÙŠ Ù…Ù† Ø§Ù„ÙˆÙŠØ¨ Ø£Ø¶Ù Ù…ÙØªØ§Ø­ Serper Ø£Ùˆ Tavily Ø¹Ø¨Ø± --dart-define.',
+            'لتفعيل البحث الذكي من الويب أضف مفتاح Serper أو Tavily عبر --dart-define.',
       );
     }
 
@@ -8071,7 +8073,7 @@ class SmartSearchDiscoveryService {
       return const SmartSearchDiscoveryResult(
         products: <ProductComparison>[],
         notice:
-            'Ù„Ù… ØªØªÙˆÙØ± Ø¨Ø¹Ø¯ Ø£Ø³Ø¹Ø§Ø± ÙˆÙŠØ¨ ÙƒØ§ÙÙŠØ© Ù„ØªÙƒÙˆÙŠÙ† Ø¨Ø·Ø§Ù‚Ø© Ù…Ù‚Ø§Ø±Ù†Ø© Ø¬Ø¯ÙŠØ¯Ø©ØŒ Ù„Ø°Ù„Ùƒ Ø³Ù†Ø¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ© Ø£Ùˆ Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù‚Ø§Ø¯Ù….',
+            'لم تتوفر بعد أسعار ويب كافية لتكوين بطاقة مقارنة جديدة، لذلك سنعتمد على القاعدة الحالية أو طلب الإضافة القادم.',
       );
     }
 
@@ -8085,14 +8087,14 @@ class SmartSearchDiscoveryService {
       return const SmartSearchDiscoveryResult(
         products: <ProductComparison>[],
         notice:
-            'Ù†ØªØ§Ø¦Ø¬ Ø§Ù„ÙˆÙŠØ¨ Ø§Ù„Ø­Ø§Ù„ÙŠØ© ÙƒØ§Ù†Øª Ù‚Ø±ÙŠØ¨Ø© Ù…Ù† Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¬ÙˆØ¯Ø© Ù…Ø³Ø¨Ù‚Ø§Ù‹ØŒ Ù„Ø°Ù„Ùƒ Ù„Ù… Ù†Ø¶Ù Ø¨Ø·Ø§Ù‚Ø© Ø¬Ø¯ÙŠØ¯Ø© Ø§Ù„Ø¢Ù†.',
+            'نتائج الويب الحالية كانت قريبة من البيانات الموجودة مسبقاً، لذلك لم نضف بطاقة جديدة الآن.',
       );
     }
 
     return SmartSearchDiscoveryResult(
       products: suggestions,
       notice:
-          'ØªÙ… ØªÙˆÙ„ÙŠØ¯ ${suggestions.length} Ø¨Ø·Ø§Ù‚Ø© Ø°ÙƒÙŠØ© Ù…Ù† Ù†ØªØ§Ø¦Ø¬ Ø§Ù„ÙˆÙŠØ¨ Ø­ØªÙ‰ Ù„Ùˆ Ù„Ù… ØªÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.',
+          'تم توليد ${suggestions.length} بطاقة ذكية من نتائج الويب حتى لو لم تكن موجودة في قاعدة البيانات.',
     );
   }
 
@@ -8104,7 +8106,7 @@ class SmartSearchDiscoveryService {
         ? ''
         : '${ProductCategoryCatalog.lookup(selectedCategoryId).label} ';
 
-    return '$query $categoryHintØ³Ø¹Ø± Ù…ÙƒÙˆÙ†Ø§Øª Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ© '
+    return '$query $categoryHintسعر مكونات السعودية '
         'site:amazon.sa OR site:noon.com OR site:nahdionline.com OR site:al-dawaa.com OR site:hungerstation.com OR site:jahez.net OR site:mrsool.co';
   }
 
@@ -8133,7 +8135,7 @@ class SmartSearchDiscoveryService {
         : selectedCategoryId;
     final category = ProductCategoryCatalog.lookup(
       inferredCategoryId,
-      fallbackLabel: 'Ù…Ù‚Ø§Ø±Ù†Ø© Ø°ÙƒÙŠØ©',
+      fallbackLabel: 'مقارنة ذكية',
     );
 
     return _SmartSearchCandidate(
@@ -8188,7 +8190,7 @@ class SmartSearchDiscoveryService {
         tags: [
           cheaper.categoryLabel,
           query,
-          'Ø¨Ø­Ø« Ø°ÙƒÙŠ',
+          'بحث ذكي',
           cheaper.hostLabel,
         ],
         fragranceNotes:
@@ -8234,7 +8236,7 @@ class SmartSearchDiscoveryService {
       return '';
     }
 
-    final separators = [' | ', ' - ', ' â€“ ', ' â€” ', ' â€¢ '];
+    final separators = [' | ', ' - ', ' – ', ' — ', ' • '];
     for (final separator in separators) {
       final index = raw.indexOf(separator);
       if (index > 12) {
@@ -8252,9 +8254,9 @@ class SmartSearchDiscoveryService {
     }
 
     final patterns = <RegExp>[
-      RegExp(r'(?:Ø§Ù„Ù…ÙƒÙˆÙ†Ø§Øª|Ø§Ù„Ù…Ø§Ø¯Ø© Ø§Ù„ÙØ¹Ø§Ù„Ø©|ingredients?|active ingredients?)[:\-]\s*([^.\n]{12,120})',
+      RegExp(r'(?:المكونات|المادة الفعالة|ingredients?|active ingredients?)[:\-]\s*([^.\n]{12,120})',
           caseSensitive: false),
-      RegExp(r'(?:Ø§Ù„Ù†ÙˆØªØ©|Ø§Ù„Ù†ÙØ­Ø§Øª|notes?)[:\-]\s*([^.\n]{12,120})',
+      RegExp(r'(?:النوتة|النفحات|notes?)[:\-]\s*([^.\n]{12,120})',
           caseSensitive: false),
     ];
 
@@ -8291,11 +8293,11 @@ class SmartSearchDiscoveryService {
     final normalized = host.toLowerCase();
     if (normalized.contains('amazon')) return 'Amazon.sa';
     if (normalized.contains('noon')) return 'Noon';
-    if (normalized.contains('nahdi')) return 'Ø§Ù„Ù†Ù‡Ø¯ÙŠ';
-    if (normalized.contains('dawaa')) return 'Ø§Ù„Ø¯ÙˆØ§Ø¡';
+    if (normalized.contains('nahdi')) return 'النهدي';
+    if (normalized.contains('dawaa')) return 'الدواء';
     if (normalized.contains('hungerstation')) return 'HungerStation';
-    if (normalized.contains('jahez')) return 'Ø¬Ø§Ù‡Ø²';
-    if (normalized.contains('mrsool')) return 'Ù…Ø±Ø³ÙˆÙ„';
+    if (normalized.contains('jahez')) return 'جاهز';
+    if (normalized.contains('mrsool')) return 'مرسول';
     return host;
   }
 
@@ -8303,11 +8305,11 @@ class SmartSearchDiscoveryService {
     final text = '$title $snippet'.replaceAll(',', '');
     final patterns = [
       RegExp(
-        r'(?:Ø±\.?\s?Ø³|Ø±ÙŠØ§Ù„|SAR)\s*([0-9]+(?:\.[0-9]{1,2})?)',
+        r'(?:ر\.?\s?س|ريال|SAR)\s*([0-9]+(?:\.[0-9]{1,2})?)',
         caseSensitive: false,
       ),
       RegExp(
-        r'([0-9]+(?:\.[0-9]{1,2})?)\s*(?:Ø±\.?\s?Ø³|Ø±ÙŠØ§Ù„|SAR)',
+        r'([0-9]+(?:\.[0-9]{1,2})?)\s*(?:ر\.?\s?س|ريال|SAR)',
         caseSensitive: false,
       ),
     ];
@@ -8448,8 +8450,8 @@ class FirestoreCatalogService {
       referralRewardApplied: false,
       shareBaseUrl: LeastPriceDataConfig.appShareUrl,
       inviteMessageTemplate:
-          'Ø£Ù†Ø§ ÙˆÙØ±Øª {SAVED_AMOUNT} Ø±ÙŠØ§Ù„ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… ØªØ·Ø¨ÙŠÙ‚ Ø£Ø±Ø®Øµ Ø³Ø¹Ø±! '
-          'Ø­Ù…Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¢Ù† ÙˆØ§Ø³ØªØ®Ø¯Ù… ÙƒÙˆØ¯ Ø§Ù„Ø¯Ø¹ÙˆØ© Ø§Ù„Ø®Ø§Øµ Ø¨ÙŠ: {USER_CODE}\n{APP_LINK}',
+          'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
+          'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
     );
 
     await userDocument.set(
@@ -8746,11 +8748,11 @@ class ProductRepository {
           );
         }
       } catch (_) {
-        notice = 'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø£Ø­Ø¯Ø« Ø§Ù„Ø£Ø³Ø¹Ø§Ø± Ù…Ù† Ø§Ù„Ø±Ø§Ø¨Ø· Ø§Ù„Ø®Ø§Ø±Ø¬ÙŠØŒ Ù„Ø°Ù„Ùƒ ØªÙ… Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…ØµØ¯Ø± Ø¨Ø¯ÙŠÙ„.';
+        notice = 'تعذر تحميل أحدث الأسعار من الرابط الخارجي، لذلك تم استخدام مصدر بديل.';
       }
     } else if (remoteUrl.isNotEmpty) {
       notice =
-          'ØªÙ… ØªÙØ¹ÙŠÙ„ remoteJsonUrl ÙƒØ±Ø§Ø¨Ø· Ù†Ù…ÙˆØ°Ø¬ÙŠ. Ø§Ø³ØªØ¨Ø¯Ù„Ù‡ Ø¨Ø±Ø§Ø¨Ø·Ùƒ Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ù„Ø¨Ø¯Ø¡ Ø§Ù„ØªØ­ÙƒÙ… Ø¹Ù† Ø¨Ø¹Ø¯ Ø¨Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.';
+          'تم تفعيل remoteJsonUrl كرابط نموذجي. استبدله برابطك الحقيقي لبدء التحكم عن بعد بالبيانات.';
     }
 
     try {
@@ -8768,7 +8770,7 @@ class ProductRepository {
       }
     } catch (_) {
       notice ??=
-          'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ù…Ù„Ù JSON Ø®Ø§Ø±Ø¬ÙŠØŒ Ù„Ø°Ù„Ùƒ ØªÙ… Ø¹Ø±Ø¶ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªØ¬Ø±ÙŠØ¨ÙŠØ© Ø§Ù„Ø­Ø§Ù„ÙŠØ©.';
+          'لم يتم العثور على ملف JSON خارجي، لذلك تم عرض البيانات التجريبية الحالية.';
     }
 
     return ProductLoadResult(
@@ -8776,7 +8778,7 @@ class ProductRepository {
       source: ProductDataSource.mock,
       referralProfile: UserSavingsProfile.initial(),
       notice: notice ??
-          'ÙŠÙ…ÙƒÙ†Ùƒ Ù„Ø§Ø­Ù‚Ø§Ù‹ Ø±Ø¨Ø· Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¨Ù…Ù„Ù JSON Ø£Ùˆ Ø±Ø§Ø¨Ø· URL Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø£Ø³Ø¹Ø§Ø± Ø¨Ø¯ÙˆÙ† Ø¥Ø¹Ø§Ø¯Ø© Ù†Ø´Ø± Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.',
+          'يمكنك لاحقاً ربط التطبيق بملف JSON أو رابط URL لتحديث الأسعار بدون إعادة نشر التطبيق.',
     );
   }
 
@@ -8894,14 +8896,14 @@ class AdBannerItem {
   factory AdBannerItem.fromJson(Map<String, dynamic> json) {
     return AdBannerItem(
       id: _stringValue(json['id']) ?? '',
-      title: _stringValue(json['title']) ?? 'Ø¹Ø±Ø¶ Ù…ØªØ¬Ø±',
-      subtitle: _stringValue(json['subtitle']) ?? 'Ø®ØµÙˆÙ…Ø§Øª ÙŠÙˆÙ…ÙŠØ© Ø¯Ø§Ø®Ù„ Ø£Ø±Ø®Øµ Ø³Ø¹Ø±',
+      title: _stringValue(json['title']) ?? 'عرض متجر',
+      subtitle: _stringValue(json['subtitle']) ?? 'خصومات يومية داخل أرخص سعر',
       imageUrl: _normalizedImageUrl(
         _stringValue(json['imageUrl']) ?? '',
         fallbackLabel: _stringValue(json['title']) ?? 'LeastPrice Banner',
       ),
       targetUrl: _stringValue(json['targetUrl']) ?? '',
-      storeName: _stringValue(json['storeName']) ?? 'Ù…ØªØ¬Ø± Ù…ØªØ¹Ø§Ù‚Ø¯',
+      storeName: _stringValue(json['storeName']) ?? 'متجر متعاقد',
       active: _boolValue(json['active'], defaultValue: true),
       order: _intValue(json['order']),
     );
@@ -8931,23 +8933,23 @@ class AdBannerItem {
   static const List<AdBannerItem> mockData = [
     AdBannerItem(
       id: 'local-roaster',
-      title: 'Ø¹Ø±Ø¶ Ø§Ù„Ù…Ø­Ù…ØµØ© Ø§Ù„Ù…Ù…ÙŠØ²Ø©',
-      subtitle: 'Ø®ØµÙ… Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ù‡ÙˆØ© Ø§Ù„Ù…Ø®ØªØµØ© ÙˆØ­Ø¨ÙˆØ¨ Ø§Ù„ÙŠÙˆÙ… Ù…Ø¹ ØªÙˆØµÙŠÙ„ Ø³Ø±ÙŠØ¹.',
+      title: 'عرض المحمصة المميزة',
+      subtitle: 'خصم على القهوة المختصة وحبوب اليوم مع توصيل سريع.',
       imageUrl:
           'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1400&q=80',
       targetUrl: 'https://leastprice.app/offers/roaster',
-      storeName: 'Ù…Ø­Ù…ØµØ© Ø§Ù„Ø´Ø±Ù‚ÙŠØ©',
+      storeName: 'محمصة الشرقية',
       active: true,
       order: 1,
     ),
     AdBannerItem(
       id: 'restaurant-partner',
-      title: 'ÙˆØ¬Ø¨Ø§Øª Ù…Ø­Ù„ÙŠØ© Ø¨Ø³Ø¹Ø± Ø£ÙØ¶Ù„',
-      subtitle: 'Ø¹Ø±ÙˆØ¶ Ø­ØµØ±ÙŠØ© Ù…Ù† Ù…Ø·Ø§Ø¹Ù… Ø§Ù„Ø®Ø¨Ø± ÙˆØ§Ù„Ø¯Ù…Ø§Ù… Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.',
+      title: 'وجبات محلية بسعر أفضل',
+      subtitle: 'عروض حصرية من مطاعم الخبر والدمام داخل التطبيق.',
       imageUrl:
           'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80',
       targetUrl: 'https://leastprice.app/offers/restaurants',
-      storeName: 'Ø´Ø±ÙƒØ§Ø¡ Ø§Ù„Ù…Ø·Ø§Ø¹Ù…',
+      storeName: 'شركاء المطاعم',
       active: true,
       order: 2,
     ),
@@ -8975,7 +8977,7 @@ class ProductCategoryCatalog {
 
   static const ProductCategory all = ProductCategory(
     id: allId,
-    label: 'Ø§Ù„ÙƒÙ„',
+    label: 'الكل',
     icon: Icons.grid_view_rounded,
     color: Color(0xFFE8711A),
   );
@@ -8984,67 +8986,67 @@ class ProductCategoryCatalog {
     all,
     ProductCategory(
       id: 'coffee',
-      label: 'Ù‚Ù‡ÙˆØ©',
+      label: 'قهوة',
       icon: Icons.local_cafe_rounded,
       color: Color(0xFF8C5A2B),
     ),
     ProductCategory(
       id: 'roasters',
-      label: 'Ù…Ø­Ø§Ù…Øµ',
+      label: 'محامص',
       icon: Icons.coffee_maker_rounded,
       color: Color(0xFFA54E2A),
     ),
     ProductCategory(
       id: 'restaurants',
-      label: 'Ù…Ø·Ø§Ø¹Ù…',
+      label: 'مطاعم',
       icon: Icons.restaurant_rounded,
       color: Color(0xFFE85D3F),
     ),
     ProductCategory(
       id: 'perfumes',
-      label: 'Ø¹Ø·ÙˆØ±',
+      label: 'عطور',
       icon: Icons.spa_rounded,
       color: Color(0xFFB05CC8),
     ),
     ProductCategory(
       id: 'cosmetics',
-      label: 'ØªØ¬Ù…ÙŠÙ„',
+      label: 'تجميل',
       icon: Icons.face_retouching_natural_rounded,
       color: Color(0xFFE06F8A),
     ),
     ProductCategory(
       id: 'pharmacy',
-      label: 'ØµÙŠØ¯Ù„ÙŠØ©',
+      label: 'صيدلية',
       icon: Icons.local_pharmacy_rounded,
       color: Color(0xFF2F9E93),
     ),
     ProductCategory(
       id: 'detergents',
-      label: 'Ù…Ù†Ø¸ÙØ§Øª',
+      label: 'منظفات',
       icon: Icons.cleaning_services_rounded,
       color: Color(0xFF4D7CFE),
     ),
     ProductCategory(
       id: 'dairy',
-      label: 'Ø£Ù„Ø¨Ø§Ù†',
+      label: 'ألبان',
       icon: Icons.local_drink_rounded,
       color: Color(0xFF3FA87B),
     ),
     ProductCategory(
       id: 'canned',
-      label: 'Ù…Ø¹Ù„Ø¨Ø§Øª',
+      label: 'معلبات',
       icon: Icons.inventory_2_rounded,
       color: Color(0xFF8A6C3F),
     ),
     ProductCategory(
       id: 'tea',
-      label: 'Ø´Ø§ÙŠ',
+      label: 'شاي',
       icon: Icons.emoji_food_beverage_rounded,
       color: Color(0xFF7B8E2F),
     ),
     ProductCategory(
       id: 'juice',
-      label: 'Ø¹ØµÙŠØ±',
+      label: 'عصير',
       icon: Icons.local_bar_rounded,
       color: Color(0xFFFF8B3D),
     ),
@@ -9068,48 +9070,48 @@ class ProductCategoryCatalog {
   static String inferId(String label) {
     final normalized = _normalizeArabic(label);
 
-    if (normalized.contains('Ù…Ø­Ù…Øµ') || normalized.contains('Ø¨Ù†') || normalized.contains('Ø­Ø¨ÙˆØ¨')) {
+    if (normalized.contains('محمص') || normalized.contains('بن') || normalized.contains('حبوب')) {
       return 'roasters';
     }
-    if (normalized.contains('Ù‚Ù‡ÙˆÙ‡')) return 'coffee';
-    if (normalized.contains('Ù…Ø·Ø¹Ù…') ||
-        normalized.contains('ÙˆØ¬Ø¨Ù‡') ||
-        normalized.contains('Ø¨Ø±Ø¬Ø±')) {
+    if (normalized.contains('قهوه')) return 'coffee';
+    if (normalized.contains('مطعم') ||
+        normalized.contains('وجبه') ||
+        normalized.contains('برجر')) {
       return 'restaurants';
     }
-    if (normalized.contains('Ø¹Ø·Ø±') ||
-        normalized.contains('Ø¨Ø±ÙÙŠÙˆÙ…') ||
-        normalized.contains('Ø±Ø§Ø¦Ø­Ù‡')) {
+    if (normalized.contains('عطر') ||
+        normalized.contains('برفيوم') ||
+        normalized.contains('رائحه')) {
       return 'perfumes';
     }
-    if (normalized.contains('ØªØ¬Ù…ÙŠÙ„') ||
-        normalized.contains('Ø³ÙŠØ±ÙˆÙ…') ||
-        normalized.contains('ÙƒØ±ÙŠÙ…') ||
-        normalized.contains('Ù…ÙƒÙŠØ§Ø¬')) {
+    if (normalized.contains('تجميل') ||
+        normalized.contains('سيروم') ||
+        normalized.contains('كريم') ||
+        normalized.contains('مكياج')) {
       return 'cosmetics';
     }
-    if (normalized.contains('ØµÙŠØ¯Ù„ÙŠ') ||
-        normalized.contains('ØµÙŠØ¯Ù„ÙŠÙ‡') ||
-        normalized.contains('Ù…Ø±Ø·Ø¨') ||
-        normalized.contains('Ø¯ÙˆØ§Ø¡')) {
+    if (normalized.contains('صيدلي') ||
+        normalized.contains('صيدليه') ||
+        normalized.contains('مرطب') ||
+        normalized.contains('دواء')) {
       return 'pharmacy';
     }
-    if (normalized.contains('Ù…Ù†Ø¸Ù') || normalized.contains('ØªÙ†Ø¸ÙŠÙ')) {
+    if (normalized.contains('منظف') || normalized.contains('تنظيف')) {
       return 'detergents';
     }
-    if (normalized.contains('Ø§Ù„Ø¨Ø§Ù†') ||
-        normalized.contains('Ù„Ø¨Ù†') ||
-        normalized.contains('Ø­Ù„ÙŠØ¨') ||
-        normalized.contains('Ø¬Ø¨Ù†Ù‡')) {
+    if (normalized.contains('البان') ||
+        normalized.contains('لبن') ||
+        normalized.contains('حليب') ||
+        normalized.contains('جبنه')) {
       return 'dairy';
     }
-    if (normalized.contains('Ù…Ø¹Ù„Ø¨Ø§Øª') ||
-        normalized.contains('Ù…Ø¹Ù„Ø¨') ||
-        normalized.contains('Ù…Ø¹Ø¬ÙˆÙ†')) {
+    if (normalized.contains('معلبات') ||
+        normalized.contains('معلب') ||
+        normalized.contains('معجون')) {
       return 'canned';
     }
-    if (normalized.contains('Ø´Ø§ÙŠ')) return 'tea';
-    if (normalized.contains('Ø¹ØµÙŠØ±')) return 'juice';
+    if (normalized.contains('شاي')) return 'tea';
+    if (normalized.contains('عصير')) return 'juice';
 
     return normalized.replaceAll(' ', '_');
   }
@@ -9255,13 +9257,13 @@ class ProductComparison {
     final alternative = _asMap(json['alternative']);
 
     final categoryLabel =
-        _stringValue(json['categoryLabel'] ?? json['category']) ?? 'Ø£Ø®Ø±Ù‰';
+        _stringValue(json['categoryLabel'] ?? json['category']) ?? 'أخرى';
     final expensiveName =
         _stringValue(json['expensiveName'] ?? expensive['name']) ??
-            'Ù…Ù†ØªØ¬ Ù…Ø±ØªÙØ¹ Ø§Ù„Ø³Ø¹Ø±';
+            'منتج مرتفع السعر';
     final alternativeName =
         _stringValue(json['alternativeName'] ?? alternative['name']) ??
-            'Ø§Ù„Ø®ÙŠØ§Ø± Ø§Ù„Ø§Ù‚ØªØµØ§Ø¯ÙŠ';
+            'الخيار الاقتصادي';
     final normalizedTags = _stringListValue(json['tags']);
 
     return ProductComparison(
@@ -9343,12 +9345,12 @@ class ProductComparison {
   static final List<ProductComparison> mockData = [
     const ProductComparison(
       categoryId: 'coffee',
-      categoryLabel: 'Ù‚Ù‡ÙˆØ©',
-      expensiveName: 'Ù†Ø³ÙƒØ§ÙÙŠÙ‡ Ø¬ÙˆÙ„Ø¯ 200 Ø¬Ù…',
+      categoryLabel: 'قهوة',
+      expensiveName: 'نسكافيه جولد 200 جم',
       expensivePrice: 48.95,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ù‚Ù‡ÙˆØ© Ø¨Ø§Ø¬Ø© Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ© 250 Ø¬Ù…',
+      alternativeName: 'قهوة باجة السعودية 250 جم',
       alternativePrice: 24.50,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80',
@@ -9356,261 +9358,261 @@ class ProductComparison {
           'https://www.amazon.sa/s?k=%D9%82%D9%87%D9%88%D8%A9+%D8%A8%D8%A7%D8%AC%D8%A9',
       rating: 4.6,
       reviewCount: 184,
-      tags: ['Ù†Ø³ÙƒØ§ÙÙŠÙ‡', 'Ø¨Ø§Ø¬Ø©', 'Ù‚Ù‡ÙˆØ© ÙÙˆØ±ÙŠØ©', 'Ù…Ø´Ø±ÙˆØ¨Ø§Øª Ø³Ø§Ø®Ù†Ø©'],
+      tags: ['نسكافيه', 'باجة', 'قهوة فورية', 'مشروبات ساخنة'],
     ),
     const ProductComparison(
       categoryId: 'detergents',
-      categoryLabel: 'Ù…Ù†Ø¸ÙØ§Øª',
-      expensiveName: 'ÙÙŠØ±ÙŠ Ø³Ø§Ø¦Ù„ Ø¬Ù„ÙŠ 1 Ù„ØªØ±',
+      categoryLabel: 'منظفات',
+      expensiveName: 'فيري سائل جلي 1 لتر',
       expensivePrice: 17.50,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1583947582886-f40ec95dd752?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ù‡ÙˆÙ… ÙƒÙŠØ± Ø³Ø§Ø¦Ù„ Ø¬Ù„ÙŠ Ø§Ù‚ØªØµØ§Ø¯ÙŠ 1 Ù„ØªØ±',
+      alternativeName: 'هوم كير سائل جلي اقتصادي 1 لتر',
       alternativePrice: 9.25,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.noon.com/saudi-en/search?q=dishwashing%20liquid',
       rating: 4.2,
       reviewCount: 91,
-      tags: ['ØªÙ†Ø¸ÙŠÙ', 'Ø¬Ù„ÙŠ', 'Ù…Ø·Ø¨Ø®', 'Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©'],
+      tags: ['تنظيف', 'جلي', 'مطبخ', 'أفضل قيمة'],
     ),
     const ProductComparison(
       categoryId: 'dairy',
-      categoryLabel: 'Ø£Ù„Ø¨Ø§Ù†',
-      expensiveName: 'Ø¬Ø¨Ù†Ø© ÙƒØ±Ø§ÙØª Ø´Ø±Ø§Ø¦Ø­ 400 Ø¬Ù…',
+      categoryLabel: 'ألبان',
+      expensiveName: 'جبنة كرافت شرائح 400 جم',
       expensivePrice: 21.95,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø¬Ø¨Ù†Ø© Ø§Ù„Ù…Ø±Ø§Ø¹ÙŠ Ø´Ø±Ø§Ø¦Ø­ 400 Ø¬Ù…',
+      alternativeName: 'جبنة المراعي شرائح 400 جم',
       alternativePrice: 13.95,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.amazon.sa/s?k=%D8%AC%D8%A8%D9%86%D8%A9+%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%B9%D9%8A',
       rating: 4.4,
       reviewCount: 132,
-      tags: ['Ø¬Ø¨Ù†Ø©', 'ÙƒØ±Ø§ÙØª', 'Ø§Ù„Ù…Ø±Ø§Ø¹ÙŠ', 'Ø¥ÙØ·Ø§Ø±'],
+      tags: ['جبنة', 'كرافت', 'المراعي', 'إفطار'],
     ),
     const ProductComparison(
       categoryId: 'canned',
-      categoryLabel: 'Ù…Ø¹Ù„Ø¨Ø§Øª',
-      expensiveName: 'Ù…Ø¹Ø¬ÙˆÙ† Ø·Ù…Ø§Ø·Ù… Ù‡Ø§ÙŠÙ†Ø² 8 Ø¹Ø¨ÙˆØ§Øª',
+      categoryLabel: 'معلبات',
+      expensiveName: 'معجون طماطم هاينز 8 عبوات',
       expensivePrice: 18.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ù…Ø¹Ø¬ÙˆÙ† Ø·Ù…Ø§Ø·Ù… Ù‚ÙˆØ¯ÙŠ 8 Ø¹Ø¨ÙˆØ§Øª',
+      alternativeName: 'معجون طماطم قودي 8 عبوات',
       alternativePrice: 10.50,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1576867757603-05b134ebc379?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.amazon.sa/s?k=goody+tomato+paste',
       rating: 4.5,
       reviewCount: 88,
-      tags: ['Ù‡Ø§ÙŠÙ†Ø²', 'Ù‚ÙˆØ¯ÙŠ', 'Ø·Ø¨Ø®', 'Ø·Ù…Ø§Ø·Ù…'],
+      tags: ['هاينز', 'قودي', 'طبخ', 'طماطم'],
     ),
     const ProductComparison(
       categoryId: 'tea',
-      categoryLabel: 'Ø´Ø§ÙŠ',
-      expensiveName: 'Ø´Ø§ÙŠ Ù„ÙŠØ¨ØªÙˆÙ† 100 ÙƒÙŠØ³',
+      categoryLabel: 'شاي',
+      expensiveName: 'شاي ليبتون 100 كيس',
       expensivePrice: 29.95,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø´Ø§ÙŠ Ø±Ø¨ÙŠØ¹ 100 ÙƒÙŠØ³',
+      alternativeName: 'شاي ربيع 100 كيس',
       alternativePrice: 17.25,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.noon.com/saudi-en/search?q=rabea%20tea',
       rating: 4.8,
       reviewCount: 240,
-      tags: ['Ù„ÙŠØ¨ØªÙˆÙ†', 'Ø±Ø¨ÙŠØ¹', 'Ø´Ø§ÙŠ Ø³Ø¹ÙˆØ¯ÙŠ', 'Ù…Ø´Ø±ÙˆØ¨ Ø³Ø§Ø®Ù†'],
+      tags: ['ليبتون', 'ربيع', 'شاي سعودي', 'مشروب ساخن'],
     ),
     const ProductComparison(
       categoryId: 'restaurants',
-      categoryLabel: 'Ù…Ø·Ø§Ø¹Ù…',
-      expensiveName: 'ÙˆØ¬Ø¨Ø© Ø¨Ø±Ø¬Ø± Ù…Ø±Ø¬Ø¹ÙŠØ©',
+      categoryLabel: 'مطاعم',
+      expensiveName: 'وجبة برجر مرجعية',
       expensivePrice: 26.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø¨Ø±Ø¬Ø± Ù…Ø¯Ø®Ù† Ù…Ù† Ù…Ø·Ø¹Ù… Ø¨Ø±Ø¬Ø± Ø§Ù„Ø´Ø±Ù‚ÙŠØ© - Ø§Ù„Ø®Ø¨Ø±',
+      alternativeName: 'برجر مدخن من مطعم برجر الشرقية - الخبر',
       alternativePrice: 18.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.hungerstation.com/sa-en',
       rating: 4.9,
       reviewCount: 278,
-      tags: ['Ø¨ÙŠØ¬ Ù…Ø§Ùƒ', 'Ø¨Ø±Ø¬Ø±', 'Ø§Ù„Ø®Ø¨Ø±', 'Ù…Ø·Ø¹Ù… Ù…Ù…ÙŠØ²', 'Ø§Ù„Ø´Ø±Ù‚ÙŠØ©'],
-      localLocationLabel: 'Ø§Ù„Ø®Ø¨Ø± - Ø·Ø±ÙŠÙ‚ Ø§Ù„Ø£Ù…ÙŠØ± ØªØ±ÙƒÙŠ - Ù…Ø·Ø¹Ù… Ø¨Ø±Ø¬Ø± Ø§Ù„Ø´Ø±Ù‚ÙŠØ©',
+      tags: ['بيج ماك', 'برجر', 'الخبر', 'مطعم مميز', 'الشرقية'],
+      localLocationLabel: 'الخبر - طريق الأمير تركي - مطعم برجر الشرقية',
       localLocationUrl: 'https://maps.google.com/?q=Khobar+burger+restaurant',
     ),
     const ProductComparison(
       categoryId: 'restaurants',
-      categoryLabel: 'Ù…Ø·Ø§Ø¹Ù…',
-      expensiveName: 'Ø³Ø§Ù†Ø¯ÙˆØªØ´ ÙƒØ±Ø³Ø¨ÙŠ Ù…Ø±Ø¬Ø¹ÙŠ',
+      categoryLabel: 'مطاعم',
+      expensiveName: 'ساندوتش كرسبي مرجعي',
       expensivePrice: 24.50,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'ÙƒØ±Ø³Ø¨ÙŠ Ø¯Ø¬Ø§Ø¬ Ù…Ù† Ù…Ø·Ø¹Ù… Ø£Ù‡Ù„ Ø§Ù„Ø®Ø¨Ø±',
+      alternativeName: 'كرسبي دجاج من مطعم أهل الخبر',
       alternativePrice: 16.50,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://jahez.net',
       rating: 4.7,
       reviewCount: 163,
-      tags: ['ÙƒØ±Ø³Ø¨ÙŠ', 'Ø¯Ø¬Ø§Ø¬', 'Ù…Ø·Ø§Ø¹Ù… Ø§Ù„Ø®Ø¨Ø±', 'Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©'],
-      localLocationLabel: 'Ø§Ù„Ø®Ø¨Ø± - Ø­ÙŠ Ø§Ù„Ø­Ø²Ø§Ù… Ø§Ù„Ø°Ù‡Ø¨ÙŠ - Ù…Ø·Ø¹Ù… Ø£Ù‡Ù„ Ø§Ù„Ø®Ø¨Ø±',
+      tags: ['كرسبي', 'دجاج', 'مطاعم الخبر', 'أفضل قيمة'],
+      localLocationLabel: 'الخبر - حي الحزام الذهبي - مطعم أهل الخبر',
       localLocationUrl: 'https://maps.google.com/?q=Khobar+crispy+chicken',
     ),
     const ProductComparison(
       categoryId: 'restaurants',
-      categoryLabel: 'Ù…Ø·Ø§Ø¹Ù…',
-      expensiveName: 'Ø¢ÙŠØ³ Ù„Ø§ØªÙŠÙ‡ Ù…Ø±Ø¬Ø¹ÙŠ',
+      categoryLabel: 'مطاعم',
+      expensiveName: 'آيس لاتيه مرجعي',
       expensivePrice: 21.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø¢ÙŠØ³ Ù„Ø§ØªÙŠÙ‡ Ù…Ù† Ù…Ù‚Ù‡Ù‰ Ø´Ø±Ù‚ÙŠ',
+      alternativeName: 'آيس لاتيه من مقهى شرقي',
       alternativePrice: 13.50,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://mrsool.co',
       rating: 4.8,
       reviewCount: 121,
-      tags: ['Ù‚Ù‡ÙˆØ© Ø¨Ø§Ø±Ø¯Ø©', 'Ù…Ù‚Ù‡Ù‰ Ù…Ù…ÙŠØ²', 'Ù„Ø§ØªÙŠÙ‡', 'Ø§Ù„Ø´Ø±Ù‚ÙŠØ©'],
-      localLocationLabel: 'Ø§Ù„Ø®Ø¨Ø± - Ø§Ù„ÙƒÙˆØ±Ù†ÙŠØ´ - Ù…Ù‚Ù‡Ù‰ Ø´Ø±Ù‚ÙŠ',
+      tags: ['قهوة باردة', 'مقهى مميز', 'لاتيه', 'الشرقية'],
+      localLocationLabel: 'الخبر - الكورنيش - مقهى شرقي',
       localLocationUrl: 'https://maps.google.com/?q=Khobar+coffee+shop',
     ),
     const ProductComparison(
       categoryId: 'perfumes',
-      categoryLabel: 'Ø¹Ø·ÙˆØ±',
+      categoryLabel: 'عطور',
       expensiveName: 'Dior Sauvage Eau de Parfum',
       expensivePrice: 520.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø¨Ø¯ÙŠÙ„ Ø³Ø§ÙØ§Ø¬ Ù…Ù† Ù†Ø®Ø¨Ø© Ø§Ù„Ø¹ÙˆØ¯',
+      alternativeName: 'بديل سافاج من نخبة العود',
       alternativePrice: 189.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.amazon.sa/s?k=sauvage+alternative',
       rating: 4.9,
       reviewCount: 312,
-      tags: ['Ø³Ø§ÙØ§Ø¬', 'Ù†Ø®Ø¨Ø© Ø§Ù„Ø¹ÙˆØ¯', 'Ø¨Ø±Ø§Ù†Ø¯ Ø³Ø¹ÙˆØ¯ÙŠ', 'Ø¨Ø¯ÙŠÙ„ Ø¹Ø·Ø±ÙŠ'],
-      fragranceNotes: 'Ø¨Ø±ØºÙ…ÙˆØªØŒ ÙÙ„ÙÙ„ Ø³ÙŠØ´ÙˆØ§Ù†ØŒ Ø£Ù…Ø¨Ø±ÙˆÙƒØ³Ø§Ù†ØŒ Ù„Ù…Ø³Ø© Ø®Ø´Ø¨ÙŠØ© Ù…Ù†Ø¹Ø´Ø©',
+      tags: ['سافاج', 'نخبة العود', 'براند سعودي', 'بديل عطري'],
+      fragranceNotes: 'برغموت، فلفل سيشوان، أمبروكسان، لمسة خشبية منعشة',
     ),
     const ProductComparison(
       categoryId: 'perfumes',
-      categoryLabel: 'Ø¹Ø·ÙˆØ±',
+      categoryLabel: 'عطور',
       expensiveName: 'Baccarat Rouge 540',
       expensivePrice: 1210.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø¨Ø¯ÙŠÙ„ Ø¨Ù†ÙØ³ Ø§Ù„Ø±Ø§Ø¦Ø­Ø© Ù…Ù† Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© Ù„Ù„Ø¹ÙˆØ¯',
+      alternativeName: 'بديل بنفس الرائحة من العربية للعود',
       alternativePrice: 245.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.noon.com/saudi-en/search?q=arabian+oud+perfume',
       rating: 4.8,
       reviewCount: 204,
-      tags: ['Ø¨ÙƒØ§Ø±Ø§Øª', 'Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© Ù„Ù„Ø¹ÙˆØ¯', 'Ø¹ÙˆØ¯', 'Ø¹Ù†Ø¨Ø±'],
-      fragranceNotes: 'Ø²Ø¹ÙØ±Ø§Ù†ØŒ ÙŠØ§Ø³Ù…ÙŠÙ†ØŒ Ø¹Ù†Ø¨Ø±ØŒ Ø£Ø®Ø´Ø§Ø¨ Ø¯Ø§ÙØ¦Ø© ÙˆØ³ÙƒØ± Ù…Ø­Ø±ÙˆÙ‚',
+      tags: ['بكارات', 'العربية للعود', 'عود', 'عنبر'],
+      fragranceNotes: 'زعفران، ياسمين، عنبر، أخشاب دافئة وسكر محروق',
     ),
     const ProductComparison(
       categoryId: 'perfumes',
-      categoryLabel: 'Ø¹Ø·ÙˆØ±',
+      categoryLabel: 'عطور',
       expensiveName: 'Chanel Coco Mademoiselle',
       expensivePrice: 615.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø¨Ø¯ÙŠÙ„ ÙÙ„ÙˆØ±Ø§Ù„ Ù…Ù† Ø¥Ø¨Ø±Ø§Ù‡ÙŠÙ… Ø§Ù„Ù‚Ø±Ø´ÙŠ',
+      alternativeName: 'بديل فلورال من إبراهيم القرشي',
       alternativePrice: 210.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1588405748880-12d1d2a59df9?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.amazon.sa/s?k=ibrahim+alqurashi+perfume',
       rating: 4.7,
       reviewCount: 177,
-      tags: ['Ø´Ø§Ù†ÙŠÙ„', 'Ø¥Ø¨Ø±Ø§Ù‡ÙŠÙ… Ø§Ù„Ù‚Ø±Ø´ÙŠ', 'ÙÙ„ÙˆØ±Ø§Ù„', 'Ù…Ø³Ùƒ'],
-      fragranceNotes: 'Ø¨Ø±ØªÙ‚Ø§Ù„ØŒ ÙˆØ±Ø¯ ØªØ±ÙƒÙŠØŒ Ø¨Ø§ØªØ´ÙˆÙ„ÙŠØŒ Ù…Ø³Ùƒ Ø£Ø¨ÙŠØ¶',
+      tags: ['شانيل', 'إبراهيم القرشي', 'فلورال', 'مسك'],
+      fragranceNotes: 'برتقال، ورد تركي، باتشولي، مسك أبيض',
     ),
     const ProductComparison(
       categoryId: 'cosmetics',
-      categoryLabel: 'ØªØ¬Ù…ÙŠÙ„',
+      categoryLabel: 'تجميل',
       expensiveName: 'The Ordinary Niacinamide 10% Serum',
       expensivePrice: 69.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø³ÙŠØ±ÙˆÙ… Ù†ÙŠØ§Ø³ÙŠÙ†Ø§Ù…ÙŠØ¯ Ù…Ù† Ù„Ø§Ø¨ Ø³Ø¹ÙˆØ¯ÙŠ',
+      alternativeName: 'سيروم نياسيناميد من لاب سعودي',
       alternativePrice: 34.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.noon.com/saudi-en/search?q=niacinamide+serum',
       rating: 4.6,
       reviewCount: 143,
-      tags: ['Ù†ÙŠØ§Ø³ÙŠÙ†Ø§Ù…ÙŠØ¯', 'Ø³ÙŠØ±ÙˆÙ…', 'Ø¨Ø´Ø±Ø©', 'Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©'],
-      activeIngredients: 'Niacinamide 10% + Zinc PCA Ù„ØªÙ†Ø¸ÙŠÙ… Ø§Ù„Ø¯Ù‡ÙˆÙ† ÙˆØªÙ‚Ù„ÙŠÙ„ Ù…Ø¸Ù‡Ø± Ø§Ù„Ù…Ø³Ø§Ù…',
+      tags: ['نياسيناميد', 'سيروم', 'بشرة', 'أفضل قيمة'],
+      activeIngredients: 'Niacinamide 10% + Zinc PCA لتنظيم الدهون وتقليل مظهر المسام',
     ),
     const ProductComparison(
       categoryId: 'cosmetics',
-      categoryLabel: 'ØªØ¬Ù…ÙŠÙ„',
+      categoryLabel: 'تجميل',
       expensiveName: 'La Roche-Posay Vitamin C Serum',
       expensivePrice: 220.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1570194065650-d99fb4d8a5c8?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø³ÙŠØ±ÙˆÙ… ÙÙŠØªØ§Ù…ÙŠÙ† C Ù…Ù† Ø¨Ø±Ø§Ù†Ø¯ Ø³Ø¹ÙˆØ¯ÙŠ Ù„Ù„Ø¹Ù†Ø§ÙŠØ©',
+      alternativeName: 'سيروم فيتامين C من براند سعودي للعناية',
       alternativePrice: 96.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.amazon.sa/s?k=vitamin+c+serum',
       rating: 4.5,
       reviewCount: 109,
-      tags: ['ÙÙŠØªØ§Ù…ÙŠÙ† Ø³ÙŠ', 'Ø³ÙŠØ±ÙˆÙ…', 'Ù†Ø¶Ø§Ø±Ø©', 'Ù…ÙƒÙˆÙ†Ø§Øª ÙØ¹Ø§Ù„Ø©'],
-      activeIngredients: 'Vitamin C + Hyaluronic Acid + Vitamin E Ù„Ø¥Ø´Ø±Ø§Ù‚Ø© ÙˆØªØ±Ø·ÙŠØ¨ Ø£Ø¹Ù…Ù‚',
+      tags: ['فيتامين سي', 'سيروم', 'نضارة', 'مكونات فعالة'],
+      activeIngredients: 'Vitamin C + Hyaluronic Acid + Vitamin E لإشراقة وترطيب أعمق',
     ),
     const ProductComparison(
       categoryId: 'cosmetics',
-      categoryLabel: 'ØªØ¬Ù…ÙŠÙ„',
+      categoryLabel: 'تجميل',
       expensiveName: 'Maybelline Fit Me Concealer',
       expensivePrice: 58.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1631730486782-d5a6bdf9a7ec?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'ÙƒÙˆÙ†Ø³ÙŠÙ„Ø± Ø§Ù‚ØªØµØ§Ø¯ÙŠ Ø¨ØªØºØ·ÙŠØ© Ø®ÙÙŠÙØ© Ù…Ù† Ø¨ÙˆØªÙŠÙƒ Ø³Ø¹ÙˆØ¯ÙŠ',
+      alternativeName: 'كونسيلر اقتصادي بتغطية خفيفة من بوتيك سعودي',
       alternativePrice: 27.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.noon.com/saudi-en/search?q=concealer',
       rating: 4.4,
       reviewCount: 86,
-      tags: ['ÙƒÙˆÙ†Ø³ÙŠÙ„Ø±', 'Ù…ÙƒÙŠØ§Ø¬', 'ØªØºØ·ÙŠØ©', 'Ø£ÙØ¶Ù„ Ù‚ÙŠÙ…Ø©'],
-      activeIngredients: 'Pigment blend + Glycerin Ù„ØªØ±Ø·ÙŠØ¨ Ø®ÙÙŠÙ ÙˆØ«Ø¨Ø§Øª ÙŠÙˆÙ…ÙŠ',
+      tags: ['كونسيلر', 'مكياج', 'تغطية', 'أفضل قيمة'],
+      activeIngredients: 'Pigment blend + Glycerin لترطيب خفيف وثبات يومي',
     ),
     const ProductComparison(
       categoryId: 'pharmacy',
-      categoryLabel: 'ØµÙŠØ¯Ù„ÙŠØ©',
+      categoryLabel: 'صيدلية',
       expensiveName: 'CeraVe Moisturizing Cream',
       expensivePrice: 89.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1556228578-dd6c36f7737d?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ù…Ø±Ø·Ø¨ Ø§Ù‚ØªØµØ§Ø¯ÙŠ Ù…Ù† Ø§Ù„ØµÙŠØ¯Ù„ÙŠØ©',
+      alternativeName: 'مرطب اقتصادي من الصيدلية',
       alternativePrice: 44.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.nahdionline.com',
       rating: 4.7,
       reviewCount: 221,
-      tags: ['Ø³ÙŠØ±Ø§ÙÙŠ', 'Ù…Ø±Ø·Ø¨', 'Ù†Ù‡Ø¯ÙŠ', 'Ø§Ù‚ØªØµØ§Ø¯ÙŠ'],
-      activeIngredients: 'Ø³ÙŠØ±Ø§Ù…ÙŠØ¯Ø§Øª + Ù‡ÙŠØ§Ù„ÙˆØ±ÙˆÙ†ÙŠÙƒ Ø£Ø³ÙŠØ¯ + Ø¨Ø§Ù†Ø«ÙŠÙ†ÙˆÙ„ Ù„Ø¯Ø¹Ù… Ø­Ø§Ø¬Ø² Ø§Ù„Ø¨Ø´Ø±Ø©',
+      tags: ['سيرافي', 'مرطب', 'نهدي', 'اقتصادي'],
+      activeIngredients: 'سيراميدات + هيالورونيك أسيد + بانثينول لدعم حاجز البشرة',
     ),
     const ProductComparison(
       categoryId: 'pharmacy',
-      categoryLabel: 'ØµÙŠØ¯Ù„ÙŠØ©',
+      categoryLabel: 'صيدلية',
       expensiveName: 'Panadol Cold & Flu',
       expensivePrice: 24.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=80',
-      alternativeName: 'Ø®ÙŠØ§Ø± Ø§Ù‚ØªØµØ§Ø¯ÙŠ Ù„Ù†Ø²Ù„Ø§Øª Ø§Ù„Ø¨Ø±Ø¯',
+      alternativeName: 'خيار اقتصادي لنزلات البرد',
       alternativePrice: 14.50,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.al-dawaa.com',
       rating: 4.3,
       reviewCount: 75,
-      tags: ['Ø¨Ø§Ù†Ø§Ø¯ÙˆÙ„', 'Ø¨Ø±Ø¯', 'ØµÙŠØ¯Ù„ÙŠØ©', 'Ø¯ÙˆØ§Ø¡'],
-      activeIngredients: 'Ø¨Ø§Ø±Ø§Ø³ÙŠØªØ§Ù…ÙˆÙ„ + Ù…Ø²ÙŠÙ„ Ø§Ø­ØªÙ‚Ø§Ù† Ø¨ØªØ±ÙƒÙŠØ¨Ø© Ø§Ù‚ØªØµØ§Ø¯ÙŠØ© Ù…Ø´Ø§Ø¨Ù‡Ø©',
+      tags: ['بانادول', 'برد', 'صيدلية', 'دواء'],
+      activeIngredients: 'باراسيتامول + مزيل احتقان بتركيبة اقتصادية مشابهة',
     ),
   ];
 }
@@ -9731,7 +9733,7 @@ String? _mergeNotices(String? current, String? incoming) {
 }
 
 String formatPrice(double price) {
-  return '${formatAmountValue(price)} Ø±.Ø³';
+  return '${formatAmountValue(price)} ر.س';
 }
 
 String formatAmountValue(double amount) {
@@ -9742,11 +9744,11 @@ String formatAmountValue(double amount) {
 String _normalizeArabic(String input) {
   return input
       .toLowerCase()
-      .replaceAll(RegExp(r'[Ø£Ø¥Ø¢]'), 'Ø§')
-      .replaceAll('Ø¤', 'Ùˆ')
-      .replaceAll('Ø¦', 'ÙŠ')
-      .replaceAll('Ø©', 'Ù‡')
-      .replaceAll('Ù‰', 'ÙŠ')
+      .replaceAll(RegExp(r'[أإآ]'), 'ا')
+      .replaceAll('ؤ', 'و')
+      .replaceAll('ئ', 'ي')
+      .replaceAll('ة', 'ه')
+      .replaceAll('ى', 'ي')
       .replaceAll(RegExp(r'[^0-9a-zA-Z\u0600-\u06FF\s]'), ' ')
       .replaceAll(RegExp(r'\s+'), ' ')
       .trim();
