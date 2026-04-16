@@ -26,3 +26,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/products.json
+    - assets/icons/app_icon_navy.png
