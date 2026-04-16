@@ -21,6 +21,55 @@ bool get _isAr => appLang.value == 'ar';
 
 String tr(String ar, String en) => _isAr ? ar : en;
 
+class AppPalette {
+  const AppPalette._();
+
+  static const Color navy = Color(0xFF1B2F5E);
+  static const Color deepNavy = Color(0xFF12284D);
+  static const Color softNavy = Color(0xFF6B7A9A);
+  static const Color orange = Color(0xFFE8711A);
+  static const Color paleOrange = Color(0xFFFFD9BA);
+  static const Color softOrange = Color(0xFFFFF3E8);
+  static const Color shellBackground = Color(0xFFF5F7FF);
+  static const Color cardBackground = Color(0xFFF8FAFF);
+  static const Color cardBorder = Color(0xFFE1E7F4);
+  static const Color panelText = Color(0xFF2A426D);
+  static const Color mutedText = Color(0xFF6B7A9A);
+  static const Color shadow = Color(0x141B2F5E);
+}
+
+class AppBrandMark extends StatelessWidget {
+  const AppBrandMark({
+    super.key,
+    this.size = 58,
+    this.padding = 8,
+    this.backgroundColor = Colors.white,
+    this.borderRadius = 20,
+  });
+
+  final double size;
+  final double padding;
+  final Color backgroundColor;
+  final double borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: Image.asset(
+        'assets/icons/app_icon_navy.png',
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 
 Future<void> main() async {
@@ -83,15 +132,12 @@ class LeastPriceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const navy = Color(0xFF1B2F5E);
-    const orange = Color(0xFFE8711A);
-
     final scheme = ColorScheme.fromSeed(
-      seedColor: orange,
+      seedColor: AppPalette.orange,
       brightness: Brightness.light,
     ).copyWith(
-      primary: orange,
-      secondary: navy,
+      primary: AppPalette.orange,
+      secondary: AppPalette.navy,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       surface: Colors.white,
@@ -107,7 +153,7 @@ class LeastPriceApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: scheme,
-        scaffoldBackgroundColor: const Color(0xFFF5F7FF),
+        scaffoldBackgroundColor: AppPalette.shellBackground,
         snackBarTheme: const SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
         ),
@@ -124,16 +170,19 @@ class LeastPriceApp extends StatelessWidget {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(18),
-            borderSide: const BorderSide(color: Color(0xFFFFDEB8)),
+            borderSide: const BorderSide(color: AppPalette.paleOrange),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(18),
-            borderSide: const BorderSide(color: orange, width: 1.5),
+            borderSide: const BorderSide(
+              color: AppPalette.orange,
+              width: 1.5,
+            ),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: orange,
+            backgroundColor: AppPalette.orange,
             foregroundColor: Colors.white,
             minimumSize: const Size.fromHeight(54),
             shape: RoundedRectangleBorder(
@@ -148,8 +197,8 @@ class LeastPriceApp extends StatelessWidget {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(54),
-            foregroundColor: orange,
-            side: const BorderSide(color: Color(0xFFFFCB99)),
+            foregroundColor: AppPalette.orange,
+            side: const BorderSide(color: AppPalette.paleOrange),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
             ),
@@ -193,7 +242,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Material(
-        color: const Color(0xFFF5FBF8),
+        color: AppPalette.shellBackground,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 760),
@@ -206,7 +255,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x140C3B2E),
+                      color: AppPalette.shadow,
                       blurRadius: 24,
                       offset: Offset(0, 14),
                     ),
@@ -230,7 +279,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
-                              color: Color(0xFF17332B),
+                              color: AppPalette.navy,
                             ),
                           ),
                         ),
@@ -240,7 +289,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                     const Text(
                       'بدلاً من الصفحة البيضاء، يعرض التطبيق الآن سبب الخطأ ليسهل علينا إصلاحه بسرعة.',
                       style: TextStyle(
-                        color: Color(0xFF61756D),
+                        color: AppPalette.softNavy,
                         height: 1.5,
                       ),
                     ),
@@ -248,14 +297,14 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8FBFA),
+                        color: AppPalette.cardBackground,
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: const Color(0xFFE2EBE7)),
+                        border: Border.all(color: AppPalette.cardBorder),
                       ),
                       child: SelectableText(
                         details.exceptionAsString(),
                         style: const TextStyle(
-                          color: Color(0xFF24443B),
+                          color: AppPalette.panelText,
                           fontWeight: FontWeight.w700,
                           height: 1.45,
                         ),
@@ -265,7 +314,7 @@ class _GlobalRuntimeErrorScreen extends StatelessWidget {
                     Text(
                       details.library ?? 'Flutter',
                       style: const TextStyle(
-                        color: Color(0xFF7B8E86),
+                        color: AppPalette.softNavy,
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,
                       ),
@@ -522,7 +571,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x140C3B2E),
+                    color: AppPalette.shadow,
                     blurRadius: 28,
                     offset: Offset(0, 16),
                   ),
@@ -532,11 +581,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
-                    Icons.dashboard_customize_rounded,
-                    size: 52,
-                    color: Color(0xFFE8711A),
-                  ),
+                  const Center(child: AppBrandMark(size: 72, borderRadius: 24)),
                   const SizedBox(height: 16),
                   const Text(
                     'لوحة تحكم LeastPrice',
@@ -544,7 +589,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF1B2F5E),
+                      color: AppPalette.navy,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -552,7 +597,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     'سجّل ببريد المشرف لإدارة البنرات والمنتجات مباشرة من المتصفح. هذه اللوحة محمية ببريد ${LeastPriceDataConfig.adminEmail}.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: Color(0xFF61756D),
+                      color: AppPalette.softNavy,
                       height: 1.5,
                     ),
                   ),
@@ -592,15 +637,15 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF2FBF7),
+                        color: AppPalette.softOrange,
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: const Color(0xFFD6EEE6)),
+                        border: Border.all(color: AppPalette.paleOrange),
                       ),
                       child: Text(
                         _statusMessage!,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          color: Color(0xFF245044),
+                          color: AppPalette.panelText,
                           fontWeight: FontWeight.w700,
                           height: 1.45,
                         ),
@@ -660,7 +705,7 @@ class _AdminAccessDeniedScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x140C3B2E),
+                    color: AppPalette.shadow,
                     blurRadius: 28,
                     offset: Offset(0, 16),
                   ),
@@ -682,7 +727,7 @@ class _AdminAccessDeniedScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFF1B2F5E),
+                      color: AppPalette.navy,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -690,7 +735,7 @@ class _AdminAccessDeniedScreen extends StatelessWidget {
                     'البريد الحالي هو ${user.email ?? 'غير معروف'}، بينما اللوحة مسموحة فقط للبريد ${LeastPriceDataConfig.adminEmail}.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: Color(0xFF61756D),
+                      color: AppPalette.softNavy,
                       height: 1.5,
                     ),
                   ),
@@ -2042,7 +2087,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _referralController = TextEditingController();
-  bool _isRegisterMode = true;
+  bool _isRegisterMode = false;
   bool _isSubmitting = false;
   bool _isSendingPasswordReset = false;
   bool _obscurePassword = true;
@@ -2059,12 +2104,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submitAuth() async {
     final messenger = ScaffoldMessenger.of(context);
-    final normalizedPhone = _formatSaudiPhoneNumber(_phoneController.text);
+    final normalizedPhone = _isRegisterMode
+        ? _formatSaudiPhoneNumber(_phoneController.text)
+        : null;
     final normalizedEmail = _normalizeEmailAddress(_emailController.text);
     final password = _passwordController.text.trim();
-    final referralCode = _referralController.text.trim().toUpperCase();
+    final referralCode = _isRegisterMode
+        ? _referralController.text.trim().toUpperCase()
+        : '';
 
-    if (normalizedPhone == null) {
+    if (_isRegisterMode && normalizedPhone == null) {
       messenger.showSnackBar(
         const SnackBar(
           content: Text('رقم الجوال إلزامي. أدخله بصيغة 05XXXXXXXX أو +9665XXXXXXXX.'),
@@ -2119,7 +2168,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await _catalogService.ensureUserProfile(
         user: user,
         pendingInviteCode: PendingAuthSession.consumeInviteCode(),
-        requiredPhoneNumber: normalizedPhone,
+        requiredPhoneNumber: _isRegisterMode ? normalizedPhone : null,
         emailAddress: normalizedEmail,
       );
       if (!mounted) return;
@@ -2192,7 +2241,7 @@ class _LoginScreenState extends State<LoginScreen> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Color(0xFF0D7A5E), Color(0xFFF5FCF9)],
+            colors: [AppPalette.navy, AppPalette.shellBackground],
             stops: [0.18, 0.18],
           ),
         ),
@@ -2206,13 +2255,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: const [
                           BoxShadow(
-                            color: Color(0x140C3B2E),
+                            color: AppPalette.shadow,
                             blurRadius: 26,
                             offset: Offset(0, 16),
                           ),
@@ -2223,39 +2272,27 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Row(
                             children: [
-                              Container(
-                                width: 64,
-                                height: 64,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF2FBF7),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Icon(
-                                  Icons.storefront_rounded,
-                                  color: Color(0xFFE8711A),
-                                  size: 30,
-                                ),
-                              ),
+                              const AppBrandMark(size: 64, borderRadius: 20),
                               const SizedBox(width: 14),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      'أرخص سعر - LeastPrice',
+                                      'LeastPrice',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 22,
                                         fontWeight: FontWeight.w900,
-                                        color: Color(0xFF1B2F5E),
+                                        color: AppPalette.navy,
                                       ),
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
                                       _isRegisterMode
-                                          ? 'أنشئ حسابك بالإيميل وكلمة المرور مع رقم جوال إلزامي.'
-                                          : 'سجّل دخولك بالإيميل وكلمة المرور، وسيبقى رقم الجوال إلزامياً داخل الملف.',
+                                          ? 'أنشئ حسابك بسرعة.'
+                                          : 'سجّل دخولك للمتابعة.',
                                       style: const TextStyle(
-                                        color: Color(0xFF61756D),
+                                        color: AppPalette.softNavy,
                                         height: 1.45,
                                       ),
                                     ),
@@ -2268,7 +2305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF2FBF7),
+                              color: AppPalette.softOrange,
                               borderRadius: BorderRadius.circular(18),
                             ),
                             child: Row(
@@ -2300,17 +2337,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            controller: _phoneController,
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(
-                              labelText: 'رقم الجوال - إلزامي',
-                              hintText: '05XXXXXXXX',
-                              prefixIcon: Icon(Icons.phone_android_rounded),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
+                          const SizedBox(height: 16),
                           TextField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
@@ -2344,38 +2371,41 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 14),
-                          TextField(
-                            controller: _referralController,
-                            textCapitalization: TextCapitalization.characters,
-                            decoration: const InputDecoration(
-                              labelText: 'كود الدعوة - اختياري',
-                              hintText: 'LP-AB12',
-                              prefixIcon: Icon(Icons.card_giftcard_rounded),
+                          if (_isRegisterMode) ...[
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              decoration: const InputDecoration(
+                                labelText: 'رقم الجوال',
+                                hintText: '05XXXXXXXX',
+                                prefixIcon: Icon(Icons.phone_android_rounded),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'رقم الجوال إلزامي لحفظ ملفك والتواصل التجاري، أما تسجيل الدخول فيعتمد على البريد الإلكتروني وكلمة المرور فقط دون الحاجة إلى تفعيل الحساب.',
-                            style: TextStyle(
-                              color: Color(0xFF6C7D76),
-                              fontSize: 12.8,
-                              height: 1.45,
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _referralController,
+                              textCapitalization: TextCapitalization.characters,
+                              decoration: const InputDecoration(
+                                labelText: 'كود الدعوة (اختياري)',
+                                hintText: 'LP-AB12',
+                                prefixIcon: Icon(Icons.card_giftcard_rounded),
+                              ),
                             ),
-                          ),
+                          ],
                           if (_statusMessage != null) ...[
                             const SizedBox(height: 16),
                             Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF2FBF7),
+                                color: AppPalette.softOrange,
                                 borderRadius: BorderRadius.circular(18),
-                                border: Border.all(color: const Color(0xFFD6EEE6)),
+                                border: Border.all(color: AppPalette.paleOrange),
                               ),
                               child: Text(
                                 _statusMessage!,
                                 style: const TextStyle(
-                                  color: Color(0xFF245044),
+                                  color: AppPalette.panelText,
                                   fontWeight: FontWeight.w700,
                                   height: 1.5,
                                 ),
@@ -2406,23 +2436,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? 'جارٍ التنفيذ...'
                                   : (_isRegisterMode
                                       ? 'إنشاء الحساب'
-                                      : 'تسجيل الدخول'),
+                                      : 'دخول'),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          OutlinedButton.icon(
-                            onPressed: _isSubmitting || _isSendingPasswordReset
-                                ? null
-                                : _sendPasswordResetEmail,
-                            icon: _isSendingPasswordReset
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2.2),
-                                  )
-                                : const Icon(Icons.mark_email_read_rounded),
-                            label: const Text('إرسال رابط إعادة تعيين كلمة المرور'),
-                          ),
+                          if (!_isRegisterMode) ...[
+                            const SizedBox(height: 6),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed:
+                                    _isSubmitting || _isSendingPasswordReset
+                                        ? null
+                                        : _sendPasswordResetEmail,
+                                child: Text(
+                                  _isSendingPasswordReset
+                                      ? 'جارٍ إرسال الرابط...'
+                                      : 'نسيت كلمة المرور؟',
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -2463,7 +2496,7 @@ class _ModeToggleButton extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: selected ? Colors.white : const Color(0xFF406156),
+            color: selected ? Colors.white : AppPalette.navy,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -3947,7 +3980,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       floatingActionButton: FloatingActionButton.small(
         heroTag: 'admin-dashboard-fab',
         tooltip: 'لوحة المسؤول',
-        backgroundColor: const Color(0xE60F8F6F),
+        backgroundColor: AppPalette.navy,
         foregroundColor: Colors.white,
         onPressed: widget.firebaseReady
             ? _openAdminDashboard
@@ -3973,7 +4006,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFFF2FCF7), Color(0xFFFFFFFF)],
+                colors: [AppPalette.softOrange, Colors.white],
               ),
             ),
             child: RefreshIndicator(
@@ -4161,7 +4194,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                             const Text(
                               'جارٍ البحث الذكي من الويب عن مقارنات غير موجودة في القاعدة...',
                               style: TextStyle(
-                                color: Color(0xFF0B7A5E),
+                                color: AppPalette.orange,
                                 fontSize: 12.8,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -4172,7 +4205,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                             Text(
                               _smartSearchNotice!,
                               style: const TextStyle(
-                                color: Color(0xFF5B6E66),
+                                color: AppPalette.softNavy,
                                 fontSize: 12.8,
                                 fontWeight: FontWeight.w700,
                                 height: 1.45,
@@ -4184,7 +4217,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                             Text(
                               _searchDemandNotice!,
                               style: const TextStyle(
-                                color: Color(0xFF0B7A5E),
+                                color: AppPalette.navy,
                                 fontSize: 12.8,
                                 fontWeight: FontWeight.w800,
                                 height: 1.5,
@@ -4342,11 +4375,11 @@ class _HeaderSection extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [Color(0xFF0B7A5E), Color(0xFF13A07C)],
+              colors: [AppPalette.navy, AppPalette.deepNavy],
             ),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x290F8F6F),
+                color: AppPalette.shadow,
                 blurRadius: 28,
                 offset: Offset(0, 18),
               ),
@@ -4369,19 +4402,7 @@ class _HeaderSection extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(
-                          Icons.storefront_rounded,
-                          color: Color(0xFFE8711A),
-                          size: 30,
-                        ),
-                      ),
+                      const AppBrandMark(size: 60, borderRadius: 20),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
@@ -4397,7 +4418,7 @@ class _HeaderSection extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              tr('مرحباً', 'Hello') + ' $currentUserLabel',
+                              '${tr('مرحباً', 'Hello')} $currentUserLabel',
                               style: const TextStyle(
                                 color: Color(0xD9FFFFFF),
                                 fontSize: 13.5,
@@ -4811,7 +4832,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) {
                               return Container(
-                                color: const Color(0xFFCAEADF),
+                                color: AppPalette.softOrange,
                               );
                             },
                           ),
@@ -4822,7 +4843,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
                             gradient: const LinearGradient(
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
-                              colors: [Color(0xD90F271F), Color(0x55152F28)],
+                              colors: [Color(0xE61B2F5E), Color(0x66264A88)],
                             ),
                           ),
                         ),
