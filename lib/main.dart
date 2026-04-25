@@ -3675,7 +3675,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         _smartSearchNotice = result.notice;
         _comparisonSearchSourceLabel = result.fromCache
             ? tr('كاش Firestore', 'Firestore cache')
-            : tr('SerpApi مباشر', 'Live SerpApi');
+            : result.results.any((item) => item.isLiveDirect)
+                ? tr('بحث هجين مباشر', 'Live hybrid search')
+                : tr('SerpApi مباشر', 'Live SerpApi');
       });
     } catch (error) {
       debugPrint('LeastPrice marketplace search failed: $error');
