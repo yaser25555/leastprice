@@ -3425,22 +3425,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   final FirestoreCatalogService _catalogService =
       const FirestoreCatalogService();
   final ProductRepository _fallbackRepository = const ProductRepository();
-  final SmartSearchDiscoveryService _smartSearchService =
-      const SmartSearchDiscoveryService();
+  final SerpApiShoppingSearchService _comparisonSearchService =
+      const SerpApiShoppingSearchService();
   final Connectivity _connectivity = Connectivity();
-  final List<String> _quickSearchTags = const [
-    'قهوة',
-    'مطاعم',
-    'عطور',
-    'محامص',
-    'تجميل',
-    'صيدلية',
-    'منظفات',
-    'ألبان',
-    'معلبات',
-    'شاي',
-  ];
-
   late Stream<List<ProductComparison>> _productsStream;
   StreamSubscription<dynamic>? _connectivitySubscription;
   StreamSubscription<UserSavingsProfile?>? _userProfileSubscription;
@@ -3455,15 +3442,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   bool _isSearchingOnline = false;
   String? _dataNotice;
   String? _smartSearchNotice;
-  String? _searchDemandNotice;
+  String _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
   ProductDataSource _dataSource = ProductDataSource.remote;
   UserSavingsProfile _userProfile = UserSavingsProfile.initial();
   AutomationHealthStatus _systemHealth = AutomationHealthStatus.initial();
-  final Set<String> _submittedSearchRequestKeys = <String>{};
   List<AdBannerItem> _activeBanners = AdBannerItem.mockData;
-  List<ProductComparison> _catalogProductsSnapshot = const <ProductComparison>[];
-  List<ProductComparison> _smartSearchSuggestions =
-      const <ProductComparison>[];
+  List<ComparisonSearchResult> _comparisonSearchResults =
+      const <ComparisonSearchResult>[];
 
   @override
   void initState() {
@@ -3603,43 +3588,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       if (nextQuery.trim().isNotEmpty) {
         _selectedHomeSection = HomeCatalogSection.comparisons;
       }
-      _searchDemandNotice = null;
     });
 
     _scheduleSmartSearch(nextQuery);
   }
 
-  void _applyQuickSearch(String value) {
-    _searchController
-      ..text = value
-      ..selection = TextSelection.fromPosition(
-        TextPosition(offset: value.length),
-      );
-  }
-
   void _clearSearch() {
     _searchController.clear();
-  }
-
-  void _resetFilters() {
-    _clearSearch();
-    setState(() {
-      _selectedCategoryId = ProductCategoryCatalog.allId;
-      _searchDemandNotice = null;
-      _productsStream = _buildProductsStream();
-    });
-    _clearSmartSearchState();
-  }
-
-  void _selectCategory(String categoryId) {
-    setState(() {
-      _selectedCategoryId = categoryId;
-      _selectedHomeSection = HomeCatalogSection.comparisons;
-      _searchDemandNotice = null;
-      _productsStream = _buildProductsStream();
-    });
-
-    _scheduleSmartSearch(_query);
   }
 
   void _selectHomeSection(HomeCatalogSection section) {
@@ -3667,32 +3622,33 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   }
 
   void _clearSmartSearchState() {
-    if (_smartSearchSuggestions.isEmpty &&
+    if (_comparisonSearchResults.isEmpty &&
         _smartSearchNotice == null &&
-        _searchDemandNotice == null &&
         !_isSearchingOnline) {
       return;
     }
 
     if (!mounted) {
-      _smartSearchSuggestions = const <ProductComparison>[];
+      _comparisonSearchResults = const <ComparisonSearchResult>[];
       _smartSearchNotice = null;
-      _searchDemandNotice = null;
+      _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
       _isSearchingOnline = false;
       return;
     }
 
     setState(() {
-      _smartSearchSuggestions = const <ProductComparison>[];
+      _comparisonSearchResults = const <ComparisonSearchResult>[];
       _smartSearchNotice = null;
-      _searchDemandNotice = null;
+      _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
       _isSearchingOnline = false;
     });
   }
 
-  Future<void> _runSmartSearch(String rawQuery) async {
+  Future<void> _runSmartSearch(
+    String rawQuery, {
+    bool forceRefresh = false,
+  }) async {
     final trimmedQuery = rawQuery.trim();
-    final requestedCategoryId = _selectedCategoryId;
     if (trimmedQuery.isEmpty || !mounted || !_hasInternet) {
       _clearSmartSearchState();
       return;
@@ -3704,173 +3660,45 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     });
 
     try {
-      final result = await _smartSearchService.discoverComparisons(
+      final result = await _comparisonSearchService.search(
         query: trimmedQuery,
-        selectedCategoryId: requestedCategoryId,
-        existingProducts: _catalogProductsSnapshot,
+        firebaseReady: widget.firebaseReady,
+        forceRefresh: forceRefresh,
       );
 
-      if (!mounted ||
-          _normalizeArabic(trimmedQuery) != _normalizeArabic(_query) ||
-          requestedCategoryId != _selectedCategoryId) {
+      if (!mounted || _normalizeArabic(trimmedQuery) != _normalizeArabic(_query)) {
         return;
       }
 
       setState(() {
-        _smartSearchSuggestions = result.products;
+        _comparisonSearchResults = result.results;
         _smartSearchNotice = result.notice;
+        _comparisonSearchSourceLabel = result.fromCache
+            ? tr('كاش Firestore', 'Firestore cache')
+            : tr('SerpApi مباشر', 'Live SerpApi');
       });
-
-      final hasCatalogMatches = _findMatchingProducts(
-        _catalogProductsSnapshot,
-        normalizedQuery: _normalizeArabic(trimmedQuery),
-      ).isNotEmpty;
-      final shouldShowDemandNotice =
-          !hasCatalogMatches && result.products.isEmpty;
-
-      if (_shouldQueueSearchDemand(
-        query: trimmedQuery,
-        categoryId: requestedCategoryId,
-      )) {
-        unawaited(
-          _submitSearchDemand(
-            query: trimmedQuery,
-            categoryId: requestedCategoryId,
-            showNotice: shouldShowDemandNotice,
-          ),
-        );
-      }
     } catch (error) {
-      debugPrint('LeastPrice smart search failed: $error');
-      if (!mounted ||
-          _normalizeArabic(trimmedQuery) != _normalizeArabic(_query) ||
-          requestedCategoryId != _selectedCategoryId) {
+      debugPrint('LeastPrice marketplace search failed: $error');
+      if (!mounted || _normalizeArabic(trimmedQuery) != _normalizeArabic(_query)) {
         return;
       }
 
       setState(() {
-        _smartSearchSuggestions = const <ProductComparison>[];
-        _smartSearchNotice =
-            tr(
-              'تعذر إكمال البحث الذكي من الويب حالياً. سنواصل الاعتماد على القاعدة الحالية وسنسجل طلبك إن لزم.',
-              'Smart web search could not be completed right now. We will keep using the current database and log your request if needed.',
-            );
+        _comparisonSearchResults = const <ComparisonSearchResult>[];
+        _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
+        _smartSearchNotice = tr(
+          'تعذر جلب نتائج التسوق الآن. تحقق من الاتصال أو جرّب بعد قليل.',
+          'Unable to fetch shopping results right now. Check the connection or try again shortly.',
+        );
       });
 
-      final hasCatalogMatches = _findMatchingProducts(
-        _catalogProductsSnapshot,
-        normalizedQuery: _normalizeArabic(trimmedQuery),
-      ).isNotEmpty;
-
-      if (_shouldQueueSearchDemand(
-        query: trimmedQuery,
-        categoryId: requestedCategoryId,
-      )) {
-        unawaited(
-          _submitSearchDemand(
-            query: trimmedQuery,
-            categoryId: requestedCategoryId,
-            showNotice: !hasCatalogMatches,
-          ),
-        );
-      }
     } finally {
-      if (mounted &&
-          _normalizeArabic(trimmedQuery) == _normalizeArabic(_query) &&
-          requestedCategoryId == _selectedCategoryId) {
+      if (mounted && _normalizeArabic(trimmedQuery) == _normalizeArabic(_query)) {
         setState(() {
           _isSearchingOnline = false;
         });
       }
     }
-  }
-
-  bool _shouldQueueSearchDemand({
-    required String query,
-    required String categoryId,
-  }) {
-    if (!widget.firebaseReady || !_hasInternet) {
-      return false;
-    }
-
-    final normalizedQuery = _normalizeArabic(query);
-    if (normalizedQuery.length < 3) {
-      return false;
-    }
-
-    final requestKey = _buildSearchRequestKey(
-      query: normalizedQuery,
-      categoryId: categoryId,
-    );
-
-    return !_submittedSearchRequestKeys.contains(requestKey);
-  }
-
-  Future<void> _submitSearchDemand({
-    required String query,
-    required String categoryId,
-    bool showNotice = false,
-  }) async {
-    final normalizedQuery = _normalizeArabic(query);
-    final requestKey = _buildSearchRequestKey(
-      query: normalizedQuery,
-      categoryId: categoryId,
-    );
-
-    if (_submittedSearchRequestKeys.contains(requestKey)) {
-      return;
-    }
-
-    _submittedSearchRequestKeys.add(requestKey);
-
-    try {
-      await _catalogService.submitSearchRequest(
-        query: query,
-        categoryId: categoryId,
-      );
-
-      if (!mounted ||
-          _normalizeArabic(_query) != normalizedQuery ||
-          _selectedCategoryId != categoryId) {
-        return;
-      }
-
-      if (showNotice) {
-        setState(() {
-          _searchDemandNotice =
-              tr(
-                'سجلنا طلب البحث عن "${query.trim()}"، وسيدخل ضمن الأصناف الأعلى طلباً التي يتابعها روبوت التحديث اليومي لإضافة هذا الصنف أو أفضل مقارنة له.',
-                'We logged the search request for "${query.trim()}". It will be counted among the most requested items that the daily update bot follows to add this item or its best comparison.',
-              );
-        });
-      }
-    } catch (error) {
-      _submittedSearchRequestKeys.remove(requestKey);
-      debugPrint('LeastPrice search demand submission failed: $error');
-
-      if (!mounted ||
-          _normalizeArabic(_query) != normalizedQuery ||
-          _selectedCategoryId != categoryId) {
-        return;
-      }
-
-      if (showNotice) {
-        setState(() {
-          _searchDemandNotice =
-              tr(
-                'تعذر تسجيل طلب البحث الآن. تحقق من الاتصال ثم جرّب مرة أخرى، أو اسحب للتحديث لاحقاً.',
-                'Unable to record the search request right now. Check your connection and try again, or pull to refresh later.',
-              );
-        });
-      }
-    }
-  }
-
-  String _buildSearchRequestKey({
-    required String query,
-    required String categoryId,
-  }) {
-    return '$categoryId|$query';
   }
 
   void _handleConnectivityChange(
@@ -3986,6 +3814,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     try {
       await _catalogService.refreshProductsFromServer();
+      if (_query.trim().isNotEmpty) {
+        await _runSmartSearch(_query, forceRefresh: true);
+      }
       if (!mounted) return;
 
       setState(() {
@@ -4035,173 +3866,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         });
       }
     }
-  }
-
-  List<ProductCategory> _visibleCategoriesFor(
-    List<ProductComparison> products,
-  ) {
-    final availableIds = products.map((product) => product.categoryId).toSet();
-    final visible = <ProductCategory>[...ProductCategoryCatalog.defaults];
-
-    for (final categoryId in availableIds) {
-      final alreadyVisible = visible.any((category) => category.id == categoryId);
-      if (alreadyVisible) {
-        continue;
-      }
-
-      final fallbackLabel = products
-          .firstWhere((product) => product.categoryId == categoryId)
-          .categoryLabel;
-
-      visible.add(
-        ProductCategoryCatalog.lookup(
-          categoryId,
-          fallbackLabel: fallbackLabel,
-        ),
-      );
-    }
-
-    return visible;
-  }
-
-  String _selectedCategoryLabelFor(List<ProductComparison> products) {
-    if (_selectedCategoryId == ProductCategoryCatalog.allId) {
-      return localizedCategoryLabelForId(ProductCategoryCatalog.allId);
-    }
-
-    String? fallbackLabel;
-    for (final product in products) {
-      if (product.categoryId == _selectedCategoryId &&
-          product.categoryLabel.trim().isNotEmpty) {
-        fallbackLabel = product.categoryLabel;
-        break;
-      }
-    }
-
-    final category = ProductCategoryCatalog.lookup(
-      _selectedCategoryId,
-      fallbackLabel: fallbackLabel ?? 'الكل',
-    );
-    return localizedCategoryLabelForId(
-      category.id,
-      fallbackLabel: category.label,
-    );
-  }
-
-  List<ProductComparison> _filteredProductsFor(
-    List<ProductComparison> products,
-  ) {
-    final localResults = _filterProductsWithCurrentState(products);
-    final normalizedQuery = _normalizeArabic(_query);
-
-    if (normalizedQuery.isEmpty) {
-      return localResults;
-    }
-
-    final smartResults = _filterProductsWithCurrentState(_smartSearchSuggestions);
-    if (smartResults.isEmpty) {
-      return localResults;
-    }
-
-    final merged = <ProductComparison>[...localResults];
-    final fingerprints = localResults
-        .map(_productFingerprint)
-        .where((token) => token.isNotEmpty)
-        .toSet();
-
-    for (final product in smartResults) {
-      final fingerprint = _productFingerprint(product);
-      if (fingerprint.isEmpty || fingerprints.add(fingerprint)) {
-        merged.add(product);
-      }
-    }
-
-    return merged;
-  }
-
-  List<ProductComparison> _filterProductsWithCurrentState(
-    List<ProductComparison> products,
-  ) {
-    final normalizedQuery = _normalizeArabic(_query);
-
-    return _findMatchingProducts(
-      products,
-      normalizedQuery: normalizedQuery,
-      categoryId: _selectedCategoryId,
-    );
-  }
-
-  List<ProductComparison> _findMatchingProducts(
-    List<ProductComparison> products, {
-    required String normalizedQuery,
-    String? categoryId,
-  }) {
-    final filtered = products.where((product) {
-      if (categoryId == null || categoryId == ProductCategoryCatalog.allId) {
-        return true;
-      }
-      return product.categoryId == categoryId;
-    }).toList();
-
-    if (normalizedQuery.isEmpty) {
-      return filtered;
-    }
-
-    final ranked = filtered
-        .map(
-          (product) => MapEntry(
-            product,
-            _calculateSearchScore(product, normalizedQuery),
-          ),
-        )
-        .where((entry) => entry.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    return ranked.map((entry) => entry.key).toList();
-  }
-
-  String _productFingerprint(ProductComparison product) {
-    return _normalizeArabic(
-      '${product.expensiveName}|${product.alternativeName}|${product.categoryLabel}|${product.buyUrl}',
-    );
-  }
-
-  int _calculateSearchScore(ProductComparison product, String query) {
-    final searchableTokens = product.searchTokens
-        .map(_normalizeArabic)
-        .where((token) => token.isNotEmpty)
-        .toList();
-
-    final searchableText = searchableTokens.join(' ');
-    final terms = query.split(' ').where((term) => term.isNotEmpty);
-    var total = 0;
-
-    for (final term in terms) {
-      var termScore = 0;
-
-      for (final token in searchableTokens) {
-        if (token == term) {
-          termScore = math.max(termScore, 120);
-        } else if (token.startsWith(term)) {
-          termScore = math.max(termScore, 90);
-        } else if (token.contains(term)) {
-          termScore = math.max(termScore, 60);
-        }
-      }
-
-      if (termScore == 0 && searchableText.contains(term)) {
-        termScore = 35;
-      }
-
-      if (termScore == 0) {
-        return 0;
-      }
-
-      total += termScore;
-    }
-
-    return total + product.savingsPercent;
   }
 
   Future<void> _openExternalUrl(
@@ -4263,41 +3927,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     }
   }
 
-  Future<void> _openBuyLink(ProductComparison product) {
-    if (!product.hasBuyUrl) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            tr(
-              'لا يوجد رابط شراء لهذا الإعلان حالياً.',
-              'There is no purchase link for this listing right now.',
-            ),
-          ),
-        ),
-      );
-      return Future<void>.value();
-    }
-
-    return _openExternalUrl(
-      product.buyUrl,
-      enforceSupportedStore: true,
-    );
-  }
-
-  void _shareSavings(ProductComparison product) {
-    final message = product.hasOriginalOfferTag
-        ? tr(
-            'وجدت عرضاً مميزاً على المنتج الأصلي داخل تطبيق أرخص سعر! شاهد المقارنة الآن: ${_userProfile.shareBaseUrl}',
-            'I found a great offer on the original product in LeastPrice! Check the comparison now: ${_userProfile.shareBaseUrl}',
-          )
-        : tr(
-            'شاهدت هذا الخيار الاقتصادي في تطبيق أرخص سعر ووفرت ${formatAmountValue(product.savingsAmount)} ريال! حمل التطبيق الآن: ${_userProfile.shareBaseUrl}',
-            'I found this better-value option in LeastPrice and saved ${formatAmountValue(product.savingsAmount)} SAR! Download the app now: ${_userProfile.shareBaseUrl}',
-          );
-
-    Share.share(message, subject: tr('أرخص سعر - LeastPrice', 'LeastPrice'));
-  }
-
   double _estimatedInviteSavingsFor(List<ProductComparison> products) {
     if (products.isEmpty) {
       return 0;
@@ -4350,45 +3979,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
-  }
-
-  Future<void> _openRatingDialog(ProductComparison product) async {
-    final rating = await showDialog<double>(
-      context: context,
-      builder: (context) => _RateAlternativeDialog(product: product),
-    );
-
-    if (rating == null || !mounted) {
-      return;
-    }
-
-    try {
-      await _catalogService.submitRating(product, rating);
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            tr(
-              'تم تسجيل تقييمك لـ "${product.alternativeName}" وتحديثه على السحابة.',
-              'Your rating for "${product.alternativeName}" was saved and synced to the cloud.',
-            ),
-          ),
-        ),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            tr(
-              'تعذر حفظ التقييم حالياً. تأكد من أن المنتج مرتبط بوثيقة Firestore.',
-              'Unable to save the rating right now. Make sure the product is linked to a Firestore document.',
-            ),
-          ),
-        ),
-      );
-    }
   }
 
   Future<void> _openAdminDashboard() async {
@@ -4472,18 +4062,14 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         stream: _productsStream,
         builder: (context, snapshot) {
           final products = snapshot.data ?? const <ProductComparison>[];
-          _catalogProductsSnapshot = products;
-          final filteredProducts = _filteredProductsFor(products);
-          final visibleCategories = _visibleCategoriesFor(products);
-          final selectedCategoryLabel = _selectedCategoryLabelFor(products);
           final hasQuery = _query.trim().isNotEmpty;
           final showOffersSection = _selectedHomeSection == HomeCatalogSection.offers;
           final showComparisonsSection =
               _selectedHomeSection == HomeCatalogSection.comparisons;
-          final isInitialLoading =
-              widget.firebaseReady &&
-              snapshot.connectionState == ConnectionState.waiting &&
-              products.isEmpty;
+          final comparisonResults = _comparisonSearchResults;
+          final comparisonDataSourceLabel = showComparisonsSection
+              ? _comparisonSearchSourceLabel
+              : _dataSource.label;
 
           return DecoratedBox(
             decoration: const BoxDecoration(
@@ -4509,19 +4095,25 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                               ? widget.currentUser.email!.trim()
                                   : tr('مستخدم موثّق', 'Verified user')),
                       searchController: _searchController,
-                      resultsCount: filteredProducts.length,
-                      quickTags: _quickSearchTags,
-                      categories: visibleCategories,
+                      resultsCount:
+                          showComparisonsSection ? comparisonResults.length : 0,
+                      quickTags: const <String>[],
+                      categories: const <ProductCategory>[],
                       selectedCategoryId: _selectedCategoryId,
-                      dataSourceLabel: _dataSource.label,
+                      dataSourceLabel: comparisonDataSourceLabel,
                       inviteCode: _userProfile.inviteCode,
                       invitedFriendsCount: _userProfile.invitedFriendsCount,
                       estimatedSavingsText: formatAmountValue(
                         _estimatedInviteSavingsFor(products),
                       ),
                       systemHealthLabel: _systemHealth.statusLabel,
-                      onTagTap: _applyQuickSearch,
-                      onCategorySelected: _selectCategory,
+                      searchHintText: tr(
+                        'ابحث عن أي منتج: دواء، عطر، طعام، إلكترونيات...',
+                        'Search any product: medicine, perfume, food, electronics...',
+                      ),
+                      showDiscoveryControls: false,
+                      onTagTap: (_) {},
+                      onCategorySelected: (_) {},
                       onInviteTap: () => _inviteFriend(products),
                       onLogoutTap: _signOut,
                       onClearSearch: _clearSearch,
@@ -4595,20 +4187,19 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     ),
                   if (showOffersSection)
                     SliverToBoxAdapter(
-                      child: _AdBannersSection(
-                        banners: _activeBanners,
-                        onBannerTap: _openBanner,
-                      ),
-                    ),
-                  if (showOffersSection)
-                    SliverToBoxAdapter(
                       child: _ExclusiveDealsSection(
                         stream: widget.firebaseReady
                             ? _catalogService.watchExclusiveDeals()
                             : Stream<List<ExclusiveDeal>>.value(
                                 ExclusiveDeal.mockData,
                               ),
-                        showEmptyState: true,
+                      ),
+                    ),
+                  if (showOffersSection)
+                    SliverToBoxAdapter(
+                      child: _AdBannersSection(
+                        banners: _activeBanners,
+                        onBannerTap: _openBanner,
                       ),
                     ),
                   if (showComparisonsSection)
@@ -4616,78 +4207,89 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                         child: _SectionIntroCard(
-                          title: tr('المقارنة المستمرة', 'Continuous comparison'),
+                          title: tr(
+                            'محرك المقارنة الشامل',
+                            'Universal comparison search',
+                          ),
                           subtitle: tr(
-                            'هذا القسم يعرض أسعار المقارنات من مجموعة products، ويتم تحديثه آلياً عبر الروبوت اليومي.',
-                            'This section displays comparison prices from products and gets refreshed automatically by the daily bot.',
+                            'اكتب أي اسم منتج، وسنجلب أفضل نتائج التسوق من السوق السعودي مباشرة عبر SerpApi مع كاش 24 ساعة من Firestore.',
+                            'Type any product name and we will fetch the best Saudi shopping results directly through SerpApi with a 24-hour Firestore cache.',
                           ),
                           backgroundColor: AppPalette.comparisonSoftEmerald,
                           borderColor: AppPalette.comparisonBorder,
                           accentColor: AppPalette.comparisonEmerald,
-                          icon: Icons.auto_awesome_rounded,
+                          icon: Icons.travel_explore_rounded,
                         ),
                       ),
                     ),
-                  if (snapshot.hasError && products.isEmpty && !widget.firebaseReady)
-                    const SliverPadding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 16),
-                      sliver: SliverToBoxAdapter(child: SizedBox.shrink()),
-                    ),
-                  if (showComparisonsSection &&
-                      (!snapshot.hasError || products.isNotEmpty || !widget.firebaseReady))
-                    if (isInitialLoading)
-                    const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xFFE8711A),
-                        ),
-                      ),
-                    )
-                  else if (filteredProducts.isEmpty)
+                  if (showComparisonsSection && !hasQuery && !_isSearchingOnline)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
                       sliver: SliverToBoxAdapter(
-                        child: _EmptyState(
-                          query: _query,
-                          selectedCategoryLabel: selectedCategoryLabel,
-                          hasCategoryFilter:
-                              _selectedCategoryId != ProductCategoryCatalog.allId,
-                          searchDemandNotice: _searchDemandNotice,
-                          onReset: _resetFilters,
+                        child: _ComparisonSearchPlaceholder(
+                          title: tr(
+                            'ابدأ بكتابة اسم المنتج',
+                            'Start by typing the product name',
+                          ),
+                          message: tr(
+                            'هذا القسم لم يعد يعرض أصنافاً ثابتة. اكتب أي منتج وسنرتب لك النتائج من الأرخص إلى الأعلى سعراً.',
+                            'This section no longer shows fixed products. Type any item and we will sort the results from the cheapest to the highest price.',
+                          ),
+                          icon: Icons.search_rounded,
                         ),
                       ),
                     )
-                  else
+                  else if (showComparisonsSection &&
+                      _isSearchingOnline &&
+                      comparisonResults.isEmpty)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(20, 32, 20, 24),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppPalette.comparisonEmerald,
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (showComparisonsSection && comparisonResults.isEmpty)
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                      sliver: SliverToBoxAdapter(
+                        child: _ComparisonSearchPlaceholder(
+                          title: tr(
+                            'لا توجد نتائج مناسبة الآن',
+                            'No matching results right now',
+                          ),
+                          message: tr(
+                            'جرّب كلمات أوضح أو اسم المنتج كما يظهر في المتجر، وسنحاول جلب النتائج مرة أخرى.',
+                            'Try clearer keywords or the product name as it appears in stores, and we will fetch the results again.',
+                          ),
+                          icon: Icons.manage_search_rounded,
+                        ),
+                      ),
+                    )
+                  else if (showComparisonsSection)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            final product = filteredProducts[index];
+                            final result = comparisonResults[index];
 
                             return Padding(
                               padding: EdgeInsets.only(
-                                bottom: index == filteredProducts.length - 1
+                                bottom: index == comparisonResults.length - 1
                                     ? 0
                                     : 18,
                               ),
-                              child: ComparisonCard(
-                                comparison: product,
-                                onBuyTap: product.hasBuyUrl
-                                    ? () => _openBuyLink(product)
-                                    : null,
-                                onShareTap: () => _shareSavings(product),
-                                onRateTap: () => _openRatingDialog(product),
-                                onLocationTap: product.localLocationUrl == null
-                                    ? null
-                                    : () => _openExternalUrl(
-                                          product.localLocationUrl!,
-                                        ),
+                              child: _ComparisonSearchResultCard(
+                                result: result,
+                                onTap: () => _openExternalUrl(result.productUrl),
                               ),
                             );
                           },
-                          childCount: filteredProducts.length,
+                          childCount: comparisonResults.length,
                         ),
                       ),
                     ),
@@ -4701,12 +4303,12 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                             Text(
                               hasQuery
                                   ? tr(
-                                      'نتائج البحث عن "${_query.trim()}"',
+                                      'نتائج التسوق عن "${_query.trim()}"',
                                       'Search results for "${_query.trim()}"',
                                     )
                                   : tr(
-                                      'يتم الآن جلب المنتجات مباشرة من Cloud Firestore مع بث لحظي لأي تحديث جديد.',
-                                      'Products are now loading directly from Cloud Firestore with real-time updates.',
+                                      'اكتب المنتج في شريط البحث بالأعلى لبدء مقارنة الأسعار فوراً.',
+                                      'Type the product in the search bar above to start price comparison instantly.',
                                     ),
                               style: TextStyle(
                                 color: Colors.grey.shade700,
@@ -4730,8 +4332,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                               const SizedBox(height: 6),
                               Text(
                                 tr(
-                                  'جارٍ التحقق من أحدث الأسعار من الخادم...',
-                                  'Checking the latest prices from the server...',
+                                  'جارٍ تحديث نتائج السوق والتحقق من أحدث البيانات...',
+                                  'Refreshing the market results and checking the latest data...',
                                 ),
                                 style: const TextStyle(
                                   color: Color(0xFF9A6700),
@@ -4744,8 +4346,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                               const SizedBox(height: 6),
                               Text(
                                 tr(
-                                  'جارٍ البحث الذكي من الويب عن مقارنات غير موجودة في القاعدة...',
-                                  'Running smart web search for comparisons not found in the database...',
+                                  'جارٍ جلب نتائج التسوق الحية من SerpApi...',
+                                  'Fetching live shopping results from SerpApi...',
                                 ),
                                 style: const TextStyle(
                                   color: AppPalette.orange,
@@ -4766,24 +4368,12 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                                 ),
                               ),
                             ],
-                            if (_searchDemandNotice != null) ...[
-                              const SizedBox(height: 6),
-                              Text(
-                                _searchDemandNotice!,
-                                style: const TextStyle(
-                                  color: AppPalette.navy,
-                                  fontSize: 12.8,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.5,
-                                ),
-                              ),
-                            ],
                             if (snapshot.hasError && products.isNotEmpty) ...[
                               const SizedBox(height: 6),
                               Text(
                                 tr(
-                                  'حدثت مشكلة مؤقتة في المزامنة، لكن تم الإبقاء على آخر بيانات متاحة.',
-                                  'A temporary sync issue occurred, but the latest available data is still shown.',
+                                  'حدثت مشكلة مؤقتة في مزامنة قسم المنتجات الآلي، لكن البحث الشامل سيواصل العمل بشكل مستقل.',
+                                  'A temporary sync issue affected the automated products section, but universal search will keep working independently.',
                                 ),
                                 style: const TextStyle(
                                   color: Color(0xFFB44B42),
@@ -4874,6 +4464,222 @@ class _StatusBanner extends StatelessWidget {
   }
 }
 
+class _ComparisonSearchPlaceholder extends StatelessWidget {
+  const _ComparisonSearchPlaceholder({
+    required this.title,
+    required this.message,
+    required this.icon,
+  });
+
+  final String title;
+  final String message;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: AppPalette.comparisonBorder),
+        boxShadow: const [
+          BoxShadow(
+            color: AppPalette.shadow,
+            blurRadius: 18,
+            offset: Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 66,
+            height: 66,
+            decoration: BoxDecoration(
+              color: AppPalette.comparisonSoftEmerald,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Icon(
+              icon,
+              color: AppPalette.comparisonEmerald,
+              size: 30,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppPalette.navy,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppPalette.softNavy,
+              height: 1.55,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ComparisonSearchResultCard extends StatelessWidget {
+  const _ComparisonSearchResultCard({
+    required this.result,
+    required this.onTap,
+  });
+
+  final ComparisonSearchResult result;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(28),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: AppPalette.comparisonBorder),
+          boxShadow: const [
+            BoxShadow(
+              color: AppPalette.shadow,
+              blurRadius: 18,
+              offset: Offset(0, 12),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: result.imageUrl.trim().isNotEmpty
+                  ? Image.network(
+                      result.imageUrl,
+                      width: 92,
+                      height: 92,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _ComparisonImageFallback(),
+                    )
+                  : const _ComparisonImageFallback(),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppPalette.comparisonSoftEmerald,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      tr('محدث آلياً', 'Updated automatically'),
+                      style: const TextStyle(
+                        color: AppPalette.comparisonEmerald,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12.2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    result.title,
+                    style: const TextStyle(
+                      color: AppPalette.navy,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    formatPrice(result.price),
+                    style: const TextStyle(
+                      color: AppPalette.comparisonEmerald,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.storefront_rounded,
+                        size: 16,
+                        color: AppPalette.softNavy,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          result.storeName,
+                          style: const TextStyle(
+                            color: AppPalette.softNavy,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: onTap,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppPalette.comparisonEmerald,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    icon: const Icon(Icons.open_in_new_rounded),
+                    label: Text(tr('فتح المتجر', 'Open store')),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ComparisonImageFallback extends StatelessWidget {
+  const _ComparisonImageFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 92,
+      height: 92,
+      color: AppPalette.cardBackground,
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.image_search_rounded,
+        color: AppPalette.softNavy,
+        size: 34,
+      ),
+    );
+  }
+}
+
 class _HeaderSection extends StatelessWidget {
   const _HeaderSection({
     required this.query,
@@ -4888,11 +4694,13 @@ class _HeaderSection extends StatelessWidget {
     required this.invitedFriendsCount,
     required this.estimatedSavingsText,
     required this.systemHealthLabel,
+    required this.searchHintText,
     required this.onTagTap,
     required this.onCategorySelected,
     required this.onInviteTap,
     required this.onLogoutTap,
     required this.onClearSearch,
+    this.showDiscoveryControls = true,
   });
 
   final String query;
@@ -4907,11 +4715,13 @@ class _HeaderSection extends StatelessWidget {
   final int invitedFriendsCount;
   final String estimatedSavingsText;
   final String systemHealthLabel;
+  final String searchHintText;
   final ValueChanged<String> onTagTap;
   final ValueChanged<String> onCategorySelected;
   final VoidCallback onInviteTap;
   final Future<void> Function() onLogoutTap;
   final VoidCallback onClearSearch;
+  final bool showDiscoveryControls;
 
   @override
   Widget build(BuildContext context) {
@@ -5043,7 +4853,7 @@ class _HeaderSection extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                     decoration: InputDecoration(
-                      hintText: tr('ابحث عن منتج مثل: نسكافيه، كرافت، هاينز...', 'Search for a product e.g. Nescafe, Kraft, Heinz...'),
+                      hintText: searchHintText,
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: hasQuery
                           ? IconButton(
@@ -5053,53 +4863,57 @@ class _HeaderSection extends StatelessWidget {
                           : null,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    tr('الأقسام البارزة', 'Featured categories'),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15,
+                  if (showDiscoveryControls && categories.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      tr('الأقسام البارزة', 'Featured categories'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 92,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: categories.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 10),
-                      itemBuilder: (context, index) {
-                        final category = categories[index];
-                        final isSelected = category.id == selectedCategoryId;
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 92,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 10),
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          final isSelected = category.id == selectedCategoryId;
 
-                        return _CategoryChip(
-                          category: category,
-                          isSelected: isSelected,
-                          onTap: () => onCategorySelected(category.id),
-                        );
-                      },
+                          return _CategoryChip(
+                            category: category,
+                            isSelected: isSelected,
+                            onTap: () => onCategorySelected(category.id),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: quickTags
-                        .map(
-                          (tag) => ActionChip(
-                            onPressed: () => onTagTap(tag),
-                            backgroundColor: const Color(0x14FFFFFF),
-                            side: const BorderSide(color: Color(0x30FFFFFF)),
-                            labelStyle: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
+                  ],
+                  if (showDiscoveryControls && quickTags.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: quickTags
+                          .map(
+                            (tag) => ActionChip(
+                              onPressed: () => onTagTap(tag),
+                              backgroundColor: const Color(0x14FFFFFF),
+                              side: const BorderSide(color: Color(0x30FFFFFF)),
+                              labelStyle: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              label: Text(localizedKnownLabel(tag)),
                             ),
-                            label: Text(localizedKnownLabel(tag)),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                          )
+                          .toList(),
+                    ),
+                  ],
                   const SizedBox(height: 18),
                   Wrap(
                     spacing: 10,
@@ -5115,8 +4929,8 @@ class _HeaderSection extends StatelessWidget {
                       _StatPill(
                         icon: Icons.bolt_rounded,
                         label: hasQuery
-                            ? tr('بحث مباشر', 'Direct search')
-                            : tr('بحث ذكي', 'Smart search'),
+                            ? tr('بحث سوق حي', 'Live market search')
+                            : tr('محرك المقارنة', 'Comparison engine'),
                       ),
                       _StatPill(
                         icon: Icons.cloud_done_rounded,
@@ -5510,25 +5324,9 @@ class _AdBannersSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Column(
-        children: [
-          _SectionIntroCard(
-            title: tr('الإعلانات والعروض', 'Ads and offers'),
-            subtitle: tr(
-              'تظهر هنا البنرات الإعلانية والعروض المتعاقدة معك فقط داخل هذا التبويب.',
-              'Ad banners and promoted offers appear here only inside this tab.',
-            ),
-            backgroundColor: AppPalette.dealsSoftRed,
-            borderColor: AppPalette.dealsBorder,
-            accentColor: AppPalette.dealsRed,
-            icon: Icons.campaign_rounded,
-          ),
-          const SizedBox(height: 14),
-          _BannerCarousel(
-            banners: banners,
-            onTap: onBannerTap,
-          ),
-        ],
+      child: _BannerCarousel(
+        banners: banners,
+        onTap: onBannerTap,
       ),
     );
   }
@@ -5599,7 +5397,7 @@ class _ExclusiveDealsCarouselState extends State<_ExclusiveDealsCarousel> {
     return Column(
       children: [
         SizedBox(
-          height: 214,
+          height: 236,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.deals.length,
@@ -6534,25 +6332,24 @@ class _BackgroundBubble extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _EmptyState extends StatelessWidget {
   const _EmptyState({
     required this.query,
     required this.selectedCategoryLabel,
     required this.hasCategoryFilter,
-    this.searchDemandNotice,
     required this.onReset,
   });
 
   final String query;
   final String selectedCategoryLabel;
   final bool hasCategoryFilter;
-  final String? searchDemandNotice;
   final VoidCallback onReset;
 
   @override
   Widget build(BuildContext context) {
     final hasQuery = query.trim().isNotEmpty;
-    final hasQueuedSearchDemand = searchDemandNotice?.trim().isNotEmpty ?? false;
+    final hasQueuedSearchDemand = DateTime.now().microsecondsSinceEpoch < 0;
 
     final title = hasQuery
         ? hasQueuedSearchDemand
@@ -6576,7 +6373,10 @@ class _EmptyState extends StatelessWidget {
 
     final description = hasQuery
         ? hasQueuedSearchDemand
-            ? searchDemandNotice!
+            ? tr(
+                'Ø¬Ø§Ø±Ù ØªØ¬Ù‡ÙŠØ² Ù†ØªØ§Ø¦Ø¬ Ø£Ø¯Ù‚ Ù„Ùƒ.',
+                'We are preparing more accurate results for you.',
+              )
             : hasCategoryFilter
                 ? tr(
                     'قد يكون المنتج موجوداً في تصنيف آخر، ويمكنك إعادة ضبط الفلاتر الآن. وإذا كان غير موجود بعد، فسنسجل طلبه ليضيفه روبوت التحديث اليومي لاحقاً.',
@@ -7525,11 +7325,9 @@ class _HomeSectionSwitcherButton extends StatelessWidget {
 class _ExclusiveDealsSection extends StatefulWidget {
   const _ExclusiveDealsSection({
     required this.stream,
-    this.showEmptyState = false,
   });
 
   final Stream<List<ExclusiveDeal>> stream;
-  final bool showEmptyState;
 
   @override
   State<_ExclusiveDealsSection> createState() => _ExclusiveDealsSectionState();
@@ -7576,56 +7374,10 @@ class _ExclusiveDealsSectionState extends State<_ExclusiveDealsSection> {
             ..sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
 
           if (activeDeals.isEmpty) {
-            if (!widget.showEmptyState) {
-              return const SizedBox.shrink();
-            }
-
-            return Column(
-              children: [
-                _SectionIntroCard(
-                  title: tr('العروض', 'Offers'),
-                  subtitle: tr(
-                    'سيظهر هنا أي عرض مؤقت تضيفه من لوحة التحكم، وسيختفي تلقائياً بعد انتهاء مدته.',
-                    'Any temporary offer you add from the admin dashboard will appear here and disappear automatically after it expires.',
-                  ),
-                  backgroundColor: AppPalette.dealsSoftRed,
-                  borderColor: AppPalette.dealsBorder,
-                  accentColor: AppPalette.dealsRed,
-                  icon: Icons.local_offer_rounded,
-                ),
-                const SizedBox(height: 14),
-                _SectionIntroCard(
-                  title: tr('لا توجد عروض حالية', 'No active offers'),
-                  subtitle: tr(
-                    'حالياً لا توجد عروض سارية. أضف عرضاً جديداً من لوحة التحكم في مجموعة exclusive_deals.',
-                    'There are no active offers right now. Add a new deal from the admin dashboard in the exclusive_deals collection.',
-                  ),
-                  backgroundColor: Colors.white,
-                  borderColor: AppPalette.dealsBorder,
-                  accentColor: AppPalette.dealsRed,
-                  icon: Icons.hourglass_bottom_rounded,
-                ),
-              ],
-            );
+            return const SizedBox.shrink();
           }
 
-          return Column(
-            children: [
-              _SectionIntroCard(
-                title: tr('العروض المؤقتة', 'Temporary deals'),
-                subtitle: tr(
-                  'عروض يدوية من exclusive_deals تختفي تلقائياً عند انتهاء تاريخها.',
-                  'Manual offers from exclusive_deals that disappear automatically when they expire.',
-                ),
-                backgroundColor: AppPalette.dealsSoftRed,
-                borderColor: AppPalette.dealsBorder,
-                accentColor: AppPalette.dealsRed,
-                icon: Icons.local_fire_department_rounded,
-              ),
-              const SizedBox(height: 14),
-              _ExclusiveDealsCarousel(deals: activeDeals, now: _now),
-            ],
-          );
+          return _ExclusiveDealsCarousel(deals: activeDeals, now: _now);
         },
       ),
     );
@@ -9593,6 +9345,8 @@ class LeastPriceDataConfig {
   static const String productsCollectionName = 'products';
   static const String adBannersCollectionName = 'ad_banners';
   static const String exclusiveDealsCollectionName = 'exclusive_deals';
+  static const String comparisonSearchCacheCollectionName =
+      'comparison_search_cache';
   static const String usersCollectionName = 'users';
   static const String popularProductsCollectionName = 'popular_products';
   static const String searchRequestsCollectionName = 'search_requests';
@@ -9611,6 +9365,12 @@ class LeastPriceDataConfig {
     defaultValue: 'leastprice123',
   );
   static const String affiliateTag = 'myid-21';
+  static const int comparisonSearchCacheHours = 24;
+  static const String serpApiKey = String.fromEnvironment(
+    'SERPAPI_KEY',
+    defaultValue:
+        '8f5e0a4c11cb0e6972f549ee390b083531ca2545ef1c02593c20efae8e917861',
+  );
   static const String originalOnSaleTag = 'المنتج الأصلي عليه عرض حالياً';
   static const SearchProviderType searchProviderType = SearchProviderType.serper;
   static const String serperApiKey =
@@ -9659,6 +9419,304 @@ class SearchResultItem {
   final String title;
   final String link;
   final String snippet;
+}
+
+class ComparisonSearchResult {
+  const ComparisonSearchResult({
+    required this.title,
+    required this.price,
+    required this.storeName,
+    required this.imageUrl,
+    required this.productUrl,
+  });
+
+  final String title;
+  final double price;
+  final String storeName;
+  final String imageUrl;
+  final String productUrl;
+
+  factory ComparisonSearchResult.fromJson(Map<String, dynamic> json) {
+    final title = _stringValue(json['title'])?.trim() ?? '';
+    final storeName =
+            _stringValue(
+              json['storeName'] ?? json['source'] ?? json['seller'],
+            )?.trim() ??
+        '';
+    final productUrl =
+            _stringValue(
+              json['productUrl'] ?? json['product_link'] ?? json['link'],
+            )?.trim() ??
+        '';
+    final thumbnails = json['thumbnails'];
+    final imageUrl = _normalizedImageUrl(
+      _stringValue(json['imageUrl'] ?? json['thumbnail']) ??
+          (thumbnails is List && thumbnails.isNotEmpty
+              ? _stringValue(thumbnails.first) ?? ''
+              : ''),
+      fallbackLabel: title.isEmpty ? 'LeastPrice Result' : title,
+    );
+    final rawPriceText = _stringValue(json['price']);
+    final parsedFallbackPrice = rawPriceText == null
+        ? null
+        : _extractMarketplacePrice(rawPriceText);
+    final rawExtractedPrice = json['priceValue'] ?? json['extracted_price'];
+    final extractedPrice = rawExtractedPrice == null
+        ? null
+        : _doubleValue(rawExtractedPrice);
+    final price = extractedPrice ?? parsedFallbackPrice ?? 0;
+
+    return ComparisonSearchResult(
+      title: title,
+      price: price,
+      storeName: storeName.isEmpty ? tr('متجر إلكتروني', 'Online store') : storeName,
+      imageUrl: imageUrl,
+      productUrl: productUrl,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'priceValue': price,
+      'price': formatPrice(price),
+      'storeName': storeName,
+      'imageUrl': imageUrl,
+      'productUrl': productUrl,
+    };
+  }
+}
+
+class ComparisonSearchCacheEntry {
+  const ComparisonSearchCacheEntry({
+    required this.query,
+    required this.normalizedQuery,
+    required this.cachedAt,
+    required this.results,
+  });
+
+  final String query;
+  final String normalizedQuery;
+  final DateTime cachedAt;
+  final List<ComparisonSearchResult> results;
+
+  bool get isFresh =>
+      DateTime.now().difference(cachedAt) <
+      Duration(hours: LeastPriceDataConfig.comparisonSearchCacheHours);
+
+  factory ComparisonSearchCacheEntry.fromJson(Map<String, dynamic> json) {
+    final items = json['results'];
+    return ComparisonSearchCacheEntry(
+      query: _stringValue(json['query']) ?? '',
+      normalizedQuery: _stringValue(json['normalizedQuery']) ?? '',
+      cachedAt:
+          _dateTimeValue(json['cachedAt']) ??
+          DateTime.fromMillisecondsSinceEpoch(0),
+      results: items is List
+          ? items
+                .whereType<Map>()
+                .map(
+                  (item) => ComparisonSearchResult.fromJson(
+                    Map<String, dynamic>.from(item),
+                  ),
+                )
+                .where(
+                  (result) =>
+                      result.title.trim().isNotEmpty &&
+                      result.productUrl.trim().isNotEmpty &&
+                      result.price > 0,
+                )
+                .toList()
+          : const <ComparisonSearchResult>[],
+    );
+  }
+}
+
+class ComparisonSearchResponse {
+  const ComparisonSearchResponse({
+    required this.results,
+    required this.fromCache,
+    this.notice,
+  });
+
+  final List<ComparisonSearchResult> results;
+  final bool fromCache;
+  final String? notice;
+}
+
+class SerpApiShoppingSearchService {
+  const SerpApiShoppingSearchService({
+    FirestoreCatalogService? catalogService,
+  }) : _catalogService = catalogService;
+
+  final FirestoreCatalogService? _catalogService;
+
+  FirestoreCatalogService get _service =>
+      _catalogService ?? const FirestoreCatalogService();
+
+  Future<ComparisonSearchResponse> search({
+    required String query,
+    required bool firebaseReady,
+    bool forceRefresh = false,
+  }) async {
+    final trimmedQuery = query.trim();
+    final normalizedQuery = _normalizeArabic(trimmedQuery);
+    if (normalizedQuery.length < 2) {
+      return const ComparisonSearchResponse(
+        results: <ComparisonSearchResult>[],
+        fromCache: false,
+      );
+    }
+
+    ComparisonSearchCacheEntry? cachedEntry;
+    if (firebaseReady) {
+      cachedEntry = await _service.fetchComparisonSearchCache(trimmedQuery);
+      if (!forceRefresh &&
+          cachedEntry != null &&
+          cachedEntry.isFresh &&
+          cachedEntry.results.isNotEmpty) {
+        return ComparisonSearchResponse(
+          results: cachedEntry.results,
+          fromCache: true,
+          notice: tr(
+            'تم عرض النتائج من الذاكرة المؤقتة المحفوظة خلال آخر 24 ساعة.',
+            'Results were loaded from the cache saved within the last 24 hours.',
+          ),
+        );
+      }
+    }
+
+    final apiKey = LeastPriceDataConfig.serpApiKey.trim();
+    if (apiKey.isEmpty) {
+      return ComparisonSearchResponse(
+        results: cachedEntry?.results ?? const <ComparisonSearchResult>[],
+        fromCache: cachedEntry != null,
+        notice: tr(
+          'مفتاح SerpApi غير موجود حالياً، لذلك لا يمكن تنفيذ البحث الحي.',
+          'The SerpApi key is missing, so live search cannot run right now.',
+        ),
+      );
+    }
+
+    try {
+      final results = await _fetchLiveResults(trimmedQuery, apiKey);
+      if (firebaseReady && results.isNotEmpty) {
+        await _service.saveComparisonSearchCache(
+          query: trimmedQuery,
+          results: results,
+        );
+      }
+
+      return ComparisonSearchResponse(
+        results: results,
+        fromCache: false,
+        notice: results.isEmpty
+            ? tr(
+                'لم نجد نتائج تسوق مناسبة لهذا البحث حالياً.',
+                'No matching shopping results were found for this search right now.',
+              )
+            : tr(
+                'تم تحديث النتائج مباشرة من SerpApi للسوق السعودي.',
+                'Results were refreshed live from SerpApi for the Saudi market.',
+              ),
+      );
+    } catch (_) {
+      if (cachedEntry != null && cachedEntry.results.isNotEmpty) {
+        return ComparisonSearchResponse(
+          results: cachedEntry.results,
+          fromCache: true,
+          notice: tr(
+            'تعذر تحديث النتائج الآن، لذلك تم عرض آخر نسخة محفوظة من Firestore.',
+            'Live refresh failed, so the latest saved Firestore copy is shown instead.',
+          ),
+        );
+      }
+      rethrow;
+    }
+  }
+
+  Future<List<ComparisonSearchResult>> _fetchLiveResults(
+    String query,
+    String apiKey,
+  ) async {
+    final uri = Uri.https('serpapi.com', '/search.json', {
+      'engine': 'google_shopping',
+      'q': query,
+      'location': 'Saudi Arabia',
+      'gl': 'sa',
+      'hl': 'ar',
+      'api_key': apiKey,
+    });
+
+    final response = await http.get(uri);
+    if (response.statusCode >= 400) {
+      throw Exception('SerpApi responded with ${response.statusCode}');
+    }
+
+    final payload = jsonDecode(response.body);
+    if (payload is! Map<String, dynamic>) {
+      throw const FormatException('Unexpected SerpApi payload');
+    }
+
+    final results = _parseResults(payload)
+      ..sort((a, b) => a.price.compareTo(b.price));
+
+    return results;
+  }
+
+  List<ComparisonSearchResult> _parseResults(Map<String, dynamic> payload) {
+    final results = <ComparisonSearchResult>[];
+    final seen = <String>{};
+
+    void addResult(dynamic rawItem) {
+      if (rawItem is! Map) {
+        return;
+      }
+
+      final item = ComparisonSearchResult.fromJson(
+        Map<String, dynamic>.from(rawItem),
+      );
+      if (item.title.trim().isEmpty ||
+          item.productUrl.trim().isEmpty ||
+          item.price <= 0) {
+        return;
+      }
+
+      final fingerprint = _normalizeArabic(
+        '${item.title}|${item.storeName}|${item.price}',
+      );
+      if (!seen.add(fingerprint)) {
+        return;
+      }
+
+      results.add(item);
+    }
+
+    final directResults = payload['shopping_results'];
+    if (directResults is List) {
+      for (final item in directResults) {
+        addResult(item);
+      }
+    }
+
+    final categorizedResults = payload['categorized_shopping_results'];
+    if (categorizedResults is List) {
+      for (final category in categorizedResults) {
+        if (category is! Map) {
+          continue;
+        }
+        final categoryItems = category['shopping_results'];
+        if (categoryItems is! List) {
+          continue;
+        }
+        for (final item in categoryItems) {
+          addResult(item);
+        }
+      }
+    }
+
+    return results;
+  }
 }
 
 class ParsedCatalogPayload {
@@ -10394,6 +10452,8 @@ class FirestoreCatalogService {
       firestore.collection(LeastPriceDataConfig.adBannersCollectionName);
   CollectionReference<Map<String, dynamic>> get _exclusiveDealsCollection =>
       firestore.collection(LeastPriceDataConfig.exclusiveDealsCollectionName);
+  CollectionReference<Map<String, dynamic>> get _comparisonSearchCacheCollection =>
+      firestore.collection(LeastPriceDataConfig.comparisonSearchCacheCollectionName);
   CollectionReference<Map<String, dynamic>> get _usersCollection =>
       firestore.collection(LeastPriceDataConfig.usersCollectionName);
   CollectionReference<Map<String, dynamic>> get _systemHealthCollection =>
@@ -10467,6 +10527,43 @@ class FirestoreCatalogService {
 
       return AutomationHealthStatus.fromJson(snapshot.data() ?? const {});
     });
+  }
+
+  Future<ComparisonSearchCacheEntry?> fetchComparisonSearchCache(
+    String query,
+  ) async {
+    final normalizedQuery = _normalizeArabic(query);
+    if (normalizedQuery.length < 2) {
+      return null;
+    }
+
+    final documentId = _buildComparisonSearchCacheDocumentId(normalizedQuery);
+    final snapshot = await _comparisonSearchCacheCollection.doc(documentId).get();
+    if (!snapshot.exists) {
+      return null;
+    }
+
+    return ComparisonSearchCacheEntry.fromJson(snapshot.data() ?? const {});
+  }
+
+  Future<void> saveComparisonSearchCache({
+    required String query,
+    required List<ComparisonSearchResult> results,
+  }) async {
+    final normalizedQuery = _normalizeArabic(query);
+    if (normalizedQuery.length < 2 || results.isEmpty) {
+      return;
+    }
+
+    final documentId = _buildComparisonSearchCacheDocumentId(normalizedQuery);
+    await _comparisonSearchCacheCollection.doc(documentId).set({
+      'query': query.trim(),
+      'normalizedQuery': normalizedQuery,
+      'cachedAt': Timestamp.fromDate(DateTime.now()),
+      'results': results.map((result) => result.toJson()).toList(),
+      'lastUpdated': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   Future<UserSavingsProfile> ensureUserProfile({
@@ -10805,6 +10902,10 @@ class FirestoreCatalogService {
     required String categoryId,
   }) {
     return '$categoryId--${normalizedQuery.replaceAll('/', '_')}';
+  }
+
+  String _buildComparisonSearchCacheDocumentId(String normalizedQuery) {
+    return normalizedQuery.replaceAll(RegExp(r'[^a-zA-Z0-9\u0600-\u06FF]+'), '_');
   }
 
   String _buildReferralCodeFromUserId(String userId) {
@@ -11963,6 +12064,34 @@ String formatPrice(double price) {
 String formatAmountValue(double amount) {
   final hasFraction = amount != amount.roundToDouble();
   return hasFraction ? amount.toStringAsFixed(2) : amount.toStringAsFixed(0);
+}
+
+double? _extractMarketplacePrice(String text) {
+  final normalized = text.replaceAll(',', '').trim();
+  if (normalized.isEmpty) {
+    return null;
+  }
+
+  final patterns = <RegExp>[
+    RegExp(
+      r'(?:ر\.?\s?س|ريال|SAR)\s*([0-9]+(?:\.[0-9]{1,2})?)',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'([0-9]+(?:\.[0-9]{1,2})?)\s*(?:ر\.?\s?س|ريال|SAR)',
+      caseSensitive: false,
+    ),
+    RegExp(r'([0-9]+(?:\.[0-9]{1,2})?)'),
+  ];
+
+  for (final pattern in patterns) {
+    final match = pattern.firstMatch(normalized);
+    if (match != null) {
+      return double.tryParse(match.group(1) ?? '');
+    }
+  }
+
+  return null;
 }
 
 String _normalizeArabic(String input) {

@@ -27,6 +27,12 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    match /comparison_search_cache/{documentId} {
+      allow read: if true;
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
     match /popular_products/{documentId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
