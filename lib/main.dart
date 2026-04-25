@@ -4600,6 +4600,20 @@ class _ComparisonSearchResultCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
+                    result.isLiveDirect
+                        ? tr(
+                            'تحديث لحظي مباشر من الموقع الرسمي • ${result.channelType.label}',
+                            'Live direct update from the official store • ${result.channelType.label}',
+                          )
+                        : '${result.sourceType.label} • ${result.channelType.label}',
+                    style: const TextStyle(
+                      color: AppPalette.softNavy,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12.8,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
                     result.title,
                     style: const TextStyle(
                       color: AppPalette.navy,
@@ -4610,7 +4624,7 @@ class _ComparisonSearchResultCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    formatPrice(result.price),
+                    '${formatAmountValue(result.price)} ${result.currency}',
                     style: const TextStyle(
                       color: AppPalette.comparisonEmerald,
                       fontSize: 22,
@@ -4620,6 +4634,19 @@ class _ComparisonSearchResultCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
+                      if (result.storeLogoUrl.trim().isNotEmpty) ...[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: Image.network(
+                            result.storeLogoUrl,
+                            width: 18,
+                            height: 18,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                      ],
                       const Icon(
                         Icons.storefront_rounded,
                         size: 16,
@@ -9347,6 +9374,8 @@ class LeastPriceDataConfig {
   static const String exclusiveDealsCollectionName = 'exclusive_deals';
   static const String comparisonSearchCacheCollectionName =
       'comparison_search_cache';
+  static const String functionsRegion = 'us-central1';
+  static const String hybridSearchFunctionName = 'hybridMarketplaceSearch';
   static const String usersCollectionName = 'users';
   static const String popularProductsCollectionName = 'popular_products';
   static const String searchRequestsCollectionName = 'search_requests';
@@ -9421,20 +9450,75 @@ class SearchResultItem {
   final String snippet;
 }
 
+enum ComparisonSearchSourceType {
+  serpApi,
+  scraper,
+}
+
+extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
+  String get label {
+    switch (this) {
+      case ComparisonSearchSourceType.serpApi:
+        return tr('SerpApi', 'SerpApi');
+      case ComparisonSearchSourceType.scraper:
+        return tr('مباشر من المتجر', 'Direct store scrape');
+    }
+  }
+}
+
+enum ComparisonSearchChannelType {
+  marketplace,
+  hypermarket,
+  delivery,
+  pharmacy,
+  other,
+}
+
+extension ComparisonSearchChannelTypeLabel on ComparisonSearchChannelType {
+  String get label {
+    switch (this) {
+      case ComparisonSearchChannelType.marketplace:
+        return tr('منصة كبرى', 'Marketplace');
+      case ComparisonSearchChannelType.hypermarket:
+        return tr('هايبر ماركت', 'Hypermarket');
+      case ComparisonSearchChannelType.delivery:
+        return tr('تطبيق توصيل', 'Delivery app');
+      case ComparisonSearchChannelType.pharmacy:
+        return tr('صيدلية', 'Pharmacy');
+      case ComparisonSearchChannelType.other:
+        return tr('متجر محلي', 'Local store');
+    }
+  }
+}
+
 class ComparisonSearchResult {
   const ComparisonSearchResult({
     required this.title,
     required this.price,
     required this.storeName,
+    required this.storeId,
+    required this.storeLogoUrl,
     required this.imageUrl,
     required this.productUrl,
+    required this.currency,
+    required this.sourceType,
+    required this.channelType,
+    required this.isLiveDirect,
   });
 
   final String title;
   final double price;
   final String storeName;
+  final String storeId;
+  final String storeLogoUrl;
   final String imageUrl;
   final String productUrl;
+  final String currency;
+  final ComparisonSearchSourceType sourceType;
+  final ComparisonSearchChannelType channelType;
+  final bool isLiveDirect;
+
+  bool get isScraped => sourceType == ComparisonSearchSourceType.scraper;
 
   factory ComparisonSearchResult.fromJson(Map<String, dynamic> json) {
     final title = _stringValue(json['title'])?.trim() ?? '';
@@ -9465,13 +9549,42 @@ class ComparisonSearchResult {
         ? null
         : _doubleValue(rawExtractedPrice);
     final price = extractedPrice ?? parsedFallbackPrice ?? 0;
+    final storeId =
+        _stringValue(json['storeId']) ??
+        _inferStoreIdFromUrl(productUrl, fallbackName: storeName) ??
+        'unknown';
+    final sourceType = _comparisonSearchSourceTypeFromString(
+      _stringValue(json['sourceType']) ??
+          (_boolValue(
+            json['isLiveDirect'] ?? json['isLiveScraped'],
+            defaultValue: false,
+          )
+              ? 'scraper'
+              : 'serpapi'),
+    );
+    final channelType = _comparisonSearchChannelTypeFromString(
+      _stringValue(json['channelType']) ??
+          _inferComparisonChannelType(storeId, productUrl, storeName),
+    );
+    final currency = _stringValue(json['currency']) ?? 'SAR';
 
     return ComparisonSearchResult(
       title: title,
       price: price,
+      storeId: storeId,
+      storeLogoUrl:
+          _stringValue(json['storeLogoUrl']) ??
+          _resolveStoreLogoUrl(storeId: storeId, productUrl: productUrl),
       storeName: storeName.isEmpty ? tr('متجر إلكتروني', 'Online store') : storeName,
       imageUrl: imageUrl,
       productUrl: productUrl,
+      currency: currency,
+      sourceType: sourceType,
+      channelType: channelType,
+      isLiveDirect: _boolValue(
+        json['isLiveDirect'] ?? json['isLiveScraped'],
+        defaultValue: sourceType == ComparisonSearchSourceType.scraper,
+      ),
     );
   }
 
@@ -9479,10 +9592,16 @@ class ComparisonSearchResult {
     return {
       'title': title,
       'priceValue': price,
-      'price': formatPrice(price),
+      'price': '${formatAmountValue(price)} $currency',
       'storeName': storeName,
+      'storeId': storeId,
+      'storeLogoUrl': storeLogoUrl,
       'imageUrl': imageUrl,
       'productUrl': productUrl,
+      'currency': currency,
+      'sourceType': sourceType.name,
+      'channelType': channelType.name,
+      'isLiveDirect': isLiveDirect,
     };
   }
 }
@@ -9537,11 +9656,18 @@ class ComparisonSearchResponse {
     required this.results,
     required this.fromCache,
     this.notice,
+    this.serpApiResultsCount = 0,
+    this.scrapedResultsCount = 0,
   });
 
   final List<ComparisonSearchResult> results;
   final bool fromCache;
   final String? notice;
+  final int serpApiResultsCount;
+  final int scrapedResultsCount;
+
+  bool get hasLiveScrapedResults =>
+      scrapedResultsCount > 0 || results.any((result) => result.isLiveDirect);
 }
 
 class SerpApiShoppingSearchService {
@@ -9553,6 +9679,31 @@ class SerpApiShoppingSearchService {
 
   FirestoreCatalogService get _service =>
       _catalogService ?? const FirestoreCatalogService();
+
+  ComparisonSearchResponse _buildResponse({
+    required List<ComparisonSearchResult> results,
+    required bool fromCache,
+    String? notice,
+  }) {
+    final serpApiResultsCount = results
+        .where(
+          (result) => result.sourceType == ComparisonSearchSourceType.serpApi,
+        )
+        .length;
+    final scrapedResultsCount = results
+        .where(
+          (result) => result.sourceType == ComparisonSearchSourceType.scraper,
+        )
+        .length;
+
+    return ComparisonSearchResponse(
+      results: results,
+      fromCache: fromCache,
+      notice: notice,
+      serpApiResultsCount: serpApiResultsCount,
+      scrapedResultsCount: scrapedResultsCount,
+    );
+  }
 
   Future<ComparisonSearchResponse> search({
     required String query,
@@ -9575,7 +9726,7 @@ class SerpApiShoppingSearchService {
           cachedEntry != null &&
           cachedEntry.isFresh &&
           cachedEntry.results.isNotEmpty) {
-        return ComparisonSearchResponse(
+        return _buildResponse(
           results: cachedEntry.results,
           fromCache: true,
           notice: tr(
@@ -9607,7 +9758,7 @@ class SerpApiShoppingSearchService {
         );
       }
 
-      return ComparisonSearchResponse(
+      return _buildResponse(
         results: results,
         fromCache: false,
         notice: results.isEmpty
@@ -9622,7 +9773,7 @@ class SerpApiShoppingSearchService {
       );
     } catch (_) {
       if (cachedEntry != null && cachedEntry.results.isNotEmpty) {
-        return ComparisonSearchResponse(
+        return _buildResponse(
           results: cachedEntry.results,
           fromCache: true,
           notice: tr(
@@ -9639,6 +9790,56 @@ class SerpApiShoppingSearchService {
     String query,
     String apiKey,
   ) async {
+    try {
+      final app = Firebase.app();
+      final host =
+          '${LeastPriceDataConfig.functionsRegion}-${app.options.projectId}.cloudfunctions.net';
+      final uri = Uri.https(
+        host,
+        '/${LeastPriceDataConfig.hybridSearchFunctionName}',
+        {
+          'q': query,
+          'hl': _isAr ? 'ar' : 'en',
+        },
+      );
+
+      final response = await http.get(
+        uri,
+        headers: {
+          if (apiKey.trim().isNotEmpty) 'x-serpapi-key': apiKey.trim(),
+          'accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode < 400) {
+        final payload = jsonDecode(response.body);
+        if (payload is Map<String, dynamic>) {
+          final rows = payload['results'];
+          final hybridResults = rows is List
+              ? rows
+                    .whereType<Map>()
+                    .map(
+                      (row) => ComparisonSearchResult.fromJson(
+                        Map<String, dynamic>.from(row),
+                      ),
+                    )
+                    .where(
+                      (result) =>
+                          result.title.trim().isNotEmpty &&
+                          result.productUrl.trim().isNotEmpty &&
+                          result.price > 0,
+                    )
+                    .toList()
+              : <ComparisonSearchResult>[];
+
+          hybridResults.sort((a, b) => a.price.compareTo(b.price));
+          if (hybridResults.isNotEmpty) {
+            return hybridResults;
+          }
+        }
+      }
+    } catch (_) {}
+
     final uri = Uri.https('serpapi.com', '/search.json', {
       'engine': 'google_shopping',
       'q': query,
@@ -12092,6 +12293,176 @@ double? _extractMarketplacePrice(String text) {
   }
 
   return null;
+}
+
+ComparisonSearchSourceType _comparisonSearchSourceTypeFromString(String? value) {
+  final normalized = (value ?? '').trim().toLowerCase();
+  if (normalized.contains('scrap') || normalized.contains('live')) {
+    return ComparisonSearchSourceType.scraper;
+  }
+  return ComparisonSearchSourceType.serpApi;
+}
+
+ComparisonSearchChannelType _comparisonSearchChannelTypeFromString(String? value) {
+  final normalized = (value ?? '').trim().toLowerCase();
+  switch (normalized) {
+    case 'marketplace':
+      return ComparisonSearchChannelType.marketplace;
+    case 'hypermarket':
+      return ComparisonSearchChannelType.hypermarket;
+    case 'delivery':
+      return ComparisonSearchChannelType.delivery;
+    case 'pharmacy':
+      return ComparisonSearchChannelType.pharmacy;
+    default:
+      return ComparisonSearchChannelType.other;
+  }
+}
+
+String _normalizeStoreIdToken(String value) {
+  return value
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '')
+      .trim();
+}
+
+String? _hostFromUrl(String url) {
+  final parsed = Uri.tryParse(url);
+  if (parsed != null && parsed.hasAuthority) {
+    return parsed.host.toLowerCase();
+  }
+  final fallback = Uri.tryParse('https://$url');
+  if (fallback != null && fallback.hasAuthority) {
+    return fallback.host.toLowerCase();
+  }
+  return null;
+}
+
+String? _storeIdForHost(String? host) {
+  final normalizedHost = (host ?? '').toLowerCase();
+  if (normalizedHost.isEmpty) {
+    return null;
+  }
+  if (normalizedHost.contains('amazon')) return 'amazon';
+  if (normalizedHost.contains('noon')) return 'noon';
+  if (normalizedHost.contains('hungerstation')) return 'hungerstation';
+  if (normalizedHost.contains('panda')) return 'panda';
+  if (normalizedHost.contains('othaim')) return 'othaim';
+  if (normalizedHost.contains('farm')) return 'almazraa';
+  if (normalizedHost.contains('lulu')) return 'lulu';
+  if (normalizedHost.contains('carrefour')) return 'carrefour';
+  if (normalizedHost.contains('tamimi')) return 'tamimi';
+  if (normalizedHost.contains('toyou')) return 'toyou';
+  if (normalizedHost.contains('keeta')) return 'keeta';
+  if (normalizedHost.contains('nahdi')) return 'nahdi';
+  if (normalizedHost.contains('dawaa')) return 'aldawaa';
+  return normalizedHost.replaceFirst('www.', '').replaceAll(RegExp(r'[^a-z0-9]+'), '');
+}
+
+String? _inferStoreIdFromUrl(String url, {String? fallbackName}) {
+  final hostStoreId = _storeIdForHost(_hostFromUrl(url));
+  if (hostStoreId != null && hostStoreId.isNotEmpty) {
+    return hostStoreId;
+  }
+
+  final normalizedName = _normalizeArabic(fallbackName ?? '');
+  if (normalizedName.contains('امازون') || normalizedName.contains('amazon')) {
+    return 'amazon';
+  }
+  if (normalizedName.contains('نون') || normalizedName.contains('noon')) {
+    return 'noon';
+  }
+  if (normalizedName.contains('هنجرستيشن')) return 'hungerstation';
+  if (normalizedName.contains('بنده')) return 'panda';
+  if (normalizedName.contains('العثيم')) return 'othaim';
+  if (normalizedName.contains('المزرعه')) return 'almazraa';
+  if (normalizedName.contains('لولو')) return 'lulu';
+  if (normalizedName.contains('كارفور')) return 'carrefour';
+  if (normalizedName.contains('التميمي')) return 'tamimi';
+  if (normalizedName.contains('تويو')) return 'toyou';
+  if (normalizedName.contains('كيتا')) return 'keeta';
+  if (normalizedName.contains('النهدي')) return 'nahdi';
+  if (normalizedName.contains('الدواء')) return 'aldawaa';
+
+  final fallbackToken = _normalizeStoreIdToken(fallbackName ?? '');
+  return fallbackToken.isEmpty ? null : fallbackToken;
+}
+
+String _inferComparisonChannelType(
+  String storeId,
+  String productUrl,
+  String storeName,
+) {
+  final normalized = _normalizeArabic('$storeId ${_hostFromUrl(productUrl) ?? ''} $storeName');
+  if (normalized.contains('nahdi') ||
+      normalized.contains('dawaa') ||
+      normalized.contains('نهدي') ||
+      normalized.contains('دواء')) {
+    return 'pharmacy';
+  }
+  if (normalized.contains('hungerstation') ||
+      normalized.contains('toyou') ||
+      normalized.contains('keeta') ||
+      normalized.contains('هنجرستيشن') ||
+      normalized.contains('تويو') ||
+      normalized.contains('كيتا')) {
+    return 'delivery';
+  }
+  if (normalized.contains('amazon') ||
+      normalized.contains('noon') ||
+      normalized.contains('امازون') ||
+      normalized.contains('نون')) {
+    return 'marketplace';
+  }
+  if (normalized.contains('panda') ||
+      normalized.contains('othaim') ||
+      normalized.contains('lulu') ||
+      normalized.contains('carrefour') ||
+      normalized.contains('tamimi') ||
+      normalized.contains('farm') ||
+      normalized.contains('بنده') ||
+      normalized.contains('العثيم') ||
+      normalized.contains('لولو') ||
+      normalized.contains('كارفور') ||
+      normalized.contains('التميمي') ||
+      normalized.contains('المزرعه')) {
+    return 'hypermarket';
+  }
+  return 'other';
+}
+
+String _resolveStoreLogoUrl({
+  required String storeId,
+  required String productUrl,
+}) {
+  const knownHosts = <String, String>{
+    'amazon': 'amazon.sa',
+    'noon': 'noon.com',
+    'hungerstation': 'hungerstation.com',
+    'panda': 'panda.sa',
+    'othaim': 'othaimmarkets.com',
+    'almazraa': 'farm.com.sa',
+    'lulu': 'luluhypermarket.com',
+    'carrefour': 'carrefourksa.com',
+    'tamimi': 'tamimimarkets.com',
+    'toyou': 'toyou.io',
+    'keeta': 'keeta.com',
+    'nahdi': 'nahdionline.com',
+    'aldawaa': 'al-dawaa.com',
+  };
+
+  final host =
+      _hostFromUrl(productUrl) ??
+      knownHosts[storeId] ??
+      knownHosts[_normalizeStoreIdToken(storeId)];
+  if (host == null || host.isEmpty) {
+    return '';
+  }
+
+  return Uri.https('www.google.com', '/s2/favicons', {
+    'domain_url': 'https://$host',
+    'sz': '128',
+  }).toString();
 }
 
 String _normalizeArabic(String input) {
