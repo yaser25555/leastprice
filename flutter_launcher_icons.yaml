@@ -1,0 +1,9 @@
+flutter_launcher_icons:
+  image_path: "assets/icons/app_icon_navy_1024.png"
+  android: true
+  ios: false
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon_navy_1024.png"
+    background_color: "#1B2F5E"
+

@@ -51,5 +51,7 @@ jobs:
           POPULAR_PRODUCTS_COLLECTION: popular_products
           SEARCH_REQUESTS_COLLECTION: search_requests
           SYSTEM_HEALTH_COLLECTION: system_health
+          TOP_DEMAND_LIMIT: 12
+          MIN_REQUEST_COUNT: 2
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
-        run: python scripts/daily_firestore_price_bot.py --search-request-limit 20
+        run: python scripts/daily_firestore_price_bot.py --search-request-limit 20 --top-demand-limit 12 --min-request-count 2

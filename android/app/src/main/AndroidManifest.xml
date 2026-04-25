@@ -3,7 +3,7 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@android:drawable/sym_def_app_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="LeastPrice">
         <activity
             android:name=".MainActivity"

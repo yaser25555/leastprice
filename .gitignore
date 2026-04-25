@@ -7,15 +7,21 @@
 .metadata
 *.iml
 build/
+.firebase/
 
 android/.gradle/
 android/local.properties
 
 functions/node_modules/
+assets/icons/node_modules/
+assets/icons/package-lock.json
 
 scripts/__pycache__/
 *.pyc
 *.log
+.tmp-sm/
+tmp-*.png
+tmp-*.jpg
 
 google-services.json
 android/app/google-services.json

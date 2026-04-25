@@ -2,7 +2,7 @@
   "referral": {
     "inviteCode": "LP-REMOTE-501",
     "invitedFriendsCount": 12,
-    "shareBaseUrl": "https://leastprice.app",
+    "shareBaseUrl": "https://leastprice-yaser.web.app/",
     "inviteMessageTemplate": "أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}"
   },
   "products": [

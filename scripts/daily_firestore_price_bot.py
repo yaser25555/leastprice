@@ -47,10 +47,14 @@ DEFAULT_SYSTEM_HEALTH_COLLECTION = (
     os.getenv("SYSTEM_HEALTH_COLLECTION", "system_health").strip() or "system_health"
 )
 DEFAULT_REQUEST_LIMIT = int(os.getenv("SEARCH_REQUEST_LIMIT", "20"))
+DEFAULT_TOP_DEMAND_LIMIT = int(os.getenv("TOP_DEMAND_LIMIT", "12"))
+DEFAULT_MIN_REQUEST_COUNT = int(os.getenv("MIN_REQUEST_COUNT", "2"))
 AFFILIATE_TAG = os.getenv("AFFILIATE_TAG", "myid-21").strip() or "myid-21"
 SEARCH_PROVIDER = os.getenv("SEARCH_PROVIDER", "serper").strip().lower() or "serper"
 SEARCH_TIMEOUT_SECONDS = 30
 ORIGINAL_ON_SALE_TAG = "\u0627\u0644\u0645\u0646\u062a\u062c \u0627\u0644\u0623\u0635\u0644\u064a \u0639\u0644\u064a\u0647 \u0639\u0631\u0636 \u062d\u0627\u0644\u064a\u0627\u064b"
+TOP_SEARCH_DEMAND_TAG = "\u0627\u0644\u0623\u0643\u062b\u0631 \u0637\u0644\u0628\u0627\u064b"
+SEARCH_DEMAND_SYNC_TAG = "\u062a\u062d\u062f\u064a\u062b \u0645\u0628\u0646\u064a \u0639\u0644\u0649 \u0637\u0644\u0628\u0627\u062a \u0627\u0644\u0628\u062d\u062b"
 
 EXPENSIVE_HOSTS = ("amazon.sa", "www.amazon.sa", "noon.com", "www.noon.com")
 ALTERNATIVE_HOSTS = (
@@ -192,6 +196,11 @@ def main() -> int:
         "requests_fulfilled": 0,
         "requests_skipped": 0,
         "requests_need_review": 0,
+        "demand_checked": 0,
+        "demand_promoted": 0,
+        "demand_updated": 0,
+        "demand_skipped": 0,
+        "demand_missing_product": 0,
     }
 
     product_snapshots = list(products_collection.stream())
@@ -254,6 +263,24 @@ def main() -> int:
             products_collection_name=arguments.products_collection,
         )
         stats[result] += 1
+
+    refreshed_request_snapshots = list(search_requests_collection.stream())
+    refreshed_request_snapshots.sort(
+        key=build_search_request_rank,
+        reverse=True,
+    )
+
+    demand_stats = sync_top_search_demand_to_popular_products(
+        database=database,
+        snapshots=refreshed_request_snapshots,
+        existing_products=existing_products,
+        dry_run=dry_run,
+        popular_products_collection_name=arguments.popular_products_collection,
+        top_limit=arguments.top_demand_limit,
+        min_request_count=arguments.min_request_count,
+    )
+    for key, value in demand_stats.items():
+        stats[key] += value
 
     write_system_health(
         database=database,
@@ -356,6 +383,18 @@ def parse_arguments() -> argparse.Namespace:
         type=int,
         default=DEFAULT_REQUEST_LIMIT,
         help="Maximum queued user searches to process in one run.",
+    )
+    parser.add_argument(
+        "--top-demand-limit",
+        type=int,
+        default=DEFAULT_TOP_DEMAND_LIMIT,
+        help="Maximum high-demand searches to sync into popular_products per run.",
+    )
+    parser.add_argument(
+        "--min-request-count",
+        type=int,
+        default=DEFAULT_MIN_REQUEST_COUNT,
+        help="Minimum number of repeated searches required before promoting a term.",
     )
     parser.add_argument(
         "--dry-run",
@@ -508,6 +547,8 @@ def refresh_product_document(
         updates["expensivePrice"] = round(next_expensive_price, 2)
     if prices_different(current_alternative_price, next_alternative_price):
         updates["alternativePrice"] = round(next_alternative_price, 2)
+    if not safe_bool(payload.get("is_automated"), default=False):
+        updates["is_automated"] = True
     if safe_string(payload.get("buyUrl")) != next_buy_url and next_buy_url:
         updates["buyUrl"] = next_buy_url
     if safe_string_list(payload.get("tags")) != next_tags:
@@ -590,6 +631,7 @@ def process_popular_product(
 
     write_payload = {
         **generated,
+        "is_automated": True,
         "generatedBy": "daily_firestore_price_bot",
         "sourceType": "popular_products",
         "sourcePopularId": snapshot.id,
@@ -706,6 +748,7 @@ def process_search_request(
         _, document_reference = database.collection(products_collection_name).add(
             {
                 **generated,
+                "is_automated": True,
                 "createdAt": firestore.SERVER_TIMESTAMP,
                 "updatedAt": firestore.SERVER_TIMESTAMP,
                 "generatedBy": "daily_firestore_price_bot",
@@ -723,9 +766,167 @@ def process_search_request(
         dry_run=dry_run,
     )
 
-    existing_products.append(generated)
+    existing_products.append(generated | {"documentId": product_document_id})
     existing_signatures.add(signature)
     return "requests_fulfilled"
+
+
+def sync_top_search_demand_to_popular_products(
+    *,
+    database: firestore.Client,
+    snapshots: Sequence[Any],
+    existing_products: Sequence[Dict[str, Any]],
+    dry_run: bool,
+    popular_products_collection_name: str,
+    top_limit: int,
+    min_request_count: int,
+) -> Dict[str, int]:
+    stats = {
+        "demand_checked": 0,
+        "demand_promoted": 0,
+        "demand_updated": 0,
+        "demand_skipped": 0,
+        "demand_missing_product": 0,
+    }
+    if top_limit <= 0:
+        return stats
+
+    popular_products = database.collection(popular_products_collection_name)
+
+    for snapshot in snapshots[:top_limit]:
+        stats["demand_checked"] += 1
+        payload = snapshot.to_dict() or {}
+        request_count = safe_int(payload.get("requestCount"))
+        if request_count < min_request_count:
+            stats["demand_skipped"] += 1
+            continue
+
+        query = safe_string(payload.get("query"))
+        normalized_query = normalize_text(query or safe_string(payload.get("normalizedQuery")))
+        if len(normalized_query) < 2:
+            stats["demand_skipped"] += 1
+            continue
+
+        category_id = safe_string(payload.get("categoryId")) or "all"
+        matched_product = find_best_matching_product_for_request(
+            existing_products=existing_products,
+            normalized_query=normalized_query,
+            requested_category_id=category_id,
+        )
+        if matched_product is None:
+            stats["demand_missing_product"] += 1
+            continue
+
+        request_document_id = safe_string(snapshot.id)
+        popular_document_id = f"search-demand--{request_document_id}"
+        popular_reference = popular_products.document(popular_document_id)
+        existing_popular_snapshot = popular_reference.get()
+
+        write_payload = build_popular_payload_from_search_demand(
+            request_payload=payload,
+            matched_product=matched_product,
+            request_document_id=request_document_id,
+        )
+        if not write_payload:
+            stats["demand_skipped"] += 1
+            continue
+        if not existing_popular_snapshot.exists:
+            write_payload["createdAt"] = firestore.SERVER_TIMESTAMP
+
+        if dry_run:
+            action = "update" if existing_popular_snapshot.exists else "create"
+            print(f"[DRY RUN] would {action} high-demand popular product {popular_document_id}: {write_payload}")
+        else:
+            popular_reference.set(write_payload, merge=True)
+
+        request_updates: Dict[str, Any] = {
+            "promotedToPopularAt": firestore.SERVER_TIMESTAMP,
+            "popularProductId": popular_document_id,
+            "lastMatchedProductId": safe_string(matched_product.get("documentId")),
+        }
+        if dry_run:
+            print(f"[DRY RUN] would update demand request {snapshot.id}: {request_updates}")
+        else:
+            snapshot.reference.set(request_updates, merge=True)
+
+        if existing_popular_snapshot.exists:
+            stats["demand_updated"] += 1
+        else:
+            stats["demand_promoted"] += 1
+
+    return stats
+
+
+def build_popular_payload_from_search_demand(
+    *,
+    request_payload: Dict[str, Any],
+    matched_product: Dict[str, Any],
+    request_document_id: str,
+) -> Dict[str, Any]:
+    request_count = safe_int(request_payload.get("requestCount"))
+    category_id = safe_string(matched_product.get("categoryId")) or safe_string(request_payload.get("categoryId")) or "all"
+    category_label = (
+        safe_string(matched_product.get("category"))
+        or safe_string(matched_product.get("categoryLabel"))
+        or safe_string(request_payload.get("categoryLabel"))
+        or CATEGORY_LABELS.get(category_id, category_id)
+    )
+    query = safe_string(request_payload.get("query"))
+    search_terms = [query, category_label, *safe_string_list(matched_product.get("tags"))]
+    deduped_search_terms = dedupe_strings(search_terms)
+
+    tags = dedupe_strings(
+        [
+            TOP_SEARCH_DEMAND_TAG,
+            SEARCH_DEMAND_SYNC_TAG,
+            category_label,
+            *safe_string_list(matched_product.get("tags")),
+        ]
+    )
+
+    return {
+        "active": True,
+        "autoGenerated": True,
+        "sourceType": "search_demand",
+        "sourceSearchRequestId": request_document_id,
+        "priority": max(request_count, 1),
+        "requestCount": request_count,
+        "categoryId": category_id,
+        "category": category_label,
+        "categoryLabel": category_label,
+        "expensiveName": safe_string(matched_product.get("expensiveName")),
+        "expensivePrice": safe_float(matched_product.get("expensivePrice")),
+        "expensiveImageUrl": safe_string(matched_product.get("expensiveImageUrl")),
+        "alternativeName": safe_string(matched_product.get("alternativeName")),
+        "alternativePrice": safe_float(matched_product.get("alternativePrice")),
+        "alternativeImageUrl": safe_string(matched_product.get("alternativeImageUrl")),
+        "buyUrl": safe_string(matched_product.get("buyUrl")),
+        "rating": safe_float(matched_product.get("rating")),
+        "reviewCount": safe_int(matched_product.get("reviewCount")),
+        "productDocumentId": safe_string(matched_product.get("documentId")),
+        "searchTerms": deduped_search_terms,
+        "tags": tags,
+        "notes": f"Auto-promoted from repeated search demand for: {query}".strip(),
+        "status": "active",
+        "lastDemandedAt": firestore.SERVER_TIMESTAMP,
+        "updatedAt": firestore.SERVER_TIMESTAMP,
+        "lastPublishedAt": firestore.SERVER_TIMESTAMP,
+        **build_optional_popular_fields(matched_product),
+    }
+
+
+def build_optional_popular_fields(product: Dict[str, Any]) -> Dict[str, Any]:
+    optional_fields = (
+        "fragranceNotes",
+        "activeIngredients",
+        "localLocationUrl",
+        "localLocationLabel",
+    )
+    return {
+        field_name: safe_string(product.get(field_name))
+        for field_name in optional_fields
+        if safe_string(product.get(field_name))
+    }
 
 
 def build_product_from_search_request(
@@ -782,6 +983,7 @@ def build_product_from_search_request(
     payload: Dict[str, Any] = {
         "categoryId": category_id,
         "category": category_label,
+        "is_automated": True,
         "expensiveName": expensive_candidate.name,
         "expensivePrice": round(expensive_candidate.price, 2),
         "expensiveImageUrl": "",
@@ -888,6 +1090,7 @@ def build_product_from_popular_item(
     product: Dict[str, Any] = {
         "categoryId": category_id,
         "category": category_label,
+        "is_automated": True,
         "expensiveName": expensive_name,
         "expensivePrice": round(expensive_price, 2),
         "expensiveImageUrl": safe_string(payload.get("expensiveImageUrl")),
@@ -964,6 +1167,59 @@ def update_request_status(
         return
 
     snapshot.reference.set(updates, merge=True)
+
+
+def build_search_request_rank(snapshot: Any) -> Tuple[int, int]:
+    payload = snapshot.to_dict() or {}
+    return (
+        safe_int(payload.get("requestCount")),
+        safe_int(payload.get("attempts")) * -1,
+    )
+
+
+def find_best_matching_product_for_request(
+    *,
+    existing_products: Sequence[Dict[str, Any]],
+    normalized_query: str,
+    requested_category_id: str,
+) -> Optional[Dict[str, Any]]:
+    matches: List[Tuple[Tuple[int, float, int, float], Dict[str, Any]]] = []
+    for product in existing_products:
+        if not product_matches_query(product, normalized_query):
+            continue
+
+        product_category_id = safe_string(product.get("categoryId"))
+        category_match = int(
+            requested_category_id in {"", "all"} or
+            product_category_id == requested_category_id
+        )
+        rating = safe_float(product.get("rating"))
+        review_count = safe_int(product.get("reviewCount"))
+        savings_value = max(
+            safe_float(product.get("expensivePrice")) - safe_float(product.get("alternativePrice")),
+            0.0,
+        )
+        score = (category_match, rating, review_count, savings_value)
+        matches.append((score, product))
+
+    if not matches:
+        return None
+
+    matches.sort(key=lambda item: item[0], reverse=True)
+    return matches[0][1]
+
+
+def dedupe_strings(values: Sequence[str]) -> List[str]:
+    deduped: List[str] = []
+    seen: set[str] = set()
+    for value in values:
+        text = safe_string(value)
+        normalized = normalize_text(text)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        deduped.append(text)
+    return deduped
 
 
 def build_expensive_query(expensive_name: str, *, extra_terms: Sequence[str] = ()) -> str:

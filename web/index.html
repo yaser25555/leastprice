@@ -32,20 +32,93 @@
   <title>أرخص سعر | LeastPrice</title>
   <meta name="description" content="مقارنة أسعار المنتجات في السوق السعودي - LeastPrice">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#E8711A">
+  <meta name="theme-color" content="#1B2F5E">
 </head>
 <body>
   <script>
-    // Force service worker update on every load
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        var updatePromises = registrations.map(function(reg) {
-          return reg.update();
-        });
-        return Promise.all(updatePromises);
+    const versionInfoUrl = 'version.json';
+    const versionStorageKey = 'leastprice_web_build_version';
+
+    async function getRemoteVersionKey() {
+      const response = await fetch(`${versionInfoUrl}?t=${Date.now()}`, {
+        cache: 'no-store',
       });
+
+      if (!response.ok) {
+        throw new Error(`Unable to fetch version.json (${response.status})`);
+      }
+
+      const payload = await response.json();
+      return [
+        payload.app_name || 'leastprice',
+        payload.version || '0',
+        payload.build_number || '0',
+      ].join('@');
     }
+
+    async function clearFlutterWebCaches() {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(
+          registrations.map(async (registration) => {
+            try {
+              await registration.unregister();
+            } catch (_) {}
+          }),
+        );
+      }
+
+      if ('caches' in window) {
+        const cacheKeys = await caches.keys();
+        await Promise.all(
+          cacheKeys.map(async (cacheKey) => {
+            try {
+              await caches.delete(cacheKey);
+            } catch (_) {}
+          }),
+        );
+      }
+    }
+
+    async function refreshServiceWorkers() {
+      if (!('serviceWorker' in navigator)) {
+        return;
+      }
+
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations.map(async (registration) => {
+          try {
+            await registration.update();
+          } catch (_) {}
+        }),
+      );
+    }
+
+    async function bootLatestVersion() {
+      let remoteVersionKey = `${Date.now()}`;
+
+      try {
+        remoteVersionKey = await getRemoteVersionKey();
+        const previousVersionKey = localStorage.getItem(versionStorageKey);
+
+        if (previousVersionKey && previousVersionKey !== remoteVersionKey) {
+          await clearFlutterWebCaches();
+        }
+
+        localStorage.setItem(versionStorageKey, remoteVersionKey);
+        await refreshServiceWorkers();
+      } catch (error) {
+        console.warn('LeastPrice latest-version check failed:', error);
+      }
+
+      const script = document.createElement('script');
+      script.src = `flutter_bootstrap.js?v=${encodeURIComponent(remoteVersionKey)}`;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    bootLatestVersion();
   </script>
-  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
