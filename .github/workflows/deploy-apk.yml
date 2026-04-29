@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -28,10 +28,13 @@ jobs:
       - name: Build APK (release)
         run: flutter build apk --release
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - name: Prepare stable APK name
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/leastprice.apk
+
+      - name: Publish GitHub Release (latest)
+        uses: softprops/action-gh-release@v2
         with:
-          name: leastprice-apk-${{ github.sha }}
-          path: build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
+          tag_name: apk-${{ github.run_number }}
+          name: Latest APK
+          files: build/app/outputs/flutter-apk/leastprice.apk
 
