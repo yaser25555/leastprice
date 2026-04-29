@@ -4,7 +4,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class HomeSectionSwitcher extends StatelessWidget {
-  const HomeSectionSwitcher({super.key, 
+  const HomeSectionSwitcher({
+    super.key,
     required this.selectedSection,
     required this.onSectionSelected,
   });
@@ -40,7 +41,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               onTap: () => onSectionSelected(HomeCatalogSection.offers),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Expanded(
             child: HomeSectionSwitcherButton(
               label: tr('السعر الأقل', 'Lowest Price'),
@@ -51,6 +52,17 @@ class HomeSectionSwitcher extends StatelessWidget {
               onTap: () => onSectionSelected(HomeCatalogSection.comparisons),
             ),
           ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: HomeSectionSwitcherButton(
+              label: tr('من نحن', 'About Us'),
+              icon: Icons.info_rounded,
+              isSelected: selectedSection == HomeCatalogSection.about,
+              activeColor: AppPalette.navy,
+              activeBackground: AppPalette.softOrange,
+              onTap: () => onSectionSelected(HomeCatalogSection.about),
+            ),
+          ),
         ],
       ),
     );
@@ -58,7 +70,8 @@ class HomeSectionSwitcher extends StatelessWidget {
 }
 
 class HomeSectionSwitcherButton extends StatelessWidget {
-  const HomeSectionSwitcherButton({super.key, 
+  const HomeSectionSwitcherButton({
+    super.key,
     required this.label,
     required this.icon,
     required this.isSelected,
@@ -81,7 +94,7 @@ class HomeSectionSwitcherButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(18),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
         decoration: BoxDecoration(
           color: isSelected ? activeBackground : Colors.transparent,
           borderRadius: BorderRadius.circular(18),
@@ -91,21 +104,24 @@ class HomeSectionSwitcherButton extends StatelessWidget {
                 : Colors.transparent,
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               color: isSelected ? activeColor : AppPalette.softNavy,
-              size: 20,
+              size: 18,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(height: 6),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: isSelected ? activeColor : AppPalette.navy,
                 fontWeight: FontWeight.w900,
-                fontSize: 14.5,
+                fontSize: 12.6,
               ),
             ),
           ],

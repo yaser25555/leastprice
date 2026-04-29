@@ -844,6 +844,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               _selectedHomeSection == HomeCatalogSection.offers;
           final showComparisonsSection =
               _selectedHomeSection == HomeCatalogSection.comparisons;
+          final showAboutSection =
+              _selectedHomeSection == HomeCatalogSection.about;
           final comparisonResults = _comparisonSearchResults;
           final comparisonDataSourceLabel = showComparisonsSection
               ? _comparisonSearchSourceLabel
@@ -993,6 +995,14 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       child: AdBannersSection(
                         banners: _activeBanners,
                         onBannerTap: _openBanner,
+                      ),
+                    ),
+                  if (showAboutSection)
+                    SliverToBoxAdapter(
+                      child: AboutLeastPriceSection(
+                        onContactTap: () => _openExternalUrl(
+                          LeastPriceDataConfig.adminWhatsAppUrl,
+                        ),
                       ),
                     ),
                   if (showComparisonsSection &&

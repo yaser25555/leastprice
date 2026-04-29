@@ -1,4 +1,5 @@
 export 'ad_banners_section.dart';
+export 'about_leastprice_section.dart';
 export 'automated_comparison_badge.dart';
 export 'background_bubble.dart';
 export 'badges.dart';
