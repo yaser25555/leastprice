@@ -48,6 +48,17 @@ jobs:
           storeFile=leastprice-upload-keystore.jks
           EOF
 
+      - name: Prepare Firebase google-services.json (from GitHub Secrets)
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON_BASE64" ]; then
+            echo "Missing Firebase config secret GOOGLE_SERVICES_JSON_BASE64."
+            exit 1
+          fi
+
+          printf "%s" "$GOOGLE_SERVICES_JSON_BASE64" | tr -d '\n\r\t ' | base64 -d > android/app/google-services.json
+
       - name: Build APK (release)
         run: flutter build apk --release
 
