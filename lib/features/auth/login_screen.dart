@@ -5,10 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/widgets/app_brand_mark.dart';
+import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/auth/pending_auth_session.dart';
+import 'package:leastprice/features/home/about_leastprice_section.dart';
 import 'auth_exports.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,6 +35,49 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _rememberMe = false;
   String? _statusMessage;
+
+  Future<void> _openExternalUrl(String url) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final isWhatsApp = url.contains('wa.me');
+
+    try {
+      final uri = Uri.parse(url);
+      final opened = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!opened && mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              isWhatsApp
+                  ? tr('تعذر فتح واتساب حالياً.', 'Unable to open WhatsApp.')
+                  : tr('تعذر فتح رابط التواصل حالياً.',
+                      'Unable to open the contact link.'),
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            isWhatsApp
+                ? tr(
+                    'رقم واتساب أو رابط غير صالح حالياً.',
+                    'WhatsApp number or link is invalid right now.',
+                  )
+                : tr(
+                    'رابط التواصل غير صالح أو غير متاح حالياً.',
+                    'The contact link is invalid or unavailable right now.',
+                  ),
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -528,6 +574,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ],
+                          const SizedBox(height: 18),
+                          AboutLeastPriceSection(
+                            onContactTap: () => _openExternalUrl(
+                              LeastPriceDataConfig.adminWhatsAppUrl,
+                            ),
+                          ),
                         ],
                       ),
                     ),
