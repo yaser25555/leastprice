@@ -35,18 +35,25 @@ class ComparisonSearchBarSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasQuery = query.trim().isNotEmpty;
+    final appleStyle = isAppleInterface(context);
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFEFD9),
+        color: appleStyle ? Colors.white : const Color(0xFFFFEFD9),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppPalette.paleOrange, width: 1.5),
-        boxShadow: const [
+        border: Border.all(
+          color:
+              appleStyle ? const Color(0xFFE5E7EE) : AppPalette.paleOrange,
+          width: 1.5,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: AppPalette.shadow,
-            blurRadius: 18,
-            offset: Offset(0, 12),
+            color: appleStyle
+                ? const Color(0x0D1B2F5E)
+                : AppPalette.shadow,
+            blurRadius: appleStyle ? 12 : 18,
+            offset: Offset(0, appleStyle ? 6 : 12),
           ),
         ],
       ),
@@ -76,9 +83,15 @@ class ComparisonSearchBarSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.65),
+              color: appleStyle
+                  ? const Color(0xFFF6F7FB)
+                  : Colors.white.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppPalette.paleOrange),
+              border: Border.all(
+                color: appleStyle
+                    ? const Color(0xFFDCE1EA)
+                    : AppPalette.paleOrange,
+              ),
             ),
             child: Row(
               children: [

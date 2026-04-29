@@ -15,19 +15,26 @@ class HomeSectionSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appleStyle = isAppleInterface(context);
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: appleStyle ? const Color(0xFFF1F2F7) : Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppPalette.cardBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: AppPalette.shadow,
-            blurRadius: 14,
-            offset: Offset(0, 8),
-          ),
-        ],
+        border: Border.all(
+          color: appleStyle
+              ? const Color(0xFFDCE0E8)
+              : AppPalette.cardBorder,
+        ),
+        boxShadow: appleStyle
+            ? const []
+            : const [
+                BoxShadow(
+                  color: AppPalette.shadow,
+                  blurRadius: 14,
+                  offset: Offset(0, 8),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -89,6 +96,7 @@ class HomeSectionSwitcherButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appleStyle = isAppleInterface(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
@@ -96,11 +104,15 @@ class HomeSectionSwitcherButton extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
         decoration: BoxDecoration(
-          color: isSelected ? activeBackground : Colors.transparent,
+          color: isSelected
+              ? (appleStyle ? Colors.white : activeBackground)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isSelected
-                ? activeColor.withValues(alpha: 0.35)
+                ? (appleStyle
+                    ? const Color(0xFFD9DEE8)
+                    : activeColor.withValues(alpha: 0.35))
                 : Colors.transparent,
           ),
         ),

@@ -27,6 +27,7 @@ class HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appleStyle = isAppleInterface(context);
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -35,16 +36,19 @@ class HeaderSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 24, 20, 22),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [AppPalette.navy, AppPalette.deepNavy],
+              colors: appleStyle
+                  ? const [Color(0xFF243B6B), AppPalette.navy]
+                  : const [AppPalette.navy, AppPalette.deepNavy],
             ),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: AppPalette.shadow,
-                blurRadius: 28,
-                offset: Offset(0, 18),
+                color:
+                    appleStyle ? const Color(0x101B2F5E) : AppPalette.shadow,
+                blurRadius: appleStyle ? 20 : 28,
+                offset: Offset(0, appleStyle ? 12 : 18),
               ),
             ],
           ),
@@ -262,6 +266,7 @@ class CompactHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appleStyle = isAppleInterface(context);
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -270,16 +275,19 @@ class CompactHeaderSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [AppPalette.navy, AppPalette.deepNavy],
+              colors: appleStyle
+                  ? const [Color(0xFF243B6B), AppPalette.navy]
+                  : const [AppPalette.navy, AppPalette.deepNavy],
             ),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: AppPalette.shadow,
-                blurRadius: 28,
-                offset: Offset(0, 18),
+                color:
+                    appleStyle ? const Color(0x101B2F5E) : AppPalette.shadow,
+                blurRadius: appleStyle ? 20 : 28,
+                offset: Offset(0, appleStyle ? 12 : 18),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
 
@@ -8,6 +9,14 @@ import 'package:leastprice/data/models/product_category_catalog.dart';
 final ValueNotifier<String> appLang = ValueNotifier<String>('ar');
 
 bool get isAr => appLang.value == 'ar';
+bool get isAppleTargetPlatform =>
+    defaultTargetPlatform == TargetPlatform.iOS ||
+    defaultTargetPlatform == TargetPlatform.macOS;
+
+bool isAppleInterface(BuildContext context) {
+  final platform = Theme.of(context).platform;
+  return platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+}
 
 String tr(String ar, String en) => isAr ? ar : en;
 

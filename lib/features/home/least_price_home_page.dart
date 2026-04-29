@@ -838,6 +838,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       body: StreamBuilder<List<ProductComparison>>(
         stream: _productsStream,
         builder: (context, snapshot) {
+          final appleStyle = isAppleInterface(context);
           final products = snapshot.data ?? const <ProductComparison>[];
           final hasQuery = _query.trim().isNotEmpty;
           final showOffersSection =
@@ -852,12 +853,18 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               : _dataSource.label;
 
           return DecoratedBox(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppPalette.softOrange, Color(0xFFFFE7D1)],
-              ),
+            decoration: BoxDecoration(
+              gradient: appleStyle
+                  ? const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xFFF8F8FB), Color(0xFFF1F2F7)],
+                    )
+                  : const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [AppPalette.softOrange, Color(0xFFFFE7D1)],
+                    ),
             ),
             child: RefreshIndicator(
               color: const Color(0xFFE8711A),

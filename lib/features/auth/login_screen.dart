@@ -243,15 +243,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appleStyle = isAppleInterface(context);
     return Scaffold(
       body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [AppPalette.navy, AppPalette.shellBackground],
-            stops: [0.18, 0.18],
-          ),
+        decoration: BoxDecoration(
+          gradient: appleStyle
+              ? const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFFF8F8FB), Color(0xFFF1F2F7)],
+                )
+              : const LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [AppPalette.navy, AppPalette.shellBackground],
+                  stops: [0.18, 0.18],
+                ),
         ),
         child: SafeArea(
           child: Center(
@@ -266,12 +273,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: const [
+                        borderRadius: BorderRadius.circular(
+                          appleStyle ? 32 : 30,
+                        ),
+                        border: appleStyle
+                            ? Border.all(color: const Color(0xFFE6E8EF))
+                            : null,
+                        boxShadow: [
                           BoxShadow(
-                            color: AppPalette.shadow,
-                            blurRadius: 26,
-                            offset: Offset(0, 16),
+                            color: appleStyle
+                                ? const Color(0x0F1B2F5E)
+                                : AppPalette.shadow,
+                            blurRadius: appleStyle ? 18 : 26,
+                            offset: Offset(0, appleStyle ? 8 : 16),
                           ),
                         ],
                       ),
@@ -286,10 +300,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'LeastPrice',
                                       style: TextStyle(
-                                        fontSize: 22,
+                                        fontSize: appleStyle ? 24 : 22,
                                         fontWeight: FontWeight.w900,
                                         color: AppPalette.navy,
                                       ),

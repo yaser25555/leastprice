@@ -1,17 +1,18 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/widgets/global_runtime_error_screen.dart';
-import 'features/auth/auth_gate.dart';
-import 'features/admin/admin_dashboard_auth_gate.dart';
 
-import 'package:leastprice/core/utils/helpers.dart';
-import 'package:leastprice/core/theme/app_palette.dart';
+import 'core/theme/app_palette.dart';
+import 'core/theme/least_price_scroll_behavior.dart';
+import 'core/utils/helpers.dart';
+import 'core/widgets/global_runtime_error_screen.dart';
+import 'features/admin/admin_dashboard_auth_gate.dart';
+import 'features/auth/auth_gate.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,7 @@ class LeastPriceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final applePlatform = isAppleTargetPlatform;
     final scheme = ColorScheme.fromSeed(
       seedColor: AppPalette.orange,
       brightness: Brightness.light,
@@ -62,10 +64,12 @@ class LeastPriceApp extends StatelessWidget {
       valueListenable: appLang,
       builder: (context, lang, _) {
         final isEnglish = lang == 'en';
+
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: isEnglish ? 'LeastPrice' : 'أرخص سعر',
           locale: Locale(lang),
+          scrollBehavior: const LeastPriceScrollBehavior(),
           supportedLocales: const [
             Locale('ar'),
             Locale('en'),
@@ -77,31 +81,69 @@ class LeastPriceApp extends StatelessWidget {
           ],
           theme: ThemeData(
             useMaterial3: true,
+            platform:
+                applePlatform ? TargetPlatform.iOS : TargetPlatform.android,
             colorScheme: scheme,
-            scaffoldBackgroundColor: AppPalette.shellBackground,
+            scaffoldBackgroundColor: applePlatform
+                ? const Color(0xFFF4F5F9)
+                : AppPalette.shellBackground,
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+              },
+            ),
+            cupertinoOverrideTheme: CupertinoThemeData(
+              primaryColor: AppPalette.orange,
+              scaffoldBackgroundColor: applePlatform
+                  ? const Color(0xFFF4F5F9)
+                  : AppPalette.shellBackground,
+              barBackgroundColor: applePlatform
+                  ? const Color(0xF8FFFFFF)
+                  : AppPalette.softOrange,
+            ),
             snackBarTheme: const SnackBarThemeData(
               behavior: SnackBarBehavior.floating,
             ),
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
-              fillColor: const Color(0xFFFFE8D2),
+              fillColor:
+                  applePlatform ? Colors.white : const Color(0xFFFFE8D2),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 18,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: const BorderSide(color: AppPalette.paleOrange),
+                borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
+                borderSide: BorderSide(
+                  color: applePlatform
+                      ? const Color(0xFFE3E6EE)
+                      : AppPalette.paleOrange,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
                 borderSide: const BorderSide(
                   color: AppPalette.orange,
                   width: 1.5,
+                ),
+              ),
+            ),
+            cardTheme: CardThemeData(
+              color: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              elevation: applePlatform ? 0 : 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(applePlatform ? 24 : 20),
+                side: BorderSide(
+                  color: applePlatform
+                      ? const Color(0xFFE6E8EF)
+                      : AppPalette.cardBorder,
                 ),
               ),
             ),
@@ -111,7 +153,7 @@ class LeastPriceApp extends StatelessWidget {
                 foregroundColor: Colors.white,
                 minimumSize: const Size.fromHeight(54),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
                 ),
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.w800,
@@ -123,9 +165,13 @@ class LeastPriceApp extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(54),
                 foregroundColor: AppPalette.orange,
-                side: const BorderSide(color: AppPalette.paleOrange),
+                side: BorderSide(
+                  color: applePlatform
+                      ? const Color(0xFFD9DCE4)
+                      : AppPalette.paleOrange,
+                ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
                 ),
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.w800,
@@ -150,7 +196,7 @@ class LeastPriceApp extends StatelessWidget {
                   bootstrapNotice: firebaseBootstrapNotice,
                 ),
         );
-      }, // end ValueListenableBuilder
+      },
     );
   }
 }
