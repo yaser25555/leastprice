@@ -6,6 +6,14 @@ plugins {
 }
 
 android {
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = file("key.properties")
+    def hasKeystoreProperties = keystorePropertiesFile.exists()
+
+    if (hasKeystoreProperties) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
     namespace "com.leastprice.app"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
@@ -27,9 +35,20 @@ android {
         versionName flutter.versionName
     }
 
+    if (hasKeystoreProperties) {
+        signingConfigs {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig hasKeystoreProperties ? signingConfigs.release : signingConfigs.debug
         }
     }
 }
