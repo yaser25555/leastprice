@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
-import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/core/widgets/app_brand_mark.dart';
+import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/features/home/comparison_image_fallback.dart';
 import 'home_exports.dart';
 
@@ -48,7 +49,8 @@ class ComparisonSearchResultCard extends StatelessWidget {
                       width: 92,
                       height: 92,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => ComparisonImageFallback(),
+                      errorBuilder: (_, __, ___) =>
+                          const ComparisonImageFallback(),
                     )
                   : const ComparisonImageFallback(),
             ),
@@ -101,18 +103,25 @@ class ComparisonSearchResultCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    result.isLiveDirect
-                        ? tr(
-                            'تحديث لحظي مباشر من الموقع الرسمي • ${result.channelType.label}',
-                            'Live direct update from the official store • ${result.channelType.label}',
-                          )
-                        : '${result.sourceType.label} • ${result.channelType.label}',
-                    style: const TextStyle(
-                      color: AppPalette.softNavy,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12.8,
-                    ),
+                  Row(
+                    children: [
+                      const AppBrandMark(
+                        size: 26,
+                        padding: 4,
+                        borderRadius: 9,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'LeastPrice • ${result.channelType.label}',
+                          style: const TextStyle(
+                            color: AppPalette.softNavy,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.8,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(

@@ -362,7 +362,7 @@ extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
   String get label {
     switch (this) {
       case ComparisonSearchSourceType.serpApi:
-        return tr('SerpApi', 'SerpApi');
+        return tr('LeastPrice', 'LeastPrice');
       case ComparisonSearchSourceType.scraper:
         return tr('مباشر من المتجر', 'Direct store scrape');
     }
