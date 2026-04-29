@@ -111,12 +111,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 10),
-                    Container(
-                      width: 48,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE3E6EE),
-                        borderRadius: BorderRadius.circular(999),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 0, 8, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 48,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE3E6EE),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  tr('من نحن', 'About Us'),
+                                  style: const TextStyle(
+                                    color: AppPalette.navy,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: tr('إغلاق', 'Close'),
+                            onPressed: () => Navigator.of(sheetContext).pop(),
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        ],
                       ),
                     ),
                     AboutLeastPriceSection(
