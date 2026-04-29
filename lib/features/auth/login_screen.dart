@@ -79,6 +79,61 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _showAboutLeastPriceSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.78,
+          minChildSize: 0.35,
+          maxChildSize: 0.95,
+          builder: (context, controller) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(26),
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x33000000),
+                    blurRadius: 18,
+                    offset: Offset(0, -6),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                controller: controller,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      width: 48,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE3E6EE),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                    AboutLeastPriceSection(
+                      onContactTap: () => _openExternalUrl(
+                        LeastPriceDataConfig.adminWhatsAppUrl,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -574,10 +629,25 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ],
-                          const SizedBox(height: 18),
-                          AboutLeastPriceSection(
-                            onContactTap: () => _openExternalUrl(
-                              LeastPriceDataConfig.adminWhatsAppUrl,
+                          const SizedBox(height: 14),
+                          OutlinedButton.icon(
+                            onPressed: _isSubmitting || _isSendingPasswordReset
+                                ? null
+                                : _showAboutLeastPriceSheet,
+                            icon: const Icon(Icons.info_outline_rounded),
+                            label: Text(tr('من نحن', 'About Us')),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppPalette.navy,
+                              side: BorderSide(
+                                color: AppPalette.cardBorder,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                             ),
                           ),
                         ],
