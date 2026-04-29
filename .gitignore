@@ -11,6 +11,9 @@ build/
 
 android/.gradle/
 android/local.properties
+android/app/key.properties
+android/app/*.jks
+android/app/*.keystore
 
 functions/node_modules/
 assets/icons/node_modules/
