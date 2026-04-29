@@ -38,7 +38,8 @@ jobs:
           fi
 
           # Decode keystore and create key.properties used by android/app/build.gradle
-          printf "%s" "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/leastprice-upload-keystore.jks
+          # Some UIs wrap base64 across lines/spaces. Normalize before decoding.
+          printf "%s" "$ANDROID_KEYSTORE_BASE64" | tr -d '\n\r\t ' | base64 -d > android/app/leastprice-upload-keystore.jks
 
           cat > android/app/key.properties <<EOF
           storePassword=$ANDROID_KEYSTORE_PASSWORD
