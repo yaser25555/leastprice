@@ -75,6 +75,52 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   List<ComparisonSearchResult> _comparisonSearchResults =
       const <ComparisonSearchResult>[];
 
+  void _handleFirestoreSubscriptionError(
+    String label,
+    Object error,
+    StackTrace stackTrace, {
+    VoidCallback? fallback,
+  }) {
+    debugPrint('LeastPrice $label stream failed: $error');
+    if (stackTrace != StackTrace.empty) {
+      debugPrintStack(stackTrace: stackTrace);
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      fallback?.call();
+    });
+  }
+
+  void _handleFirestorePermissionAwareError(
+    String label,
+    Object error,
+    StackTrace stackTrace, {
+    VoidCallback? fallback,
+  }) {
+    if (error is FirebaseException &&
+        error.plugin == 'cloud_firestore' &&
+        error.code == 'permission-denied') {
+      _handleFirestoreSubscriptionError(
+        '$label permission',
+        error,
+        stackTrace,
+        fallback: fallback,
+      );
+      return;
+    }
+
+    _handleFirestoreSubscriptionError(
+      label,
+      error,
+      stackTrace,
+      fallback: fallback,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,6 +141,12 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         setState(() {
           _userProfile = profile;
         });
+      }, onError: (Object error, StackTrace stackTrace) {
+        _handleFirestorePermissionAwareError(
+          'user profile',
+          error,
+          stackTrace,
+        );
       });
       _bannerSubscription = _catalogService.watchAdBanners().listen((banners) {
         if (!mounted) {
@@ -103,6 +155,15 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         setState(() {
           _activeBanners = banners.isEmpty ? AdBannerItem.mockData : banners;
         });
+      }, onError: (Object error, StackTrace stackTrace) {
+        _handleFirestorePermissionAwareError(
+          'ad banners',
+          error,
+          stackTrace,
+          fallback: () {
+            _activeBanners = AdBannerItem.mockData;
+          },
+        );
       });
       _couponSubscription = _catalogService.watchFeaturedCoupons().listen((
         coupons,
@@ -116,6 +177,18 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
             _comparisonSearchResults,
           );
         });
+      }, onError: (Object error, StackTrace stackTrace) {
+        _handleFirestorePermissionAwareError(
+          'featured coupons',
+          error,
+          stackTrace,
+          fallback: () {
+            _activeCoupons = const <Coupon>[];
+            _comparisonSearchResults = _attachCouponsToSearchResults(
+              _comparisonSearchResults,
+            );
+          },
+        );
       });
       _systemHealthSubscription = _catalogService.watchSystemHealth().listen((
         status,
@@ -126,6 +199,15 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         setState(() {
           _systemHealth = status;
         });
+      }, onError: (Object error, StackTrace stackTrace) {
+        _handleFirestorePermissionAwareError(
+          'system health',
+          error,
+          stackTrace,
+          fallback: () {
+            _systemHealth = AutomationHealthStatus.initial();
+          },
+        );
       });
       unawaited(_setupConnectivityMonitoring());
       WidgetsBinding.instance.addPostFrameCallback((_) {
