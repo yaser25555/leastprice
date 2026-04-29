@@ -1,9 +1,10 @@
 flutter_launcher_icons:
-  image_path: "assets/icons/app_icon_navy_1024.png"
+  image_path: "assets/icons/logo_lp_navy_orange_1024.png"
   android: true
-  ios: false
+  ios: true
+  remove_alpha_ios: true
   web:
     generate: true
-    image_path: "assets/icons/app_icon_navy_1024.png"
+    image_path: "assets/icons/logo_lp_navy_orange_1024.png"
     background_color: "#1B2F5E"
 

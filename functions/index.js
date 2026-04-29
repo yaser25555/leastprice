@@ -1,18 +1,11 @@
 const admin = require('firebase-admin');
 const cheerio = require('cheerio');
+const functionsV1 = require('firebase-functions/v1');
 const logger = require('firebase-functions/logger');
-const { onDocumentCreated } = require('firebase-functions/v2/firestore');
-const { onRequest } = require('firebase-functions/v2/https');
-const { setGlobalOptions } = require('firebase-functions/v2');
 
 if (!admin.apps.length) {
   admin.initializeApp();
 }
-
-setGlobalOptions({
-  region: 'us-central1',
-  maxInstances: 10,
-});
 
 const db = admin.firestore();
 const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
@@ -23,6 +16,8 @@ const HYBRID_SEARCH_USER_AGENT =
 const REQUEST_TIMEOUT_MS = 15000;
 const MAX_RESULTS_PER_STORE = 8;
 const MAX_TOTAL_RESULTS = 40;
+const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key';
+const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
 
 const PRIORITY_STORES = [
   {
@@ -170,18 +165,15 @@ for (const store of PRIORITY_STORES) {
   }
 }
 
-exports.applyReferralRewardOnUserCreate = onDocumentCreated(
-  {
-    document: 'users/{userId}',
-    retry: true,
-  },
-  async (event) => {
-    const snapshot = event.data;
-    if (!snapshot) {
-      logger.warn('User create trigger fired without snapshot payload.');
-      return;
-    }
-
+exports.applyReferralRewardOnUserCreate = functionsV1
+  .region('us-central1')
+  .runWith({
+    timeoutSeconds: 120,
+    memory: '1GB',
+    maxInstances: 10,
+  })
+  .firestore.document('users/{userId}')
+  .onCreate(async (snapshot) => {
     const userRef = snapshot.ref;
 
     await db.runTransaction(async (transaction) => {
@@ -278,16 +270,18 @@ exports.applyReferralRewardOnUserCreate = onDocumentCreated(
         invitedBy,
       });
     });
-  },
-);
+  });
 
-exports.hybridMarketplaceSearch = onRequest(
-  {
-    cors: true,
+exports.hybridMarketplaceSearch = functionsV1
+  .region('us-central1')
+  .runWith({
     timeoutSeconds: 120,
-    memory: '1GiB',
-  },
-  async (request, response) => {
+    memory: '1GB',
+    maxInstances: 10,
+  })
+  .https.onRequest(async (request, response) => {
+    applyCorsHeaders(request, response);
+
     if (request.method === 'OPTIONS') {
       response.status(204).send('');
       return;
@@ -302,6 +296,8 @@ exports.hybridMarketplaceSearch = onRequest(
     }
 
     const query = String(request.query.q || '').trim();
+    const location = String(request.query.location || 'Saudi Arabia').trim() || 'Saudi Arabia';
+    const hl = String(request.query.hl || 'ar').trim().toLowerCase() === 'en' ? 'en' : 'ar';
     if (query.length < 2) {
       response.status(400).json({
         error: 'invalid-query',
@@ -317,7 +313,7 @@ exports.hybridMarketplaceSearch = onRequest(
     const targetedStores = selectStoresForVertical(searchVertical);
 
     const [serpApiOutcome, scraperOutcome] = await Promise.allSettled([
-      serpApiKey ? searchSerpApi(query, serpApiKey) : Promise.resolve([]),
+      serpApiKey ? searchSerpApi(query, serpApiKey, { location, hl }) : Promise.resolve([]),
       scrapePriorityStores(query, targetedStores),
     ]);
 
@@ -370,16 +366,24 @@ exports.hybridMarketplaceSearch = onRequest(
       }),
       results: mergedResults,
     });
-  },
-);
+  });
 
-async function searchSerpApi(query, apiKey) {
+function applyCorsHeaders(request, response) {
+  const origin = request.get('origin');
+  response.set('Access-Control-Allow-Origin', origin || '*');
+  response.set('Vary', 'Origin');
+  response.set('Access-Control-Allow-Methods', ALLOWED_CORS_METHODS);
+  response.set('Access-Control-Allow-Headers', ALLOWED_CORS_HEADERS);
+  response.set('Access-Control-Max-Age', '3600');
+}
+
+async function searchSerpApi(query, apiKey, { location = 'Saudi Arabia', hl = 'ar' } = {}) {
   const url = new URL('https://serpapi.com/search.json');
   url.searchParams.set('engine', 'google_shopping');
   url.searchParams.set('q', query);
-  url.searchParams.set('location', 'Saudi Arabia');
+  url.searchParams.set('location', location);
   url.searchParams.set('gl', 'sa');
-  url.searchParams.set('hl', 'ar');
+  url.searchParams.set('hl', hl);
   url.searchParams.set('api_key', apiKey);
 
   const payload = await fetchJson(url.toString());
