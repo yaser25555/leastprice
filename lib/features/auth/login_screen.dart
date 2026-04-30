@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Text(
                                   tr('من نحن', 'About Us'),
                                   style: const TextStyle(
-                                    color: AppPalette.navy,
+                                    color: AppPalette.paleOrange,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 16,
                                   ),
@@ -395,7 +395,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
-                        color: AppPalette.softOrange,
+                        color: AppPalette.cardBackground,
                         borderRadius: BorderRadius.circular(
                           appleStyle ? 32 : 30,
                         ),
@@ -426,7 +426,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       style: TextStyle(
                                         fontSize: appleStyle ? 24 : 22,
                                         fontWeight: FontWeight.w900,
-                                        color: AppPalette.navy,
+                                        color: AppPalette.paleOrange,
                                       ),
                                     ),
                                     const SizedBox(height: 6),
@@ -441,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               'Sign in to continue.',
                                             ),
                                       style: const TextStyle(
-                                        color: AppPalette.softNavy,
+                                        color: AppPalette.mutedText,
                                         height: 1.45,
                                       ),
                                     ),
@@ -500,7 +500,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'Remember my email on this device',
                               ),
                               style: const TextStyle(
-                                color: AppPalette.panelText,
+                                color: AppPalette.paleOrange,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
                               ),
@@ -546,7 +546,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: AppPalette.softOrange,
+                                color: AppPalette.deepNavy,
                                 borderRadius: BorderRadius.circular(18),
                                 border:
                                     Border.all(color: AppPalette.paleOrange),
@@ -554,7 +554,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 _statusMessage!,
                                 style: const TextStyle(
-                                  color: AppPalette.panelText,
+                                  color: AppPalette.paleOrange,
                                   fontWeight: FontWeight.w700,
                                   height: 1.5,
                                 ),
@@ -657,7 +657,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             icon: const Icon(Icons.info_outline_rounded),
                             label: Text(tr('من نحن', 'About Us')),
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: AppPalette.navy,
+                              foregroundColor: AppPalette.paleOrange,
                               side: BorderSide(
                                 color: AppPalette.cardBorder,
                               ),

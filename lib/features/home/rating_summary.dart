@@ -44,7 +44,7 @@ class RatingSummary extends StatelessWidget {
                   Text(
                     reviewText,
                     style: const TextStyle(
-                      color: Color(0xFF7A5A00),
+                      color: AppPalette.paleOrange,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -55,7 +55,7 @@ class RatingSummary extends StatelessWidget {
                       'Tap the stars to rate quality and value compared to the higher-priced option.',
                     ),
                     style: const TextStyle(
-                      color: Color(0xFF8B7331),
+                      color: AppPalette.mutedText,
                       fontSize: 12.8,
                       height: 1.4,
                     ),
@@ -65,7 +65,7 @@ class RatingSummary extends StatelessWidget {
             ),
             const Icon(
               Icons.chevron_left_rounded,
-              color: Color(0xFFB79020),
+              color: AppPalette.orange,
             ),
           ],
         ),

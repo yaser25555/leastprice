@@ -57,8 +57,8 @@ class LeastPriceApp extends StatelessWidget {
       secondary: AppPalette.navy,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      surface: AppPalette.softOrange,
-      onSurface: AppPalette.navy,
+      surface: AppPalette.cardBackground,
+      onSurface: AppPalette.paleOrange,
     );
 
     return ValueListenableBuilder<String>(
@@ -104,6 +104,10 @@ class LeastPriceApp extends StatelessWidget {
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               fillColor: AppPalette.cardBackground,
+              hintStyle: const TextStyle(color: AppPalette.mutedText),
+              labelStyle: const TextStyle(color: AppPalette.paleOrange),
+              prefixIconColor: AppPalette.orange,
+              suffixIconColor: AppPalette.orange,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 18,
@@ -154,7 +158,7 @@ class LeastPriceApp extends StatelessWidget {
             outlinedButtonTheme: OutlinedButtonThemeData(
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(54),
-                foregroundColor: AppPalette.orange,
+                foregroundColor: AppPalette.paleOrange,
                 side: BorderSide(
                   color: AppPalette.paleOrange,
                 ),

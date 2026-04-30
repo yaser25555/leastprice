@@ -156,7 +156,7 @@ class ComparisonCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F7FF),
+                color: AppPalette.softNavy,
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Row(
@@ -178,7 +178,7 @@ class ComparisonCard extends StatelessWidget {
                               'Price difference: ${formatPrice(comparison.savingsAmount)} in favor of the best value option.',
                             ),
                       style: const TextStyle(
-                        color: Color(0xFF224238),
+                        color: AppPalette.paleOrange,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
                       ),

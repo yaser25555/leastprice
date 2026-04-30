@@ -46,7 +46,7 @@ class AboutLeastPriceSection extends StatelessWidget {
                 Text(
                   tr('من نحن', 'About Us'),
                   style: const TextStyle(
-                    color: AppPalette.navy,
+                    color: AppPalette.paleOrange,
                     fontWeight: FontWeight.w900,
                     fontSize: 24,
                   ),
@@ -58,7 +58,7 @@ class AboutLeastPriceSection extends StatelessWidget {
                     'LeastPrice is a platform that helps shoppers find the lowest and best prices across different platforms within Saudi cities, then presents the results clearly and quickly to save time and effort.',
                   ),
                   style: const TextStyle(
-                    color: AppPalette.panelText,
+                    color: AppPalette.mutedText,
                     fontSize: 15,
                     height: 1.7,
                     fontWeight: FontWeight.w600,
@@ -123,7 +123,7 @@ class _AboutFeatureCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF7F0),
+        color: AppPalette.softNavy,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppPalette.cardBorder),
       ),
@@ -143,7 +143,7 @@ class _AboutFeatureCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              color: AppPalette.navy,
+              color: AppPalette.paleOrange,
               fontSize: 17,
               fontWeight: FontWeight.w900,
             ),
@@ -152,7 +152,7 @@ class _AboutFeatureCard extends StatelessWidget {
           Text(
             description,
             style: const TextStyle(
-              color: AppPalette.panelText,
+              color: AppPalette.mutedText,
               fontSize: 14.4,
               fontWeight: FontWeight.w600,
               height: 1.7,
