@@ -1,0 +1,11 @@
+{
+  "name": "leastprice-brand-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "regen": "node regen_brand_pngs.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}

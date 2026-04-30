@@ -18,6 +18,8 @@ android/app/*.keystore
 functions/node_modules/
 assets/icons/node_modules/
 assets/icons/package-lock.json
+tools/node_modules/
+tools/package-lock.json
 
 scripts/__pycache__/
 *.pyc
