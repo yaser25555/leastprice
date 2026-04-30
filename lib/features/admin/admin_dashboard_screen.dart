@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -21,8 +22,8 @@ class AdminDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: AppPalette.cardBackground,
+        surfaceTintColor: AppPalette.cardBackground,
         elevation: 0,
         titleSpacing: 24,
         toolbarHeight: 82,
@@ -90,7 +91,7 @@ class _AdminDashboardBodyState extends State<AdminDashboardBody>
     return Column(
       children: [
         Material(
-          color: Colors.white,
+          color: AppPalette.cardBackground,
           child: TabBar(
             controller: _tabController,
             tabs: [

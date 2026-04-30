@@ -116,7 +116,7 @@ class ExclusiveCouponCard extends StatelessWidget {
             child: Ink(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppPalette.cardBackground,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: AppPalette.comparisonBorder),
               ),

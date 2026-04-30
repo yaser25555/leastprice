@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class FirebaseSetupScreen extends StatelessWidget {
@@ -18,7 +19,7 @@ class FirebaseSetupScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppPalette.cardBackground,
               borderRadius: BorderRadius.circular(26),
               boxShadow: const [
                 BoxShadow(

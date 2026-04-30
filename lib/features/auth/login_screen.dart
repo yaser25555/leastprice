@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   width: 48,
                                   height: 5,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFE3E6EE),
+                                    color: AppPalette.paleOrange,
                                     borderRadius: BorderRadius.circular(999),
                                   ),
                                 ),
@@ -376,18 +376,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: appleStyle
-              ? const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFFF8F8FB), Color(0xFFF1F2F7)],
-                )
-              : const LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [AppPalette.navy, AppPalette.shellBackground],
-                  stops: [0.18, 0.18],
-                ),
+          gradient: const LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [AppPalette.deepNavy, AppPalette.navy, AppPalette.orange],
+            stops: [0.1, 0.55, 1],
+          ),
         ),
         child: SafeArea(
           child: Center(
@@ -401,18 +395,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
-                        color: AppPalette.cardBackground,
+                        color: AppPalette.softOrange,
                         borderRadius: BorderRadius.circular(
                           appleStyle ? 32 : 30,
                         ),
                         border: appleStyle
-                            ? Border.all(color: const Color(0xFFE6E8EF))
+                            ? Border.all(color: AppPalette.cardBorder)
                             : null,
                         boxShadow: [
                           BoxShadow(
-                            color: appleStyle
-                                ? const Color(0x0F1B2F5E)
-                                : AppPalette.shadow,
+                            color: AppPalette.shadow,
                             blurRadius: appleStyle ? 18 : 26,
                             offset: Offset(0, appleStyle ? 8 : 16),
                           ),

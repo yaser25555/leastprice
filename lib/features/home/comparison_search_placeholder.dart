@@ -16,7 +16,7 @@ class ComparisonSearchPlaceholder extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(26),
         border: Border.all(color: AppPalette.comparisonBorder),
         boxShadow: const [

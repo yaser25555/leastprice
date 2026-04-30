@@ -25,7 +25,7 @@ class ComparisonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(28),
         boxShadow: const [
           BoxShadow(

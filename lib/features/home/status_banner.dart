@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 
 class StatusBanner extends StatelessWidget {
   const StatusBanner({super.key, 
@@ -34,7 +35,7 @@ class StatusBanner extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppPalette.cardBackground,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(icon, color: accentColor),

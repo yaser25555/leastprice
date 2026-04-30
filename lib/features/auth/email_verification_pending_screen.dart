@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class EmailVerificationPendingScreen extends StatefulWidget {
@@ -99,7 +100,7 @@ class _EmailVerificationPendingScreenState
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppPalette.cardBackground,
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: const [
                   BoxShadow(
