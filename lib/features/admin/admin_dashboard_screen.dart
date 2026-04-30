@@ -20,7 +20,7 @@ class AdminDashboardScreen extends StatelessWidget {
     const service = FirestoreCatalogService();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: AppPalette.shellBackground,
       appBar: AppBar(
         backgroundColor: AppPalette.cardBackground,
         surfaceTintColor: AppPalette.cardBackground,

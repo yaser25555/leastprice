@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -185,7 +186,7 @@ class _AdminSimpleExclusiveDealsPanelState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: AppPalette.shellBackground,
       body: StreamBuilder<List<ExclusiveDeal>>(
         stream: widget.service.watchAdminExclusiveDeals(),
         builder: (context, snap) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
@@ -28,9 +29,9 @@ class RatingSummary extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFBF1),
+          color: AppPalette.softOrange,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFF4D37B)),
+          border: Border.all(color: AppPalette.cardBorder),
         ),
         child: Row(
           children: [

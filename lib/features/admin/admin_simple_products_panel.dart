@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -186,7 +187,7 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: AppPalette.shellBackground,
       body: StreamBuilder<List<ProductComparison>>(
         stream: widget.service.watchAllProducts(),
         builder: (context, snap) {

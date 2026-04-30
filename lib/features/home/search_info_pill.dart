@@ -16,7 +16,7 @@ class SearchInfoPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFDFC3),
+        color: AppPalette.softOrange,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppPalette.paleOrange),
       ),

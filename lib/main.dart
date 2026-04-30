@@ -129,13 +129,11 @@ class LeastPriceApp extends StatelessWidget {
             cardTheme: CardThemeData(
               color: AppPalette.cardBackground,
               surfaceTintColor: Colors.transparent,
-              elevation: applePlatform ? 0 : 2,
+              elevation: applePlatform ? 2 : 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(applePlatform ? 24 : 20),
                 side: BorderSide(
-                  color: applePlatform
-                      ? const Color(0xFFE6E8EF)
-                      : AppPalette.cardBorder,
+                  color: AppPalette.cardBorder,
                 ),
               ),
             ),
