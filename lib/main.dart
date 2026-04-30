@@ -115,9 +115,7 @@ class LeastPriceApp extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
                 borderSide: BorderSide(
-                  color: applePlatform
-                      ? const Color(0xFFE3E6EE)
-                      : AppPalette.paleOrange,
+                  color: AppPalette.cardBorder,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -160,9 +158,7 @@ class LeastPriceApp extends StatelessWidget {
                 minimumSize: const Size.fromHeight(54),
                 foregroundColor: AppPalette.orange,
                 side: BorderSide(
-                  color: applePlatform
-                      ? const Color(0xFFD9DCE4)
-                      : AppPalette.paleOrange,
+                  color: AppPalette.paleOrange,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
