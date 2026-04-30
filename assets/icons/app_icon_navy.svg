@@ -1,14 +1,51 @@
-<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LeastPrice">
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0F3460;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#001A33;stop-opacity:1" />
+      <stop offset="0%"  stop-color="#1B2F5E"/>
+      <stop offset="100%" stop-color="#12284D"/>
     </linearGradient>
-    
-    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#FF6B00;stop-opacity:1" />
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#F08A33"/>
+      <stop offset="100%" stop-color="#E8711A"/>
     </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0A1A36" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- الخلفية الكحلية -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="url(#bgGradient)"/>
+
+  <!-- إطار برتقالي ناعم لتأكيد الهوية -->
+  <rect x="14" y="14" width="484" height="484" rx="86" ry="86"
+        fill="none" stroke="#FFD9BA" stroke-width="2" opacity="0.25"/>
+
+  <!-- بطاقة السعر (رمز التوفير) -->
+  <g transform="translate(310, 118) rotate(18)" filter="url(#softShadow)">
+    <path d="M 0 0 L 96 0 L 132 36 L 132 96 L 0 96 Z"
+          fill="url(#orangeGradient)"/>
+    <circle cx="110" cy="26" r="9" fill="#12284D"/>
+    <!-- سهم نزولي يشير إلى أرخص سعر -->
+    <path d="M 32 30 L 32 70 M 32 70 L 22 60 M 32 70 L 42 60"
+          stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+
+  <!-- الحروف LP الرئيسية -->
+  <text x="256" y="346"
+        font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="248" font-weight="900"
+        fill="#FFFFFF" text-anchor="middle" letter-spacing="-6"
+        filter="url(#softShadow)">LP</text>
+
+  <!-- خط برتقالي تحت الحروف -->
+  <rect x="156" y="380" width="200" height="10" rx="5" fill="url(#orangeGradient)"/>
+
+  <!-- اسم العلامة بالكامل -->
+  <text x="256" y="438"
+        font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="36" font-weight="700" letter-spacing="6"
+        fill="#FFD9BA" text-anchor="middle">LEASTPRICE</text>
+</svg>
     
     <!-- تدرج اللمعان للشخصية -->
     <linearGradient id="shineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
