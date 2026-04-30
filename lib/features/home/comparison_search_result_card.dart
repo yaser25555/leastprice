@@ -27,7 +27,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(color: AppPalette.comparisonBorder),
           boxShadow: const [

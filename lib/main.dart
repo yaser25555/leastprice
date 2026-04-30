@@ -58,6 +58,7 @@ class LeastPriceApp extends StatelessWidget {
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       surface: AppPalette.softOrange,
+      onSurface: AppPalette.navy,
     );
 
     return ValueListenableBuilder<String>(
@@ -84,9 +85,7 @@ class LeastPriceApp extends StatelessWidget {
             platform:
                 applePlatform ? TargetPlatform.iOS : TargetPlatform.android,
             colorScheme: scheme,
-            scaffoldBackgroundColor: applePlatform
-                ? const Color(0xFFF4F5F9)
-                : AppPalette.shellBackground,
+            scaffoldBackgroundColor: AppPalette.shellBackground,
             pageTransitionsTheme: const PageTransitionsTheme(
               builders: <TargetPlatform, PageTransitionsBuilder>{
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
@@ -96,20 +95,15 @@ class LeastPriceApp extends StatelessWidget {
             ),
             cupertinoOverrideTheme: CupertinoThemeData(
               primaryColor: AppPalette.orange,
-              scaffoldBackgroundColor: applePlatform
-                  ? const Color(0xFFF4F5F9)
-                  : AppPalette.shellBackground,
-              barBackgroundColor: applePlatform
-                  ? const Color(0xF8FFFFFF)
-                  : AppPalette.softOrange,
+              scaffoldBackgroundColor: AppPalette.shellBackground,
+              barBackgroundColor: AppPalette.softOrange,
             ),
             snackBarTheme: const SnackBarThemeData(
               behavior: SnackBarBehavior.floating,
             ),
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
-              fillColor:
-                  applePlatform ? Colors.white : const Color(0xFFFFE8D2),
+              fillColor: AppPalette.cardBackground,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 18,
@@ -135,7 +129,7 @@ class LeastPriceApp extends StatelessWidget {
               ),
             ),
             cardTheme: CardThemeData(
-              color: Colors.white,
+              color: AppPalette.cardBackground,
               surfaceTintColor: Colors.transparent,
               elevation: applePlatform ? 0 : 2,
               shape: RoundedRectangleBorder(

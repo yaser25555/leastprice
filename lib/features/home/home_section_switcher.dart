@@ -19,7 +19,7 @@ class HomeSectionSwitcher extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: appleStyle ? const Color(0xFFF1F2F7) : Colors.white,
+        color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: appleStyle
@@ -105,7 +105,7 @@ class HomeSectionSwitcherButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
         decoration: BoxDecoration(
           color: isSelected
-              ? (appleStyle ? Colors.white : activeBackground)
+              ? (appleStyle ? AppPalette.softOrange : activeBackground)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(

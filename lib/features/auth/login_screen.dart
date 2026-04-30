@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context, controller) {
             return Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppPalette.cardBackground,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(26),
                 ),
@@ -401,7 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppPalette.cardBackground,
                         borderRadius: BorderRadius.circular(
                           appleStyle ? 32 : 30,
                         ),
