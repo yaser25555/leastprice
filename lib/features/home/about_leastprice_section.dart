@@ -46,7 +46,7 @@ class AboutLeastPriceSection extends StatelessWidget {
                 Text(
                   tr('من نحن', 'About Us'),
                   style: const TextStyle(
-                    color: AppPalette.paleOrange,
+                    color: AppPalette.panelText,
                     fontWeight: FontWeight.w900,
                     fontSize: 24,
                   ),
@@ -143,7 +143,7 @@ class _AboutFeatureCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              color: AppPalette.paleOrange,
+              color: AppPalette.panelText,
               fontSize: 17,
               fontWeight: FontWeight.w900,
             ),

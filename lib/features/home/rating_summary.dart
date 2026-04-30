@@ -44,7 +44,7 @@ class RatingSummary extends StatelessWidget {
                   Text(
                     reviewText,
                     style: const TextStyle(
-                      color: AppPalette.paleOrange,
+                      color: AppPalette.panelText,
                       fontWeight: FontWeight.w800,
                     ),
                   ),

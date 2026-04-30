@@ -426,7 +426,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       style: TextStyle(
                                         fontSize: appleStyle ? 24 : 22,
                                         fontWeight: FontWeight.w900,
-                                        color: AppPalette.paleOrange,
+                                        color: AppPalette.panelText,
                                       ),
                                     ),
                                     const SizedBox(height: 6),
@@ -500,7 +500,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'Remember my email on this device',
                               ),
                               style: const TextStyle(
-                                color: AppPalette.paleOrange,
+                                color: AppPalette.panelText,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
                               ),
@@ -554,7 +554,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 _statusMessage!,
                                 style: const TextStyle(
-                                  color: AppPalette.paleOrange,
+                                  color: AppPalette.panelText,
                                   fontWeight: FontWeight.w700,
                                   height: 1.5,
                                 ),

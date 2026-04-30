@@ -94,7 +94,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                           child: Text(
                             tr('أولوية نون/أمازون', 'Noon/Amazon priority'),
                             style: const TextStyle(
-                              color: AppPalette.deepNavy,
+                              color: AppPalette.panelText,
                               fontWeight: FontWeight.w800,
                               fontSize: 12.2,
                             ),
@@ -127,7 +127,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   Text(
                     result.title,
                     style: const TextStyle(
-                      color: AppPalette.paleOrange,
+                      color: AppPalette.panelText,
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
                       height: 1.35,
@@ -173,7 +173,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                                   Text(
                                     tr('وفر أكثر!', 'Save more!'),
                                     style: const TextStyle(
-                                      color: AppPalette.paleOrange,
+                                      color: AppPalette.panelText,
                                       fontWeight: FontWeight.w900,
                                       fontSize: 13,
                                     ),
@@ -196,7 +196,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             const SizedBox(width: 8),
                             const Icon(
                               Icons.copy_rounded,
-                              color: AppPalette.paleOrange,
+                              color: AppPalette.softTurquoise,
                               size: 18,
                             ),
                           ],
