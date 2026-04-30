@@ -40,7 +40,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: appleStyle ? Colors.white : const Color(0xFFFFEFD9),
+        color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color:
@@ -84,8 +84,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
               color: appleStyle
-                  ? const Color(0xFFF6F7FB)
-                  : Colors.white.withValues(alpha: 0.65),
+                  ? AppPalette.softOrange
+                  : AppPalette.softOrange.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: appleStyle

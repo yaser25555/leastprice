@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/models/admin_product_draft.dart';
 import 'package:leastprice/services/api/affiliate_link_service.dart';
@@ -124,7 +125,7 @@ class _AdminAddProductDialogState extends State<AdminAddProductDialog> {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 540),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
         ),
         child: Padding(

@@ -28,7 +28,7 @@ class AdminAccessDeniedScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppPalette.cardBackground,
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: const [
                   BoxShadow(

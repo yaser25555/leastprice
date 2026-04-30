@@ -88,7 +88,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
-                      color: Colors.white,
+                      color: AppPalette.cardBackground,
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0x22000000),
@@ -134,7 +134,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.18),
+                                  color: AppPalette.softOrange.withValues(alpha: 0.28),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Text(
@@ -188,8 +188,8 @@ class _BannerCarouselState extends State<BannerCarousel> {
               margin: const EdgeInsets.symmetric(horizontal: 3),
               decoration: BoxDecoration(
                 color: isActive
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: 0.32),
+                    ? AppPalette.softOrange
+                    : AppPalette.paleOrange.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(20),
               ),
             );

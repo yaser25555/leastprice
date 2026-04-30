@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leastprice/core/theme/app_palette.dart';
 
 
 class AdminDashboardSectionCard extends StatelessWidget {
@@ -12,7 +13,7 @@ class AdminDashboardSectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
