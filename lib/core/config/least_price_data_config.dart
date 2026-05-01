@@ -48,7 +48,7 @@ class LeastPriceDataConfig {
   static const SearchProviderType searchProviderType =
       SearchProviderType.serper;
   static const String serperApiKey =
-      String.fromEnvironment('SERPER_API_KEY', defaultValue: 'f7fa2546aac3050cc7972a4265217d42c3c38ff4');
+      String.fromEnvironment('SERPER_API_KEY', defaultValue: 'f7fa2546aac3050cc7972a4265217d42c3c38ff4c');
   static const String tavilyApiKey =
       String.fromEnvironment('TAVILY_API_KEY', defaultValue: '');
   static const bool enableAutomaticPriceRefresh = true;

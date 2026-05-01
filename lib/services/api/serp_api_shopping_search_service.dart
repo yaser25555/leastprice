@@ -298,6 +298,38 @@ class SerpApiShoppingSearchService {
 
     return _parseResults(payload);
   }
+
+  Future<List<ComparisonSearchResult>> _fetchSerperResults(
+    String query,
+    String apiKey, {
+    required MarketplaceSearchCity city,
+  }) async {
+    final uri = Uri.https('google.serper.dev', '/search');
+    final response = await http.post(
+      uri,
+      headers: {
+        'X-API-KEY': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'q': query,
+        'gl': 'sa',
+        'hl': 'ar',
+        'location': city.serpApiLocation,
+      }),
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception('Serper responded with ${response.statusCode}');
+    }
+
+    final payload = jsonDecode(response.body);
+    if (payload is! Map<String, dynamic>) {
+      throw const FormatException('Unexpected Serper payload');
+    }
+
+    return _parseSerperResults(payload);
+  }
   List<ComparisonSearchResult> _parseLocalResults(Map<String, dynamic> payload) {
     final results = <ComparisonSearchResult>[];
     final seen = <String>{};

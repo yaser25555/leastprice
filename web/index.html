@@ -32,6 +32,34 @@
   <title>أرخص سعر | LeastPrice</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1B2F5E">
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getStorage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXDgWqm4d0g58ZFwXBlNHKqUp6dqWEa04",
+      authDomain: "leastprice-yaser.web.app",
+      projectId: "leastprice-yaser",
+      storageBucket: "leastprice-yaser.firebasestorage.app",
+      messagingSenderId: "46896031630",
+      appId: "1:46896031630:web:f45faba915e461eef2a6df",
+      measurementId: "G-P3NWPSRHHP"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    // Make Firebase available globally for Flutter
+    window.firebase = { app, db, auth, storage };
+  </script>
 </head>
 <body>
   <script>

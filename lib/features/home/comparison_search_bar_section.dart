@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/home/search_info_pill.dart';
+import 'package:leastprice/features/search/barcode_scanner_screen.dart';
 import 'home_exports.dart';
 
 class ComparisonSearchBarSection extends StatelessWidget {
@@ -80,15 +81,37 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 Icons.search_rounded,
                 color: AppPalette.orange,
               ),
-              suffixIcon: hasQuery
-                  ? IconButton(
+              suffixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      final result = await Navigator.push<String>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BarcodeScannerScreen(),
+                        ),
+                      );
+                      if (result != null && result.isNotEmpty) {
+                        onSubmitted(result);
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.qr_code_scanner_rounded,
+                      color: AppPalette.orange,
+                    ),
+                    tooltip: tr('بحث بالباركود', 'Search by barcode'),
+                  ),
+                  if (hasQuery)
+                    IconButton(
                       onPressed: onClearSearch,
                       icon: const Icon(
                         Icons.close_rounded,
                         color: AppPalette.orange,
                       ),
-                    )
-                  : null,
+                    ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 14),
