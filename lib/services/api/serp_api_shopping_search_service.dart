@@ -154,6 +154,9 @@ class SerpApiShoppingSearchService {
     String apiKey, {
     required MarketplaceSearchCity city,
   }) async {
+    final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
+    final results = <ComparisonSearchResult>[];
+
     if (kIsWeb) {
       final uri = Uri.parse(
         '${Uri.base.origin}/api/${LeastPriceDataConfig.hybridSearchFunctionName}'
@@ -203,6 +206,31 @@ class SerpApiShoppingSearchService {
       return filteredHybridResults;
     }
 
+    // Fetch from SerpApi
+    final serpApiResults = await _fetchSerpApiResults(query, apiKey, city: city);
+    results.addAll(serpApiResults);
+
+    // Fetch from Serper if key is available
+    if (serperApiKey.isNotEmpty) {
+      try {
+        final serperResults = await _fetchSerperResults(query, serperApiKey, city: city);
+        results.addAll(serperResults);
+      } catch (error) {
+        debugPrint('Serper search failed: $error');
+      }
+    }
+
+    final filteredResults = _filterSupportedSaudiStoreResults(results)
+      ..sort(_compareSearchResults);
+
+    return filteredResults;
+  }
+
+  Future<List<ComparisonSearchResult>> _fetchSerpApiResults(
+    String query,
+    String apiKey, {
+    required MarketplaceSearchCity city,
+  }) async {
     final uri = Uri.https('serpapi.com', '/search.json', {
       'engine': 'google_shopping',
       'q': query,
@@ -222,10 +250,38 @@ class SerpApiShoppingSearchService {
       throw const FormatException('Unexpected SerpApi payload');
     }
 
-    final results = _filterSupportedSaudiStoreResults(_parseResults(payload))
-      ..sort(_compareSearchResults);
+    return _parseResults(payload);
+  }
 
-    return results;
+  Future<List<ComparisonSearchResult>> _fetchSerperResults(
+    String query,
+    String apiKey, {
+    required MarketplaceSearchCity city,
+  }) async {
+    final response = await http.post(
+      Uri.parse('https://google.serper.dev/search'),
+      headers: {
+        'X-API-KEY': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'q': '$query shopping',
+        'gl': 'sa',
+        'hl': 'ar',
+        'location': city.serpApiLocation,
+      }),
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception('Serper responded with ${response.statusCode}');
+    }
+
+    final payload = jsonDecode(response.body);
+    if (payload is! Map<String, dynamic>) {
+      throw const FormatException('Unexpected Serper payload');
+    }
+
+    return _parseSerperResults(payload);
   }
 
   List<ComparisonSearchResult> _parseResults(Map<String, dynamic> payload) {
@@ -301,6 +357,62 @@ class SerpApiShoppingSearchService {
             'currency': item['currency'] ?? 'SAR',
           });
         }
+      }
+    }
+
+    return results;
+  }
+
+  List<ComparisonSearchResult> _parseSerperResults(Map<String, dynamic> payload) {
+    final results = <ComparisonSearchResult>[];
+    final seen = <String>{};
+
+    void addResult(dynamic rawItem) {
+      if (rawItem is! Map) {
+        return;
+      }
+
+      final item = rawItem as Map<String, dynamic>;
+      final title = stringValue(item['title'])?.trim() ?? '';
+      final link = stringValue(item['link'])?.trim() ?? '';
+      final snippet = stringValue(item['snippet'])?.trim() ?? '';
+
+      if (title.isEmpty || link.isEmpty) {
+        return;
+      }
+
+      final fingerprint = normalizeArabic('${title}|${link}');
+      if (!seen.add(fingerprint)) {
+        return;
+      }
+
+      // Try to extract price from snippet or title
+      final priceText = extractMarketplacePrice(snippet) ?? extractMarketplacePrice(title);
+      if (priceText == null) {
+        return; // Skip if no price
+      }
+
+      final result = ComparisonSearchResult(
+        title: title,
+        price: priceText,
+        storeName: inferStoreIdFromUrl(link) ?? 'Google Search',
+        storeId: inferStoreIdFromUrl(link) ?? 'google',
+        storeLogoUrl: resolveStoreLogoUrl(storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
+        imageUrl: '', // Serper may not have images
+        productUrl: link,
+        currency: 'SAR',
+        sourceType: ComparisonSearchSourceType.serpApi, // Treat as serpapi for now
+        channelType: ComparisonSearchChannelType.marketplace,
+        isLiveDirect: false,
+      );
+
+      results.add(result);
+    }
+
+    final organicResults = payload['organic'];
+    if (organicResults is List) {
+      for (final item in organicResults) {
+        addResult(item);
       }
     }
 
