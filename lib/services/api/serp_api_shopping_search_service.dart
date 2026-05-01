@@ -37,6 +37,42 @@ class SerpApiShoppingSearchService {
     'extra',
   };
 
+  static const Set<String> _foodRelatedKeywords = {
+    'مطعم',
+    'restaurant',
+    'قهوة',
+    'coffee',
+    'وجبة',
+    'meal',
+    'أكل',
+    'food',
+    'مشروب',
+    'drink',
+    'برجر',
+    'burger',
+    'بيتزا',
+    'pizza',
+    'دجاج',
+    'chicken',
+    'لحم',
+    'meat',
+    'حلويات',
+    'sweets',
+    'كيك',
+    'cake',
+    'عصير',
+    'juice',
+    'شاي',
+    'tea',
+    'مكولات',
+    'snacks',
+  };
+
+  bool _isFoodRelatedQuery(String query) {
+    final normalized = normalizeArabic(query.toLowerCase());
+    return _foodRelatedKeywords.any((keyword) => normalized.contains(keyword));
+  }
+
   ComparisonSearchResponse _buildResponse({
     required List<ComparisonSearchResult> results,
     required bool fromCache,
@@ -220,6 +256,16 @@ class SerpApiShoppingSearchService {
       }
     }
 
+    // Fetch from Google Local if food-related query
+    if (_isFoodRelatedQuery(query)) {
+      try {
+        final localResults = await _fetchLocalResults(query, apiKey, city: city);
+        results.addAll(localResults);
+      } catch (error) {
+        debugPrint('Google Local search failed: $error');
+      }
+    }
+
     final filteredResults = _filterSupportedSaudiStoreResults(results)
       ..sort(_compareSearchResults);
 
@@ -252,36 +298,85 @@ class SerpApiShoppingSearchService {
 
     return _parseResults(payload);
   }
+  List<ComparisonSearchResult> _parseLocalResults(Map<String, dynamic> payload) {
+    final results = <ComparisonSearchResult>[];
+    final seen = <String>{};
 
-  Future<List<ComparisonSearchResult>> _fetchSerperResults(
+    void addResult(dynamic rawItem) {
+      if (rawItem is! Map) {
+        return;
+      }
+
+      final item = rawItem as Map<String, dynamic>;
+      final title = stringValue(item['title'])?.trim() ?? '';
+      final link = stringValue(item['link'])?.trim() ?? '';
+      final rating = doubleValue(item['rating']);
+      final reviews = intValue(item['reviews']) ?? 0;
+
+      if (title.isEmpty || link.isEmpty) {
+        return;
+      }
+
+      final fingerprint = normalizeArabic('${title}|${link}');
+      if (!seen.add(fingerprint)) {
+        return;
+      }
+
+      // For local results, price might not be available, set to 0 or estimate
+      final price = 0.0; // Local results may not have prices
+
+      final result = ComparisonSearchResult(
+        title: title,
+        price: price,
+        storeName: title,
+        storeId: inferStoreIdFromUrl(link) ?? 'local',
+        storeLogoUrl: resolveStoreLogoUrl(storeId: inferStoreIdFromUrl(link) ?? 'local', productUrl: link),
+        imageUrl: stringValue(item['thumbnail']) ?? '',
+        productUrl: link,
+        currency: 'SAR',
+        sourceType: ComparisonSearchSourceType.serpApi,
+        channelType: ComparisonSearchChannelType.delivery, // Assume delivery for food
+        isLiveDirect: false,
+        tag: 'عرض وجبة', // Tag for food deals
+      );
+
+      results.add(result);
+    }
+
+    final localResults = payload['local_results'];
+    if (localResults is List) {
+      for (final item in localResults) {
+        addResult(item);
+      }
+    }
+
+    return results;
+  }
+  Future<List<ComparisonSearchResult>> _fetchLocalResults(
     String query,
     String apiKey, {
     required MarketplaceSearchCity city,
   }) async {
-    final response = await http.post(
-      Uri.parse('https://google.serper.dev/search'),
-      headers: {
-        'X-API-KEY': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'q': '$query shopping',
-        'gl': 'sa',
-        'hl': 'ar',
-        'location': city.serpApiLocation,
-      }),
-    );
+    final uri = Uri.https('serpapi.com', '/search.json', {
+      'engine': 'google_local',
+      'q': query,
+      'location': city.serpApiLocation,
+      'gl': 'sa',
+      'hl': 'ar',
+      'api_key': apiKey,
+    });
 
+    final response = await http.get(uri);
     if (response.statusCode >= 400) {
-      throw Exception('Serper responded with ${response.statusCode}');
+      throw Exception('SerpApi Local responded with ${response.statusCode}');
     }
 
     final payload = jsonDecode(response.body);
     if (payload is! Map<String, dynamic>) {
-      throw const FormatException('Unexpected Serper payload');
+      throw const FormatException('Unexpected SerpApi Local payload');
     }
 
-    return _parseSerperResults(payload);
+    return _parseLocalResults(payload);
   }
 
   List<ComparisonSearchResult> _parseResults(Map<String, dynamic> payload) {

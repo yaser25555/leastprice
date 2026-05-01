@@ -15,6 +15,7 @@ class ComparisonSearchResult {
     required this.channelType,
     required this.isLiveDirect,
     this.matchedCoupon,
+    this.tag,
   });
 
   final String title;
@@ -29,6 +30,7 @@ class ComparisonSearchResult {
   final ComparisonSearchChannelType channelType;
   final bool isLiveDirect;
   final Coupon? matchedCoupon;
+  final String? tag;
 
   bool get isScraped => sourceType == ComparisonSearchSourceType.scraper;
   bool get isPreferredMarketplace =>
@@ -48,6 +50,7 @@ class ComparisonSearchResult {
     bool? isLiveDirect,
     Coupon? matchedCoupon,
     bool clearMatchedCoupon = false,
+    String? tag,
   }) {
     return ComparisonSearchResult(
       title: title ?? this.title,
@@ -63,6 +66,7 @@ class ComparisonSearchResult {
       isLiveDirect: isLiveDirect ?? this.isLiveDirect,
       matchedCoupon:
           clearMatchedCoupon ? null : (matchedCoupon ?? this.matchedCoupon),
+      tag: tag ?? this.tag,
     );
   }
 
@@ -134,6 +138,7 @@ class ComparisonSearchResult {
       matchedCoupon: rawMatchedCoupon is Map
           ? Coupon.fromJson(Map<String, dynamic>.from(rawMatchedCoupon))
           : null,
+      tag: stringValue(json['tag']),
     );
   }
 
@@ -153,6 +158,7 @@ class ComparisonSearchResult {
       'isLiveDirect': isLiveDirect,
       if (matchedCoupon != null)
         'matchedCoupon': matchedCoupon!.toFirestoreMap(),
+      if (tag != null) 'tag': tag,
     };
   }
 }
