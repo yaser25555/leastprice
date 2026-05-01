@@ -122,4 +122,25 @@ class ExclusiveDeal {
         'lastUpdatedByEmail': lastUpdatedByEmail.trim().toLowerCase(),
     };
   }
+
+  static final List<ExclusiveDeal> mockData = [
+    ExclusiveDeal(
+      id: 'mock_deal_1',
+      title: 'عرض حصري على سامسونج جالكسي S24',
+      imageUrl: 'https://example.com/samsung-s24.jpg',
+      beforePrice: 5000,
+      afterPrice: 4500,
+      expiryDate: DateTime.now().add(const Duration(days: 7)),
+      active: true,
+    ),
+    ExclusiveDeal(
+      id: 'mock_deal_2',
+      title: 'خصم 20% على منتجات أبل',
+      imageUrl: 'https://example.com/apple-products.jpg',
+      beforePrice: 3000,
+      afterPrice: 2400,
+      expiryDate: DateTime.now().add(const Duration(days: 5)),
+      active: true,
+    ),
+  ];
 }
