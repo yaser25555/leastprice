@@ -160,6 +160,102 @@ const List<MarketplaceSearchCity> marketplaceSearchCities = [
     enLabel: 'Madinah',
     serpApiLocation: 'Madinah Saudi Arabia',
   ),
+  MarketplaceSearchCity(
+    id: 'taif',
+    arLabel: 'الطائف',
+    enLabel: 'Taif',
+    serpApiLocation: 'Taif Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'tabuk',
+    arLabel: 'تبوك',
+    enLabel: 'Tabuk',
+    serpApiLocation: 'Tabuk Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'abha',
+    arLabel: 'أبها',
+    enLabel: 'Abha',
+    serpApiLocation: 'Abha Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'khamis_mushait',
+    arLabel: 'خميس مشيط',
+    enLabel: 'Khamis Mushait',
+    serpApiLocation: 'Khamis Mushait Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'jazan',
+    arLabel: 'جازان',
+    enLabel: 'Jazan',
+    serpApiLocation: 'Jazan Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'najran',
+    arLabel: 'نجران',
+    enLabel: 'Najran',
+    serpApiLocation: 'Najran Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'hail',
+    arLabel: 'حائل',
+    enLabel: 'Hail',
+    serpApiLocation: 'Hail Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'buraydah',
+    arLabel: 'بريدة',
+    enLabel: 'Buraydah',
+    serpApiLocation: 'Buraydah Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'yanbu',
+    arLabel: 'ينبع',
+    enLabel: 'Yanbu',
+    serpApiLocation: 'Yanbu Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'jubail',
+    arLabel: 'الجبيل',
+    enLabel: 'Jubail',
+    serpApiLocation: 'Jubail Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'al_ahsa',
+    arLabel: 'الأحساء',
+    enLabel: 'Al Ahsa',
+    serpApiLocation: 'Al Ahsa Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'khafji',
+    arLabel: 'الخفجي',
+    enLabel: 'Khafji',
+    serpApiLocation: 'Khafji Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'al_baha',
+    arLabel: 'الباحة',
+    enLabel: 'Al Baha',
+    serpApiLocation: 'Al Baha Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'arar',
+    arLabel: 'عرعر',
+    enLabel: 'Arar',
+    serpApiLocation: 'Arar Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'sakaka',
+    arLabel: 'سكاكا',
+    enLabel: 'Sakaka',
+    serpApiLocation: 'Sakaka Saudi Arabia',
+  ),
+  MarketplaceSearchCity(
+    id: 'alqurayyat',
+    arLabel: 'القريات',
+    enLabel: 'Al Qurayyat',
+    serpApiLocation: 'Al Qurayyat Saudi Arabia',
+  ),
 ];
 
 MarketplaceSearchCity marketplaceSearchCityById(String? id) {
@@ -384,6 +480,7 @@ enum ComparisonSearchChannelType {
   hypermarket,
   delivery,
   pharmacy,
+  electronics,
   other,
 }
 
@@ -398,6 +495,8 @@ extension ComparisonSearchChannelTypeLabel on ComparisonSearchChannelType {
         return tr('تطبيق توصيل', 'Delivery app');
       case ComparisonSearchChannelType.pharmacy:
         return tr('صيدلية', 'Pharmacy');
+      case ComparisonSearchChannelType.electronics:
+        return tr('إلكترونيات', 'Electronics');
       case ComparisonSearchChannelType.other:
         return tr('متجر محلي', 'Local store');
     }
@@ -577,6 +676,8 @@ ComparisonSearchChannelType comparisonSearchChannelTypeFromString(
       return ComparisonSearchChannelType.delivery;
     case 'pharmacy':
       return ComparisonSearchChannelType.pharmacy;
+    case 'electronics':
+      return ComparisonSearchChannelType.electronics;
     default:
       return ComparisonSearchChannelType.other;
   }
@@ -617,6 +718,8 @@ String? storeIdForHost(String? host) {
   if (normalizedHost.contains('keeta')) return 'keeta';
   if (normalizedHost.contains('nahdi')) return 'nahdi';
   if (normalizedHost.contains('dawaa')) return 'aldawaa';
+  if (normalizedHost.contains('jarir')) return 'jarir';
+  if (normalizedHost.contains('extra')) return 'extra';
   return normalizedHost
       .replaceFirst('www.', '')
       .replaceAll(RegExp(r'[^a-z0-9]+'), '');
@@ -649,6 +752,14 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   if (normalizedName.contains('كيتا')) return 'keeta';
   if (normalizedName.contains('النهدي')) return 'nahdi';
   if (normalizedName.contains('الدواء')) return 'aldawaa';
+  if (normalizedName.contains('جرير') || normalizedName.contains('jarir')) {
+    return 'jarir';
+  }
+  if (normalizedName.contains('اكسترا') ||
+      normalizedName.contains('إكسترا') ||
+      normalizedName.contains('extra')) {
+    return 'extra';
+  }
 
   final fallbackToken = normalizeStoreIdToken(fallbackName ?? '');
   return fallbackToken.isEmpty ? null : fallbackToken;
@@ -682,6 +793,13 @@ String inferComparisonChannelType(
       normalized.contains('نون') ||
       normalized.contains('نمشي')) {
     return 'marketplace';
+  }
+  if (normalized.contains('jarir') ||
+      normalized.contains('extra') ||
+      normalized.contains('جرير') ||
+      normalized.contains('اكسترا') ||
+      normalized.contains('إكسترا')) {
+    return 'electronics';
   }
   if (normalized.contains('panda') ||
       normalized.contains('othaim') ||

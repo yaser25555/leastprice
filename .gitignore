@@ -16,6 +16,7 @@ android/app/*.jks
 android/app/*.keystore
 
 functions/node_modules/
+functions/.env
 assets/icons/node_modules/
 assets/icons/package-lock.json
 tools/node_modules/

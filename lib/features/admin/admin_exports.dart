@@ -18,4 +18,5 @@ export 'admin_product_manager_panel.dart';
 export 'admin_simple_banners_panel.dart';
 export 'admin_simple_exclusive_deals_panel.dart';
 export 'admin_simple_products_panel.dart';
+export 'admin_simple_users_panel.dart';
 export 'admin_status_chip.dart';

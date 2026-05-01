@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'package:leastprice/core/config/least_price_data_config.dart';
+import 'package:leastprice/data/models/user_savings_profile.dart';
+import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/auth/firebase_setup_screen.dart';
 import 'package:leastprice/features/auth/auth_loading_screen.dart';
@@ -41,11 +44,23 @@ class AdminDashboardAuthGate extends StatelessWidget {
           return const AdminLoginScreen();
         }
 
-        if (!isAllowedAdminEmail(user.email)) {
-          return AdminAccessDeniedScreen(user: user);
+        final isPrimaryAdmin = (user.email ?? '').trim().toLowerCase() ==
+            LeastPriceDataConfig.adminEmail.toLowerCase();
+        if (isPrimaryAdmin) {
+          return AdminControlCenter(adminUser: user);
         }
 
-        return AdminDashboardScreen(adminUser: user);
+        const service = FirestoreCatalogService();
+        return StreamBuilder<UserSavingsProfile?>(
+          stream: service.watchUserProfile(user.uid),
+          builder: (context, profileSnapshot) {
+            final profile = profileSnapshot.data;
+            if (profile != null && profile.isMarketingManager) {
+              return AdminControlCenter(adminUser: user);
+            }
+            return AdminAccessDeniedScreen(user: user);
+          },
+        );
       },
     );
   }

@@ -13,6 +13,9 @@ class UserSavingsProfile {
     required this.referralRewardApplied,
     required this.shareBaseUrl,
     required this.inviteMessageTemplate,
+    required this.planActivated,
+    required this.planStatus,
+    required this.adminRole,
   });
 
   final String userId;
@@ -23,6 +26,11 @@ class UserSavingsProfile {
   final bool referralRewardApplied;
   final String shareBaseUrl;
   final String inviteMessageTemplate;
+  final bool planActivated;
+  final String planStatus;
+  final String adminRole;
+
+  bool get isMarketingManager => adminRole.trim().toLowerCase() == 'marketing_manager';
 
   factory UserSavingsProfile.initial() {
     return const UserSavingsProfile(
@@ -36,6 +44,9 @@ class UserSavingsProfile {
       inviteMessageTemplate:
           'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
           'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
+      planActivated: false,
+      planStatus: 'inactive',
+      adminRole: 'user',
     );
   }
 
@@ -55,6 +66,11 @@ class UserSavingsProfile {
       inviteMessageTemplate: stringValue(json['inviteMessageTemplate']) ??
           'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
               'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
+      planActivated: boolValue(
+        json['planActivated'] ?? json['premiumActive'] ?? json['subscriptionActive'],
+      ),
+      planStatus: stringValue(json['planStatus']) ?? 'inactive',
+      adminRole: stringValue(json['adminRole']) ?? 'user',
     );
   }
 
@@ -76,6 +92,9 @@ class UserSavingsProfile {
     bool? referralRewardApplied,
     String? shareBaseUrl,
     String? inviteMessageTemplate,
+    bool? planActivated,
+    String? planStatus,
+    String? adminRole,
   }) {
     return UserSavingsProfile(
       userId: userId ?? this.userId,
@@ -88,6 +107,9 @@ class UserSavingsProfile {
       shareBaseUrl: shareBaseUrl ?? this.shareBaseUrl,
       inviteMessageTemplate:
           inviteMessageTemplate ?? this.inviteMessageTemplate,
+      planActivated: planActivated ?? this.planActivated,
+      planStatus: planStatus ?? this.planStatus,
+      adminRole: adminRole ?? this.adminRole,
     );
   }
 
@@ -100,6 +122,9 @@ class UserSavingsProfile {
       'referralRewardApplied': referralRewardApplied,
       'shareBaseUrl': shareBaseUrl,
       'inviteMessageTemplate': inviteMessageTemplate,
+      'planActivated': planActivated,
+      'planStatus': planStatus,
+      'adminRole': adminRole,
     };
   }
 }

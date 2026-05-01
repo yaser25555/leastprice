@@ -11,6 +11,10 @@ class ExclusiveDeal {
     required this.afterPrice,
     required this.expiryDate,
     this.active = true,
+    this.createdByUid = '',
+    this.createdByEmail = '',
+    this.lastUpdatedByUid = '',
+    this.lastUpdatedByEmail = '',
   });
 
   final String id;
@@ -20,6 +24,10 @@ class ExclusiveDeal {
   final double afterPrice;
   final DateTime expiryDate;
   final bool active;
+  final String createdByUid;
+  final String createdByEmail;
+  final String lastUpdatedByUid;
+  final String lastUpdatedByEmail;
 
   double get savingsAmount => beforePrice - afterPrice;
 
@@ -44,6 +52,10 @@ class ExclusiveDeal {
     double? afterPrice,
     DateTime? expiryDate,
     bool? active,
+    String? createdByUid,
+    String? createdByEmail,
+    String? lastUpdatedByUid,
+    String? lastUpdatedByEmail,
   }) {
     return ExclusiveDeal(
       id: id ?? this.id,
@@ -53,6 +65,10 @@ class ExclusiveDeal {
       afterPrice: afterPrice ?? this.afterPrice,
       expiryDate: expiryDate ?? this.expiryDate,
       active: active ?? this.active,
+      createdByUid: createdByUid ?? this.createdByUid,
+      createdByEmail: createdByEmail ?? this.createdByEmail,
+      lastUpdatedByUid: lastUpdatedByUid ?? this.lastUpdatedByUid,
+      lastUpdatedByEmail: lastUpdatedByEmail ?? this.lastUpdatedByEmail,
     );
   }
 
@@ -73,6 +89,10 @@ class ExclusiveDeal {
       afterPrice: doubleValue(json['afterPrice'] ?? json['price_after']),
       expiryDate: expiryDate,
       active: boolValue(json['active'], defaultValue: true),
+      createdByUid: stringValue(json['createdByUid']) ?? '',
+      createdByEmail: stringValue(json['createdByEmail']) ?? '',
+      lastUpdatedByUid: stringValue(json['lastUpdatedByUid']) ?? '',
+      lastUpdatedByEmail: stringValue(json['lastUpdatedByEmail']) ?? '',
     );
   }
 
@@ -93,6 +113,13 @@ class ExclusiveDeal {
       'afterPrice': afterPrice,
       'expiry_date': Timestamp.fromDate(expiryDate),
       'active': active,
+      if (createdByUid.trim().isNotEmpty) 'createdByUid': createdByUid.trim(),
+      if (createdByEmail.trim().isNotEmpty)
+        'createdByEmail': createdByEmail.trim().toLowerCase(),
+      if (lastUpdatedByUid.trim().isNotEmpty)
+        'lastUpdatedByUid': lastUpdatedByUid.trim(),
+      if (lastUpdatedByEmail.trim().isNotEmpty)
+        'lastUpdatedByEmail': lastUpdatedByEmail.trim().toLowerCase(),
     };
   }
 

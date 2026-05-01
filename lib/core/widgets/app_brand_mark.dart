@@ -7,7 +7,7 @@ class AppBrandMark extends StatelessWidget {
     super.key,
     this.size = 58,
     this.padding = 8,
-    this.backgroundColor = AppPalette.softOrange,
+    this.backgroundColor = Colors.transparent,
     this.borderRadius = 20,
   });
 
