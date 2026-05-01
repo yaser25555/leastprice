@@ -312,7 +312,17 @@ class SerpApiShoppingSearchService {
   ) {
     return results.where((result) {
       final normalizedStoreId = result.storeId.trim().toLowerCase();
-      return _saudiSupportedStoreIds.contains(normalizedStoreId);
+      final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
+      if (normalizedStoreId.isEmpty || normalizedStoreId == 'unknown') {
+        return true;
+      }
+      if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
+        return true;
+      }
+      if (normalizedStoreId.contains('google') || productHost.contains('google')) {
+        return true;
+      }
+      return false;
     }).toList(growable: false);
   }
 
