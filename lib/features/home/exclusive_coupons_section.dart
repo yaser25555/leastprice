@@ -88,7 +88,7 @@ class _ExclusiveCouponsSectionState extends State<ExclusiveCouponsSection> {
                   'كوبونات حصرية لأهل الشرقية',
                   'Exclusive coupons for Eastern Region families',
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppPalette.navy,
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
@@ -100,7 +100,7 @@ class _ExclusiveCouponsSectionState extends State<ExclusiveCouponsSection> {
                   'انسخ الكود المناسب قبل إتمام الطلب لتحصل على وفر إضافي.',
                   'Copy the right code before checkout to unlock extra savings.',
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppPalette.softNavy,
                   fontWeight: FontWeight.w700,
                   height: 1.4,

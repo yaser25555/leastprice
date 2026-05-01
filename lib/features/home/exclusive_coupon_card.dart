@@ -40,7 +40,7 @@ class ExclusiveCouponCard extends StatelessWidget {
           colors: [Color(0xFFFFF8F1), Color(0xFFFFE7D1)],
         ),
         border: Border.all(color: AppPalette.dealsBorder),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppPalette.shadow,
             blurRadius: 22,
@@ -64,7 +64,7 @@ class ExclusiveCouponCard extends StatelessWidget {
                   width: 28,
                   height: 28,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  errorBuilder: (_, __, ___) => Icon(
                     Icons.storefront_rounded,
                     color: AppPalette.navy,
                   ),
@@ -78,7 +78,7 @@ class ExclusiveCouponCard extends StatelessWidget {
                         'كوبون حصري من ${coupon.storeName}',
                         'Exclusive coupon from ${coupon.storeName}',
                       ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.navy,
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
@@ -90,7 +90,7 @@ class ExclusiveCouponCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             coupon.discountLabel,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.orange,
               fontSize: 24,
               fontWeight: FontWeight.w900,
@@ -103,7 +103,7 @@ class ExclusiveCouponCard extends StatelessWidget {
                   'انسخ الكود واستخدمه عند إتمام الطلب.',
                   'Copy the code and use it at checkout.',
                 ),
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.softNavy,
               fontWeight: FontWeight.w700,
               height: 1.4,
@@ -125,7 +125,7 @@ class ExclusiveCouponCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       coupon.code,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.navy,
                         fontWeight: FontWeight.w900,
                         fontSize: 16,
@@ -133,7 +133,7 @@ class ExclusiveCouponCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Icon(Icons.copy_rounded, color: AppPalette.orange),
+                  Icon(Icons.copy_rounded, color: AppPalette.orange),
                 ],
               ),
             ),
@@ -141,7 +141,7 @@ class ExclusiveCouponCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             expiryLabel,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.softNavy,
               fontWeight: FontWeight.w800,
             ),

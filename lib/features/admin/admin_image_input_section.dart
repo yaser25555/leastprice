@@ -56,7 +56,7 @@ class AdminImageInputSection extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     tr('جارٍ الرفع...', 'Uploading...'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.orange,
                       fontWeight: FontWeight.w700,
                     ),

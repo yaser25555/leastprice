@@ -30,7 +30,7 @@ class CouponsPaywallSection extends StatelessWidget {
           color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(color: AppPalette.cardBorder, width: 1.4),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppPalette.shadow,
               blurRadius: 18,
@@ -45,7 +45,7 @@ class CouponsPaywallSection extends StatelessWidget {
               width: 68,
               height: 68,
               decoration: BoxDecoration(
-                gradient: const RadialGradient(
+                gradient: RadialGradient(
                   colors: [
                     AppPalette.accentSkyPale,
                     AppPalette.accentSky,
@@ -75,7 +75,7 @@ class CouponsPaywallSection extends StatelessWidget {
                 'Exclusive coupons waiting for you',
               ),
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppPalette.panelText,
                 fontWeight: FontWeight.w900,
                 fontSize: 19,
@@ -88,7 +88,7 @@ class CouponsPaywallSection extends StatelessWidget {
                 'Subscribe to unlock fresh discount codes from top Saudi and global stores.',
               ),
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppPalette.mutedText,
                 fontWeight: FontWeight.w700,
                 height: 1.5,
@@ -185,7 +185,7 @@ class CouponsPaywallSection extends StatelessWidget {
             Text(
               tr('ابتداءً من 9.99 ر.س / شهريًا',
                   'Starting from SAR 9.99 / month'),
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppPalette.paleOrange,
                 fontWeight: FontWeight.w800,
                 fontSize: 12.5,
@@ -252,7 +252,7 @@ class _BenefitRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.mutedText,
               fontWeight: FontWeight.w700,
               height: 1.4,

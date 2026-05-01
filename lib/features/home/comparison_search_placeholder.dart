@@ -19,7 +19,7 @@ class ComparisonSearchPlaceholder extends StatelessWidget {
         color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(26),
         border: Border.all(color: AppPalette.comparisonBorder),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppPalette.shadow,
             blurRadius: 18,
@@ -46,7 +46,7 @@ class ComparisonSearchPlaceholder extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.navy,
               fontSize: 18,
               fontWeight: FontWeight.w900,

@@ -59,7 +59,7 @@ class ExclusiveDealCard extends StatelessWidget {
                     width: 122,
                     color: AppPalette.softOrange,
                     alignment: Alignment.center,
-                    child: const Icon(
+                    child: Icon(
                       Icons.local_offer_rounded,
                       color: AppPalette.dealsRed,
                       size: 32,
@@ -84,7 +84,7 @@ class ExclusiveDealCard extends StatelessWidget {
                     ),
                     child: Text(
                       tr('عرض مؤقت', 'Limited deal'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.dealsRed,
                         fontWeight: FontWeight.w900,
                       ),
@@ -107,7 +107,7 @@ class ExclusiveDealCard extends StatelessWidget {
                     children: [
                       Text(
                         formatPrice(deal.afterPrice),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppPalette.dealsRed,
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
@@ -116,7 +116,7 @@ class ExclusiveDealCard extends StatelessWidget {
                       const SizedBox(width: 10),
                       Text(
                         formatPrice(deal.beforePrice),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppPalette.softNavy,
                           decoration: TextDecoration.lineThrough,
                           fontWeight: FontWeight.w700,

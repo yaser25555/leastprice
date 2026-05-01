@@ -103,7 +103,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
               decoration: BoxDecoration(
                 color: AppPalette.cardBackground,
                 borderRadius: BorderRadius.circular(28),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
                     color: AppPalette.shadow,
                     blurRadius: 28,
@@ -121,7 +121,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     tr('لوحة تحكم LeastPrice',
                         'LeastPrice Admin Dashboard'),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: AppPalette.navy,
@@ -134,7 +134,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                       'Sign in with an authorized manager account. The primary admin has full access, while marketing managers can access Deals only.',
                     ),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.softNavy,
                       height: 1.5,
                     ),
@@ -182,7 +182,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                       child: Text(
                         _statusMessage!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppPalette.panelText,
                           fontWeight: FontWeight.w700,
                           height: 1.45,

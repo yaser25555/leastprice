@@ -53,7 +53,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting &&
               !(snapshot.hasData && snapshot.data!.isNotEmpty)) {
-            return const Padding(
+            return Padding(
               padding: EdgeInsets.symmetric(vertical: 32),
               child: Center(
                 child: CircularProgressIndicator(color: AppPalette.orange),
@@ -95,7 +95,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.workspace_premium_rounded,
                     color: AppPalette.orange,
                     size: 22,
@@ -107,7 +107,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                         'كوبوناتك الحصرية (${coupons.length})',
                         'Your exclusive coupons (${coupons.length})',
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.panelText,
                         fontSize: 19,
                         fontWeight: FontWeight.w900,
@@ -122,7 +122,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   'انسخ الكود قبل إتمام الطلب لتحصل على وفر إضافي.',
                   'Copy the code before checkout to unlock extra savings.',
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppPalette.mutedText,
                   fontWeight: FontWeight.w700,
                   height: 1.4,

@@ -12,7 +12,7 @@ class ComparisonImageFallback extends StatelessWidget {
       height: 92,
       color: AppPalette.cardBackground,
       alignment: Alignment.center,
-      child: const Icon(
+      child: Icon(
         Icons.image_search_rounded,
         color: AppPalette.softNavy,
         size: 34,

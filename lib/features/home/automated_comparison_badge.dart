@@ -24,7 +24,7 @@ class AutomatedComparisonBadge extends StatelessWidget {
       ),
       child: Text(
         tr('محدث آلياً', 'Auto-updated'),
-        style: const TextStyle(
+        style: TextStyle(
           color: AppPalette.comparisonEmerald,
           fontWeight: FontWeight.w800,
         ),

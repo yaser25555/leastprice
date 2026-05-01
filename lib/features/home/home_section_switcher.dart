@@ -28,7 +28,7 @@ class HomeSectionSwitcher extends StatelessWidget {
         ),
         boxShadow: appleStyle
             ? const []
-            : const [
+            : [
                 BoxShadow(
                   color: AppPalette.shadow,
                   blurRadius: 14,

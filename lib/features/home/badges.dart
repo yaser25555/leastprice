@@ -13,7 +13,7 @@ class SavingBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [AppPalette.comparisonEmerald, Color(0xFF16AA83)],
         ),
         borderRadius: BorderRadius.circular(16),

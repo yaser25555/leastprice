@@ -43,7 +43,7 @@ class RatingSummary extends StatelessWidget {
                 children: [
                   Text(
                     reviewText,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.panelText,
                       fontWeight: FontWeight.w800,
                     ),
@@ -54,7 +54,7 @@ class RatingSummary extends StatelessWidget {
                       'اضغط على النجوم لتقييم الجودة والقيمة مقارنة بالخيار الأعلى سعراً.',
                       'Tap the stars to rate quality and value compared to the higher-priced option.',
                     ),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.mutedText,
                       fontSize: 12.8,
                       height: 1.4,
@@ -63,7 +63,7 @@ class RatingSummary extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_left_rounded,
               color: AppPalette.orange,
             ),

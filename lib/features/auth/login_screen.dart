@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: 10),
                                 Text(
                                   tr('من نحن', 'About Us'),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppPalette.paleOrange,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 16,
@@ -376,7 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [AppPalette.deepNavy, AppPalette.navy, AppPalette.orange],
@@ -440,7 +440,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               'سجّل دخولك للمتابعة.',
                                               'Sign in to continue.',
                                             ),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppPalette.mutedText,
                                         height: 1.45,
                                       ),
@@ -499,7 +499,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'تذكر البريد الإلكتروني على هذا الجهاز',
                                 'Remember my email on this device',
                               ),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppPalette.panelText,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13.5,
@@ -553,7 +553,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               child: Text(
                                 _statusMessage!,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppPalette.panelText,
                                   fontWeight: FontWeight.w700,
                                   height: 1.5,

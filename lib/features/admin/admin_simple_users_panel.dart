@@ -110,7 +110,7 @@ class AdminSimpleUsersPanel extends StatelessWidget {
                     'من هنا يمكنك تفعيل أو إلغاء تفعيل الخطة لكل مستخدم بعد التحقق من التحويل.',
                     'From here, you can activate or deactivate each user plan after verifying transfer.',
                   ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.mutedText,
                     fontWeight: FontWeight.w600,
                   ),
@@ -136,7 +136,7 @@ class AdminSimpleUsersPanel extends StatelessWidget {
                         'لا يوجد مستخدمون بعد.',
                         'No users found yet.',
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.mutedText,
                         fontWeight: FontWeight.w700,
                       ),

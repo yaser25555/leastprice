@@ -107,7 +107,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
         color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: AppPalette.cardBorder, width: 1.4),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppPalette.shadow,
             blurRadius: 18,
@@ -143,7 +143,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
               Expanded(
                 child: Text(
                   tr('اختر باقتك', 'Choose your plan'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.panelText,
                     fontWeight: FontWeight.w900,
                     fontSize: 18,
@@ -228,7 +228,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                         children: [
                           Text(
                             _tierTitle(tier),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppPalette.panelText,
                               fontWeight: FontWeight.w900,
                             ),
@@ -296,7 +296,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
               children: [
                 Text(
                   tr('الفرق بين الباقات', 'Plan differences'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.panelText,
                     fontWeight: FontWeight.w900,
                   ),
@@ -306,7 +306,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                   final index = entry.key;
                   final line = entry.value;
                   // Rotate accent colors so the list breathes beyond a single tone.
-                  const accents = <Color>[
+                  final accents = <Color>[
                     AppPalette.orangeWarm,
                     AppPalette.orangeCoral,
                     AppPalette.accentSky,
@@ -326,7 +326,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                         Expanded(
                           child: Text(
                             line,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppPalette.mutedText,
                               fontWeight: FontWeight.w700,
                               height: 1.4,
@@ -354,7 +354,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                 children: [
                   Text(
                     tr('معلومات التحويل', 'Transfer details'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.panelText,
                       fontWeight: FontWeight.w900,
                     ),
@@ -369,7 +369,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                       'IBAN: SA7005000068202380361000\n'
                       'Plan activation is done manually after transfer.',
                     ),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.mutedText,
                       fontWeight: FontWeight.w700,
                       height: 1.5,
@@ -405,7 +405,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                       'رقم الدعم: 00966558570889',
                       'Support: 00966558570889',
                     ),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.paleOrange,
                       fontWeight: FontWeight.w800,
                     ),

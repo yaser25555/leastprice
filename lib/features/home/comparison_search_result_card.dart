@@ -30,7 +30,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
           color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(color: AppPalette.comparisonBorder),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppPalette.shadow,
               blurRadius: 18,
@@ -74,7 +74,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                         ),
                         child: Text(
                           tr('محدث آلياً', 'Updated automatically'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppPalette.comparisonEmerald,
                             fontWeight: FontWeight.w800,
                             fontSize: 12.2,
@@ -93,7 +93,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                           ),
                           child: Text(
                             tr('أولوية نون/أمازون', 'Noon/Amazon priority'),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppPalette.panelText,
                               fontWeight: FontWeight.w800,
                               fontSize: 12.2,
@@ -112,7 +112,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                           ),
                           child: Text(
                             result.tag!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppPalette.navy,
                               fontWeight: FontWeight.w800,
                               fontSize: 12.2,
@@ -133,7 +133,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'LeastPrice • ${result.channelType.label}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppPalette.mutedText,
                             fontWeight: FontWeight.w700,
                             fontSize: 12.8,
@@ -145,7 +145,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     result.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.panelText,
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
@@ -155,7 +155,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     '${formatAmountValue(result.price)} ${result.currency}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.comparisonEmerald,
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -179,7 +179,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.local_offer_rounded,
                               color: AppPalette.orange,
                               size: 18,
@@ -191,7 +191,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                                 children: [
                                   Text(
                                     tr('وفر أكثر!', 'Save more!'),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppPalette.panelText,
                                       fontWeight: FontWeight.w900,
                                       fontSize: 13,
@@ -203,7 +203,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                                       'استخدم كود الخصم: ${result.matchedCoupon!.code}',
                                       'Use coupon code: ${result.matchedCoupon!.code}',
                                     ),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppPalette.mutedText,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12.5,
@@ -213,7 +213,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Icon(
+                            Icon(
                               Icons.copy_rounded,
                               color: AppPalette.softTurquoise,
                               size: 18,
@@ -240,7 +240,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                       ],
-                      const Icon(
+                      Icon(
                         Icons.storefront_rounded,
                         size: 16,
                         color: AppPalette.mutedText,
@@ -249,7 +249,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           result.storeName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppPalette.mutedText,
                             fontWeight: FontWeight.w700,
                           ),

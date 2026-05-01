@@ -324,7 +324,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                     behavior: HitTestBehavior.opaque,
                     child: Row(
                       children: [
-                        const AppBrandMark(
+                        AppBrandMark(
                           size: 54,
                           padding: 6,
                           borderRadius: 16,
@@ -337,7 +337,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                             children: [
                               Text(
                                 'LeastPrice',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppPalette.paleOrange,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
@@ -387,13 +387,30 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                               ),
                               child: Text(
                                 lang == 'ar' ? 'EN' : 'AR',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppPalette.paleOrange,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 12,
                                 ),
                               ),
                             ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: isFeminineTheme,
+                          builder: (context, isFem, _) => IconButton(
+                            onPressed: () {
+                              isFeminineTheme.value = !isFeminineTheme.value;
+                            },
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: AppPalette.paleOrange,
+                              padding: const EdgeInsets.all(10),
+                              minimumSize: const Size(38, 38),
+                            ),
+                            icon: Icon(isFem ? Icons.spa_rounded : Icons.palette_rounded, size: 18),
+                            tooltip: tr('تغيير الثيم', 'Change Theme'),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -429,14 +446,14 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                               Expanded(
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.discount_rounded, color: AppPalette.orange, size: 16),
+                                    Icon(Icons.discount_rounded, color: AppPalette.orange, size: 16),
                                     const SizedBox(width: 6),
                                     Text(
                                       tr(
                                         'كود الدعوة',
                                         'Invite code',
                                       ),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppPalette.paleOrange,
                                         fontSize: 13,
                                         fontWeight: FontWeight.w800,
@@ -459,7 +476,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                                     ),
                                     child: Text(
                                       widget.inviteCode,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppPalette.deepNavy,
                                         fontWeight: FontWeight.w900,
                                         fontSize: 11.5,

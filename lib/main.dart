@@ -51,21 +51,24 @@ class LeastPriceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final applePlatform = isAppleTargetPlatform;
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppPalette.orange,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: AppPalette.orange,
-      secondary: AppPalette.navy,
-      onPrimary: Colors.white,
-      onSecondary: Colors.white,
-      surface: AppPalette.cardBackground,
-      onSurface: AppPalette.paleOrange,
-    );
+    return ValueListenableBuilder<bool>(
+      valueListenable: isFeminineTheme,
+      builder: (context, isFeminine, _) {
+        final scheme = ColorScheme.fromSeed(
+          seedColor: AppPalette.orange,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: AppPalette.orange,
+          secondary: AppPalette.navy,
+          onPrimary: Colors.white,
+          onSecondary: Colors.white,
+          surface: AppPalette.cardBackground,
+          onSurface: AppPalette.paleOrange,
+        );
 
-    return ValueListenableBuilder<String>(
-      valueListenable: appLang,
-      builder: (context, lang, _) {
+        return ValueListenableBuilder<String>(
+          valueListenable: appLang,
+          builder: (context, lang, _) {
         final isEnglish = lang == 'en';
 
         return MaterialApp(
@@ -106,8 +109,8 @@ class LeastPriceApp extends StatelessWidget {
             inputDecorationTheme: InputDecorationTheme(
               filled: true,
               fillColor: AppPalette.cardBackground,
-              hintStyle: const TextStyle(color: AppPalette.mutedText),
-              labelStyle: const TextStyle(color: AppPalette.paleOrange),
+              hintStyle: TextStyle(color: AppPalette.mutedText),
+              labelStyle: TextStyle(color: AppPalette.paleOrange),
               prefixIconColor: AppPalette.orange,
               suffixIconColor: AppPalette.orange,
               contentPadding: const EdgeInsets.symmetric(
@@ -126,7 +129,7 @@ class LeastPriceApp extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: AppPalette.orange,
                   width: 1.5,
                 ),
@@ -190,6 +193,8 @@ class LeastPriceApp extends StatelessWidget {
                   bootstrapNotice: firebaseBootstrapNotice,
                 ),
         );
+      },
+    );
       },
     );
   }

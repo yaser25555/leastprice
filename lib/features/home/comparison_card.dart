@@ -56,7 +56,7 @@ class ComparisonCard extends StatelessWidget {
                       comparison.categoryId,
                       fallbackLabel: comparison.categoryLabel,
                     ),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.comparisonEmerald,
                       fontWeight: FontWeight.w800,
                     ),
@@ -177,7 +177,7 @@ class ComparisonCard extends StatelessWidget {
                               'فرق السعر: ${formatPrice(comparison.savingsAmount)} لصالح الخيار الأفضل قيمة.',
                               'Price difference: ${formatPrice(comparison.savingsAmount)} in favor of the best value option.',
                             ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.paleOrange,
                         fontWeight: FontWeight.w700,
                         height: 1.4,

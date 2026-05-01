@@ -26,7 +26,7 @@ class AboutLeastPriceSection extends StatelessWidget {
               color: AppPalette.cardBackground,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(color: AppPalette.cardBorder),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
                   color: AppPalette.shadow,
                   blurRadius: 18,
@@ -45,7 +45,7 @@ class AboutLeastPriceSection extends StatelessWidget {
                 const SizedBox(height: 14),
                 Text(
                   tr('من نحن', 'About Us'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.panelText,
                     fontWeight: FontWeight.w900,
                     fontSize: 24,
@@ -57,7 +57,7 @@ class AboutLeastPriceSection extends StatelessWidget {
                     'LeastPrice منصة تساعد المستهلك على العثور على السعر الأقل والأفضل عبر المنصات المختلفة داخل المدن السعودية، ثم تعرض النتائج بشكل واضح وسريع لتوفير الوقت والجهد.',
                     'LeastPrice is a platform that helps shoppers find the lowest and best prices across different platforms within Saudi cities, then presents the results clearly and quickly to save time and effort.',
                   ),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.mutedText,
                     fontSize: 15,
                     height: 1.7,
@@ -164,7 +164,7 @@ class _AboutFeatureCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.panelText,
               fontSize: 17,
               fontWeight: FontWeight.w900,
@@ -173,7 +173,7 @@ class _AboutFeatureCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             description,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.mutedText,
               fontSize: 14.4,
               fontWeight: FontWeight.w600,

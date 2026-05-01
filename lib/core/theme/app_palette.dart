@@ -1,68 +1,74 @@
 import 'package:flutter/material.dart';
 
+final ValueNotifier<bool> isFeminineTheme = ValueNotifier<bool>(false);
+
+
+final ValueNotifier<bool> isFeminineTheme = ValueNotifier<bool>(false);
+
+
 class AppPalette {
   const AppPalette._();
 
-  static const Color navy = Color(0xFF1B2F5E);
-  static const Color deepNavy = Color(0xFF12284D);
-  static const Color softNavy = Color(0xFF2C4C84);
-  static const Color lightNavy = Color(0xFF3B639E);
-  static const Color orange = Color(0xFFE8711A);
-  static const Color paleOrange = Color(0xFFFFB978);
-  static const Color softOrange = Color(0xFF213C6E);
-  static const Color turquoise = Color(0xFF35C9C4);
-  static const Color softTurquoise = Color(0xFF7DE7E2);
-  static const Color comparisonEmerald = Color(0xFFE8711A);
-  static const Color comparisonSoftEmerald = Color(0xFF2B4A80);
-  static const Color comparisonBorder = Color(0xFFF3A866);
-  static const Color dealsRed = Color(0xFFE8711A);
-  static const Color dealsSoftRed = Color(0xFF2A4A82);
-  static const Color dealsBorder = Color(0xFFF2A776);
-  static const Color shellBackground = Color(0xFF162B52);
-  static const Color cardBackground = Color(0xFF1C345F);
-  static const Color cardBorder = Color(0xFFEA9A58);
-  static const Color panelText = Color(0xFF8BEDEA);
-  static const Color mutedText = Color(0xFF63D6D2);
-  static const Color shadow = Color(0x141B2F5E);
+  static Color get navy => isFeminineTheme.value ? const Color(0xFF005A9C) : const Color(0xFF1B2F5E);
+  static Color get deepNavy => isFeminineTheme.value ? const Color(0xFF003F7A) : const Color(0xFF12284D);
+  static Color get softNavy => isFeminineTheme.value ? const Color(0xFF3388CC) : const Color(0xFF2C4C84);
+  static Color get lightNavy => isFeminineTheme.value ? const Color(0xFF55AADD) : const Color(0xFF3B639E);
+  static Color get orange => isFeminineTheme.value ? const Color(0xFFFF4081) : const Color(0xFFE8711A);
+  static Color get paleOrange => isFeminineTheme.value ? const Color(0xFFFF80AB) : const Color(0xFFFFB978);
+  static Color get softOrange => isFeminineTheme.value ? const Color(0xFF004C8C) : const Color(0xFF213C6E);
+  static Color get turquoise => isFeminineTheme.value ? const Color(0xFFE040FB) : const Color(0xFF35C9C4);
+  static Color get softTurquoise => isFeminineTheme.value ? const Color(0xFFEA80FC) : const Color(0xFF7DE7E2);
+  static Color get comparisonEmerald => isFeminineTheme.value ? const Color(0xFFFF4081) : const Color(0xFFE8711A);
+  static Color get comparisonSoftEmerald => isFeminineTheme.value ? const Color(0xFF005A9C) : const Color(0xFF2B4A80);
+  static Color get comparisonBorder => isFeminineTheme.value ? const Color(0xFFFF80AB) : const Color(0xFFF3A866);
+  static Color get dealsRed => isFeminineTheme.value ? const Color(0xFFFF4081) : const Color(0xFFE8711A);
+  static Color get dealsSoftRed => isFeminineTheme.value ? const Color(0xFF005A9C) : const Color(0xFF2A4A82);
+  static Color get dealsBorder => isFeminineTheme.value ? const Color(0xFFFF80AB) : const Color(0xFFF2A776);
+  static Color get shellBackground => isFeminineTheme.value ? const Color(0xFF003F7A) : const Color(0xFF162B52);
+  static Color get cardBackground => isFeminineTheme.value ? const Color(0xFF004C8C) : const Color(0xFF1C345F);
+  static Color get cardBorder => isFeminineTheme.value ? const Color(0xFFFF80AB) : const Color(0xFFEA9A58);
+  static Color get panelText => isFeminineTheme.value ? const Color(0xFFFFE4FF) : const Color(0xFF8BEDEA);
+  static Color get mutedText => isFeminineTheme.value ? const Color(0xFFFFB3FF) : const Color(0xFF63D6D2);
+  static Color get shadow => isFeminineTheme.value ? const Color(0x14005A9C) : const Color(0x141B2F5E);
 
   // -- Brand-aligned tokens (per BRAND_GUIDELINES.md / UI_DESIGN_GUIDELINES.md) --
-  static const Color brandNavy = Color(0xFF1B2F5E);
-  static const Color brandNavyDeep = Color(0xFF12284D);
-  static const Color brandNavySecondary = Color(0xFF6B7A9A);
-  static const Color brandOrange = Color(0xFFE8711A);
-  static const Color brandOrangePale = Color(0xFFFFD9BA);
-  static const Color brandOrangeBackground = Color(0xFFFFF3E8);
-  static const Color brandSurface = Color(0xFFF5F7FF);
-  static const Color brandCard = Color(0xFFFFFFFF);
-  static const Color brandCardSoft = Color(0xFFF8FAFF);
-  static const Color brandCardBorder = Color(0xFFE1E7F4);
-  static const Color brandShadow = Color(0x141B2F5E);
+  static Color get brandNavy => isFeminineTheme.value ? Color(0xFF1B2F5E) : Color(0xFF1B2F5E);
+  static Color get brandNavyDeep => isFeminineTheme.value ? Color(0xFF12284D) : Color(0xFF12284D);
+  static Color get brandNavySecondary => isFeminineTheme.value ? Color(0xFF6B7A9A) : Color(0xFF6B7A9A);
+  static Color get brandOrange => isFeminineTheme.value ? Color(0xFFE8711A) : Color(0xFFE8711A);
+  static Color get brandOrangePale => isFeminineTheme.value ? Color(0xFFFFD9BA) : Color(0xFFFFD9BA);
+  static Color get brandOrangeBackground => isFeminineTheme.value ? Color(0xFFFFF3E8) : Color(0xFFFFF3E8);
+  static Color get brandSurface => isFeminineTheme.value ? Color(0xFFF5F7FF) : Color(0xFFF5F7FF);
+  static Color get brandCard => isFeminineTheme.value ? Color(0xFFFFFFFF) : Color(0xFFFFFFFF);
+  static Color get brandCardSoft => isFeminineTheme.value ? Color(0xFFF8FAFF) : Color(0xFFF8FAFF);
+  static Color get brandCardBorder => isFeminineTheme.value ? Color(0xFFE1E7F4) : Color(0xFFE1E7F4);
+  static Color get brandShadow => isFeminineTheme.value ? Color(0x141B2F5E) : Color(0x141B2F5E);
 
   // -- Warm spectrum (for variety beyond a single orange) --
-  static const Color orangeWarm = Color(0xFFFFA052);
-  static const Color orangeCoral = Color(0xFFF76A4D);
-  static const Color orangeCrimson = Color(0xFFC84B1E);
+  static Color get orangeWarm => isFeminineTheme.value ? Color(0xFFFFA052) : Color(0xFFFFA052);
+  static Color get orangeCoral => isFeminineTheme.value ? Color(0xFFF76A4D) : Color(0xFFF76A4D);
+  static Color get orangeCrimson => isFeminineTheme.value ? Color(0xFFC84B1E) : Color(0xFFC84B1E);
 
   // -- Sky accents (used sparingly to break warm rhythm) --
-  static const Color accentSky = Color(0xFF7FB7E8);
-  static const Color accentSkyPale = Color(0xFFD6E6F5);
-  static const Color accentSkyDeep = Color(0xFF3B7FBF);
+  static Color get accentSky => isFeminineTheme.value ? Color(0xFF7FB7E8) : Color(0xFF7FB7E8);
+  static Color get accentSkyPale => isFeminineTheme.value ? Color(0xFFD6E6F5) : Color(0xFFD6E6F5);
+  static Color get accentSkyDeep => isFeminineTheme.value ? Color(0xFF3B7FBF) : Color(0xFF3B7FBF);
 
   // -- Reusable brand gradients --
-  static const LinearGradient gradientWarmCta = LinearGradient(
+  static LinearGradient get gradientWarmCta => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [orangeWarm, orange, orangeCrimson],
     stops: [0.0, 0.55, 1.0],
   );
 
-  static const LinearGradient gradientWarmSoft = LinearGradient(
+  static LinearGradient get gradientWarmSoft => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [orangeWarm, paleOrange],
   );
 
-  static const LinearGradient gradientSky = LinearGradient(
+  static LinearGradient get gradientSky => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [accentSkyPale, accentSky],

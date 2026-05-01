@@ -41,7 +41,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                   case TorchState.off:
                     return const Icon(Icons.flash_off, color: Colors.grey);
                   case TorchState.on:
-                    return const Icon(Icons.flash_on, color: AppPalette.orange);
+                    return Icon(Icons.flash_on, color: AppPalette.orange);
                   case TorchState.auto:
                     return const Icon(Icons.flash_auto, color: Colors.grey);
                   case TorchState.unavailable:

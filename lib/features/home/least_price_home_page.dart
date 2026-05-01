@@ -1107,7 +1107,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       end: Alignment.bottomCenter,
                       colors: [Color(0xFFF8F8FB), Color(0xFFF1F2F7)],
                     )
-                  : const LinearGradient(
+                  : LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [AppPalette.softOrange, Color(0xFFFFE7D1)],
@@ -1290,7 +1290,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                   else if (showComparisonsSection &&
                       _isSearchingOnline &&
                       comparisonResults.isEmpty)
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20, 32, 20, 24),
                         child: Center(
@@ -1353,7 +1353,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           children: [
                             Text(
                               _smartSearchNotice!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppPalette.softNavy,
                                 fontSize: 12.8,
                                 fontWeight: FontWeight.w700,

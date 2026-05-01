@@ -273,7 +273,7 @@ class _AdminExclusiveDealEditorDialogState
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.event_available_rounded,
+                          Icon(Icons.event_available_rounded,
                               color: AppPalette.dealsRed),
                           const SizedBox(width: 10),
                           Expanded(
@@ -299,7 +299,7 @@ class _AdminExclusiveDealEditorDialogState
                               ],
                             ),
                           ),
-                          const Icon(Icons.edit_calendar_rounded,
+                          Icon(Icons.edit_calendar_rounded,
                               color: AppPalette.dealsRed),
                         ],
                       ),

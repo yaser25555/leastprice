@@ -27,7 +27,7 @@ class CompactMetricPill extends StatelessWidget {
           const SizedBox(width: 7),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.paleOrange,
               fontWeight: FontWeight.w800,
             ),
@@ -63,7 +63,7 @@ class CompactStatPill extends StatelessWidget {
           const SizedBox(width: 7),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.paleOrange,
               fontWeight: FontWeight.w800,
             ),

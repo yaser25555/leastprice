@@ -27,7 +27,7 @@ class SearchInfoPill extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.panelText,
               fontWeight: FontWeight.w800,
               fontSize: 12.8,

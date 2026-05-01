@@ -30,7 +30,7 @@ class AdminAccessDeniedScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppPalette.cardBackground,
                 borderRadius: BorderRadius.circular(28),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
                     color: AppPalette.shadow,
                     blurRadius: 28,
@@ -52,7 +52,7 @@ class AdminAccessDeniedScreen extends StatelessWidget {
                     tr('هذا الحساب ليس مشرفاً',
                         'This account is not an admin'),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                       color: AppPalette.navy,
@@ -65,7 +65,7 @@ class AdminAccessDeniedScreen extends StatelessWidget {
                       'The current email is ${user.email ?? 'unknown'}, while this dashboard is only allowed for ${LeastPriceDataConfig.adminEmail}.',
                     ),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppPalette.softNavy,
                       height: 1.5,
                     ),

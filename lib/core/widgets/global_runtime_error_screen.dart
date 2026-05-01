@@ -26,7 +26,7 @@ class GlobalRuntimeErrorScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: AppPalette.shadow,
                       blurRadius: 24,
@@ -52,7 +52,7 @@ class GlobalRuntimeErrorScreen extends StatelessWidget {
                               'حدث خطأ أثناء بناء الواجهة',
                               'A runtime UI error occurred',
                             ),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
                               color: AppPalette.navy,
@@ -67,7 +67,7 @@ class GlobalRuntimeErrorScreen extends StatelessWidget {
                         'بدلاً من الصفحة البيضاء، يعرض التطبيق الآن سبب الخطأ ليسهل علينا إصلاحه بسرعة.',
                         'Instead of a blank page, the app now shows the error details so we can fix it faster.',
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.softNavy,
                         height: 1.5,
                       ),
@@ -82,7 +82,7 @@ class GlobalRuntimeErrorScreen extends StatelessWidget {
                       ),
                       child: SelectableText(
                         details.exceptionAsString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppPalette.panelText,
                           fontWeight: FontWeight.w700,
                           height: 1.45,
@@ -92,7 +92,7 @@ class GlobalRuntimeErrorScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       details.library ?? 'Flutter',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppPalette.softNavy,
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,

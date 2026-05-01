@@ -32,7 +32,7 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
       'title': 'المطاعم والمقاهي',
       'subtitle': 'أفضل عروض الوجبات، القهوة، والمطاعم من حولك بأقل الأسعار.',
       'icon': Icons.restaurant_rounded,
-      'gradient': const [AppPalette.orange, Color(0xFFFF7A00)],
+      'gradient': [AppPalette.orange, const Color(0xFFFF7A00)],
     },
     {
       'title': 'العطور والتجميل',
@@ -86,11 +86,11 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
-              const Icon(Icons.auto_awesome_rounded, color: AppPalette.orange, size: 20),
+              Icon(Icons.auto_awesome_rounded, color: AppPalette.orange, size: 20),
               const SizedBox(width: 8),
               Text(
                 tr('اكتشف أفضل الصفقات', 'Discover top deals'),
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppPalette.panelText,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
