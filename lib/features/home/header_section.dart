@@ -325,8 +325,8 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                     child: Row(
                       children: [
                         const AppBrandMark(
-                          size: 46,
-                          padding: 5,
+                          size: 54,
+                          padding: 6,
                           borderRadius: 16,
                           backgroundColor: AppPalette.softOrange,
                         ),
@@ -345,13 +345,19 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              Text(
-                                '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
-                                style: const TextStyle(
-                                  color: Color(0xFFFFD9BA),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.person_rounded, size: 14, color: Color(0xFFFFD9BA)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
+                                    style: const TextStyle(
+                                      color: Color(0xFFFFD9BA),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -394,7 +400,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                         IconButton(
                           onPressed: widget.onLogoutTap,
                           style: IconButton.styleFrom(
-                            backgroundColor: const Color(0x24E8711A),
+                            backgroundColor: Colors.transparent,
                             foregroundColor: AppPalette.paleOrange,
                             padding: const EdgeInsets.all(10),
                             minimumSize: const Size(38, 38),
