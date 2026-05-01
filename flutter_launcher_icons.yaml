@@ -1,10 +1,18 @@
 flutter_launcher_icons:
-  image_path: "assets/icons/logo_lp_navy_orange_1024.png"
-  android: true
+  image_path: "assets/icons/app_icon_navy_1024.png"
+  android: "ic_launcher"
   ios: true
   remove_alpha_ios: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#1B2F5E"
+  adaptive_icon_foreground: "assets/icons/app_icon_navy_1024.png"
   web:
     generate: true
-    image_path: "assets/icons/logo_lp_navy_orange_1024.png"
+    image_path: "assets/icons/app_icon_navy_1024.png"
     background_color: "#1B2F5E"
+    theme_color: "#1B2F5E"
+  windows:
+    generate: true
+    image_path: "assets/icons/app_icon_navy_1024.png"
+    icon_size: 256
 

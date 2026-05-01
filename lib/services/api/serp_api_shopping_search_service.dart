@@ -19,6 +19,23 @@ class SerpApiShoppingSearchService {
 
   FirestoreCatalogService get _service =>
       _catalogService ?? const FirestoreCatalogService();
+  static const Set<String> _saudiSupportedStoreIds = {
+    'amazon',
+    'noon',
+    'hungerstation',
+    'panda',
+    'othaim',
+    'almazraa',
+    'lulu',
+    'carrefour',
+    'tamimi',
+    'toyou',
+    'keeta',
+    'nahdi',
+    'aldawaa',
+    'jarir',
+    'extra',
+  };
 
   ComparisonSearchResponse _buildResponse({
     required List<ComparisonSearchResult> results,
@@ -180,8 +197,10 @@ class SerpApiShoppingSearchService {
               .toList()
           : <ComparisonSearchResult>[];
 
-      hybridResults.sort(_compareSearchResults);
-      return hybridResults;
+      final filteredHybridResults =
+          _filterSupportedSaudiStoreResults(hybridResults);
+      filteredHybridResults.sort(_compareSearchResults);
+      return filteredHybridResults;
     }
 
     final uri = Uri.https('serpapi.com', '/search.json', {
@@ -203,7 +222,7 @@ class SerpApiShoppingSearchService {
       throw const FormatException('Unexpected SerpApi payload');
     }
 
-    final results = _parseResults(payload)
+    final results = _filterSupportedSaudiStoreResults(_parseResults(payload))
       ..sort(_compareSearchResults);
 
     return results;
@@ -286,6 +305,15 @@ class SerpApiShoppingSearchService {
     }
 
     return results;
+  }
+
+  List<ComparisonSearchResult> _filterSupportedSaudiStoreResults(
+    List<ComparisonSearchResult> results,
+  ) {
+    return results.where((result) {
+      final normalizedStoreId = result.storeId.trim().toLowerCase();
+      return _saudiSupportedStoreIds.contains(normalizedStoreId);
+    }).toList(growable: false);
   }
 
   int _compareSearchResults(

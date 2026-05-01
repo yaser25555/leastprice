@@ -24,4 +24,17 @@ class AppPalette {
   static const Color panelText = Color(0xFF8BEDEA);
   static const Color mutedText = Color(0xFF63D6D2);
   static const Color shadow = Color(0x141B2F5E);
+
+  // -- Brand-aligned tokens (per BRAND_GUIDELINES.md / UI_DESIGN_GUIDELINES.md) --
+  static const Color brandNavy = Color(0xFF1B2F5E);
+  static const Color brandNavyDeep = Color(0xFF12284D);
+  static const Color brandNavySecondary = Color(0xFF6B7A9A);
+  static const Color brandOrange = Color(0xFFE8711A);
+  static const Color brandOrangePale = Color(0xFFFFD9BA);
+  static const Color brandOrangeBackground = Color(0xFFFFF3E8);
+  static const Color brandSurface = Color(0xFFF5F7FF);
+  static const Color brandCard = Color(0xFFFFFFFF);
+  static const Color brandCardSoft = Color(0xFFF8FAFF);
+  static const Color brandCardBorder = Color(0xFFE1E7F4);
+  static const Color brandShadow = Color(0x141B2F5E);
 }

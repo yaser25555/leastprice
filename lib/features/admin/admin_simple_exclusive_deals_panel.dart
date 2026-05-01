@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
@@ -19,6 +20,8 @@ class AdminSimpleExclusiveDealsPanel extends StatefulWidget {
 
 class _AdminSimpleExclusiveDealsPanelState
     extends State<AdminSimpleExclusiveDealsPanel> {
+  User? get _actor => FirebaseAuth.instance.currentUser;
+
   Future<void> _add() async {
     final deal = await showDialog<ExclusiveDeal>(
       context: context,
@@ -26,7 +29,11 @@ class _AdminSimpleExclusiveDealsPanelState
     );
     if (deal == null || !mounted) return;
     try {
-      await widget.service.saveExclusiveDeal(deal);
+      await widget.service.saveExclusiveDeal(
+        deal,
+        editorUserId: _actor?.uid,
+        editorEmail: _actor?.email,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -52,7 +59,11 @@ class _AdminSimpleExclusiveDealsPanelState
     );
     if (updated == null || !mounted) return;
     try {
-      await widget.service.saveExclusiveDeal(updated);
+      await widget.service.saveExclusiveDeal(
+        updated,
+        editorUserId: _actor?.uid,
+        editorEmail: _actor?.email,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -74,7 +85,11 @@ class _AdminSimpleExclusiveDealsPanelState
   Future<void> _publish(ExclusiveDeal deal) async {
     if (deal.id.trim().isEmpty) return;
     try {
-      await widget.service.publishExclusiveDeal(deal.id);
+      await widget.service.publishExclusiveDeal(
+        deal.id,
+        editorUserId: _actor?.uid,
+        editorEmail: _actor?.email,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -156,7 +171,9 @@ class _AdminSimpleExclusiveDealsPanelState
         subtitle: Text(
           '${formatPrice(deal.beforePrice)} → ${formatPrice(deal.afterPrice)}\n'
           '${tr('ينتهي', 'Ends')} ${formatDealExpiryLabel(deal.expiryDate)}'
-          '${expired ? ' • ${tr('منتهي', 'Expired')}' : ''}',
+          '${expired ? ' • ${tr('منتهي', 'Expired')}' : ''}\n'
+          '${tr('أضيف بواسطة', 'Added by')}: '
+          '${deal.createdByEmail.trim().isEmpty ? tr('غير محدد', 'Unknown') : deal.createdByEmail}',
         ),
         isThreeLine: true,
         trailing: Wrap(

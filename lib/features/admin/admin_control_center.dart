@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
+import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'admin_exports.dart';
 
-class AdminControlCenter extends StatefulWidget {
+class AdminControlCenter extends StatelessWidget {
   const AdminControlCenter({
     super.key,
     required this.adminUser,
@@ -15,25 +16,9 @@ class AdminControlCenter extends StatefulWidget {
 
   final User adminUser;
 
-  @override
-  State<AdminControlCenter> createState() => _AdminControlCenterState();
-}
-
-class _AdminControlCenterState extends State<AdminControlCenter>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  bool get _isPrimaryAdmin =>
+      (adminUser.email ?? '').trim().toLowerCase() ==
+      LeastPriceDataConfig.adminEmail.toLowerCase();
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +44,7 @@ class _AdminControlCenterState extends State<AdminControlCenter>
             ),
             const SizedBox(height: 4),
             Text(
-              widget.adminUser.email ?? LeastPriceDataConfig.adminEmail,
+              adminUser.email ?? LeastPriceDataConfig.adminEmail,
               style: const TextStyle(
                 fontSize: 13,
                 color: Color(0xFF6B7A9A),
@@ -77,39 +62,65 @@ class _AdminControlCenterState extends State<AdminControlCenter>
           const SizedBox(width: 16),
         ],
       ),
-      body: Column(
-        children: [
-          Material(
-            color: AppPalette.cardBackground,
-            child: TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(
-                  icon: const Icon(Icons.view_carousel_rounded),
-                  text: tr('البنرات', 'Banners'),
+      body: StreamBuilder<UserSavingsProfile?>(
+        stream: service.watchUserProfile(adminUser.uid),
+        builder: (context, snapshot) {
+          final profile = snapshot.data ?? UserSavingsProfile.initial();
+          final isMarketingManager = !_isPrimaryAdmin && profile.isMarketingManager;
+          final hasAdminAccess = _isPrimaryAdmin || isMarketingManager;
+
+          if (!hasAdminAccess) {
+            return AdminAccessDeniedScreen(user: adminUser);
+          }
+
+          final tabs = <Tab>[
+            if (_isPrimaryAdmin)
+              Tab(
+                icon: const Icon(Icons.view_carousel_rounded),
+                text: tr('البنرات', 'Banners'),
+              ),
+            if (_isPrimaryAdmin)
+              Tab(
+                icon: const Icon(Icons.compare_arrows_rounded),
+                text: tr('المقارنات', 'Comparisons'),
+              ),
+            Tab(
+              icon: const Icon(Icons.local_offer_rounded),
+              text: tr('العروض', 'Deals'),
+            ),
+            if (_isPrimaryAdmin)
+              Tab(
+                icon: const Icon(Icons.manage_accounts_rounded),
+                text: tr('المستخدمون', 'Users'),
+              ),
+          ];
+
+          final pages = <Widget>[
+            if (_isPrimaryAdmin) const AdminSimpleBannersPanel(service: service),
+            if (_isPrimaryAdmin) const AdminSimpleProductsPanel(service: service),
+            const AdminSimpleExclusiveDealsPanel(service: service),
+            if (_isPrimaryAdmin)
+              const AdminSimpleUsersPanel(
+                service: service,
+                isPrimaryAdmin: true,
+              ),
+          ];
+
+          return DefaultTabController(
+            length: tabs.length,
+            child: Column(
+              children: [
+                Material(
+                  color: AppPalette.cardBackground,
+                  child: TabBar(tabs: tabs),
                 ),
-                Tab(
-                  icon: const Icon(Icons.compare_arrows_rounded),
-                  text: tr('المقارنات', 'Comparisons'),
-                ),
-                Tab(
-                  icon: const Icon(Icons.local_offer_rounded),
-                  text: tr('العروض', 'Deals'),
+                Expanded(
+                  child: TabBarView(children: pages),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: const [
-                AdminSimpleBannersPanel(service: service),
-                AdminSimpleProductsPanel(service: service),
-                AdminSimpleExclusiveDealsPanel(service: service),
-              ],
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

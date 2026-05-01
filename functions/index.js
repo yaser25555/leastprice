@@ -18,6 +18,7 @@ const MAX_RESULTS_PER_STORE = 8;
 const MAX_TOTAL_RESULTS = 40;
 const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key';
 const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
+const SAUDI_FAMOUS_STORES_ONLY = true;
 
 const PRIORITY_STORES = [
   {
@@ -154,6 +155,30 @@ const PRIORITY_STORES = [
         `https://www.al-dawaa.com/ara/search/result/?q=${encodeURIComponent(query)}`,
       (query) =>
         `https://www.al-dawaa.com/eng/search/result/?q=${encodeURIComponent(query)}`,
+    ],
+  },
+  {
+    id: 'jarir',
+    name: 'جرير',
+    channelType: 'electronics',
+    hosts: ['jarir.com', 'www.jarir.com'],
+    searchUrls: [
+      (query) =>
+        `https://www.jarir.com/sa-en/catalogsearch/result/?q=${encodeURIComponent(query)}`,
+      (query) =>
+        `https://www.jarir.com/sa-ar/catalogsearch/result/?q=${encodeURIComponent(query)}`,
+    ],
+  },
+  {
+    id: 'extra',
+    name: 'إكسترا',
+    channelType: 'electronics',
+    hosts: ['extra.com', 'www.extra.com'],
+    searchUrls: [
+      (query) =>
+        `https://www.extra.com/en-sa/search/?text=${encodeURIComponent(query)}`,
+      (query) =>
+        `https://www.extra.com/ar-sa/search/?text=${encodeURIComponent(query)}`,
     ],
   },
 ];
@@ -309,37 +334,62 @@ exports.hybridMarketplaceSearch = functionsV1
     const serpApiKey = String(
       request.get('x-serpapi-key') || process.env.SERPAPI_KEY || '',
     ).trim();
+    const dataForSeoLogin = String(process.env.DATAFORSEO_LOGIN || '').trim();
+    const dataForSeoPassword = String(process.env.DATAFORSEO_PASSWORD || '').trim();
+    const canUseDataForSeo = Boolean(dataForSeoLogin && dataForSeoPassword);
     const searchVertical = inferSearchVertical(query);
     const targetedStores = selectStoresForVertical(searchVertical);
+    const scraperPromise = scrapePriorityStores(query, targetedStores);
+    let dataForSeoResults = [];
+    let serpApiResults = [];
+    let scrapedResults = [];
 
-    const [serpApiOutcome, scraperOutcome] = await Promise.allSettled([
-      serpApiKey ? searchSerpApi(query, serpApiKey, { location, hl }) : Promise.resolve([]),
-      scrapePriorityStores(query, targetedStores),
-    ]);
-
-    const serpApiResults =
-      serpApiOutcome.status === 'fulfilled' ? serpApiOutcome.value : [];
-    const scrapedResults =
-      scraperOutcome.status === 'fulfilled' ? scraperOutcome.value : [];
-
-    if (serpApiOutcome.status === 'rejected') {
-      logger.warn('SerpApi search failed inside hybridMarketplaceSearch.', {
-        query,
-        error: String(serpApiOutcome.reason),
-      });
+    if (canUseDataForSeo) {
+      try {
+        dataForSeoResults = await searchDataForSeo(query, {
+          location,
+          hl,
+          login: dataForSeoLogin,
+          password: dataForSeoPassword,
+        });
+      } catch (error) {
+        logger.warn('DataForSEO search failed inside hybridMarketplaceSearch.', {
+          query,
+          error: String(error),
+        });
+      }
     }
 
-    if (scraperOutcome.status === 'rejected') {
+    // Keep SerpApi as a resilient fallback when DataForSEO is unavailable or empty.
+    if (dataForSeoResults.length === 0 && serpApiKey) {
+      try {
+        serpApiResults = await searchSerpApi(query, serpApiKey, { location, hl });
+      } catch (error) {
+        logger.warn('SerpApi search failed inside hybridMarketplaceSearch.', {
+          query,
+          error: String(error),
+        });
+      }
+    }
+
+    try {
+      scrapedResults = await scraperPromise;
+    } catch (error) {
       logger.warn('HTML scraping failed inside hybridMarketplaceSearch.', {
         query,
-        error: String(scraperOutcome.reason),
+        error: String(error),
       });
     }
 
     const mergedResults = mergeHybridSearchResults([
+      ...dataForSeoResults,
       ...serpApiResults,
       ...scrapedResults,
-    ]).slice(0, MAX_TOTAL_RESULTS);
+    ]);
+    const filteredResults = SAUDI_FAMOUS_STORES_ONLY
+      ? filterToPriorityStores(mergedResults)
+      : mergedResults;
+    const finalResults = filteredResults.slice(0, MAX_TOTAL_RESULTS);
 
     response.status(200).json({
       query,
@@ -350,21 +400,23 @@ exports.hybridMarketplaceSearch = functionsV1
         channelType: store.channelType,
       })),
       counts: {
-        total: mergedResults.length,
+        total: finalResults.length,
+        dataforseo: dataForSeoResults.length,
         serpApi: serpApiResults.length,
         scraper: scrapedResults.length,
-        hypermarket: mergedResults.filter((item) => item.channelType === 'hypermarket')
+        hypermarket: finalResults.filter((item) => item.channelType === 'hypermarket')
           .length,
-        delivery: mergedResults.filter((item) => item.channelType === 'delivery')
+        delivery: finalResults.filter((item) => item.channelType === 'delivery')
           .length,
-        pharmacy: mergedResults.filter((item) => item.channelType === 'pharmacy')
+        pharmacy: finalResults.filter((item) => item.channelType === 'pharmacy')
           .length,
       },
       notice: buildHybridSearchNotice({
+        dataForSeoResults,
         serpApiResults,
         scrapedResults,
       }),
-      results: mergedResults,
+      results: finalResults,
     });
   });
 
@@ -413,6 +465,46 @@ async function searchSerpApi(query, apiKey, { location = 'Saudi Arabia', hl = 'a
       const result = normalizeSerpApiResult(item);
       if (result) {
         candidates.push(result);
+      }
+    }
+  }
+
+  return candidates;
+}
+
+async function searchDataForSeo(
+  query,
+  { location = 'Saudi Arabia', hl = 'ar', login, password } = {},
+) {
+  const endpoint = 'https://api.dataforseo.com/v3/serp/google/shopping/live/advanced';
+  const payload = [
+    {
+      keyword: query,
+      location_name: location,
+      language_code: hl === 'en' ? 'en' : 'ar',
+    },
+  ];
+
+  const response = await fetchJsonWithBasicAuth(endpoint, {
+    login,
+    password,
+    body: payload,
+  });
+  if (!response || typeof response !== 'object') {
+    return [];
+  }
+
+  const tasks = Array.isArray(response.tasks) ? response.tasks : [];
+  const candidates = [];
+  for (const task of tasks) {
+    const resultBuckets = Array.isArray(task?.result) ? task.result : [];
+    for (const bucket of resultBuckets) {
+      const items = Array.isArray(bucket?.items) ? bucket.items : [];
+      for (const item of items) {
+        const result = normalizeDataForSeoResult(item);
+        if (result) {
+          candidates.push(result);
+        }
       }
     }
   }
@@ -472,6 +564,65 @@ function normalizeSerpApiResult(item) {
     imageUrl: normalizeImageUrl(imageUrl),
     productUrl,
     sourceType: 'serpapi',
+    channelType: store.channelType,
+    isLiveDirect: false,
+  };
+}
+
+function normalizeDataForSeoResult(item) {
+  if (!item || typeof item !== 'object') {
+    return null;
+  }
+
+  const title = firstNonEmpty([
+    item.title,
+    item.product_title,
+    item.name,
+  ]);
+  const productUrl = firstNonEmpty([
+    item.url,
+    item.link,
+    item.product_url,
+    item.shop_ad_aclk,
+  ]);
+  const imageUrl = firstNonEmpty([
+    item.image_url,
+    item.thumbnail,
+    item.image,
+  ]);
+
+  const priceInfo = parsePriceValue(
+    firstNonEmpty([
+      item.price?.current,
+      item.price?.value,
+      item.price,
+      item.extracted_price,
+      item.raw_price,
+    ]),
+  );
+  if (!title || !productUrl || priceInfo.value == null || priceInfo.value <= 0) {
+    return null;
+  }
+
+  const storeName = firstNonEmpty([
+    item.seller,
+    item.merchant,
+    item.source,
+    item.shop,
+  ]);
+  const store = resolveStoreInfo({ storeName, productUrl });
+
+  return {
+    title: cleanProductTitle(title),
+    priceValue: priceInfo.value,
+    price: formatPriceLabel(priceInfo.value, priceInfo.currency),
+    currency: priceInfo.currency,
+    storeName: store.name || storeName || 'Online store',
+    storeId: store.id,
+    storeLogoUrl: buildStoreLogoUrl(store.host || productUrl),
+    imageUrl: normalizeImageUrl(imageUrl),
+    productUrl,
+    sourceType: 'dataforseo',
     channelType: store.channelType,
     isLiveDirect: false,
   };
@@ -820,9 +971,15 @@ function buildHybridSearchResult({
   };
 }
 
-function buildHybridSearchNotice({ serpApiResults, scrapedResults }) {
+function buildHybridSearchNotice({ dataForSeoResults, serpApiResults, scrapedResults }) {
+  if (scrapedResults.length > 0 && dataForSeoResults.length > 0) {
+    return 'تم دمج نتائج DataForSEO مع الزحف المباشر من مواقع المتاجر المحلية.';
+  }
   if (scrapedResults.length > 0 && serpApiResults.length > 0) {
     return 'تم دمج نتائج SerpApi مع الزحف المباشر من مواقع المتاجر المحلية.';
+  }
+  if (dataForSeoResults.length > 0) {
+    return 'تم عرض نتائج DataForSEO حسب المدينة المحددة.';
   }
   if (scrapedResults.length > 0) {
     return 'تم عرض نتائج مباشرة من مواقع المتاجر الرسمية.';
@@ -878,6 +1035,22 @@ function mergeHybridSearchResults(results) {
   });
 }
 
+function filterToPriorityStores(results) {
+  const allowedStoreIds = new Set(PRIORITY_STORES.map((store) => store.id));
+  return results.filter((item) => {
+    const storeId = String(item?.storeId || '').trim().toLowerCase();
+    if (allowedStoreIds.has(storeId)) {
+      return true;
+    }
+
+    const host = extractHost(item?.productUrl || '');
+    if (!host) {
+      return false;
+    }
+    return STORE_BY_HOST.has(host.toLowerCase());
+  });
+}
+
 function inferSearchVertical(query) {
   const normalized = normalizeArabic(query);
   const pharmacyHints = [
@@ -904,9 +1077,49 @@ function inferSearchVertical(query) {
     'بقالة',
     'مقاضي',
   ];
+  const electronicsHints = [
+    'جوال',
+    'هاتف',
+    'ايفون',
+    'سامسونج',
+    'شاحن',
+    'كيبل',
+    'سماعه',
+    'لابتوب',
+    'تابلت',
+    'الكترونيات',
+  ];
+  const beautyHints = [
+    'عطر',
+    'عطور',
+    'برفان',
+    'مكياج',
+    'كريم',
+    'شامبو',
+    'عنايه',
+  ];
+  const cafeHints = [
+    'قهوه',
+    'قهوة',
+    'كافي',
+    'كافيه',
+    'اسبريسو',
+    'لاتيه',
+    'كابتشينو',
+    'كوفي',
+  ];
 
   if (pharmacyHints.some((hint) => normalized.includes(normalizeArabic(hint)))) {
     return 'pharmacy';
+  }
+  if (electronicsHints.some((hint) => normalized.includes(normalizeArabic(hint)))) {
+    return 'electronics';
+  }
+  if (beautyHints.some((hint) => normalized.includes(normalizeArabic(hint)))) {
+    return 'beauty';
+  }
+  if (cafeHints.some((hint) => normalized.includes(normalizeArabic(hint)))) {
+    return 'cafe';
   }
   if (groceryHints.some((hint) => normalized.includes(normalizeArabic(hint)))) {
     return 'grocery';
@@ -920,13 +1133,27 @@ function selectStoresForVertical(vertical) {
       return PRIORITY_STORES.filter((store) =>
         ['pharmacy', 'marketplace'].includes(store.channelType),
       );
+    case 'electronics':
+      return PRIORITY_STORES.filter((store) =>
+        ['electronics', 'marketplace'].includes(store.channelType),
+      );
+    case 'beauty':
+      return PRIORITY_STORES.filter((store) =>
+        ['pharmacy', 'hypermarket', 'marketplace'].includes(store.channelType),
+      );
+    case 'cafe':
+      return PRIORITY_STORES.filter((store) =>
+        ['delivery', 'hypermarket'].includes(store.channelType),
+      );
     case 'grocery':
       return PRIORITY_STORES.filter((store) =>
         ['hypermarket', 'delivery'].includes(store.channelType),
       );
     default:
       return PRIORITY_STORES.filter((store) =>
-        ['hypermarket', 'pharmacy', 'delivery'].includes(store.channelType),
+        ['hypermarket', 'pharmacy', 'delivery', 'electronics', 'marketplace'].includes(
+          store.channelType,
+        ),
       );
   }
 }
@@ -1195,10 +1422,12 @@ function channelOrder(channelType) {
       return 1;
     case 'pharmacy':
       return 2;
-    case 'marketplace':
+    case 'electronics':
       return 3;
-    default:
+    case 'marketplace':
       return 4;
+    default:
+      return 5;
   }
 }
 
@@ -1208,6 +1437,27 @@ async function fetchJson(url) {
       accept: 'application/json, text/plain, */*',
       'user-agent': HYBRID_SEARCH_USER_AGENT,
     },
+  });
+  if (!response.ok) {
+    throw new Error(`Request failed with ${response.status} for ${url}`);
+  }
+  return response.json();
+}
+
+async function fetchJsonWithBasicAuth(
+  url,
+  { login, password, body },
+) {
+  const credentials = Buffer.from(`${login}:${password}`).toString('base64');
+  const response = await fetchWithTimeout(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      accept: 'application/json, text/plain, */*',
+      'content-type': 'application/json',
+      'user-agent': HYBRID_SEARCH_USER_AGENT,
+    },
+    body: JSON.stringify(body),
   });
   if (!response.ok) {
     throw new Error(`Request failed with ${response.status} for ${url}`);

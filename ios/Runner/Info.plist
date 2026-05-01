@@ -30,6 +30,8 @@
 	<string>نستخدم الكاميرا لالتقاط صور العروض والمنتجات داخل لوحة الإدارة.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>نستخدم المعرض لاختيار صور العروض والمنتجات داخل لوحة الإدارة.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>نستخدم موقعك لتحديد مدينتك تلقائياً وتحسين نتائج البحث حسب المدينة.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

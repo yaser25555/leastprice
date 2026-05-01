@@ -44,16 +44,6 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       return;
     }
 
-    if (!isAllowedAdminEmail(normalizedEmail)) {
-      setState(() {
-        _statusMessage = tr(
-          'هذه اللوحة مقيدة ببريد المشرف ${LeastPriceDataConfig.adminEmail} فقط.',
-          'This dashboard is restricted to ${LeastPriceDataConfig.adminEmail} only.',
-        );
-      });
-      return;
-    }
-
     if (password.isEmpty) {
       setState(() {
         _statusMessage = tr(
@@ -140,8 +130,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   const SizedBox(height: 10),
                   Text(
                     tr(
-                      'سجّل ببريد المشرف لإدارة البنرات والمنتجات مباشرة من المتصفح. هذه اللوحة محمية ببريد ${LeastPriceDataConfig.adminEmail}.',
-                      'Sign in with the admin email to manage banners and products directly from the browser. This dashboard is protected for ${LeastPriceDataConfig.adminEmail}.',
+                      'سجّل بحساب مدير معتمد. المشرف الرئيسي لديه صلاحيات كاملة، ومدير التسويق يرى تبويب العروض فقط.',
+                      'Sign in with an authorized manager account. The primary admin has full access, while marketing managers can access Deals only.',
                     ),
                     textAlign: TextAlign.center,
                     style: const TextStyle(

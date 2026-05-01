@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
@@ -21,6 +22,8 @@ class AdminExclusiveDealsTable extends StatefulWidget {
 }
 
 class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
+  User? get _actor => FirebaseAuth.instance.currentUser;
+
   Future<void> _openEditor({ExclusiveDeal? initialDeal}) async {
     final deal = await showDialog<ExclusiveDeal>(
       context: context,
@@ -33,7 +36,11 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
     }
 
     try {
-      await widget.catalogService.saveExclusiveDeal(deal);
+      await widget.catalogService.saveExclusiveDeal(
+        deal,
+        editorUserId: _actor?.uid,
+        editorEmail: _actor?.email,
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -77,7 +84,11 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
     }
 
     try {
-      await widget.catalogService.publishExclusiveDeal(deal.id);
+      await widget.catalogService.publishExclusiveDeal(
+        deal.id,
+        editorUserId: _actor?.uid,
+        editorEmail: _actor?.email,
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -277,6 +288,8 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
                           DataColumn(label: Text(tr('الحالة', 'Status'))),
                           DataColumn(label: Text(tr('الصورة', 'Image'))),
                           DataColumn(
+                              label: Text(tr('أضيف بواسطة', 'Added by'))),
+                          DataColumn(
                               label: Text(tr('الإجراءات', 'Actions'))),
                         ],
                         rows: deals.map((deal) {
@@ -318,6 +331,18 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
                                 AdminNetworkThumbnail(
                                   imageUrl: deal.imageUrl,
                                   label: deal.title,
+                                ),
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 220,
+                                  child: Text(
+                                    deal.createdByEmail.trim().isEmpty
+                                        ? tr('غير محدد', 'Unknown')
+                                        : deal.createdByEmail,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
                               DataCell(

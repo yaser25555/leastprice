@@ -159,6 +159,67 @@ class FirestoreCatalogService {
     });
   }
 
+  Stream<List<UserSavingsProfile>> watchAdminUserProfiles() {
+    return _usersCollection.snapshots().map((snapshot) {
+      final users = snapshot.docs
+          .map(UserSavingsProfile.fromFirestore)
+          .where((profile) => profile.userId.trim().isNotEmpty)
+          .toList()
+        ..sort((a, b) {
+          if (a.planActivated != b.planActivated) {
+            return a.planActivated ? -1 : 1;
+          }
+          return a.phoneNumber.compareTo(b.phoneNumber);
+        });
+      return users;
+    });
+  }
+
+  Future<void> setUserPlanActivation({
+    required String userId,
+    required bool planActivated,
+    String? planStatus,
+  }) async {
+    final normalizedUserId = userId.trim();
+    if (normalizedUserId.isEmpty) {
+      throw const FormatException('Missing user id');
+    }
+
+    await _usersCollection.doc(normalizedUserId).set(
+      {
+        'planActivated': planActivated,
+        'planStatus': (planStatus ?? (planActivated ? 'active' : 'inactive')).trim(),
+        'planUpdatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> setUserAdminRole({
+    required String userId,
+    required String adminRole,
+  }) async {
+    final normalizedUserId = userId.trim();
+    if (normalizedUserId.isEmpty) {
+      throw const FormatException('Missing user id');
+    }
+
+    final normalizedRole = adminRole.trim().toLowerCase();
+    if (normalizedRole.isEmpty) {
+      throw const FormatException('Missing admin role');
+    }
+
+    await _usersCollection.doc(normalizedUserId).set(
+      {
+        'adminRole': normalizedRole,
+        'adminRoleUpdatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
   Stream<AutomationHealthStatus?> watchSystemHealth() {
     return _systemHealthCollection
         .doc(LeastPriceDataConfig.systemHealthDocumentId)
@@ -283,6 +344,9 @@ class FirestoreCatalogService {
       inviteMessageTemplate:
           'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
           'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
+      planActivated: false,
+      planStatus: 'inactive',
+      adminRole: 'user',
     );
 
     await userDocument.set(
@@ -424,9 +488,19 @@ class FirestoreCatalogService {
     );
   }
 
-  Future<void> saveExclusiveDeal(ExclusiveDeal deal) async {
+  Future<void> saveExclusiveDeal(
+    ExclusiveDeal deal, {
+    String? editorUserId,
+    String? editorEmail,
+  }) async {
+    final normalizedEditorUid = (editorUserId ?? '').trim();
+    final normalizedEditorEmail = (editorEmail ?? '').trim().toLowerCase();
+    final hasEditorIdentity =
+        normalizedEditorUid.isNotEmpty || normalizedEditorEmail.isNotEmpty;
     final data = {
       ...deal.toFirestoreMap(),
+      if (hasEditorIdentity) 'lastUpdatedByUid': normalizedEditorUid,
+      if (hasEditorIdentity) 'lastUpdatedByEmail': normalizedEditorEmail,
       'updatedAt': FieldValue.serverTimestamp(),
       'lastUpdated': FieldValue.serverTimestamp(),
     };
@@ -434,6 +508,8 @@ class FirestoreCatalogService {
     if (deal.id.trim().isEmpty) {
       await _exclusiveDealsCollection.add({
         ...data,
+        if (hasEditorIdentity) 'createdByUid': normalizedEditorUid,
+        if (hasEditorIdentity) 'createdByEmail': normalizedEditorEmail,
         'createdAt': FieldValue.serverTimestamp(),
       });
       return;
@@ -445,9 +521,19 @@ class FirestoreCatalogService {
         );
   }
 
-  Future<void> publishExclusiveDeal(String dealId) async {
+  Future<void> publishExclusiveDeal(
+    String dealId, {
+    String? editorUserId,
+    String? editorEmail,
+  }) async {
+    final normalizedEditorUid = (editorUserId ?? '').trim();
+    final normalizedEditorEmail = (editorEmail ?? '').trim().toLowerCase();
+    final hasEditorIdentity =
+        normalizedEditorUid.isNotEmpty || normalizedEditorEmail.isNotEmpty;
     await _exclusiveDealsCollection.doc(dealId).set(
       {
+        if (hasEditorIdentity) 'lastUpdatedByUid': normalizedEditorUid,
+        if (hasEditorIdentity) 'lastUpdatedByEmail': normalizedEditorEmail,
         'lastUpdated': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       },

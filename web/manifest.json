@@ -1,11 +1,13 @@
 {
-    "name": "leastprice",
-    "short_name": "leastprice",
+    "name": "أرخص سعر | LeastPrice",
+    "short_name": "LeastPrice",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#1B2F5E",
     "theme_color": "#1B2F5E",
-    "description": "A new Flutter project.",
+    "description": "مقارنة أسعار المنتجات في السوق السعودي - LeastPrice",
+    "lang": "ar",
+    "dir": "rtl",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

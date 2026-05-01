@@ -4,6 +4,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -65,6 +67,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   bool _hasInternet = true;
   bool _isRefreshing = false;
   bool _isSearchingOnline = false;
+  bool _isDetectingCity = false;
   String? _smartSearchNotice;
   String _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
   ProductDataSource _dataSource = ProductDataSource.remote;
@@ -74,6 +77,14 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   List<Coupon> _activeCoupons = const <Coupon>[];
   List<ComparisonSearchResult> _comparisonSearchResults =
       const <ComparisonSearchResult>[];
+  static const int _trialVisibleResultsCount = 5;
+
+  bool get _isPaidPlanActive => _userProfile.planActivated;
+  bool get _isPrimaryAdmin =>
+      (widget.currentUser.email ?? '').trim().toLowerCase() ==
+      LeastPriceDataConfig.adminEmail.toLowerCase();
+  bool get _canAccessAdminPanel =>
+      _isPrimaryAdmin || _userProfile.isMarketingManager;
 
   void _handleFirestoreSubscriptionError(
     String label,
@@ -211,8 +222,145 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       });
       unawaited(_setupConnectivityMonitoring());
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(_detectCityFromCurrentLocation(showFeedback: false));
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         unawaited(_refreshCatalog(showSuccessMessage: false));
       });
+    }
+  }
+
+  Future<void> _detectCityFromCurrentLocation({
+    bool showFeedback = true,
+  }) async {
+    if (_isDetectingCity || !mounted) {
+      return;
+    }
+    setState(() {
+      _isDetectingCity = true;
+    });
+
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (showFeedback && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                tr(
+                  'خدمة الموقع غير مفعلة. فعّل GPS ثم حاول مرة أخرى.',
+                  'Location services are disabled. Enable GPS and try again.',
+                ),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (showFeedback && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                tr(
+                  'تم رفض إذن الموقع. يمكنك اختيار المدينة يدويًا.',
+                  'Location permission was denied. You can choose the city manually.',
+                ),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+      );
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isEmpty) {
+        return;
+      }
+
+      final cityTokens = <String>[
+        placemarks.first.locality ?? '',
+        placemarks.first.subAdministrativeArea ?? '',
+        placemarks.first.administrativeArea ?? '',
+      ].map(normalizeArabic).where((value) => value.isNotEmpty).toList();
+
+      MarketplaceSearchCity? detectedCity;
+      for (final city in marketplaceSearchCities) {
+        final cityLabel = normalizeArabic(city.arLabel);
+        final cityLabelEn = normalizeArabic(city.enLabel);
+        final cityId = normalizeArabic(city.id.replaceAll('_', ' '));
+        final isMatch = cityTokens.any(
+          (token) =>
+              token.contains(cityLabel) ||
+              cityLabel.contains(token) ||
+              token.contains(cityLabelEn) ||
+              token.contains(cityId),
+        );
+        if (isMatch) {
+          detectedCity = city;
+          break;
+        }
+      }
+
+      if (detectedCity == null) {
+        return;
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _selectedSearchCity = detectedCity!;
+      });
+
+      if (_query.trim().isNotEmpty && _hasInternet) {
+        await _runSmartSearch(_query, forceRefresh: true);
+      }
+
+      if (showFeedback && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr(
+                'تم تحديد المدينة تلقائيًا: ${detectedCity.label}',
+                'City detected automatically: ${detectedCity.label}',
+              ),
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (showFeedback && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr(
+                'تعذر تحديد المدينة تلقائيًا الآن. اختر المدينة يدويًا.',
+                'Unable to detect city automatically right now. Choose city manually.',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDetectingCity = false;
+        });
+      }
     }
   }
 
@@ -401,9 +549,18 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     }
 
     setState(() {
-      _comparisonSearchResults = _attachCouponsToSearchResults(result.results);
+      final fullResults = _attachCouponsToSearchResults(result.results);
+      final visibleResults = _isPaidPlanActive
+          ? fullResults
+          : fullResults.take(_trialVisibleResultsCount).toList(growable: false);
+      _comparisonSearchResults = visibleResults;
       _smartSearchNotice = result.results.isEmpty
           ? _comparisonSearchFallbackMessage()
+          : !_isPaidPlanActive && fullResults.length > _trialVisibleResultsCount
+              ? tr(
+                  'يتم عرض أول $_trialVisibleResultsCount نتائج فقط. بعد التحويل البنكي يتم تفعيل الخطة يدويًا وإظهار جميع الميزات.',
+                  'Only the first $_trialVisibleResultsCount results are shown. After bank transfer, the plan is activated manually and all features are unlocked.',
+                )
           : result.notice;
       _comparisonSearchSourceLabel = result.fromCache
           ? tr(
@@ -907,16 +1064,18 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.small(
-        heroTag: 'admin-dashboard-fab',
-        tooltip: tr('لوحة المسؤول', 'Admin panel'),
-        backgroundColor: AppPalette.navy,
-        foregroundColor: Colors.white,
-        onPressed: widget.firebaseReady
-            ? _openAdminDashboard
-            : _showFirebaseSetupRequired,
-        child: const Icon(Icons.admin_panel_settings_rounded),
-      ),
+      floatingActionButton: _canAccessAdminPanel
+          ? FloatingActionButton.small(
+              heroTag: 'admin-dashboard-fab',
+              tooltip: tr('لوحة المسؤول', 'Admin panel'),
+              backgroundColor: AppPalette.navy,
+              foregroundColor: Colors.white,
+              onPressed: widget.firebaseReady
+                  ? _openAdminDashboard
+                  : _showFirebaseSetupRequired,
+              child: const Icon(Icons.admin_panel_settings_rounded),
+            )
+          : null,
       body: StreamBuilder<List<ProductComparison>>(
         stream: _productsStream,
         builder: (context, snapshot) {
@@ -998,6 +1157,24 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           onSubmitted: (value) {
                             unawaited(_submitComparisonSearch(value));
                           },
+                          onDetectCityTap: () {
+                            unawaited(
+                              _detectCityFromCurrentLocation(showFeedback: true),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  if (showComparisonsSection && !_isPaidPlanActive)
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: PlanPickerSection(
+                          isPaidActive: _isPaidPlanActive,
+                          visibleResultsCount: _trialVisibleResultsCount,
+                          onWhatsAppTap: () => _openExternalUrl(
+                            LeastPriceDataConfig.adminWhatsAppUrl,
+                          ),
                         ),
                       ),
                     ),
