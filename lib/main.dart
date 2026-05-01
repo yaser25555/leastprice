@@ -14,6 +14,7 @@ import 'features/admin/admin_dashboard_auth_gate.dart';
 import 'features/auth/auth_gate.dart';
 import 'firebase_options.dart';
 import 'services/notifications/push_notification_service.dart';
+import 'services/preferences/user_preferences_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,9 @@ Future<void> main() async {
     firebaseBootstrapNotice =
         'تعذر تهيئة Firebase حالياً. تأكد من اكتمال ملفات FlutterFire وإعداد مشروع Firebase على المنصة الحالية.';
   }
+
+  // Load saved user preferences before running the app
+  isFeminineTheme.value = await UserPreferencesService.loadFeminineTheme();
 
   runApp(
     ProviderScope(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/widgets/app_brand_mark.dart';
+import 'package:leastprice/services/preferences/user_preferences_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'home_exports.dart';
 
@@ -401,7 +402,9 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                           valueListenable: isFeminineTheme,
                           builder: (context, isFem, _) => IconButton(
                             onPressed: () {
-                              isFeminineTheme.value = !isFeminineTheme.value;
+                              final newVal = !isFeminineTheme.value;
+                              isFeminineTheme.value = newVal;
+                              UserPreferencesService.saveFeminineTheme(newVal);
                             },
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.transparent,

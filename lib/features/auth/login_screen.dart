@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:leastprice/services/preferences/user_preferences_service.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/widgets/app_brand_mark.dart';
@@ -21,8 +22,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  static const String _rememberMePrefKey = 'remember_login_enabled';
-  static const String _rememberedEmailPrefKey = 'remembered_login_email';
   final FirestoreCatalogService _catalogService =
       const FirestoreCatalogService();
   final TextEditingController _phoneController = TextEditingController();
@@ -178,28 +177,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loadRememberedLoginInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    final remember = prefs.getBool(_rememberMePrefKey) ?? false;
-    final email = prefs.getString(_rememberedEmailPrefKey) ?? '';
+    final creds = await UserPreferencesService.loadCredentials();
     if (!mounted) return;
     setState(() {
-      _rememberMe = remember;
-      if (remember && email.trim().isNotEmpty) {
-        _emailController.text = email.trim();
+      _rememberMe = creds.remember;
+      if (creds.remember) {
+        if (creds.email.isNotEmpty) _emailController.text = creds.email;
+        if (creds.password.isNotEmpty) _passwordController.text = creds.password;
       }
     });
   }
 
   Future<void> _persistRememberedLoginInfo(String email) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (_rememberMe) {
-      await prefs.setBool(_rememberMePrefKey, true);
-      await prefs.setString(_rememberedEmailPrefKey, email.trim());
-      return;
-    }
-
-    await prefs.setBool(_rememberMePrefKey, false);
-    await prefs.remove(_rememberedEmailPrefKey);
+    await UserPreferencesService.saveCredentials(
+      remember: _rememberMe,
+      email: email,
+      password: _passwordController.text.trim(),
+    );
   }
 
   Future<void> _submitAuth() async {
@@ -495,9 +489,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             controlAffinity: ListTileControlAffinity.leading,
                             activeColor: AppPalette.orange,
                             title: Text(
-                              tr(
-                                'تذكر البريد الإلكتروني على هذا الجهاز',
-                                'Remember my email on this device',
+                            tr(
+                                'تذكر بيانات الدخول على هذا الجهاز',
+                                'Remember my login on this device',
                               ),
                               style: TextStyle(
                                 color: AppPalette.panelText,
