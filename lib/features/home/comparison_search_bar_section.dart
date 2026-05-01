@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -50,15 +51,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
               appleStyle ? const Color(0xFFE5E7EE) : AppPalette.paleOrange,
           width: 1.5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: appleStyle
-                ? const Color(0x0D1B2F5E)
-                : AppPalette.shadow,
-            blurRadius: appleStyle ? 12 : 18,
-            offset: Offset(0, appleStyle ? 6 : 12),
-          ),
-        ],
+        boxShadow: AppPalette.premium3DBoxShadow,
       ),
       child: Column(
         children: [
@@ -86,6 +79,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () async {
+                      HapticFeedback.lightImpact();
                       final result = await Navigator.push<String>(
                         context,
                         MaterialPageRoute(

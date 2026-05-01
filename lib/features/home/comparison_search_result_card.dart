@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -22,7 +23,10 @@ class ComparisonSearchResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
       borderRadius: BorderRadius.circular(28),
       child: Container(
         padding: const EdgeInsets.all(18),
@@ -30,13 +34,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
           color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(color: AppPalette.comparisonBorder),
-          boxShadow: [
-            BoxShadow(
-              color: AppPalette.shadow,
-              blurRadius: 18,
-              offset: Offset(0, 12),
-            ),
-          ],
+          boxShadow: AppPalette.premium3DBoxShadow,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +162,10 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   if (result.matchedCoupon != null) ...[
                     const SizedBox(height: 10),
                     InkWell(
-                      onTap: onCopyCoupon,
+                      onTap: onCopyCoupon != null ? () {
+                        HapticFeedback.selectionClick();
+                        onCopyCoupon!();
+                      } : null,
                       borderRadius: BorderRadius.circular(18),
                       child: Ink(
                         padding: const EdgeInsets.symmetric(

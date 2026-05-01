@@ -551,7 +551,20 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     }
 
     setState(() {
-      final fullResults = _attachCouponsToSearchResults(result.results);
+      List<ComparisonSearchResult> fullResults = _attachCouponsToSearchResults(result.results);
+      
+      final isBarcode = RegExp(r'^\d{8,}$').hasMatch(trimmedQuery);
+      if (isBarcode && fullResults.isNotEmpty) {
+        final referenceTitle = fullResults.first.title.toLowerCase();
+        final keywords = referenceTitle.split(' ').where((w) => w.length > 2).take(2).toList();
+        if (keywords.isNotEmpty) {
+           fullResults = fullResults.where((item) {
+             final t = item.title.toLowerCase();
+             return keywords.every((word) => t.contains(word));
+           }).toList();
+        }
+      }
+
       final visibleResults = _isPaidPlanActive
           ? fullResults
           : fullResults.take(_trialVisibleResultsCount).toList(growable: false);

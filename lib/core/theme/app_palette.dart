@@ -27,6 +27,17 @@ class AppPalette {
   static Color get mutedText => isFeminineTheme.value ? const Color(0xFF3388CC) : const Color(0xFF63D6D2);
   static Color get shadow => isFeminineTheme.value ? const Color(0x1A003F7A) : const Color(0x141B2F5E);
 
+  // -- Premium 3D Neumorphic Shadows --
+  static List<BoxShadow> get premium3DBoxShadow => isFeminineTheme.value 
+      ? [
+          const BoxShadow(color: Color(0x26005A9C), blurRadius: 18, offset: Offset(0, 10)),
+          const BoxShadow(color: Color(0x80FFFFFF), blurRadius: 16, offset: Offset(-3, -3)),
+        ]
+      : [
+          const BoxShadow(color: Color(0x40000000), blurRadius: 18, offset: Offset(0, 10)),
+          const BoxShadow(color: Color(0x1AFFFFFF), blurRadius: 16, offset: Offset(-2, -2)),
+        ];
+
   // -- Brand-aligned tokens (per BRAND_GUIDELINES.md / UI_DESIGN_GUIDELINES.md) --
   static Color get brandNavy => isFeminineTheme.value ? Color(0xFFF8BBD0) : Color(0xFF1B2F5E);
   static Color get brandNavyDeep => isFeminineTheme.value ? Color(0xFFF48FB1) : Color(0xFF12284D);
