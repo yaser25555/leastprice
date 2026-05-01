@@ -192,11 +192,41 @@ class SerpApiShoppingSearchService {
   }) async {
     final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     final results = <ComparisonSearchResult>[];
+    String effectiveQuery = query.trim();
+
+    // -- BARCODE TRANSLATION: If the query is just a barcode number, find the actual product name --
+    final isBarcode = RegExp(r'^\d{8,}$').hasMatch(effectiveQuery);
+    if (isBarcode && serperApiKey.isNotEmpty) {
+      try {
+        final uri = Uri.https('google.serper.dev', '/search');
+        final response = await http.post(
+          uri,
+          headers: {'X-API-KEY': serperApiKey, 'Content-Type': 'application/json'},
+          body: jsonEncode({'q': effectiveQuery, 'gl': 'sa', 'hl': 'ar'}),
+        );
+        if (response.statusCode < 400) {
+          final payload = jsonDecode(response.body);
+          final organic = payload['organic'];
+          if (organic is List && organic.isNotEmpty) {
+            final title = stringValue(organic.first['title']) ?? '';
+            // Extract the product name before any dash or pipe (e.g. "Nescafé Gold 200g - Panda")
+            final cleanTitle = title.split(RegExp(r'[|\-–]')).first.trim();
+            // Ensure the extracted title is not just numbers and has actual words
+            if (cleanTitle.isNotEmpty && !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
+              effectiveQuery = cleanTitle;
+              debugPrint('Barcode $query translated to Product Name: $effectiveQuery');
+            }
+          }
+        }
+      } catch (error) {
+        debugPrint('Barcode translation failed: $error');
+      }
+    }
 
     if (kIsWeb) {
       final uri = Uri.parse(
         '${Uri.base.origin}/api/${LeastPriceDataConfig.hybridSearchFunctionName}'
-        '?q=${Uri.encodeQueryComponent(query)}'
+        '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
         '&hl=${isAr ? 'ar' : 'en'}'
         '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}',
       );
@@ -243,13 +273,13 @@ class SerpApiShoppingSearchService {
     }
 
     // Fetch from SerpApi
-    final serpApiResults = await _fetchSerpApiResults(query, apiKey, city: city);
+    final serpApiResults = await _fetchSerpApiResults(effectiveQuery, apiKey, city: city);
     results.addAll(serpApiResults);
 
     // Fetch from Serper if key is available
     if (serperApiKey.isNotEmpty) {
       try {
-        final serperResults = await _fetchSerperResults(query, serperApiKey, city: city);
+        final serperResults = await _fetchSerperResults(effectiveQuery, serperApiKey, city: city);
         results.addAll(serperResults);
       } catch (error) {
         debugPrint('Serper search failed: $error');
@@ -257,9 +287,9 @@ class SerpApiShoppingSearchService {
     }
 
     // Fetch from Google Local if food-related query
-    if (_isFoodRelatedQuery(query)) {
+    if (_isFoodRelatedQuery(effectiveQuery)) {
       try {
-        final localResults = await _fetchLocalResults(query, apiKey, city: city);
+        final localResults = await _fetchLocalResults(effectiveQuery, apiKey, city: city);
         results.addAll(localResults);
       } catch (error) {
         debugPrint('Google Local search failed: $error');
