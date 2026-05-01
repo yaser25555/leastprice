@@ -57,12 +57,12 @@ class HeaderSection extends StatelessWidget {
               const Positioned(
                 top: -20,
                 left: -10,
-                child: BackgroundBubble(size: 96, color: Color(0x22FFFFFF)),
+                child: BackgroundBubble(size: 96, color: Color(0x33FFA052)),
               ),
               const Positioned(
                 bottom: -28,
                 right: -10,
-                child: BackgroundBubble(size: 130, color: Color(0x18FFFFFF)),
+                child: BackgroundBubble(size: 130, color: Color(0x267FB7E8)),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,12 +296,12 @@ class CompactHeaderSection extends StatelessWidget {
               const Positioned(
                 top: -8,
                 left: -4,
-                child: BackgroundBubble(size: 72, color: Color(0x24E8711A)),
+                child: BackgroundBubble(size: 72, color: Color(0x30FFA052)),
               ),
               const Positioned(
                 bottom: -16,
                 right: -6,
-                child: BackgroundBubble(size: 88, color: Color(0x18FFD9BA)),
+                child: BackgroundBubble(size: 88, color: Color(0x267FB7E8)),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

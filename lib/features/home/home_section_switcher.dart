@@ -77,8 +77,10 @@ class HomeSectionSwitcher extends StatelessWidget {
               label: tr('الباقات', 'Plans'),
               icon: Icons.workspace_premium_rounded,
               isSelected: selectedSection == HomeCatalogSection.plans,
-              activeColor: AppPalette.orange,
-              activeBackground: AppPalette.paleOrange,
+              activeColor: AppPalette.orangeCrimson,
+              activeBackground: AppPalette.orangeWarm,
+              activeGradient: AppPalette.gradientWarmCta,
+              activeIconColor: Colors.white,
               onTap: () => onSectionSelected(HomeCatalogSection.plans),
             ),
           ),
@@ -108,6 +110,8 @@ class HomeSectionSwitcherButton extends StatelessWidget {
     required this.activeColor,
     required this.activeBackground,
     required this.onTap,
+    this.activeGradient,
+    this.activeIconColor,
   });
 
   final String label;
@@ -116,15 +120,20 @@ class HomeSectionSwitcherButton extends StatelessWidget {
   final Color activeColor;
   final Color activeBackground;
   final VoidCallback onTap;
+  final Gradient? activeGradient;
+  final Color? activeIconColor;
 
   @override
   Widget build(BuildContext context) {
     final appleStyle = isAppleInterface(context);
+    final useGradient = isSelected && activeGradient != null && !appleStyle;
     final tileBackground = isSelected
         ? (appleStyle ? AppPalette.softOrange : activeBackground)
         : (appleStyle ? const Color(0xFFF3F4F8) : AppPalette.softNavy);
     final iconColor = isSelected
-        ? activeColor
+        ? (useGradient
+            ? (activeIconColor ?? Colors.white)
+            : activeColor)
         : (appleStyle ? AppPalette.navy : AppPalette.panelText);
     final borderColor = isSelected
         ? (appleStyle
@@ -144,15 +153,16 @@ class HomeSectionSwitcherButton extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               decoration: BoxDecoration(
-                color: tileBackground,
+                color: useGradient ? null : tileBackground,
+                gradient: useGradient ? activeGradient : null,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: borderColor, width: 1.2),
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: activeColor.withValues(alpha: 0.18),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                          color: activeColor.withValues(alpha: 0.22),
+                          blurRadius: 12,
+                          offset: const Offset(0, 5),
                         ),
                       ]
                     : const [],

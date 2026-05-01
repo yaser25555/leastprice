@@ -107,7 +107,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.location_on_outlined,
-                  color: AppPalette.orange,
+                  color: AppPalette.accentSkyDeep,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -156,7 +156,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   tooltip: tr('تحديد المدينة تلقائياً', 'Detect city automatically'),
                   icon: const Icon(
                     Icons.my_location_rounded,
-                    color: AppPalette.orange,
+                    color: AppPalette.accentSkyDeep,
                   ),
                 ),
               ],

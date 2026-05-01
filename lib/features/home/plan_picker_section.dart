@@ -120,16 +120,22 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
-                  color: AppPalette.deepNavy,
+                  gradient: AppPalette.gradientWarmCta,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppPalette.cardBorder),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppPalette.orangeCrimson.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.workspace_premium_rounded,
-                  color: AppPalette.orange,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(width: 12),
@@ -146,16 +152,22 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
               if (widget.isPaidActive)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppPalette.deepNavy,
+                    gradient: AppPalette.gradientWarmCta,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: AppPalette.cardBorder),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppPalette.orangeCrimson.withValues(alpha: 0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Text(
                     tr('مفعلة', 'Active'),
                     style: const TextStyle(
-                      color: AppPalette.orange,
+                      color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize: 12.5,
                     ),
@@ -169,41 +181,103 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
             runSpacing: 10,
             children: LeastPricePlanTier.values.map((tier) {
               final isSelected = _selected == tier;
+              final isYearly = tier == LeastPricePlanTier.yearly;
               return InkWell(
                 onTap: () => setState(() => _selected = tier),
                 borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  width: 165,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppPalette.deepNavy : AppPalette.softNavy,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: isSelected ? AppPalette.orange : AppPalette.cardBorder,
-                      width: isSelected ? 1.8 : 1.2,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 165,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isSelected ? null : AppPalette.softNavy,
+                        gradient: isSelected
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  AppPalette.deepNavy,
+                                  AppPalette.orangeCrimson.withValues(alpha: 0.35),
+                                ],
+                              )
+                            : null,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppPalette.orangeWarm
+                              : AppPalette.cardBorder,
+                          width: isSelected ? 1.8 : 1.2,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: AppPalette.orangeCrimson
+                                      .withValues(alpha: 0.22),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ]
+                            : const [],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _tierTitle(tier),
+                            style: const TextStyle(
+                              color: AppPalette.panelText,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          ShaderMask(
+                            shaderCallback: (rect) =>
+                                AppPalette.gradientWarmCta.createShader(rect),
+                            child: Text(
+                              _tierPrice(tier),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _tierTitle(tier),
-                        style: const TextStyle(
-                          color: AppPalette.panelText,
-                          fontWeight: FontWeight.w900,
+                    if (isYearly)
+                      Positioned(
+                        top: -8,
+                        right: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            gradient: AppPalette.gradientWarmCta,
+                            borderRadius: BorderRadius.circular(999),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppPalette.orangeCrimson
+                                    .withValues(alpha: 0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            tr('أفضل قيمة', 'Best value'),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 10,
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _tierPrice(tier),
-                        style: const TextStyle(
-                          color: AppPalette.orange,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               );
             }).toList(),
@@ -227,14 +301,24 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ..._tierBenefits(_selected).map(
-                  (line) => Padding(
+                ..._tierBenefits(_selected).asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final line = entry.value;
+                  // Rotate accent colors so the list breathes beyond a single tone.
+                  const accents = <Color>[
+                    AppPalette.orangeWarm,
+                    AppPalette.orangeCoral,
+                    AppPalette.accentSky,
+                    AppPalette.orangeCrimson,
+                  ];
+                  final accent = accents[index % accents.length];
+                  return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.check_circle_rounded,
-                          color: AppPalette.orange,
+                          color: accent,
                           size: 18,
                         ),
                         const SizedBox(width: 8),
@@ -250,8 +334,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                         ),
                       ],
                     ),
-                  ),
-                ),
+                  );
+                }),
               ],
             ),
           ),

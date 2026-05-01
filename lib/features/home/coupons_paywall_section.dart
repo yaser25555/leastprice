@@ -42,16 +42,29 @@ class CouponsPaywallSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: 68,
+              height: 68,
               decoration: BoxDecoration(
-                color: AppPalette.deepNavy,
+                gradient: const RadialGradient(
+                  colors: [
+                    AppPalette.accentSkyPale,
+                    AppPalette.accentSky,
+                    AppPalette.accentSkyDeep,
+                  ],
+                  stops: [0.0, 0.55, 1.0],
+                ),
                 shape: BoxShape.circle,
-                border: Border.all(color: AppPalette.orange, width: 1.6),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppPalette.accentSky.withValues(alpha: 0.35),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
               child: const Icon(
                 Icons.lock_rounded,
-                color: AppPalette.orange,
+                color: Colors.white,
                 size: 32,
               ),
             ),
@@ -102,16 +115,19 @@ class CouponsPaywallSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _BenefitRow(
-                    label: tr('أكواد خصم محدّثة أسبوع<|im_start|>0',
+                    accent: AppPalette.orangeWarm,
+                    label: tr('أكواد خصم محدّثة أسبوعيًا',
                         'Fresh discount codes weekly'),
                   ),
                   const SizedBox(height: 8),
                   _BenefitRow(
+                    accent: AppPalette.accentSky,
                     label: tr('من أمازون ونون ونمشي وغيرها',
                         'From Amazon, Noon, Namshi & more'),
                   ),
                   const SizedBox(height: 8),
                   _BenefitRow(
+                    accent: AppPalette.orangeCoral,
                     label: tr('نسخ الكود بضغطة واحدة',
                         'One-tap code copy'),
                   ),
@@ -121,30 +137,53 @@ class CouponsPaywallSection extends StatelessWidget {
             const SizedBox(height: 18),
             SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: onUpgradeTap,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppPalette.orange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: AppPalette.gradientWarmCta,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppPalette.orangeCrimson.withValues(alpha: 0.32),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                icon: const Icon(Icons.rocket_launch_rounded),
-                label: Text(
-                  tr('اشترك الآن لفتح الكوبونات',
-                      'Subscribe now to unlock coupons'),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 15,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onUpgradeTap,
+                    borderRadius: BorderRadius.circular(18),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.rocket_launch_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            tr('اشترك الآن لفتح الكوبونات',
+                                'Subscribe now to unlock coupons'),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              tr('ابتداءً من 9.99 ر.س / شهري<|im_start|>',
+              tr('ابتداءً من 9.99 ر.س / شهريًا',
                   'Starting from SAR 9.99 / month'),
               style: const TextStyle(
                 color: AppPalette.paleOrange,
@@ -195,17 +234,18 @@ class _StoreChip extends StatelessWidget {
 }
 
 class _BenefitRow extends StatelessWidget {
-  const _BenefitRow({required this.label});
+  const _BenefitRow({required this.label, required this.accent});
 
   final String label;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(
+        Icon(
           Icons.check_circle_rounded,
-          color: AppPalette.orange,
+          color: accent,
           size: 18,
         ),
         const SizedBox(width: 8),

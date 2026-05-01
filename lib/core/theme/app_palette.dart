@@ -37,4 +37,34 @@ class AppPalette {
   static const Color brandCardSoft = Color(0xFFF8FAFF);
   static const Color brandCardBorder = Color(0xFFE1E7F4);
   static const Color brandShadow = Color(0x141B2F5E);
+
+  // -- Warm spectrum (for variety beyond a single orange) --
+  static const Color orangeWarm = Color(0xFFFFA052);
+  static const Color orangeCoral = Color(0xFFF76A4D);
+  static const Color orangeCrimson = Color(0xFFC84B1E);
+
+  // -- Sky accents (used sparingly to break warm rhythm) --
+  static const Color accentSky = Color(0xFF7FB7E8);
+  static const Color accentSkyPale = Color(0xFFD6E6F5);
+  static const Color accentSkyDeep = Color(0xFF3B7FBF);
+
+  // -- Reusable brand gradients --
+  static const LinearGradient gradientWarmCta = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [orangeWarm, orange, orangeCrimson],
+    stops: [0.0, 0.55, 1.0],
+  );
+
+  static const LinearGradient gradientWarmSoft = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [orangeWarm, paleOrange],
+  );
+
+  static const LinearGradient gradientSky = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [accentSkyPale, accentSky],
+  );
 }

@@ -1,37 +1,36 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LeastPrice">
   <defs>
-    <linearGradient id="lpNavy" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"  stop-color="#1B2F5E"/>
-      <stop offset="100%" stop-color="#12284D"/>
+    <linearGradient id="lpNavyBg" x1="18%" y1="0%" x2="82%" y2="100%">
+      <stop offset="0%"  stop-color="#243B6B"/>
+      <stop offset="55%" stop-color="#1B2F5E"/>
+      <stop offset="100%" stop-color="#0E1F3D"/>
     </linearGradient>
-    <linearGradient id="lpOrange" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"  stop-color="#F08A33"/>
-      <stop offset="100%" stop-color="#E8711A"/>
+    <radialGradient id="lpNavyGlow" cx="30%" cy="24%" r="55%">
+      <stop offset="0%"  stop-color="#3B5694" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#0E1F3D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lpOrangeFg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#FFA052"/>
+      <stop offset="55%" stop-color="#F08A33"/>
+      <stop offset="100%" stop-color="#D9620B"/>
     </linearGradient>
   </defs>
 
-  <!-- الخلفية الكحلية -->
-  <circle cx="100" cy="100" r="96" fill="url(#lpNavy)"/>
-  <circle cx="100" cy="100" r="96" fill="none" stroke="#0E1F3D" stroke-width="2" opacity="0.6"/>
+  <!-- خلفية كحلية بتدرج قطري -->
+  <circle cx="100" cy="100" r="96" fill="url(#lpNavyBg)"/>
+  <!-- وهج علوي ناعم لإحساس العمق -->
+  <circle cx="100" cy="100" r="96" fill="url(#lpNavyGlow)"/>
+  <!-- حلقة برتقالية رفيعة (لمسة هوية) -->
+  <circle cx="100" cy="100" r="86" fill="none" stroke="url(#lpOrangeFg)"
+          stroke-width="1.6" opacity="0.55"/>
 
-  <!-- حلقة برتقالية ناعمة (لمسة هوية) -->
-  <circle cx="100" cy="100" r="86" fill="none" stroke="#FFD9BA" stroke-width="1.5" opacity="0.35"/>
+  <!-- الحروف LP بتدرج برتقالي -->
+  <text x="100" y="138"
+        font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="100" font-weight="900"
+        fill="url(#lpOrangeFg)"
+        text-anchor="middle" letter-spacing="-3">LP</text>
 
-  <!-- بطاقة السعر (رمز التوفير) -->
-  <g transform="translate(124, 52) rotate(18)">
-    <path d="M 0 0 L 36 0 L 50 16 L 50 36 L 0 36 Z"
-          fill="url(#lpOrange)"/>
-    <circle cx="42" cy="10" r="3.2" fill="#12284D"/>
-    <!-- سهم التخفيض داخل البطاقة -->
-    <path d="M 12 12 L 12 24 M 12 24 L 8 20 M 12 24 L 16 20"
-          stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  </g>
-
-  <!-- الحروف LP -->
-  <text x="100" y="132" font-family="'Helvetica Neue', Arial, sans-serif"
-        font-size="92" font-weight="900" fill="#FFFFFF"
-        text-anchor="middle" letter-spacing="-2">LP</text>
-
-  <!-- خط برتقالي تأكيدي تحت الحروف -->
-  <rect x="62" y="146" width="76" height="4" rx="2" fill="url(#lpOrange)"/>
+  <!-- خط تأكيدي برتقالي قصير تحت الحروف -->
+  <rect x="68" y="150" width="64" height="3.5" rx="1.75" fill="url(#lpOrangeFg)"/>
 </svg>
