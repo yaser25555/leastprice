@@ -100,6 +100,25 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             ),
                           ),
                         ),
+                      if (result.tag != null && result.tag!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppPalette.softOrange,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            result.tag!,
+                            style: const TextStyle(
+                              color: AppPalette.navy,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 12.2,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                   const SizedBox(height: 10),
