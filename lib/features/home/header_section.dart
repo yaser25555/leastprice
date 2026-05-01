@@ -247,7 +247,7 @@ class HeaderSection extends StatelessWidget {
   }
 }
 
-class CompactHeaderSection extends StatelessWidget {
+class CompactHeaderSection extends StatefulWidget {
   const CompactHeaderSection({super.key, 
     required this.currentUserLabel,
     required this.inviteCode,
@@ -265,14 +265,23 @@ class CompactHeaderSection extends StatelessWidget {
   final Future<void> Function() onLogoutTap;
 
   @override
+  State<CompactHeaderSection> createState() => _CompactHeaderSectionState();
+}
+
+class _CompactHeaderSectionState extends State<CompactHeaderSection> {
+  bool _isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
     final appleStyle = isAppleInterface(context);
     return SafeArea(
       bottom: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
@@ -306,192 +315,192 @@ class CompactHeaderSection extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const AppBrandMark(
-                        size: 46,
-                        padding: 5,
-                        borderRadius: 16,
-                        backgroundColor: AppPalette.softOrange,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0x22FFD9BA),
-                                borderRadius: BorderRadius.circular(99),
-                              ),
-                              child: Text(
-                                tr('أرخص سعر', 'Smart savings'),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Row(
+                      children: [
+                        const AppBrandMark(
+                          size: 46,
+                          padding: 5,
+                          borderRadius: 16,
+                          backgroundColor: AppPalette.softOrange,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'LeastPrice',
                                 style: const TextStyle(
                                   color: AppPalette.paleOrange,
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.2,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'LeastPrice',
-                              style: const TextStyle(
-                                color: AppPalette.paleOrange,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 0.2,
+                              const SizedBox(height: 2),
+                              Text(
+                                '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
+                                style: const TextStyle(
+                                  color: Color(0xFFFFD9BA),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${tr('مرحباً', 'Hello')} $currentUserLabel',
-                              style: const TextStyle(
-                                color: Color(0xFFFFD9BA),
-                                fontSize: 11.5,
-                                height: 1.25,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      ValueListenableBuilder<String>(
-                        valueListenable: appLang,
-                        builder: (context, lang, _) => GestureDetector(
-                          onTap: () {
-                            appLang.value = lang == 'ar' ? 'en' : 'ar';
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0x24E8711A),
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(
-                                color: const Color(0x55FFD9BA),
+                        Icon(
+                          _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                          color: AppPalette.paleOrange,
+                        ),
+                        const SizedBox(width: 6),
+                        ValueListenableBuilder<String>(
+                          valueListenable: appLang,
+                          builder: (context, lang, _) => GestureDetector(
+                            onTap: () {
+                              appLang.value = lang == 'ar' ? 'en' : 'ar';
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 5,
                               ),
-                            ),
-                            child: Text(
-                              lang == 'ar' ? 'EN' : 'AR',
-                              style: const TextStyle(
-                                color: AppPalette.paleOrange,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12,
+                              decoration: BoxDecoration(
+                                color: const Color(0x24E8711A),
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: const Color(0x55FFD9BA),
+                                ),
+                              ),
+                              child: Text(
+                                lang == 'ar' ? 'EN' : 'AR',
+                                style: const TextStyle(
+                                  color: AppPalette.paleOrange,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      IconButton(
-                        onPressed: onLogoutTap,
-                        style: IconButton.styleFrom(
-                          backgroundColor: const Color(0x24E8711A),
-                          foregroundColor: AppPalette.paleOrange,
-                          padding: const EdgeInsets.all(10),
-                          minimumSize: const Size(38, 38),
-                        ),
-                        icon: const Icon(Icons.logout_rounded, size: 18),
-                        tooltip: tr('تسجيل الخروج', 'Sign Out'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-                    decoration: BoxDecoration(
-                      color: const Color(0x14E8711A),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: const Color(0x40E8711A)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                tr(
-                                  'حسابك وكود الدعوة',
-                                  'Your account and invite code',
-                                ),
-                                style: const TextStyle(
-                                  color: AppPalette.paleOrange,
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppPalette.orange,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    inviteCode,
-                                    style: const TextStyle(
-                                      color: AppPalette.deepNavy,
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 11.5,
-                                      letterSpacing: 0.4,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                IconButton(
-                                  onPressed: onInviteTap,
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: const Color(0x24E8711A),
-                                    foregroundColor: AppPalette.paleOrange,
-                                    padding: const EdgeInsets.all(10),
-                                    minimumSize: const Size(36, 36),
-                                  ),
-                                  tooltip: tr('مشاركة الدعوة',
-                                      'Share invite'),
-                                  icon:
-                                      const Icon(Icons.share_rounded, size: 18),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 6,
-                          children: [
-                            CompactStatPill(
-                              icon: Icons.monitor_heart_rounded,
-                              label: systemHealthLabel,
-                            ),
-                            CompactMetricPill(
-                              icon: Icons.group_add_rounded,
-                              label: tr(
-                                '$invitedFriendsCount دعوة',
-                                '$invitedFriendsCount invites',
-                              ),
-                            ),
-                          ],
+                        const SizedBox(width: 6),
+                        IconButton(
+                          onPressed: widget.onLogoutTap,
+                          style: IconButton.styleFrom(
+                            backgroundColor: const Color(0x24E8711A),
+                            foregroundColor: AppPalette.paleOrange,
+                            padding: const EdgeInsets.all(10),
+                            minimumSize: const Size(38, 38),
+                          ),
+                          icon: const Icon(Icons.logout_rounded, size: 18),
+                          tooltip: tr('تسجيل الخروج', 'Sign Out'),
                         ),
                       ],
                     ),
                   ),
+                  if (_isExpanded) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0x14E8711A),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0x40E8711A)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.discount_rounded, color: AppPalette.orange, size: 16),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      tr(
+                                        'كود الدعوة',
+                                        'Invite code',
+                                      ),
+                                      style: const TextStyle(
+                                        color: AppPalette.paleOrange,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppPalette.orange,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      widget.inviteCode,
+                                      style: const TextStyle(
+                                        color: AppPalette.deepNavy,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 11.5,
+                                        letterSpacing: 0.4,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  IconButton(
+                                    onPressed: widget.onInviteTap,
+                                    style: IconButton.styleFrom(
+                                      backgroundColor: const Color(0x24E8711A),
+                                      foregroundColor: AppPalette.paleOrange,
+                                      padding: const EdgeInsets.all(10),
+                                      minimumSize: const Size(36, 36),
+                                    ),
+                                    tooltip: tr('مشاركة الدعوة',
+                                        'Share invite'),
+                                    icon:
+                                        const Icon(Icons.share_rounded, size: 18),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              CompactStatPill(
+                                icon: Icons.monitor_heart_rounded,
+                                label: widget.systemHealthLabel,
+                              ),
+                              CompactMetricPill(
+                                icon: Icons.group_add_rounded,
+                                label: tr(
+                                  '${widget.invitedFriendsCount} دعوة',
+                                  '${widget.invitedFriendsCount} invites',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ],
