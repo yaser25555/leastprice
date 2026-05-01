@@ -98,6 +98,7 @@ String localizedKnownLabel(String value) {
 enum HomeCatalogSection {
   offers,
   comparisons,
+  coupons,
   about,
 }
 

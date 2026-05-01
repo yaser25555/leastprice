@@ -31,7 +31,7 @@ class Coupon {
 
   bool get isExpired => isExpiredAt(DateTime.now());
 
-  bool get isSupportedFeaturedStore => storeId == 'noon' || storeId == 'namshi';
+  bool get isSupportedFeaturedStore => storeId.trim().isNotEmpty;
 
   Coupon copyWith({
     String? id,
@@ -115,10 +115,36 @@ class Coupon {
 
   static String _storeNameForId(String storeId) {
     switch (storeId) {
+      case 'amazon':
+        return 'Amazon';
       case 'noon':
         return 'Noon';
       case 'namshi':
         return 'Namshi';
+      case 'iherb':
+        return 'iHerb';
+      case 'sephora':
+        return 'Sephora';
+      case 'shein':
+        return 'SHEIN';
+      case 'jarir':
+        return 'Jarir';
+      case 'extra':
+        return 'Extra';
+      case 'nahdi':
+        return tr('النهدي', 'Nahdi');
+      case 'aldawaa':
+        return tr('الدواء', 'Al-Dawaa');
+      case 'lulu':
+        return tr('لولو', 'Lulu');
+      case 'carrefour':
+        return 'Carrefour';
+      case 'panda':
+        return tr('بنده', 'Panda');
+      case 'othaim':
+        return tr('العثيم', 'Othaim');
+      case 'tamimi':
+        return tr('التميمي', 'Tamimi');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }

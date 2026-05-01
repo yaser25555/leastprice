@@ -1086,6 +1086,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               _selectedHomeSection == HomeCatalogSection.offers;
           final showComparisonsSection =
               _selectedHomeSection == HomeCatalogSection.comparisons;
+          final showCouponsSection =
+              _selectedHomeSection == HomeCatalogSection.coupons;
           final showAboutSection =
               _selectedHomeSection == HomeCatalogSection.about;
           final comparisonResults = _comparisonSearchResults;
@@ -1239,15 +1241,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     ),
                   if (showOffersSection)
                     SliverToBoxAdapter(
-                      child: ExclusiveCouponsSection(
-                        stream: widget.firebaseReady
-                            ? _catalogService.watchFeaturedCoupons()
-                            : Stream<List<Coupon>>.value(Coupon.mockData),
-                        onCopyCoupon: _copyCouponCode,
-                      ),
-                    ),
-                  if (showOffersSection)
-                    SliverToBoxAdapter(
                       child: ExclusiveDealsSection(
                         stream: widget.firebaseReady
                             ? _catalogService.watchExclusiveDeals()
@@ -1261,6 +1254,23 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       child: AdBannersSection(
                         banners: _activeBanners,
                         onBannerTap: _openBanner,
+                      ),
+                    ),
+                  if (showCouponsSection && _isPaidPlanActive)
+                    SliverToBoxAdapter(
+                      child: CouponsListSection(
+                        stream: widget.firebaseReady
+                            ? _catalogService.watchFeaturedCoupons()
+                            : Stream<List<Coupon>>.value(Coupon.mockData),
+                        onCopyCoupon: _copyCouponCode,
+                      ),
+                    ),
+                  if (showCouponsSection && !_isPaidPlanActive)
+                    SliverToBoxAdapter(
+                      child: CouponsPaywallSection(
+                        onUpgradeTap: () => _selectHomeSection(
+                          HomeCatalogSection.comparisons,
+                        ),
                       ),
                     ),
                   if (showAboutSection)

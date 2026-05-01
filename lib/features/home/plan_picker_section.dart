@@ -72,6 +72,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
         return [
           tr('عرض جميع النتائج بدون حد', 'Unlimited full results'),
           tr('فتح جميع ميزات البحث والمقارنة', 'Unlock all search & comparison features'),
+          tr('كوبونات خصم حصرية من أمازون ونون ونمشي وغيرها',
+              'Exclusive discount coupons from Amazon, Noon, Namshi & more'),
           tr('أولوية في الدعم بعد التحويل', 'Priority support after transfer'),
         ];
     }

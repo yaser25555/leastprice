@@ -62,6 +62,17 @@ class HomeSectionSwitcher extends StatelessWidget {
           const SizedBox(width: 6),
           Expanded(
             child: HomeSectionSwitcherButton(
+              label: tr('كوبونات', 'Coupons'),
+              icon: Icons.confirmation_number_rounded,
+              isSelected: selectedSection == HomeCatalogSection.coupons,
+              activeColor: AppPalette.orange,
+              activeBackground: AppPalette.deepNavy,
+              onTap: () => onSectionSelected(HomeCatalogSection.coupons),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: HomeSectionSwitcherButton(
               label: tr('من نحن', 'About Us'),
               icon: Icons.info_rounded,
               isSelected: selectedSection == HomeCatalogSection.about,
