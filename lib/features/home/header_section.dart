@@ -40,8 +40,8 @@ class HeaderSection extends StatelessWidget {
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: appleStyle
-                  ? const [Color(0xFF243B6B), AppPalette.navy]
-                  : const [AppPalette.navy, AppPalette.deepNavy],
+                  ? [const Color(0xFF243B6B), AppPalette.navy]
+                  : [AppPalette.navy, AppPalette.deepNavy],
             ),
             boxShadow: [
               BoxShadow(
@@ -288,8 +288,8 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: appleStyle
-                  ? const [Color(0xFF243B6B), AppPalette.navy]
-                  : const [AppPalette.navy, AppPalette.deepNavy],
+                  ? [const Color(0xFF243B6B), AppPalette.navy]
+                  : [AppPalette.navy, AppPalette.deepNavy],
             ),
             boxShadow: [
               BoxShadow(

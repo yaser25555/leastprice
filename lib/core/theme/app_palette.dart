@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 final ValueNotifier<bool> isFeminineTheme = ValueNotifier<bool>(false);
 
-
-final ValueNotifier<bool> isFeminineTheme = ValueNotifier<bool>(false);
-
-
 class AppPalette {
   const AppPalette._();
 
