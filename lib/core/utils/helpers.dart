@@ -99,6 +99,7 @@ enum HomeCatalogSection {
   offers,
   comparisons,
   coupons,
+  plans,
   about,
 }
 

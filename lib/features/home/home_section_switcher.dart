@@ -17,7 +17,7 @@ class HomeSectionSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     final appleStyle = isAppleInterface(context);
     return Container(
-      padding: const EdgeInsets.all(6),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
       decoration: BoxDecoration(
         color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(22),
@@ -37,6 +37,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: HomeSectionSwitcherButton(
@@ -68,6 +69,17 @@ class HomeSectionSwitcher extends StatelessWidget {
               activeColor: AppPalette.orange,
               activeBackground: AppPalette.deepNavy,
               onTap: () => onSectionSelected(HomeCatalogSection.coupons),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: HomeSectionSwitcherButton(
+              label: tr('الباقات', 'Plans'),
+              icon: Icons.workspace_premium_rounded,
+              isSelected: selectedSection == HomeCatalogSection.plans,
+              activeColor: AppPalette.orange,
+              activeBackground: AppPalette.paleOrange,
+              onTap: () => onSectionSelected(HomeCatalogSection.plans),
             ),
           ),
           const SizedBox(width: 6),
@@ -108,47 +120,66 @@ class HomeSectionSwitcherButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appleStyle = isAppleInterface(context);
+    final tileBackground = isSelected
+        ? (appleStyle ? AppPalette.softOrange : activeBackground)
+        : (appleStyle ? const Color(0xFFF3F4F8) : AppPalette.softNavy);
+    final iconColor = isSelected
+        ? activeColor
+        : (appleStyle ? AppPalette.navy : AppPalette.panelText);
+    final borderColor = isSelected
+        ? (appleStyle
+            ? const Color(0xFFD9DEE8)
+            : activeColor.withValues(alpha: 0.45))
+        : (appleStyle
+            ? const Color(0xFFE2E5EC)
+            : AppPalette.cardBorder.withValues(alpha: 0.35));
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (appleStyle ? AppPalette.softOrange : activeBackground)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isSelected
-                ? (appleStyle
-                    ? const Color(0xFFD9DEE8)
-                    : activeColor.withValues(alpha: 0.35))
-                : Colors.transparent,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? activeColor : AppPalette.softNavy,
-              size: 18,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isSelected ? activeColor : AppPalette.navy,
-                fontWeight: FontWeight.w900,
-                fontSize: 12.6,
+      borderRadius: BorderRadius.circular(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AspectRatio(
+            aspectRatio: 1,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              decoration: BoxDecoration(
+                color: tileBackground,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: borderColor, width: 1.2),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: activeColor.withValues(alpha: 0.18),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : const [],
+              ),
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: 24,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? activeColor : AppPalette.navy,
+              fontWeight: FontWeight.w900,
+              fontSize: 10.5,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ],
       ),
     );
   }

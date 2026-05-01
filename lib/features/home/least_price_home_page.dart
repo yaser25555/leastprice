@@ -1088,6 +1088,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               _selectedHomeSection == HomeCatalogSection.comparisons;
           final showCouponsSection =
               _selectedHomeSection == HomeCatalogSection.coupons;
+          final showPlansSection =
+              _selectedHomeSection == HomeCatalogSection.plans;
           final showAboutSection =
               _selectedHomeSection == HomeCatalogSection.about;
           final comparisonResults = _comparisonSearchResults;
@@ -1167,7 +1169,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                         ),
                       ),
                     ),
-                  if (showComparisonsSection && !_isPaidPlanActive)
+                  if (showPlansSection)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                       sliver: SliverToBoxAdapter(
@@ -1269,7 +1271,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     SliverToBoxAdapter(
                       child: CouponsPaywallSection(
                         onUpgradeTap: () => _selectHomeSection(
-                          HomeCatalogSection.comparisons,
+                          HomeCatalogSection.plans,
                         ),
                       ),
                     ),
