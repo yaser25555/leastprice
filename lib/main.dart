@@ -13,6 +13,7 @@ import 'core/widgets/global_runtime_error_screen.dart';
 import 'features/admin/admin_dashboard_auth_gate.dart';
 import 'features/auth/auth_gate.dart';
 import 'firebase_options.dart';
+import 'services/notifications/push_notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    await PushNotificationService.initialize();
   } catch (_) {
     firebaseBootstrapNotice =
         'تعذر تهيئة Firebase حالياً. تأكد من اكتمال ملفات FlutterFire وإعداد مشروع Firebase على المنصة الحالية.';

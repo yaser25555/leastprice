@@ -1507,3 +1507,54 @@ function safeJsonParse(value) {
 function trimInlineJson(value) {
   return String(value || '').trim().replace(/;$/, '');
 }
+
+exports.notifyPremiumQuickDeals = functionsV1
+  .region('us-central1')
+  .runWith({
+    timeoutSeconds: 30,
+    memory: '256MB',
+  })
+  .firestore.document('exclusive_deals/{dealId}')
+  .onCreate(async (snapshot) => {
+    const dealData = snapshot.data();
+    if (!dealData || !dealData.active) {
+      return;
+    }
+
+    const title = dealData.title || 'عرض حصري جديد';
+    const beforePrice = dealData.beforePrice || 0;
+    const afterPrice = dealData.afterPrice || 0;
+    
+    let body = `لا تفوت هذا العرض!`;
+    if (beforePrice > 0 && afterPrice > 0) {
+      const discount = Math.round(((beforePrice - afterPrice) / beforePrice) * 100);
+      body = `خصم ${discount}% الآن بسعر ${afterPrice} ريال بدلاً من ${beforePrice} ريال! 🚀`;
+    } else if (afterPrice > 0) {
+      body = `سعر اللقطة الآن ${afterPrice} ريال فقط! 🚀`;
+    }
+
+    const payload = {
+      notification: {
+        title: `لقطة سريعة: ${title}`,
+        body: body,
+      },
+      data: {
+        type: 'exclusive_deal',
+        dealId: snapshot.id,
+      },
+      topic: 'premium_quick_deals',
+    };
+
+    try {
+      const response = await admin.messaging().send(payload);
+      logger.info('Successfully sent quick deal notification', {
+        messageId: response,
+        dealId: snapshot.id,
+      });
+    } catch (error) {
+      logger.error('Error sending quick deal notification', {
+        error: String(error),
+        dealId: snapshot.id,
+      });
+    }
+  });

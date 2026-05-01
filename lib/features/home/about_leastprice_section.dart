@@ -69,6 +69,15 @@ class AboutLeastPriceSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _AboutFeatureCard(
+            icon: Icons.verified_user_rounded,
+            title: tr('ما يميزنا عن غيرنا', 'What makes us unique'),
+            description: tr(
+              'تطبيقنا فريد من نوعه؛ فهو يقوم بالبحث لحظياً (Real-Time) ولا يكتفي بعرض لوحات عروض قديمة كما تفعل التطبيقات المشابهة.\nكما أننا نضمن بيئة نظيفة خالية من الإعلانات المزعجة (مثل إعلانات جوجل أو التطبيقات المخادعة) التي قد تعرض أجهزة المستخدمين للخطر عند الضغط عليها. ولهذا السبب، نفرض رسوماً بسيطة جداً مقابل تقديم خدمة حقيقية، واقعية ومباشرة، حتى يستمتع الجميع - بما في ذلك مستخدمي الباقة المجانية - بتجربة آمنة ومريحة تماماً.',
+              'Our app is unique; it searches in real-time instead of just posting outdated offer boards like similar apps.\nWe also guarantee a clean, ad-free environment (no Google ads or deceptive apps) that could compromise users\' devices if clicked. This is why we charge a very small fee for a real, direct service, ensuring that everyone - including free tier users - enjoys a completely safe experience.',
+            ),
+          ),
+          const SizedBox(height: 14),
+          _AboutFeatureCard(
             icon: Icons.search_rounded,
             title: tr('خدماتنا للمستهلك', 'Our value for shoppers'),
             description: tr(

@@ -26,6 +26,7 @@ import 'package:leastprice/data/repositories/product_repository.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'home_exports.dart';
 import 'package:leastprice/features/admin/admin_exports.dart';
+import 'package:leastprice/services/notifications/push_notification_service.dart';
 
 class LeastPriceHomePage extends StatefulWidget {
   const LeastPriceHomePage({
@@ -152,6 +153,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         setState(() {
           _userProfile = profile;
         });
+        PushNotificationService.updatePremiumSubscription(profile);
       }, onError: (Object error, StackTrace stackTrace) {
         _handleFirestorePermissionAwareError(
           'user profile',

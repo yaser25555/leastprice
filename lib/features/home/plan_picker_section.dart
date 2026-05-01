@@ -75,6 +75,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
           tr('كوبونات خصم حصرية من أمازون ونون ونمشي وغيرها',
               'Exclusive discount coupons from Amazon, Noon, Namshi & more'),
           tr('أولوية في الدعم بعد التحويل', 'Priority support after transfer'),
+          tr('إشعارات فورية للعروض السريعة (اللقطات)', 'Instant notifications for quick deals (steals)'),
         ];
     }
   }
