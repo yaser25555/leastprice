@@ -15,6 +15,8 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
     formats: [BarcodeFormat.all],
   );
 
+  bool _isDetected = false;
+
   @override
   void dispose() {
     controller.dispose();
@@ -65,10 +67,12 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
           MobileScanner(
             controller: controller,
             onDetect: (capture) {
+              if (_isDetected) return;
               final List<Barcode> barcodes = capture.barcodes;
               for (final barcode in barcodes) {
                 final String? code = barcode.rawValue;
                 if (code != null) {
+                  _isDetected = true;
                   Navigator.pop(context, code);
                   break;
                 }
