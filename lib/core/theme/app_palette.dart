@@ -21,8 +21,8 @@ class AppPalette {
   static Color get dealsSoftRed => isFeminineTheme.value ? const Color(0xFFF8BBD0) : const Color(0xFF2A4A82);
   static Color get dealsBorder => isFeminineTheme.value ? const Color(0xFF003F7A) : const Color(0xFFF2A776);
   static Color get shellBackground => isFeminineTheme.value ? const Color(0xFFFCE4EC) : const Color(0xFF162B52);
-  static Color get cardBackground => isFeminineTheme.value ? const Color(0xFFF8BBD0) : const Color(0xFF1C345F);
-  static Color get cardBorder => isFeminineTheme.value ? const Color(0xFFF06292) : const Color(0xFFEA9A58);
+  static Color get cardBackground => isFeminineTheme.value ? const Color(0xFFFCE4EC) : const Color(0xFF162B52);
+  static Color get cardBorder => Colors.transparent;
   static Color get panelText => isFeminineTheme.value ? const Color(0xFF003F7A) : const Color(0xFF8BEDEA);
   static Color get mutedText => isFeminineTheme.value ? const Color(0xFF3388CC) : const Color(0xFF63D6D2);
   static Color get shadow => isFeminineTheme.value ? const Color(0x1A003F7A) : const Color(0x141B2F5E);
@@ -30,12 +30,12 @@ class AppPalette {
   // -- Premium 3D Neumorphic Shadows --
   static List<BoxShadow> get premium3DBoxShadow => isFeminineTheme.value 
       ? [
-          const BoxShadow(color: Color(0x26005A9C), blurRadius: 18, offset: Offset(0, 10)),
-          const BoxShadow(color: Color(0x80FFFFFF), blurRadius: 16, offset: Offset(-3, -3)),
+          const BoxShadow(color: Color(0xFFF48FB1), blurRadius: 15, offset: Offset(6, 6)),
+          const BoxShadow(color: Color(0xFFFFFFFF), blurRadius: 15, offset: Offset(-6, -6)),
         ]
       : [
-          const BoxShadow(color: Color(0x40000000), blurRadius: 18, offset: Offset(0, 10)),
-          const BoxShadow(color: Color(0x1AFFFFFF), blurRadius: 16, offset: Offset(-2, -2)),
+          const BoxShadow(color: Color(0xFF0F1E3A), blurRadius: 15, offset: Offset(6, 6)),
+          const BoxShadow(color: Color(0xFF1D386A), blurRadius: 15, offset: Offset(-6, -6)),
         ];
 
   // -- Brand-aligned tokens (per BRAND_GUIDELINES.md / UI_DESIGN_GUIDELINES.md) --

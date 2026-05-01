@@ -46,11 +46,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color:
-              appleStyle ? const Color(0xFFE5E7EE) : AppPalette.paleOrange,
-          width: 1.5,
-        ),
+        border: Border.all(color: Colors.transparent),
         boxShadow: AppPalette.premium3DBoxShadow,
       ),
       child: Column(

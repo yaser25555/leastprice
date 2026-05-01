@@ -33,7 +33,6 @@ class ComparisonSearchResultCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppPalette.comparisonBorder),
           boxShadow: AppPalette.premium3DBoxShadow,
         ),
         child: Row(

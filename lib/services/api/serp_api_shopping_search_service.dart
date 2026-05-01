@@ -196,17 +196,19 @@ class SerpApiShoppingSearchService {
 
     // -- BARCODE TRANSLATION: If the query is just a barcode number, find the actual product name --
     final isBarcode = RegExp(r'^\d{8,}$').hasMatch(effectiveQuery);
-    if (isBarcode && serperApiKey.isNotEmpty) {
+    if (isBarcode && apiKey.isNotEmpty) {
       try {
-        final uri = Uri.https('google.serper.dev', '/search');
-        final response = await http.post(
-          uri,
-          headers: {'X-API-KEY': serperApiKey, 'Content-Type': 'application/json'},
-          body: jsonEncode({'q': effectiveQuery, 'gl': 'sa', 'hl': 'ar'}),
-        );
+        final uri = Uri.https('serpapi.com', '/search.json', {
+          'engine': 'google',
+          'q': effectiveQuery,
+          'gl': 'sa',
+          'hl': 'ar',
+          'api_key': apiKey,
+        });
+        final response = await http.get(uri);
         if (response.statusCode < 400) {
           final payload = jsonDecode(response.body);
-          final organic = payload['organic'];
+          final organic = payload['organic_results'];
           if (organic is List && organic.isNotEmpty) {
             final title = stringValue(organic.first['title']) ?? '';
             // Extract the product name before any dash or pipe (e.g. "Nescafé Gold 200g - Panda")
@@ -219,7 +221,7 @@ class SerpApiShoppingSearchService {
           }
         }
       } catch (error) {
-        debugPrint('Barcode translation failed: $error');
+        debugPrint('Barcode translation via SerpApi failed: $error');
       }
     }
 
