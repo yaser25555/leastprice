@@ -1286,7 +1286,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                   if (showComparisonsSection &&
                       !hasQuery &&
                       !_isSearchingOnline)
-                    const SliverToBoxAdapter(child: SizedBox.shrink())
+                    const SliverToBoxAdapter(child: SearchSuggestionsCarousel())
                   else if (showComparisonsSection &&
                       _isSearchingOnline &&
                       comparisonResults.isEmpty)
