@@ -91,36 +91,6 @@ class AdBannerItem {
     };
   }
 
-  static List<AdBannerItem> get mockData => [
-        AdBannerItem(
-          id: 'local-roaster',
-          title: tr('عرض المحمصة المميزة',
-              'Featured roastery offer'),
-          subtitle: tr(
-            'خصم على القهوة المختصة وحبوب اليوم مع توصيل سريع.',
-            'Discount on specialty coffee and today?s beans with fast delivery.',
-          ),
-          imageUrl:
-              'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1400&q=80',
-          targetUrl: LeastPriceDataConfig.adminWhatsAppUrl,
-          storeName: tr('محمصة الشرقية', 'Eastern Roastery'),
-          active: true,
-          order: 1,
-        ),
-        AdBannerItem(
-          id: 'restaurant-partner',
-          title: tr('وجبات محلية بسعر أفضل',
-              'Local meals at a better price'),
-          subtitle: tr(
-            'عروض حصرية من مطاعم الخبر والدمام داخل التطبيق.',
-            'Exclusive offers from Khobar and Dammam restaurants inside the app.',
-          ),
-          imageUrl:
-              'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80',
-          targetUrl: LeastPriceDataConfig.adminWhatsAppUrl,
-          storeName: tr('شركاء المطاعم', 'Restaurant partners'),
-          active: true,
-          order: 2,
-        ),
-      ];
+  static List<AdBannerItem> get mockData => [];
+
 }
