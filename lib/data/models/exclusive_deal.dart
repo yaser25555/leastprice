@@ -122,27 +122,4 @@ class ExclusiveDeal {
         'lastUpdatedByEmail': lastUpdatedByEmail.trim().toLowerCase(),
     };
   }
-
-  static final List<ExclusiveDeal> mockData = [
-    ExclusiveDeal(
-      id: 'deal-1',
-      title: tr('عرض محمصة نهاية الأسبوع',
-          'Weekend roastery deal'),
-      imageUrl:
-          'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',
-      beforePrice: 42,
-      afterPrice: 29,
-      expiryDate: DateTime.now().add(const Duration(days: 3)),
-    ),
-    ExclusiveDeal(
-      id: 'deal-2',
-      title: tr('عرض عناية يومي من الصيدلية',
-          'Daily pharmacy care deal'),
-      imageUrl:
-          'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=900&q=80',
-      beforePrice: 79,
-      afterPrice: 52,
-      expiryDate: DateTime.now().add(const Duration(days: 2)),
-    ),
-  ];
 }

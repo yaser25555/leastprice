@@ -68,7 +68,13 @@ class _ExclusiveDealsSectionState extends State<ExclusiveDealsSection> {
             ..sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
 
           if (activeDeals.isEmpty) {
-            return const SizedBox.shrink();
+            return ComparisonSearchPlaceholder(
+              title: tr(
+                'قريباً عروض حصرية مثيرة! تابعونا للحصول على أفضل العروض.',
+                'Exciting exclusive deals coming soon! Follow us for the best offers.',
+              ),
+              icon: Icons.local_offer_outlined,
+            );
           }
 
           return ExclusiveDealsCarousel(deals: activeDeals, now: _now);

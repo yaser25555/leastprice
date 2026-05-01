@@ -1,17 +1,68 @@
-# leastprice
+# LeastPrice - أرخص سعر
 
-A new Flutter project.
+تطبيق Flutter للبحث عن أقل الأسعار ومقارنة المنتجات في السعودية.
 
-## Getting Started
+## الميزات
 
-This project is a starting point for a Flutter application.
+- 🔍 بحث ذكي عن المنتجات
+- 📊 مقارنة الأسعار بين المتاجر
+- 🎯 عروض حصرية
+- 🌐 دعم الويب والأندرويد
+- 🔒 مصادقة آمنة مع Firebase
+- 📱 واجهة مستخدم عربية
 
-A few resources to get you started if this is your first Flutter project:
+## التقنيات المستخدمة
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Flutter** - إطار العمل الرئيسي
+- **Firebase** - قاعدة البيانات والمصادقة
+- **Riverpod** - إدارة الحالة
+- **Firestore** - تخزين البيانات
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## التثبيت
+
+1. استنسخ المشروع:
+```bash
+git clone https://github.com/yourusername/leastprice.git
+cd leastprice
+```
+
+2. تثبيت الـ dependencies:
+```bash
+flutter pub get
+```
+
+3. إعداد Firebase:
+   - أنشئ مشروع Firebase
+   - أضف ملفات التكوين
+   - فعل Firestore و Authentication
+
+4. تشغيل التطبيق:
+```bash
+flutter run
+```
+
+## البناء
+
+### Android APK
+```bash
+flutter build apk --release
+```
+
+### Web
+```bash
+flutter build web --release
+```
+
+## النشر
+
+يتم النشر تلقائياً عبر GitHub Actions:
+- APK إلى GitHub Releases
+- Web إلى Firebase Hosting و GitHub Pages
+
+## المساهمة
+
+نرحب بالمساهمات! يرجى قراءة دليل المساهمة قبل البدء.
+
+## الترخيص
+
+هذا المشروع مرخص تحت رخصة MIT.

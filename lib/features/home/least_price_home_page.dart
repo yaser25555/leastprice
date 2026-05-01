@@ -1246,9 +1246,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                       child: ExclusiveDealsSection(
                         stream: widget.firebaseReady
                             ? _catalogService.watchExclusiveDeals()
-                            : Stream<List<ExclusiveDeal>>.value(
-                                ExclusiveDeal.mockData,
-                              ),
+                            : Stream<List<ExclusiveDeal>>.value([]),
                       ),
                     ),
                   if (showOffersSection)
