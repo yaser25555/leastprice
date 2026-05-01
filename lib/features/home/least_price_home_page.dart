@@ -1169,68 +1169,11 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                       sliver: SliverToBoxAdapter(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFFFB56B), Color(0xFFE8711A)],
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                            ),
-                            borderRadius: BorderRadius.circular(22),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x33212B45),
-                                blurRadius: 16,
-                                offset: Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.22),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Icon(
-                                      Icons.workspace_premium_rounded,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      tr(
-                                        'فعّل الاشتراك وافتح جميع النتائج',
-                                        'Activate subscription and unlock all results',
-                                      ),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 17,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                tr(
-                                  'التفعيل يتم يدويًا بعد التحويل البنكي. بعد التفعيل تظهر كل الميزات ونتائج البحث كاملة. للدعم: 00966558570889',
-                                  'Activation is done manually after bank transfer. Once activated, all features and full search results are unlocked. Support: 00966558570889',
-                                ),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  height: 1.5,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
+                        child: PlanPickerSection(
+                          isPaidActive: _isPaidPlanActive,
+                          visibleResultsCount: _trialVisibleResultsCount,
+                          onWhatsAppTap: () => _openExternalUrl(
+                            LeastPriceDataConfig.adminWhatsAppUrl,
                           ),
                         ),
                       ),

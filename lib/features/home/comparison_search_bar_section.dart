@@ -68,24 +68,24 @@ class ComparisonSearchBarSection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: AppPalette.navy,
+              color: AppPalette.orange,
             ),
             decoration: InputDecoration(
               hintText: searchHintText,
               hintStyle: const TextStyle(
-                color: AppPalette.softNavy,
+                color: AppPalette.paleOrange,
                 fontWeight: FontWeight.w600,
               ),
               prefixIcon: const Icon(
                 Icons.search_rounded,
-                color: AppPalette.navy,
+                color: AppPalette.orange,
               ),
               suffixIcon: hasQuery
                   ? IconButton(
                       onPressed: onClearSearch,
                       icon: const Icon(
                         Icons.close_rounded,
-                        color: AppPalette.navy,
+                        color: AppPalette.orange,
                       ),
                     )
                   : null,
@@ -95,9 +95,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
-              color: appleStyle
-                  ? AppPalette.softOrange
-                  : AppPalette.softOrange.withValues(alpha: 0.8),
+              color: appleStyle ? AppPalette.cardBackground : AppPalette.deepNavy,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: appleStyle
@@ -109,7 +107,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.location_on_outlined,
-                  color: AppPalette.navy,
+                  color: AppPalette.orange,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -119,15 +117,15 @@ class ComparisonSearchBarSection extends StatelessWidget {
                       value: selectedCityId,
                       isExpanded: true,
                       borderRadius: BorderRadius.circular(18),
-                      dropdownColor: Colors.white,
+                      dropdownColor: AppPalette.cardBackground,
                       style: const TextStyle(
                         fontWeight: FontWeight.w800,
-                        color: AppPalette.navy,
+                        color: AppPalette.orange,
                         fontSize: 14.5,
                       ),
                       icon: const Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: AppPalette.navy,
+                        color: AppPalette.orange,
                       ),
                       items: availableCities
                           .map(
@@ -137,7 +135,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
                                 city.label,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w800,
-                                  color: AppPalette.navy,
+                                  color: AppPalette.orange,
                                 ),
                               ),
                             ),
@@ -158,7 +156,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   tooltip: tr('تحديد المدينة تلقائياً', 'Detect city automatically'),
                   icon: const Icon(
                     Icons.my_location_rounded,
-                    color: AppPalette.navy,
+                    color: AppPalette.orange,
                   ),
                 ),
               ],
