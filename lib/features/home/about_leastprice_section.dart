@@ -165,7 +165,7 @@ class _AboutFeatureCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: AppPalette.panelText,
+              color: AppPalette.pureWhite,
               fontSize: 17,
               fontWeight: FontWeight.w900,
             ),
@@ -174,7 +174,7 @@ class _AboutFeatureCard extends StatelessWidget {
           Text(
             description,
             style: TextStyle(
-              color: AppPalette.mutedText,
+              color: AppPalette.pureWhite.withValues(alpha: 0.85),
               fontSize: 14.4,
               fontWeight: FontWeight.w600,
               height: 1.7,

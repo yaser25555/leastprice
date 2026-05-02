@@ -355,7 +355,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                   Text(
                     tr('معلومات التحويل', 'Transfer details'),
                     style: TextStyle(
-                      color: AppPalette.panelText,
+                      color: AppPalette.pureWhite,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -370,7 +370,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                       'Plan activation is done manually after transfer.',
                     ),
                     style: TextStyle(
-                      color: AppPalette.mutedText,
+                      color: AppPalette.pureWhite.withValues(alpha: 0.85),
                       fontWeight: FontWeight.w700,
                       height: 1.5,
                     ),
