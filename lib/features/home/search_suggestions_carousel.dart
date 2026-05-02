@@ -32,7 +32,7 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
       'title': 'المطاعم والمقاهي',
       'subtitle': 'أفضل عروض الوجبات، القهوة، والمطاعم من حولك بأقل الأسعار.',
       'icon': Icons.restaurant_rounded,
-      'gradient': [AppPalette.orange, const Color(0xFFFF7A00)],
+      'gradient': [AppPalette.orange, Color(0xFFFF7A00)],
     },
     {
       'title': 'العطور والتجميل',
@@ -153,7 +153,7 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                         child: Icon(
                           item['icon'] as IconData,
                           size: 100,
-                          color: Colors.white.withOpacity(0.15),
+                          color: AppPalette.pureWhite.withOpacity(0.15),
                         ),
                       ),
                       Column(
@@ -162,14 +162,14 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: AppPalette.pureWhite.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
                                   item['icon'] as IconData,
-                                  color: Colors.white,
+                                  color: AppPalette.pureWhite,
                                   size: 24,
                                 ),
                               ),
@@ -177,8 +177,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                               Expanded(
                                 child: Text(
                                   item['title'] as String,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: AppPalette.pureWhite,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -189,8 +189,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                           const SizedBox(height: 12),
                           Text(
                             item['subtitle'] as String,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppPalette.pureWhite,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               height: 1.4,

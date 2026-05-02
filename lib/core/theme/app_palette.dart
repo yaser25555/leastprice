@@ -26,6 +26,10 @@ class AppPalette {
   static Color get panelText => isFeminineTheme.value ? const Color(0xFF003F7A) : const Color(0xFF8BEDEA);
   static Color get mutedText => isFeminineTheme.value ? const Color(0xFF3388CC) : const Color(0xFF63D6D2);
   static Color get shadow => isFeminineTheme.value ? const Color(0x1A003F7A) : const Color(0x141B2F5E);
+  static Color get pureWhite => isFeminineTheme.value ? const Color(0xFF005A9C) : Colors.white;
+  static Color pureWhiteOpacity(double opacity) => isFeminineTheme.value 
+      ? const Color(0xFF005A9C).withOpacity(opacity) 
+      : Colors.white.withOpacity(opacity);
 
   // -- Premium 3D Neumorphic Shadows --
   static List<BoxShadow> get premium3DBoxShadow => isFeminineTheme.value 

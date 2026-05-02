@@ -11,13 +11,13 @@ class CouponsPaywallSection extends StatelessWidget {
 
   final VoidCallback onUpgradeTap;
 
-  static const List<_PaywallStore> _featuredStores = [
+  static List<_PaywallStore> get _featuredStores => [
     _PaywallStore('Amazon', Color(0xFFFF9900), Color(0xFF232F3E)),
     _PaywallStore('Noon', Color(0xFFFEEE00), Color(0xFF1F1F1F)),
-    _PaywallStore('Namshi', Color(0xFF7E3CC0), Colors.white),
-    _PaywallStore('iHerb', Color(0xFF4FA72E), Colors.white),
-    _PaywallStore('Sephora', Color(0xFF111111), Colors.white),
-    _PaywallStore('SHEIN', Color(0xFF222222), Colors.white),
+    _PaywallStore('Namshi', Color(0xFF7E3CC0), AppPalette.pureWhite),
+    _PaywallStore('iHerb', Color(0xFF4FA72E), AppPalette.pureWhite),
+    _PaywallStore('Sephora', Color(0xFF111111), AppPalette.pureWhite),
+    _PaywallStore('SHEIN', Color(0xFF222222), AppPalette.pureWhite),
   ];
 
   @override
@@ -25,7 +25,7 @@ class CouponsPaywallSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
@@ -62,9 +62,9 @@ class CouponsPaywallSection extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.lock_rounded,
-                color: Colors.white,
+                color: AppPalette.pureWhite,
                 size: 32,
               ),
             ),
@@ -105,7 +105,7 @@ class CouponsPaywallSection extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: AppPalette.deepNavy,
                 borderRadius: BorderRadius.circular(20),
@@ -119,13 +119,13 @@ class CouponsPaywallSection extends StatelessWidget {
                     label: tr('أكواد خصم محدّثة أسبوعيًا',
                         'Fresh discount codes weekly'),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   _BenefitRow(
                     accent: AppPalette.accentSky,
                     label: tr('من أمازون ونون ونمشي وغيرها',
                         'From Amazon, Noon, Namshi & more'),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   _BenefitRow(
                     accent: AppPalette.orangeCoral,
                     label: tr('نسخ الكود بضغطة واحدة',
@@ -159,17 +159,17 @@ class CouponsPaywallSection extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.rocket_launch_rounded,
-                            color: Colors.white,
+                            color: AppPalette.pureWhite,
                             size: 20,
                           ),
                           const SizedBox(width: 10),
                           Text(
                             tr('اشترك الآن لفتح الكوبونات',
                                 'Subscribe now to unlock coupons'),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppPalette.pureWhite,
                               fontWeight: FontWeight.w900,
                               fontSize: 15,
                             ),

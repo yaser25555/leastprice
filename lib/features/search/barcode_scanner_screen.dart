@@ -29,19 +29,19 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
       appBar: AppBar(
         title: Text(
           tr('مسح الباركود', 'Scan Barcode'),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppPalette.deepNavy,
         foregroundColor: AppPalette.orange,
         actions: [
           IconButton(
-            color: Colors.white,
+            color: AppPalette.pureWhite,
             icon: ValueListenableBuilder(
               valueListenable: controller,
               builder: (context, state, child) {
                 switch (state.torchState) {
                   case TorchState.off:
-                    return const Icon(Icons.flash_off, color: Colors.grey);
+                    return Icon(Icons.flash_off, color: Colors.grey);
                   case TorchState.on:
                     return Icon(Icons.flash_on, color: AppPalette.orange);
                   case TorchState.auto:
@@ -55,8 +55,8 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
             onPressed: () => controller.toggleTorch(),
           ),
           IconButton(
-            color: Colors.white,
-            icon: const Icon(Icons.flip_camera_ios, color: Colors.white),
+            color: AppPalette.pureWhite,
+            icon: Icon(Icons.flip_camera_ios, color: AppPalette.pureWhite),
             iconSize: 32.0,
             onPressed: () => controller.switchCamera(),
           ),
@@ -103,7 +103,7 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                 ),
                 child: Text(
                   tr('وجه الكاميرا نحو الباركود', 'Point camera at barcode'),
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(color: AppPalette.pureWhite, fontSize: 16),
                 ),
               ),
             ),

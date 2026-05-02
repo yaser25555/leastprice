@@ -80,7 +80,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               activeColor: AppPalette.orangeCrimson,
               activeBackground: AppPalette.orangeWarm,
               activeGradient: AppPalette.gradientWarmCta,
-              activeIconColor: Colors.white,
+              activeIconColor: AppPalette.pureWhite,
               onTap: () => onSectionSelected(HomeCatalogSection.plans),
             ),
           ),
@@ -132,7 +132,7 @@ class HomeSectionSwitcherButton extends StatelessWidget {
         : (appleStyle ? const Color(0xFFF3F4F8) : AppPalette.softNavy);
     final iconColor = isSelected
         ? (useGradient
-            ? (activeIconColor ?? Colors.white)
+            ? (activeIconColor ?? AppPalette.pureWhite)
             : activeColor)
         : (appleStyle ? AppPalette.navy : AppPalette.panelText);
     final borderColor = isSelected

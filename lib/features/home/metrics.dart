@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:leastprice/core/theme/app_palette.dart';
+import 'package:leastprice/core/utils/helpers.dart';
 class InviteMetric extends StatelessWidget {
   const InviteMetric({super.key, 
     required this.icon,
@@ -21,13 +21,13 @@ class InviteMetric extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: Colors.white),
+          Icon(icon, size: 18, color: AppPalette.pureWhite),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppPalette.pureWhite,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -59,12 +59,12 @@ class StatPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 17, color: Colors.white),
+          Icon(icon, size: 17, color: AppPalette.pureWhite),
           const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppPalette.pureWhite,
               fontWeight: FontWeight.w700,
             ),
           ),

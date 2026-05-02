@@ -102,7 +102,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
     final selectedIsPaid = _selected != LeastPricePlanTier.free;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(28),
@@ -134,9 +134,9 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.workspace_premium_rounded,
-                  color: Colors.white,
+                  color: AppPalette.pureWhite,
                 ),
               ),
               const SizedBox(width: 12),
@@ -153,7 +153,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
               if (widget.isPaidActive)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     gradient: AppPalette.gradientWarmCta,
                     borderRadius: BorderRadius.circular(999),
@@ -167,8 +167,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                   ),
                   child: Text(
                     tr('مفعلة', 'Active'),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppPalette.pureWhite,
                       fontWeight: FontWeight.w900,
                       fontSize: 12.5,
                     ),
@@ -192,7 +192,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
                       width: 165,
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: isSelected ? null : AppPalette.softNavy,
                         gradient: isSelected
@@ -239,8 +239,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                                 AppPalette.gradientWarmCta.createShader(rect),
                             child: Text(
                               _tierPrice(tier),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppPalette.pureWhite,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 16,
                               ),
@@ -270,8 +270,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                           ),
                           child: Text(
                             tr('أفضل قيمة', 'Best value'),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppPalette.pureWhite,
                               fontWeight: FontWeight.w900,
                               fontSize: 10,
                             ),
@@ -285,7 +285,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
           ),
           const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: AppPalette.deepNavy,
               borderRadius: BorderRadius.circular(20),
@@ -343,7 +343,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
           if (selectedIsPaid) ...[
             const SizedBox(height: 14),
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: AppPalette.softNavy,
                 borderRadius: BorderRadius.circular(20),
@@ -389,7 +389,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                         onPressed: _openWhatsApp,
                         style: FilledButton.styleFrom(
                           backgroundColor: AppPalette.orange,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppPalette.pureWhite,
                         ),
                         icon: const Icon(Icons.forum_rounded),
                         label: Text(

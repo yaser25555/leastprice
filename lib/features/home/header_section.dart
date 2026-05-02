@@ -41,13 +41,13 @@ class HeaderSection extends StatelessWidget {
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: appleStyle
-                  ? [const Color(0xFF243B6B), AppPalette.navy]
+                  ? [Color(0xFF243B6B), AppPalette.navy]
                   : [AppPalette.navy, AppPalette.deepNavy],
             ),
             boxShadow: [
               BoxShadow(
                 color:
-                    appleStyle ? const Color(0x101B2F5E) : AppPalette.shadow,
+                    appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
                 blurRadius: appleStyle ? 20 : 28,
                 offset: Offset(0, appleStyle ? 12 : 18),
               ),
@@ -78,8 +78,8 @@ class HeaderSection extends StatelessWidget {
                           children: [
                             Text(
                               tr('أرخص سعر - LeastPrice', 'LeastPrice'),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppPalette.pureWhite,
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -87,8 +87,8 @@ class HeaderSection extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               '${tr('مرحباً', 'Hello')} $currentUserLabel',
-                              style: const TextStyle(
-                                color: Color(0xD9FFFFFF),
+                              style: TextStyle(
+                                color: AppPalette.pureWhiteOpacity(0.85),
                                 fontSize: 13.5,
                                 height: 1.45,
                                 fontWeight: FontWeight.w700,
@@ -115,8 +115,8 @@ class HeaderSection extends StatelessWidget {
                             ),
                             child: Text(
                               lang == 'ar' ? 'EN' : 'AR',
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppPalette.pureWhite,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 13,
                               ),
@@ -128,8 +128,8 @@ class HeaderSection extends StatelessWidget {
                       IconButton(
                         onPressed: onLogoutTap,
                         style: IconButton.styleFrom(
-                          backgroundColor: const Color(0x1AFFFFFF),
-                          foregroundColor: Colors.white,
+                          backgroundColor: Color(0x1AFFFFFF),
+                          foregroundColor: AppPalette.pureWhite,
                         ),
                         icon: const Icon(Icons.logout_rounded),
                         tooltip: tr('تسجيل الخروج', 'Sign Out'),
@@ -166,8 +166,8 @@ class HeaderSection extends StatelessWidget {
                                   'ملف المستخدم ودعوات التوفير',
                                   'Profile and invite savings',
                                 ),
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: AppPalette.pureWhite,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -176,8 +176,8 @@ class HeaderSection extends StatelessWidget {
                             Text(
                               tr('كودك: $inviteCode',
                                   'Your code: $inviteCode'),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppPalette.pureWhite,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -189,8 +189,8 @@ class HeaderSection extends StatelessWidget {
                             'شارك رابط الدعوة الخاص بك ووسّع دائرة التوفير بين أصدقائك.',
                             'Share your invite link and grow the savings circle with your friends.',
                           ),
-                          style: const TextStyle(
-                            color: Color(0xD9FFFFFF),
+                          style: TextStyle(
+                            color: AppPalette.pureWhiteOpacity(0.85),
                             height: 1.4,
                           ),
                         ),
@@ -222,9 +222,9 @@ class HeaderSection extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: onInviteTap,
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: const BorderSide(color: Color(0x55FFFFFF)),
-                              backgroundColor: const Color(0x10FFFFFF),
+                              foregroundColor: AppPalette.pureWhite,
+                              side: BorderSide(color: AppPalette.pureWhiteOpacity(0.33)),
+                              backgroundColor: AppPalette.pureWhiteOpacity(0.06),
                             ),
                             icon: const Icon(Icons.share_rounded),
                             label: Text(
@@ -289,13 +289,13 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: appleStyle
-                  ? [const Color(0xFF243B6B), AppPalette.navy]
+                  ? [Color(0xFF243B6B), AppPalette.navy]
                   : [AppPalette.navy, AppPalette.deepNavy],
             ),
             boxShadow: [
               BoxShadow(
                 color:
-                    appleStyle ? const Color(0x101B2F5E) : AppPalette.shadow,
+                    appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
                 blurRadius: appleStyle ? 20 : 28,
                 offset: Offset(0, appleStyle ? 12 : 18),
               ),
@@ -491,7 +491,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                                   IconButton(
                                     onPressed: widget.onInviteTap,
                                     style: IconButton.styleFrom(
-                                      backgroundColor: const Color(0x24E8711A),
+                                      backgroundColor: Color(0x24E8711A),
                                       foregroundColor: AppPalette.paleOrange,
                                       padding: const EdgeInsets.all(10),
                                       minimumSize: const Size(36, 36),

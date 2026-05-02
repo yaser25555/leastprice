@@ -1084,7 +1084,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               heroTag: 'admin-dashboard-fab',
               tooltip: tr('لوحة المسؤول', 'Admin panel'),
               backgroundColor: AppPalette.navy,
-              foregroundColor: Colors.white,
+              foregroundColor: AppPalette.pureWhite,
               onPressed: widget.firebaseReady
                   ? _openAdminDashboard
                   : _showFirebaseSetupRequired,
