@@ -362,10 +362,10 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                   const SizedBox(height: 10),
                   Text(
                     tr(
-                      'بنك الإنماء — باسم: ناصر فاهد الزعبي\n'
+                      'بنك الإنماء\n'
                       'الآيبان: SA7005000068202380361000\n'
                       'بعد التحويل يتم تفعيل الخطة يدويًا.',
-                      'Bank Alinma — Name: Nasser Fahed Alzaabi\n'
+                      'Bank Alinma\n'
                       'IBAN: SA7005000068202380361000\n'
                       'Plan activation is done manually after transfer.',
                     ),

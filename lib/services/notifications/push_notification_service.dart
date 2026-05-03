@@ -25,6 +25,10 @@ class PushNotificationService {
   }
 
   static Future<void> updatePremiumSubscription(UserSavingsProfile? profile) async {
+    if (kIsWeb) {
+      return; // Topic subscription is not supported on Flutter Web
+    }
+
     const topic = 'premium_quick_deals';
 
     if (profile == null) {
