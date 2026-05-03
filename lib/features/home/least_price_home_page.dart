@@ -48,6 +48,7 @@ class LeastPriceHomePage extends StatefulWidget {
 
 class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   final FirestoreCatalogService _catalogService =
       const FirestoreCatalogService();
   final ProductRepository _fallbackRepository = const ProductRepository();
@@ -401,6 +402,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
   @override
   void dispose() {
+    _searchFocusNode.dispose();
     _connectivitySubscription?.cancel();
     _userProfileSubscription?.cancel();
     _bannerSubscription?.cancel();
@@ -1161,6 +1163,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                         padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                         child: ComparisonSearchBarSection(
                           searchController: _searchController,
+                          focusNode: _searchFocusNode,
                           query: _query,
                           resultsCount: comparisonResults.length,
                           dataSourceLabel: comparisonDataSourceLabel,

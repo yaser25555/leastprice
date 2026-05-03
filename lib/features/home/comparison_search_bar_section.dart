@@ -10,6 +10,7 @@ import 'home_exports.dart';
 class ComparisonSearchBarSection extends StatelessWidget {
   const ComparisonSearchBarSection({super.key, 
     required this.searchController,
+    required this.focusNode,
     required this.query,
     required this.resultsCount,
     required this.dataSourceLabel,
@@ -24,6 +25,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
   });
 
   final TextEditingController searchController;
+  final FocusNode focusNode;
   final String query;
   final int resultsCount;
   final String dataSourceLabel;
@@ -53,6 +55,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
         children: [
           TextField(
             controller: searchController,
+            focusNode: focusNode,
             textInputAction: TextInputAction.search,
             onSubmitted: onSubmitted,
             style: TextStyle(
@@ -113,8 +116,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   icon: Icons.electrical_services_rounded,
                   label: tr('الإلكترونيات', 'Electronics'),
                   onTap: () {
-                    searchController.text = tr('الإلكترونيات', 'Electronics');
-                    onSubmitted(searchController.text);
+                    searchController.text = tr('الإلكترونيات', 'Electronics') + ' ';
+                    searchController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: searchController.text.length),
+                    );
+                    focusNode.requestFocus();
                   },
                 ),
                 const SizedBox(width: 8),
@@ -122,8 +128,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   icon: Icons.local_grocery_store_rounded,
                   label: tr('السوبر ماركت', 'Supermarket'),
                   onTap: () {
-                    searchController.text = tr('السوبر ماركت', 'Supermarket');
-                    onSubmitted(searchController.text);
+                    searchController.text = tr('السوبر ماركت', 'Supermarket') + ' ';
+                    searchController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: searchController.text.length),
+                    );
+                    focusNode.requestFocus();
                   },
                 ),
                 const SizedBox(width: 8),
@@ -131,8 +140,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   icon: Icons.restaurant_rounded,
                   label: tr('المطاعم', 'Restaurants'),
                   onTap: () {
-                    searchController.text = tr('المطاعم', 'Restaurants');
-                    onSubmitted(searchController.text);
+                    searchController.text = tr('المطاعم', 'Restaurants') + ' ';
+                    searchController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: searchController.text.length),
+                    );
+                    focusNode.requestFocus();
                   },
                 ),
                 const SizedBox(width: 8),
@@ -140,8 +152,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   icon: Icons.local_cafe_rounded,
                   label: tr('المقاهي', 'Cafes'),
                   onTap: () {
-                    searchController.text = tr('المقاهي', 'Cafes');
-                    onSubmitted(searchController.text);
+                    searchController.text = tr('المقاهي', 'Cafes') + ' ';
+                    searchController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: searchController.text.length),
+                    );
+                    focusNode.requestFocus();
                   },
                 ),
                 const SizedBox(width: 8),
@@ -149,8 +164,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   icon: Icons.medical_services_rounded,
                   label: tr('العيادات الطبية', 'Medical Clinics'),
                   onTap: () {
-                    searchController.text = tr('العيادات الطبية', 'Medical Clinics');
-                    onSubmitted(searchController.text);
+                    searchController.text = tr('العيادات الطبية', 'Medical Clinics') + ' ';
+                    searchController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: searchController.text.length),
+                    );
+                    focusNode.requestFocus();
                   },
                 ),
               ],
