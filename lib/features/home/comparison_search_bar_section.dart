@@ -105,6 +105,58 @@ class ComparisonSearchBarSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _CategoryChip(
+                  icon: Icons.electrical_services_rounded,
+                  label: tr('الإلكترونيات', 'Electronics'),
+                  onTap: () {
+                    searchController.text = tr('الإلكترونيات', 'Electronics');
+                    onSubmitted(searchController.text);
+                  },
+                ),
+                const SizedBox(width: 8),
+                _CategoryChip(
+                  icon: Icons.local_grocery_store_rounded,
+                  label: tr('السوبر ماركت', 'Supermarket'),
+                  onTap: () {
+                    searchController.text = tr('السوبر ماركت', 'Supermarket');
+                    onSubmitted(searchController.text);
+                  },
+                ),
+                const SizedBox(width: 8),
+                _CategoryChip(
+                  icon: Icons.restaurant_rounded,
+                  label: tr('المطاعم', 'Restaurants'),
+                  onTap: () {
+                    searchController.text = tr('المطاعم', 'Restaurants');
+                    onSubmitted(searchController.text);
+                  },
+                ),
+                const SizedBox(width: 8),
+                _CategoryChip(
+                  icon: Icons.local_cafe_rounded,
+                  label: tr('المقاهي', 'Cafes'),
+                  onTap: () {
+                    searchController.text = tr('المقاهي', 'Cafes');
+                    onSubmitted(searchController.text);
+                  },
+                ),
+                const SizedBox(width: 8),
+                _CategoryChip(
+                  icon: Icons.medical_services_rounded,
+                  label: tr('العيادات الطبية', 'Medical Clinics'),
+                  onTap: () {
+                    searchController.text = tr('العيادات الطبية', 'Medical Clinics');
+                    onSubmitted(searchController.text);
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
@@ -204,6 +256,37 @@ class ComparisonSearchBarSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      avatar: Icon(icon, color: AppPalette.orange, size: 16),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: AppPalette.panelText,
+          fontWeight: FontWeight.w700,
+          fontSize: 13,
+        ),
+      ),
+      backgroundColor: AppPalette.cardBackground,
+      side: BorderSide(color: AppPalette.cardBorder, width: 1.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onPressed: onTap,
     );
   }
 }
