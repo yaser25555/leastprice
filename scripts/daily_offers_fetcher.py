@@ -27,7 +27,7 @@ DEFAULT_CREDENTIALS_PATH = os.path.join(
 
 # Target stores to filter
 TARGET_STORES = [
-    "بنده", "العثيم", "كارفور", "لولو", "التميمي", "المزرعة", "نستو", "الدانوب", "جرير", "اكسترا"
+    "بنده", "العثيم", "كارفور", "لولو", "التميمي", "المزرعة", "نستو", "الدانوب", "جرير", "اكسترا", "النهدي", "الدواء"
 ]
 
 def initialize_firebase(credentials_path):
