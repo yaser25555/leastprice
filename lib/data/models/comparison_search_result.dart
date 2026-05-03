@@ -33,8 +33,14 @@ class ComparisonSearchResult {
   final String? tag;
 
   bool get isScraped => sourceType == ComparisonSearchSourceType.scraper;
-  bool get isPreferredMarketplace =>
-      storeId == 'noon' || storeId == 'amazon';
+  bool get isPreferredMarketplace {
+    const preferred = {
+      'noon', 'amazon', 'jarir', 'extra', 'nahdi', 'aldawaa', 
+      'hungerstation', 'panda', 'othaim', 'carrefour', 'niceone', 
+      'sephora', 'jahez', 'toyou', 'whites', 'lulu'
+    };
+    return preferred.contains(storeId.toLowerCase());
+  }
 
   ComparisonSearchResult copyWith({
     String? title,

@@ -608,7 +608,13 @@ class SerpApiShoppingSearchService {
     ComparisonSearchResult second,
   ) {
     final priceDifference = (first.price - second.price).abs();
-    if (priceDifference <= 2.0 &&
+    final minPrice = first.price < second.price ? first.price : second.price;
+    
+    // Give preferred stores a small tolerance (5% of the price or up to 15 SAR)
+    // to bubble them to the top if they are extremely close to the lowest price.
+    final tolerance = (minPrice * 0.05).clamp(2.0, 15.0);
+
+    if (priceDifference <= tolerance &&
         first.isPreferredMarketplace != second.isPreferredMarketplace) {
       return first.isPreferredMarketplace ? -1 : 1;
     }
