@@ -46,7 +46,7 @@ class ExclusiveDealCard extends StatelessWidget {
           border: Border.all(color: AppPalette.dealsBorder.withOpacity(0.5)),
           boxShadow: [
             BoxShadow(
-              color: AppPalette.darkNavy.withOpacity(0.06),
+              color: AppPalette.deepNavy.withOpacity(0.06),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -65,7 +65,7 @@ class ExclusiveDealCard extends StatelessWidget {
                   color: AppPalette.softOrange,
                   boxShadow: [
                     BoxShadow(
-                      color: AppPalette.darkNavy.withOpacity(0.04),
+                      color: AppPalette.deepNavy.withOpacity(0.04),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -119,7 +119,7 @@ class ExclusiveDealCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: AppPalette.darkNavy,
+                        color: AppPalette.deepNavy,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         height: 1.3,
