@@ -18,6 +18,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
     required this.isSearchingOnline,
     required this.availableCities,
     required this.selectedCityId,
+    required this.selectedCategory,
+    required this.onCategorySelected,
     required this.onCitySelected,
     required this.onClearSearch,
     required this.onSubmitted,
@@ -33,6 +35,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final bool isSearchingOnline;
   final List<MarketplaceSearchCity> availableCities;
   final String selectedCityId;
+  final String? selectedCategory;
+  final ValueChanged<String> onCategorySelected;
   final ValueChanged<String> onCitySelected;
   final VoidCallback onClearSearch;
   final ValueChanged<String> onSubmitted;
@@ -115,11 +119,9 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.electrical_services_rounded,
                   label: tr('الإلكترونيات', 'Electronics'),
+                  isSelected: selectedCategory == tr('الإلكترونيات', 'Electronics'),
                   onTap: () {
-                    searchController.text = tr('الإلكترونيات', 'Electronics') + ' ';
-                    searchController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: searchController.text.length),
-                    );
+                    onCategorySelected(tr('الإلكترونيات', 'Electronics'));
                     focusNode.requestFocus();
                   },
                 ),
@@ -127,11 +129,9 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.local_grocery_store_rounded,
                   label: tr('السوبر ماركت', 'Supermarket'),
+                  isSelected: selectedCategory == tr('السوبر ماركت', 'Supermarket'),
                   onTap: () {
-                    searchController.text = tr('السوبر ماركت', 'Supermarket') + ' ';
-                    searchController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: searchController.text.length),
-                    );
+                    onCategorySelected(tr('السوبر ماركت', 'Supermarket'));
                     focusNode.requestFocus();
                   },
                 ),
@@ -139,11 +139,9 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.restaurant_rounded,
                   label: tr('المطاعم', 'Restaurants'),
+                  isSelected: selectedCategory == tr('المطاعم', 'Restaurants'),
                   onTap: () {
-                    searchController.text = tr('المطاعم', 'Restaurants') + ' ';
-                    searchController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: searchController.text.length),
-                    );
+                    onCategorySelected(tr('المطاعم', 'Restaurants'));
                     focusNode.requestFocus();
                   },
                 ),
@@ -151,11 +149,9 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.local_cafe_rounded,
                   label: tr('المقاهي', 'Cafes'),
+                  isSelected: selectedCategory == tr('المقاهي', 'Cafes'),
                   onTap: () {
-                    searchController.text = tr('المقاهي', 'Cafes') + ' ';
-                    searchController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: searchController.text.length),
-                    );
+                    onCategorySelected(tr('المقاهي', 'Cafes'));
                     focusNode.requestFocus();
                   },
                 ),
@@ -163,11 +159,9 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.medical_services_rounded,
                   label: tr('العيادات الطبية', 'Medical Clinics'),
+                  isSelected: selectedCategory == tr('العيادات الطبية', 'Medical Clinics'),
                   onTap: () {
-                    searchController.text = tr('العيادات الطبية', 'Medical Clinics') + ' ';
-                    searchController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: searchController.text.length),
-                    );
+                    onCategorySelected(tr('العيادات الطبية', 'Medical Clinics'));
                     focusNode.requestFocus();
                   },
                 ),
@@ -283,26 +277,28 @@ class _CategoryChip extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
+    required this.isSelected,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
     return ActionChip(
-      avatar: Icon(icon, color: AppPalette.orange, size: 16),
+      avatar: Icon(icon, color: isSelected ? AppPalette.pureWhite : AppPalette.orange, size: 16),
       label: Text(
         label,
         style: TextStyle(
-          color: AppPalette.panelText,
+          color: isSelected ? AppPalette.pureWhite : AppPalette.panelText,
           fontWeight: FontWeight.w700,
           fontSize: 13,
         ),
       ),
-      backgroundColor: AppPalette.cardBackground,
-      side: BorderSide(color: AppPalette.cardBorder, width: 1.2),
+      backgroundColor: isSelected ? AppPalette.orange : AppPalette.cardBackground,
+      side: BorderSide(color: isSelected ? AppPalette.orange : AppPalette.cardBorder, width: 1.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onPressed: onTap,
     );

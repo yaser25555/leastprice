@@ -63,6 +63,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   StreamSubscription<AutomationHealthStatus?>? _systemHealthSubscription;
   Timer? _smartSearchDebounce;
   String _query = '';
+  String? _selectedSearchCategory;
   final String _selectedCategoryId = ProductCategoryCatalog.allId;
   MarketplaceSearchCity _selectedSearchCity = marketplaceSearchCities.first;
   HomeCatalogSection _selectedHomeSection = HomeCatalogSection.comparisons;
@@ -541,8 +542,23 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     String trimmedQuery, {
     bool forceRefresh = false,
   }) async {
+    String effectiveQuery = trimmedQuery;
+    if (_selectedSearchCategory != null && trimmedQuery.isNotEmpty) {
+      if (_selectedSearchCategory == 'الإلكترونيات' || _selectedSearchCategory == 'Electronics') {
+         effectiveQuery = '$trimmedQuery الكترونيات';
+      } else if (_selectedSearchCategory == 'السوبر ماركت' || _selectedSearchCategory == 'Supermarket') {
+         effectiveQuery = '$trimmedQuery بقالة';
+      } else if (_selectedSearchCategory == 'المطاعم' || _selectedSearchCategory == 'Restaurants') {
+         effectiveQuery = '$trimmedQuery مطعم';
+      } else if (_selectedSearchCategory == 'المقاهي' || _selectedSearchCategory == 'Cafes') {
+         effectiveQuery = '$trimmedQuery كافيه';
+      } else if (_selectedSearchCategory == 'العيادات الطبية' || _selectedSearchCategory == 'Medical Clinics') {
+         effectiveQuery = '$trimmedQuery عيادة';
+      }
+    }
+
     final result = await _comparisonSearchService.search(
-      query: trimmedQuery,
+      query: effectiveQuery,
       firebaseReady: widget.firebaseReady,
       forceRefresh: forceRefresh,
       city: _selectedSearchCity,
@@ -1174,6 +1190,16 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           isSearchingOnline: _isSearchingOnline,
                           availableCities: marketplaceSearchCities,
                           selectedCityId: _selectedSearchCity.id,
+                          selectedCategory: _selectedSearchCategory,
+                          onCategorySelected: (category) {
+                            setState(() {
+                              if (_selectedSearchCategory == category) {
+                                _selectedSearchCategory = null;
+                              } else {
+                                _selectedSearchCategory = category;
+                              }
+                            });
+                          },
                           onCitySelected: _selectSearchCity,
                           onClearSearch: _clearSearch,
                           onSubmitted: (value) {
