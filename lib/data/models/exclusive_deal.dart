@@ -15,6 +15,7 @@ class ExclusiveDeal {
     this.createdByEmail = '',
     this.lastUpdatedByUid = '',
     this.lastUpdatedByEmail = '',
+    this.dealUrl = '',
   });
 
   final String id;
@@ -28,6 +29,7 @@ class ExclusiveDeal {
   final String createdByEmail;
   final String lastUpdatedByUid;
   final String lastUpdatedByEmail;
+  final String dealUrl;
 
   double get savingsAmount => beforePrice - afterPrice;
 
@@ -56,6 +58,7 @@ class ExclusiveDeal {
     String? createdByEmail,
     String? lastUpdatedByUid,
     String? lastUpdatedByEmail,
+    String? dealUrl,
   }) {
     return ExclusiveDeal(
       id: id ?? this.id,
@@ -69,6 +72,7 @@ class ExclusiveDeal {
       createdByEmail: createdByEmail ?? this.createdByEmail,
       lastUpdatedByUid: lastUpdatedByUid ?? this.lastUpdatedByUid,
       lastUpdatedByEmail: lastUpdatedByEmail ?? this.lastUpdatedByEmail,
+      dealUrl: dealUrl ?? this.dealUrl,
     );
   }
 
@@ -93,6 +97,7 @@ class ExclusiveDeal {
       createdByEmail: stringValue(json['createdByEmail']) ?? '',
       lastUpdatedByUid: stringValue(json['lastUpdatedByUid']) ?? '',
       lastUpdatedByEmail: stringValue(json['lastUpdatedByEmail']) ?? '',
+      dealUrl: stringValue(json['dealUrl']) ?? '',
     );
   }
 
@@ -120,6 +125,7 @@ class ExclusiveDeal {
         'lastUpdatedByUid': lastUpdatedByUid.trim(),
       if (lastUpdatedByEmail.trim().isNotEmpty)
         'lastUpdatedByEmail': lastUpdatedByEmail.trim().toLowerCase(),
+      if (dealUrl.trim().isNotEmpty) 'dealUrl': dealUrl.trim(),
     };
   }
 
@@ -132,6 +138,7 @@ class ExclusiveDeal {
       afterPrice: 4500,
       expiryDate: DateTime.now().add(const Duration(days: 7)),
       active: true,
+      dealUrl: 'https://panda.com.sa',
     ),
     ExclusiveDeal(
       id: 'mock_deal_2',
@@ -141,6 +148,7 @@ class ExclusiveDeal {
       afterPrice: 2400,
       expiryDate: DateTime.now().add(const Duration(days: 5)),
       active: true,
+      dealUrl: 'https://extra.com',
     ),
   ];
 }

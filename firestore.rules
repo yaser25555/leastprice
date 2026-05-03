@@ -32,6 +32,11 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin() || isMarketingManager();
     }
 
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() || isMarketingManager();
+    }
+
     match /comparison_search_cache/{documentId} {
       allow read: if true;
       allow create, update: if isSignedIn();

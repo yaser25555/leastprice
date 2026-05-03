@@ -29,42 +29,47 @@ MOCK_DAILY_OFFERS = [
     {
         "store": "Panda",
         "title": "مهرجان بنده الأسبوعي - خصومات تصل لـ 50%",
-        "imageUrl": "https://panda.com.sa/media/catalog/category/weekly_offers.jpg", # Placeholder
+        "imageUrl": "https://placehold.co/400x400/FFF4ED/D94B45/png?text=Panda+Offer", # Placeholder
         "beforePrice": 200.0,
         "afterPrice": 100.0,
-        "daysValid": 7
+        "daysValid": 7,
+        "dealUrl": "https://panda.com.sa"
     },
     {
         "store": "Othaim",
         "title": "عروض الطازج من أسواق العثيم",
-        "imageUrl": "https://www.othaimmarkets.com/media/weekly_flyer.jpg", # Placeholder
+        "imageUrl": "https://placehold.co/400x400/FFF4ED/D94B45/png?text=Othaim+Offer", # Placeholder
         "beforePrice": 150.0,
         "afterPrice": 90.0,
-        "daysValid": 5
+        "daysValid": 5,
+        "dealUrl": "https://www.othaimmarkets.com"
     },
     {
         "store": "Jarir",
         "title": "عروض جرير على أجهزة اللابتوب والجوالات",
-        "imageUrl": "https://www.jarir.com/media/catalog/category/offers.jpg", # Placeholder
+        "imageUrl": "https://placehold.co/400x400/FFF4ED/D94B45/png?text=Jarir+Offer", # Placeholder
         "beforePrice": 4500.0,
         "afterPrice": 3999.0,
-        "daysValid": 14
+        "daysValid": 14,
+        "dealUrl": "https://www.jarir.com"
     },
     {
         "store": "Extra",
         "title": "التخفيضات الكبرى من إكسترا - أجهزة منزلية",
-        "imageUrl": "https://www.extra.com/media/mega_sale.jpg", # Placeholder
+        "imageUrl": "https://placehold.co/400x400/FFF4ED/D94B45/png?text=Extra+Offer", # Placeholder
         "beforePrice": 2500.0,
         "afterPrice": 1800.0,
-        "daysValid": 10
+        "daysValid": 10,
+        "dealUrl": "https://www.extra.com"
     },
     {
         "store": "Nahdi",
         "title": "عروض النهدي: اشتري 1 والثاني مجاناً",
-        "imageUrl": "https://www.nahdionline.com/media/bogo_offer.jpg", # Placeholder
+        "imageUrl": "https://placehold.co/400x400/FFF4ED/D94B45/png?text=Nahdi+Offer", # Placeholder
         "beforePrice": 120.0,
         "afterPrice": 60.0,
-        "daysValid": 7
+        "daysValid": 7,
+        "dealUrl": "https://www.nahdionline.com"
     }
 ]
 
@@ -93,6 +98,7 @@ def upload_offers_to_firestore(db, offers, dry_run=False):
             "imageUrl": offer['imageUrl'],
             "beforePrice": offer['beforePrice'],
             "afterPrice": offer['afterPrice'],
+            "dealUrl": offer.get('dealUrl', ''),
             "expiry_date": expiry_date,
             "active": True,
             "createdByUid": "daily_offers_bot",
