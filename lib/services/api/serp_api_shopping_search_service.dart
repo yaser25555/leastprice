@@ -226,8 +226,14 @@ class SerpApiShoppingSearchService {
     }
 
     if (kIsWeb) {
+      final origin = Uri.base.origin;
+      final isLocalhost = origin.contains('localhost') || origin.contains('127.0.0.1');
+      final baseUrl = isLocalhost 
+          ? 'https://${LeastPriceDataConfig.functionsRegion}-leastprice-yaser.cloudfunctions.net/${LeastPriceDataConfig.hybridSearchFunctionName}'
+          : '$origin/api/${LeastPriceDataConfig.hybridSearchFunctionName}';
+          
       final uri = Uri.parse(
-        '${Uri.base.origin}/api/${LeastPriceDataConfig.hybridSearchFunctionName}'
+        '$baseUrl'
         '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
         '&hl=${isAr ? 'ar' : 'en'}'
         '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}',
