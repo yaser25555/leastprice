@@ -42,172 +42,156 @@ class ExclusiveDealCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
           border: Border.all(color: AppPalette.dealsBorder.withOpacity(0.5)),
           boxShadow: [
             BoxShadow(
-              color: AppPalette.deepNavy.withOpacity(0.06),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
+              color: AppPalette.deepNavy.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              // Image Section
-              Container(
-                width: 120,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  color: AppPalette.softOrange,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppPalette.deepNavy.withOpacity(0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            // Big Image Section
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    color: AppPalette.softOrange,
+                    child: Image.network(
+                      deal.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) {
+                        return Icon(
+                          Icons.local_offer_rounded,
+                          color: AppPalette.dealsRed.withOpacity(0.5),
+                          size: 64,
+                        );
+                      },
                     ),
-                  ],
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  deal.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) {
-                    return Icon(
-                      Icons.local_offer_rounded,
-                      color: AppPalette.dealsRed.withOpacity(0.5),
-                      size: 32,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 16),
-              
-              // Details Section
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Badge
-                    Container(
+                  ),
+                  // Badge overlay
+                  Positioned(
+                    top: 16,
+                    right: 16,
+                    child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
+                        horizontal: 14,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppPalette.dealsRed.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: AppPalette.dealsRed,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Text(
                         tr('عرض حصري', 'Exclusive Deal'),
-                        style: TextStyle(
-                          color: AppPalette.dealsRed,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    
-                    // Title
-                    Text(
-                      deal.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppPalette.deepNavy,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        height: 1.3,
+                  ),
+                ],
+              ),
+            ),
+            
+            // Details Section at the bottom
+            Container(
+              padding: const EdgeInsets.all(20),
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          deal.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppPalette.deepNavy,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    
-                    // Price Row
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppPalette.dealsRed.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: AppPalette.dealsRed,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Bottom Row: Timer & Action
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.timer_outlined,
+                        size: 18,
+                        color: AppPalette.softNavy,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        remainingLabel,
+                        style: TextStyle(
+                          color: AppPalette.softNavy,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (deal.beforePrice > 0 && deal.afterPrice > 0) ...[
                         Text(
                           formatPrice(deal.afterPrice),
                           style: TextStyle(
                             color: AppPalette.dealsRed,
-                            fontSize: 22,
+                            fontSize: 24,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        if (deal.beforePrice > deal.afterPrice)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 3),
-                            child: Text(
-                              formatPrice(deal.beforePrice),
-                              style: TextStyle(
-                                color: AppPalette.softNavy,
-                                fontSize: 14,
-                                decoration: TextDecoration.lineThrough,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    
-                    // Savings & Expiry
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.timer_outlined,
-                          size: 14,
-                          color: AppPalette.softNavy,
-                        ),
-                        const SizedBox(width: 4),
+                      ] else ...[
                         Text(
-                          remainingLabel,
+                          tr('تصفح المجلة الان', 'Browse Flyer Now'),
                           style: TextStyle(
-                            color: AppPalette.softNavy,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            color: AppPalette.dealsRed,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                        if (deal.savingsPercent > 0) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE8F5E9),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              tr('وفر ${deal.savingsPercent}%', 'Save ${deal.savingsPercent}%'),
-                              style: const TextStyle(
-                                color: Color(0xFF2E7D32),
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
                       ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-              // Action Icon
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: AppPalette.softNavy.withOpacity(0.5),
-                size: 16,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

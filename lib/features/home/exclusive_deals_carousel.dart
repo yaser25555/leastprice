@@ -71,7 +71,7 @@ class _ExclusiveDealsCarouselState extends State<ExclusiveDealsCarousel> {
     return Column(
       children: [
         SizedBox(
-          height: 236,
+          height: 420,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.deals.length,
