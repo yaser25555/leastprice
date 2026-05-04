@@ -29,16 +29,16 @@ DEFAULT_CREDENTIALS_PATH = os.path.join(
 STORE_URLS_MAP = {
     "بنده": "https://panda.com.sa/weekly-offers",
     "العثيم": "https://www.othaimmarkets.com/weekly-flyer",
-    "كارفور": "https://www.carrefourksa.com/",
-    "لولو": "https://www.luluhypermarket.com/en-sa/pages/instore-promotions",
-    "التميمي": "https://tamimimarkets.com/promotions",
-    "المزرعة": "https://farm.com.sa/weekly-offers",
+    "كارفور": "https://www.carrefourksa.com/mafsau/ar/n/c/clp_ksa-deal-zone",
+    "لولو": "https://gcc.luluhypermarket.com/ar-sa/pages/instore-promotions",
+    "التميمي": "https://shop.tamimimarkets.com/ar/tag/exclusive-deals",
+    "المزرعة": "https://farm.com.sa/ar/Offers_Categories",
     "نستو": "https://nestohypermarket.com/sa-en/promotions",
-    "الدانوب": "https://danube.sa/promotions",
-    "جرير": "https://www.jarir.com/offers",
+    "الدانوب": "https://danube.sa/brochures",
+    "جرير": "https://www.jarir.com/",
     "اكسترا": "https://www.extra.com/offers",
-    "النهدي": "https://www.nahdionline.com/offers",
-    "الدواء": "https://www.al-dawaa.com/offers"
+    "النهدي": "https://www.nahdionline.com/ar-sa/promo-flyer/clp",
+    "الدواء": "https://www.al-dawaa.com/ar/offers-magazine"
 }
 TARGET_STORES = list(STORE_URLS_MAP.keys())
 
