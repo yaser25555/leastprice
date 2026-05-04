@@ -33,7 +33,6 @@ STORE_URLS_MAP = {
     "لولو": "https://gcc.luluhypermarket.com/ar-sa/pages/instore-promotions",
     "التميمي": "https://shop.tamimimarkets.com/ar/tag/exclusive-deals",
     "المزرعة": "https://farm.com.sa/ar/Offers_Categories",
-    "نستو": "https://nestohypermarket.com/sa-en/promotions",
     "الدانوب": "https://danube.sa/brochures",
     "جرير": "https://www.jarir.com/",
     "اكسترا": "https://www.extra.com/offers",
