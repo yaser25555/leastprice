@@ -104,12 +104,23 @@ def fetch_real_offers():
             link = "https://www.d4donline.com" + link
             
         # Set dummy prices since D4D flyers don't have individual prices on the cover
+        # Smart Link Validation: Check if the official server URL is alive, otherwise fallback to D4D
         official_url = STORE_URLS_MAP[matched_store]
+        final_deal_url = official_url
+        
+        try:
+            checker = requests.head(official_url, headers=headers, timeout=5, allow_redirects=True)
+            if checker.status_code >= 400 and checker.status_code != 403: # 403 is often just anti-bot protection, page might still exist for humans
+                print(f"[SMART-CHECK] URL changed or broken for {matched_store} (Code {checker.status_code}). Using D4D link.")
+                final_deal_url = link
+        except Exception:
+            print(f"[SMART-CHECK] Server unreachable for {matched_store}. Using D4D link.")
+            final_deal_url = link
         
         offers_list.append({
             "title": clean_title,
             "imageUrl": img_url,
-            "dealUrl": official_url,
+            "dealUrl": final_deal_url,
             "beforePrice": 0.0,
             "afterPrice": 0.0,
             "daysValid": 7

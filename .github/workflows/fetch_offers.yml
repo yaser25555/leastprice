@@ -1,0 +1,30 @@
+name: Automated Daily Offers Fetcher
+
+on:
+  schedule:
+    # Runs every Thursday at 00:00 UTC (3:00 AM Saudi Time)
+    - cron: '0 0 * * 4'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  fetch_offers:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 firebase-admin
+        
+    - name: Run Scraper Bot
+      env:
+        PYTHONIOENCODING: "utf8"
+      run: python scripts/daily_offers_fetcher.py
