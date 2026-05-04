@@ -31,7 +31,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
       },
       borderRadius: BorderRadius.circular(28),
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppPalette.cardBackground,
           borderRadius: BorderRadius.circular(28),
@@ -45,15 +45,15 @@ class ComparisonSearchResultCard extends StatelessWidget {
               child: result.imageUrl.trim().isNotEmpty
                   ? Image.network(
                       result.imageUrl,
-                      width: 92,
-                      height: 92,
+                      width: 72,
+                      height: 72,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) =>
                           const ComparisonImageFallback(),
                     )
                   : const ComparisonImageFallback(),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,16 +75,16 @@ class ComparisonSearchResultCard extends StatelessWidget {
                           tr('محدث آلياً', 'Updated automatically'),
                           style: TextStyle(
                             color: AppPalette.comparisonEmerald,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 12.2,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 10,
                           ),
                         ),
                       ),
                       if (result.isPreferredMarketplace)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
+                            horizontal: 6,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFE5CF),
@@ -94,16 +94,16 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             tr('أولوية نون/أمازون', 'Noon/Amazon priority'),
                             style: TextStyle(
                               color: AppPalette.panelText,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12.2,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
                             ),
                           ),
                         ),
                       if (result.tag != null && result.tag!.isNotEmpty)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
+                            horizontal: 6,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: AppPalette.softOrange,
@@ -113,14 +113,14 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             result.tag!,
                             style: TextStyle(
                               color: AppPalette.navy,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12.2,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
                             ),
                           ),
                         ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
                       const AppBrandMark(
@@ -134,34 +134,34 @@ class ComparisonSearchResultCard extends StatelessWidget {
                           'LeastPrice • ${result.channelType.label}',
                           style: TextStyle(
                             color: AppPalette.mutedText,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12.8,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     result.title,
                     style: TextStyle(
                       color: AppPalette.panelText,
-                      fontSize: 16,
+                      fontSize: 13.5,
                       fontWeight: FontWeight.w800,
-                      height: 1.35,
+                      height: 1.3,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                   Text(
                     '${formatAmountValue(result.price)} ${result.currency}',
                     style: TextStyle(
                       color: AppPalette.comparisonEmerald,
-                      fontSize: 22,
+                      fontSize: 17,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
                   if (result.matchedCoupon != null) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 6),
                     InkWell(
                       onTap: onCopyCoupon != null ? () {
                         HapticFeedback.selectionClick();
@@ -254,12 +254,13 @@ class ComparisonSearchResultCard extends StatelessWidget {
                           style: TextStyle(
                             color: AppPalette.mutedText,
                             fontWeight: FontWeight.w700,
+                            fontSize: 12,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Consumer(
                     builder: (context, ref, child) {
                       final cartItems = ref.watch(shoppingCartProvider);
@@ -274,12 +275,12 @@ class ComparisonSearchResultCard extends StatelessWidget {
                                 backgroundColor: AppPalette.comparisonEmerald,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                  horizontal: 12,
+                                  vertical: 8,
                                 ),
                               ),
-                              icon: const Icon(Icons.open_in_new_rounded, size: 20),
-                              label: Text(tr('فتح المتجر', 'Open store')),
+                              icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                              label: Text(tr('فتح المتجر', 'Open store'), style: const TextStyle(fontSize: 12)),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -310,12 +311,12 @@ class ComparisonSearchResultCard extends StatelessWidget {
                               backgroundColor: isInCart ? AppPalette.softOrange : AppPalette.paleOrange.withOpacity(0.2),
                               foregroundColor: isInCart ? AppPalette.orange : AppPalette.deepNavy,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
+                                horizontal: 12,
+                                vertical: 8,
                               ),
                             ),
-                            icon: Icon(isInCart ? Icons.shopping_cart_rounded : Icons.add_shopping_cart_rounded, size: 20),
-                            label: Text(isInCart ? tr('مضاف للسلة', 'In Cart') : tr('أضف للسلة', 'Add to Cart')),
+                            icon: Icon(isInCart ? Icons.shopping_cart_rounded : Icons.add_shopping_cart_rounded, size: 16),
+                            label: Text(isInCart ? tr('بالسلة', 'In Cart') : tr('للسلة', 'To Cart'), style: const TextStyle(fontSize: 12)),
                           ),
                         ],
                       );

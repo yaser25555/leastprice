@@ -601,8 +601,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
           ? _comparisonSearchFallbackMessage()
           : !_isPaidPlanActive && fullResults.length > _trialVisibleResultsCount
               ? tr(
-                  'يتم عرض أول $_trialVisibleResultsCount نتائج فقط. بعد التحويل البنكي يتم تفعيل الخطة يدويًا وإظهار جميع الميزات.',
-                  'Only the first $_trialVisibleResultsCount results are shown. After bank transfer, the plan is activated manually and all features are unlocked.',
+                  'لعرض المزيد يرجى الاشتراك',
+                  'To view more, please subscribe',
                 )
           : result.notice;
       _comparisonSearchSourceLabel = result.fromCache
