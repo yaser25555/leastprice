@@ -11,6 +11,7 @@ import json
 import re
 from datetime import datetime, timedelta
 import argparse
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -111,11 +112,15 @@ def fetch_real_offers():
         try:
             checker = requests.head(official_url, headers=headers, timeout=5, allow_redirects=True)
             if checker.status_code >= 400 and checker.status_code != 403: # 403 is often just anti-bot protection, page might still exist for humans
-                print(f"[SMART-CHECK] URL changed or broken for {matched_store} (Code {checker.status_code}). Using D4D link.")
-                final_deal_url = link
+                parsed = urlparse(official_url)
+                base_url = f"{parsed.scheme}://{parsed.netloc}"
+                print(f"[SMART-CHECK] URL changed or broken for {matched_store} (Code {checker.status_code}). Using base URL: {base_url}")
+                final_deal_url = base_url
         except Exception:
-            print(f"[SMART-CHECK] Server unreachable for {matched_store}. Using D4D link.")
-            final_deal_url = link
+            parsed = urlparse(official_url)
+            base_url = f"{parsed.scheme}://{parsed.netloc}"
+            print(f"[SMART-CHECK] Server unreachable for {matched_store}. Using base URL: {base_url}")
+            final_deal_url = base_url
         
         offers_list.append({
             "title": clean_title,
