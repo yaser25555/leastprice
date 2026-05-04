@@ -28,7 +28,7 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await PushNotificationService.initialize();
+    unawaited(PushNotificationService.initialize());
   } catch (_) {
     firebaseBootstrapNotice =
         'تعذر تهيئة Firebase حالياً. تأكد من اكتمال ملفات FlutterFire وإعداد مشروع Firebase على المنصة الحالية.';
