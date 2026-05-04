@@ -26,16 +26,7 @@ class ExclusiveDealCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final remaining = deal.expiryDate.difference(now);
-    final remainingLabel = remaining.inHours >= 24
-        ? tr(
-            'ينتهي خلال ${remaining.inDays + 1} يوم',
-            'Ends in ${remaining.inDays + 1} day(s)',
-          )
-        : tr(
-            'ينتهي خلال ${remaining.inHours.clamp(0, 23)} ساعة',
-            'Ends in ${remaining.inHours.clamp(0, 23)} hour(s)',
-          );
+    final cleanTitle = deal.title.replaceAll('عروض ', '').replaceAll(' عروض', '').trim();
 
     return GestureDetector(
       onTap: _launchDeal,
@@ -121,7 +112,7 @@ class ExclusiveDealCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          deal.title,
+                          cleanTitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -149,23 +140,9 @@ class ExclusiveDealCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Bottom Row: Timer & Action
+                  // Bottom Row: Action
                   Row(
                     children: [
-                      Icon(
-                        Icons.timer_outlined,
-                        size: 18,
-                        color: AppPalette.softNavy,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        remainingLabel,
-                        style: TextStyle(
-                          color: AppPalette.softNavy,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
                       const Spacer(),
                       if (deal.beforePrice > 0 && deal.afterPrice > 0) ...[
                         Text(
@@ -178,7 +155,7 @@ class ExclusiveDealCard extends StatelessWidget {
                         ),
                       ] else ...[
                         Text(
-                          tr('تصفح المجلة الان', 'Browse Flyer Now'),
+                          tr('زيارة الموقع الرسمي', 'Visit Official Website'),
                           style: TextStyle(
                             color: AppPalette.dealsRed,
                             fontSize: 16,
