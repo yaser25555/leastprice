@@ -25,10 +25,22 @@ DEFAULT_CREDENTIALS_PATH = os.path.join(
     "leastprice-yaser-firebase-adminsdk-fbsvc-759edd3dbc.json"
 )
 
-# Target stores to filter
-TARGET_STORES = [
-    "بنده", "العثيم", "كارفور", "لولو", "التميمي", "المزرعة", "نستو", "الدانوب", "جرير", "اكسترا", "النهدي", "الدواء"
-]
+# Target stores and their official offers URLs
+STORE_URLS_MAP = {
+    "بنده": "https://panda.com.sa/weekly-offers",
+    "العثيم": "https://www.othaimmarkets.com/weekly-flyer",
+    "كارفور": "https://www.carrefourksa.com/",
+    "لولو": "https://www.luluhypermarket.com/en-sa/pages/instore-promotions",
+    "التميمي": "https://tamimimarkets.com/promotions",
+    "المزرعة": "https://farm.com.sa/weekly-offers",
+    "نستو": "https://nestohypermarket.com/sa-en/promotions",
+    "الدانوب": "https://danube.sa/promotions",
+    "جرير": "https://www.jarir.com/offers",
+    "اكسترا": "https://www.extra.com/offers",
+    "النهدي": "https://www.nahdionline.com/offers",
+    "الدواء": "https://www.al-dawaa.com/offers"
+}
+TARGET_STORES = list(STORE_URLS_MAP.keys())
 
 def initialize_firebase(credentials_path):
     if not os.path.exists(credentials_path):
@@ -68,9 +80,13 @@ def fetch_real_offers():
         link = a_tag.get('href', '')
         if not full_title or not link: continue
         
-        # Check if it matches our target stores
-        is_target = any(store in full_title for store in TARGET_STORES)
-        if not is_target:
+        matched_store = None
+        for store in TARGET_STORES:
+            if store in full_title:
+                matched_store = store
+                break
+                
+        if not matched_store:
             continue
             
         # Clean title
@@ -89,10 +105,12 @@ def fetch_real_offers():
             link = "https://www.d4donline.com" + link
             
         # Set dummy prices since D4D flyers don't have individual prices on the cover
+        official_url = STORE_URLS_MAP[matched_store]
+        
         offers_list.append({
             "title": clean_title,
             "imageUrl": img_url,
-            "dealUrl": link,
+            "dealUrl": official_url,
             "beforePrice": 0.0,
             "afterPrice": 0.0,
             "daysValid": 7
