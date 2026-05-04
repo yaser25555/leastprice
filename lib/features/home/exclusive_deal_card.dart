@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/exclusive_deal.dart';
@@ -143,6 +144,14 @@ class ExclusiveDealCard extends StatelessWidget {
                   // Bottom Row: Action
                   Row(
                     children: [
+                      IconButton(
+                        icon: Icon(Icons.ios_share_rounded, color: AppPalette.deepNavy),
+                        onPressed: () {
+                          Share.share(
+                            'شاهد أحدث ${cleanTitle} عبر تطبيق LeastPrice! 🔥\nالرابط: ${deal.dealUrl}',
+                          );
+                        },
+                      ),
                       const Spacer(),
                       if (deal.beforePrice > 0 && deal.afterPrice > 0) ...[
                         Text(

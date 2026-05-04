@@ -16,6 +16,11 @@ class PushNotificationService {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         debugPrint('PushNotificationService: User granted permission.');
+        if (!kIsWeb) {
+          await _messaging.subscribeToTopic('weekly_offers').catchError((e) {
+            debugPrint('PushNotificationService: Error subscribing to weekly_offers: $e');
+          });
+        }
       } else {
         debugPrint('PushNotificationService: User declined or has not accepted permission.');
       }
