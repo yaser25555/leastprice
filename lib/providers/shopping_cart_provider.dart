@@ -1,17 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 
-class ShoppingCartNotifier extends StateNotifier<List<ComparisonSearchResult>> {
-  ShoppingCartNotifier() : super([]);
+class ShoppingCartNotifier extends Notifier<List<ComparisonSearchResult>> {
+  @override
+  List<ComparisonSearchResult> build() {
+    return [];
+  }
 
   void addItem(ComparisonSearchResult item) {
-    if (!state.any((element) => element.id == item.id)) {
+    if (!state.any((element) => element.productUrl == item.productUrl)) {
       state = [...state, item];
     }
   }
 
-  void removeItem(String id) {
-    state = state.where((item) => item.id != id).toList();
+  void removeItem(String productUrl) {
+    state = state.where((item) => item.productUrl != productUrl).toList();
   }
 
   void clearCart() {
@@ -23,6 +26,6 @@ class ShoppingCartNotifier extends StateNotifier<List<ComparisonSearchResult>> {
   }
 }
 
-final shoppingCartProvider = StateNotifierProvider<ShoppingCartNotifier, List<ComparisonSearchResult>>((ref) {
+final shoppingCartProvider = NotifierProvider<ShoppingCartNotifier, List<ComparisonSearchResult>>(() {
   return ShoppingCartNotifier();
 });

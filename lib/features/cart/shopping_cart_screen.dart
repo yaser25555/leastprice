@@ -197,7 +197,7 @@ class ShoppingCartScreen extends ConsumerWidget {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    ref.read(shoppingCartProvider.notifier).removeItem(item.id);
+                                    ref.read(shoppingCartProvider.notifier).removeItem(item.productUrl);
                                   },
                                   icon: const Icon(Icons.remove_circle_outline_rounded, color: Colors.redAccent, size: 20),
                                   constraints: const BoxConstraints(),

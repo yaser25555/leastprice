@@ -263,7 +263,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   Consumer(
                     builder: (context, ref, child) {
                       final cartItems = ref.watch(shoppingCartProvider);
-                      final isInCart = cartItems.any((item) => item.id == result.id);
+                      final isInCart = cartItems.any((item) => item.productUrl == result.productUrl);
 
                       return Row(
                         children: [
@@ -287,7 +287,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             onPressed: () {
                               HapticFeedback.lightImpact();
                               if (isInCart) {
-                                ref.read(shoppingCartProvider.notifier).removeItem(result.id);
+                                ref.read(shoppingCartProvider.notifier).removeItem(result.productUrl);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(tr('تمت إزالة المنتج من السلة', 'Item removed from cart')),

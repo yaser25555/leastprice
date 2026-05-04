@@ -8,6 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
@@ -1101,18 +1102,51 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: _canAccessAdminPanel
-          ? FloatingActionButton.small(
-              heroTag: 'admin-dashboard-fab',
-              tooltip: tr('لوحة المسؤول', 'Admin panel'),
-              backgroundColor: AppPalette.navy,
-              foregroundColor: AppPalette.pureWhite,
-              onPressed: widget.firebaseReady
-                  ? _openAdminDashboard
-                  : _showFirebaseSetupRequired,
-              child: const Icon(Icons.admin_panel_settings_rounded),
-            )
-          : null,
+      floatingActionButton: Consumer(
+        builder: (context, ref, child) {
+          final cartItems = ref.watch(shoppingCartProvider);
+          final bool showAdminFab = _canAccessAdminPanel;
+          final bool showCartFab = cartItems.isNotEmpty;
+
+          if (!showAdminFab && !showCartFab) return const SizedBox.shrink();
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (showAdminFab)
+                FloatingActionButton.small(
+                  heroTag: 'admin-dashboard-fab',
+                  tooltip: tr('لوحة المسؤول', 'Admin panel'),
+                  backgroundColor: AppPalette.navy,
+                  foregroundColor: AppPalette.pureWhite,
+                  onPressed: widget.firebaseReady
+                      ? _openAdminDashboard
+                      : _showFirebaseSetupRequired,
+                  child: const Icon(Icons.admin_panel_settings_rounded),
+                ),
+              if (showAdminFab && showCartFab) const SizedBox(height: 12),
+              if (showCartFab)
+                FloatingActionButton.extended(
+                  heroTag: 'shopping-cart-fab',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ShoppingCartScreen()),
+                    );
+                  },
+                  backgroundColor: AppPalette.orange,
+                  icon: const Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white),
+                  label: Text(
+                    '${cartItems.length} منتجات',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
       body: StreamBuilder<List<ProductComparison>>(
         stream: _productsStream,
         builder: (context, snapshot) {
@@ -1412,27 +1446,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     ),
                 ],
               ),
-            ),
-          );
-        },
-      ),
-      floatingActionButton: Consumer(
-        builder: (context, ref, child) {
-          final cartItems = ref.watch(shoppingCartProvider);
-          if (cartItems.isEmpty) return const SizedBox.shrink();
-          
-          return FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ShoppingCartScreen()),
-              );
-            },
-            backgroundColor: AppPalette.orange,
-            icon: const Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white),
-            label: Text(
-              '${cartItems.length} منتجات',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           );
         },
