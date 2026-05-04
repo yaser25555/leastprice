@@ -6,6 +6,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/core/widgets/app_brand_mark.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/features/home/comparison_image_fallback.dart';
+import 'package:leastprice/providers/shopping_cart_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'home_exports.dart';
 
 class ComparisonSearchResultCard extends StatelessWidget {
@@ -258,18 +260,66 @@ class ComparisonSearchResultCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  FilledButton.icon(
-                    onPressed: onTap,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppPalette.comparisonEmerald,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    icon: const Icon(Icons.open_in_new_rounded),
-                    label: Text(tr('فتح المتجر', 'Open store')),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final cartItems = ref.watch(shoppingCartProvider);
+                      final isInCart = cartItems.any((item) => item.id == result.id);
+
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: onTap,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppPalette.comparisonEmerald,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              icon: const Icon(Icons.open_in_new_rounded, size: 20),
+                              label: Text(tr('فتح المتجر', 'Open store')),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          FilledButton.icon(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              if (isInCart) {
+                                ref.read(shoppingCartProvider.notifier).removeItem(result.id);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(tr('تمت إزالة المنتج من السلة', 'Item removed from cart')),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                              } else {
+                                ref.read(shoppingCartProvider.notifier).addItem(result);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(tr('تمت إضافة المنتج للسلة', 'Item added to cart')),
+                                    backgroundColor: AppPalette.comparisonEmerald,
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                              }
+                            },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: isInCart ? AppPalette.softOrange : AppPalette.paleOrange.withOpacity(0.2),
+                              foregroundColor: isInCart ? AppPalette.orange : AppPalette.deepNavy,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                            icon: Icon(isInCart ? Icons.shopping_cart_rounded : Icons.add_shopping_cart_rounded, size: 20),
+                            label: Text(isInCart ? tr('مضاف للسلة', 'In Cart') : tr('أضف للسلة', 'Add to Cart')),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),

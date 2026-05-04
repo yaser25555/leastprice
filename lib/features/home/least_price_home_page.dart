@@ -24,6 +24,10 @@ import 'package:leastprice/services/api/affiliate_link_service.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/data/repositories/product_repository.dart';
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/features/home/plan_picker_section.dart';
+import 'package:leastprice/features/home/search_suggestions_carousel.dart';
+import 'package:leastprice/features/cart/shopping_cart_screen.dart';
+import 'package:leastprice/providers/shopping_cart_provider.dart';
 import 'home_exports.dart';
 import 'package:leastprice/features/admin/admin_exports.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
@@ -1408,6 +1412,27 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     ),
                 ],
               ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: Consumer(
+        builder: (context, ref, child) {
+          final cartItems = ref.watch(shoppingCartProvider);
+          if (cartItems.isEmpty) return const SizedBox.shrink();
+          
+          return FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ShoppingCartScreen()),
+              );
+            },
+            backgroundColor: AppPalette.orange,
+            icon: const Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white),
+            label: Text(
+              '${cartItems.length} منتجات',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           );
         },
