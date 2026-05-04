@@ -5,6 +5,7 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/home/search_info_pill.dart';
 import 'package:leastprice/features/search/barcode_scanner_screen.dart';
+import 'package:leastprice/services/api/open_food_facts_service.dart';
 import 'home_exports.dart';
 
 class ComparisonSearchBarSection extends StatelessWidget {
@@ -90,7 +91,39 @@ class ComparisonSearchBarSection extends StatelessWidget {
                         ),
                       );
                       if (result != null && result.isNotEmpty) {
-                        onSubmitted(result);
+                        // Show a loading dialog while fetching the product name
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => Center(
+                            child: CircularProgressIndicator(color: AppPalette.orange),
+                          ),
+                        );
+                        
+                        final productName = await OpenFoodFactsService.getProductNameFromBarcode(result);
+                        
+                        // Close the loading dialog
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                        
+                        if (productName != null && productName.isNotEmpty) {
+                          searchController.text = productName;
+                          onSubmitted(productName);
+                        } else {
+                          // If OpenFoodFacts didn't find the product, fall back to searching by the raw barcode
+                          searchController.text = result;
+                          onSubmitted(result);
+                          
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(tr('لم نتمكن من التعرف على اسم المنتج، سنبحث برقم الباركود', 'Could not identify product name, searching by barcode')),
+                                backgroundColor: AppPalette.dealsRed,
+                              ),
+                            );
+                          }
+                        }
                       }
                     },
                     icon: Icon(
