@@ -69,6 +69,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   Timer? _smartSearchDebounce;
   String _query = '';
   String? _selectedSearchCategory;
+  String _selectedSearchStore = 'الكل';
   final String _selectedCategoryId = ProductCategoryCatalog.allId;
   MarketplaceSearchCity _selectedSearchCity = marketplaceSearchCities.first;
   HomeCatalogSection _selectedHomeSection = HomeCatalogSection.comparisons;
@@ -560,6 +561,10 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       } else if (_selectedSearchCategory == 'العيادات الطبية' || _selectedSearchCategory == 'Medical Clinics') {
          effectiveQuery = '$trimmedQuery عيادة';
       }
+    }
+
+    if (_selectedSearchStore != 'الكل' && trimmedQuery.isNotEmpty) {
+      effectiveQuery = '$effectiveQuery $_selectedSearchStore';
     }
 
     final result = await _comparisonSearchService.search(
@@ -1229,6 +1234,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                           availableCities: marketplaceSearchCities,
                           selectedCityId: _selectedSearchCity.id,
                           selectedCategory: _selectedSearchCategory,
+                          selectedStore: _selectedSearchStore,
                           onCategorySelected: (category) {
                             setState(() {
                               if (_selectedSearchCategory == category) {
@@ -1237,6 +1243,16 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                                 _selectedSearchCategory = category;
                               }
                             });
+                          },
+                          onStoreSelected: (store) {
+                            setState(() {
+                              _selectedSearchStore = store;
+                            });
+                            if (_query.trim().isNotEmpty && _hasInternet) {
+                              unawaited(
+                                _runSmartSearch(_query, forceRefresh: true),
+                              );
+                            }
                           },
                           onCitySelected: _selectSearchCity,
                           onClearSearch: _clearSearch,

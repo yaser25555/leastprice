@@ -20,7 +20,9 @@ class ComparisonSearchBarSection extends StatelessWidget {
     required this.availableCities,
     required this.selectedCityId,
     required this.selectedCategory,
+    required this.selectedStore,
     required this.onCategorySelected,
+    required this.onStoreSelected,
     required this.onCitySelected,
     required this.onClearSearch,
     required this.onSubmitted,
@@ -37,11 +39,15 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final List<MarketplaceSearchCity> availableCities;
   final String selectedCityId;
   final String? selectedCategory;
+  final String selectedStore;
   final ValueChanged<String> onCategorySelected;
+  final ValueChanged<String> onStoreSelected;
   final ValueChanged<String> onCitySelected;
   final VoidCallback onClearSearch;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onDetectCityTap;
+
+  static const List<String> supportedStores = ['الكل', 'بنده', 'العثيم', 'كارفور', 'الدانوب', 'التميمي', 'جرير', 'اكسترا', 'أمازون', 'نون', 'النهدي', 'الدواء'];
 
   @override
   Widget build(BuildContext context) {
@@ -202,75 +208,140 @@ class ComparisonSearchBarSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-            decoration: BoxDecoration(
-              color: appleStyle ? AppPalette.cardBackground : AppPalette.deepNavy,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: appleStyle
-                    ? const Color(0xFFDCE1EA)
-                    : AppPalette.paleOrange,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  color: AppPalette.accentSkyDeep,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedCityId,
-                      isExpanded: true,
-                      borderRadius: BorderRadius.circular(18),
-                      dropdownColor: AppPalette.cardBackground,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        color: AppPalette.orange,
-                        fontSize: 14.5,
-                      ),
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: AppPalette.orange,
-                      ),
-                      items: availableCities
-                          .map(
-                            (city) => DropdownMenuItem<String>(
-                              value: city.id,
-                              child: Text(
-                                city.label,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  color: AppPalette.orange,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value == null) {
-                          return;
-                        }
-                        onCitySelected(value);
-                      },
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: appleStyle ? AppPalette.cardBackground : AppPalette.deepNavy,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: appleStyle
+                          ? const Color(0xFFDCE1EA)
+                          : AppPalette.paleOrange,
                     ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                IconButton(
-                  onPressed: onDetectCityTap,
-                  tooltip: tr('تحديد المدينة تلقائياً', 'Detect city automatically'),
-                  icon: Icon(
-                    Icons.my_location_rounded,
-                    color: AppPalette.accentSkyDeep,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: AppPalette.accentSkyDeep,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedCityId,
+                            isExpanded: true,
+                            borderRadius: BorderRadius.circular(18),
+                            dropdownColor: AppPalette.cardBackground,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: AppPalette.orange,
+                              fontSize: 14.5,
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: AppPalette.orange,
+                            ),
+                            items: availableCities
+                                .map(
+                                  (city) => DropdownMenuItem<String>(
+                                    value: city.id,
+                                    child: Text(
+                                      city.label,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        color: AppPalette.orange,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              if (value != null) onCitySelected(value);
+                            },
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: onDetectCityTap,
+                        tooltip: tr('تحديد المدينة تلقائياً', 'Detect city automatically'),
+                        icon: Icon(
+                          Icons.my_location_rounded,
+                          color: AppPalette.accentSkyDeep,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: appleStyle ? AppPalette.cardBackground : AppPalette.deepNavy,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: appleStyle
+                          ? const Color(0xFFDCE1EA)
+                          : AppPalette.paleOrange,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.storefront_outlined,
+                        color: AppPalette.accentSkyDeep,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedStore,
+                            isExpanded: true,
+                            borderRadius: BorderRadius.circular(18),
+                            dropdownColor: AppPalette.cardBackground,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: AppPalette.orange,
+                              fontSize: 14.5,
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: AppPalette.orange,
+                            ),
+                            items: supportedStores
+                                .map(
+                                  (store) => DropdownMenuItem<String>(
+                                    value: store,
+                                    child: Text(
+                                      store,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        color: AppPalette.orange,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              if (value != null) onStoreSelected(value);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 14),
           Wrap(
