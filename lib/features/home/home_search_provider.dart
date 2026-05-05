@@ -182,6 +182,7 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
         results: newResults,
         currentOffset: nextOffset,
         hasMoreResults: result.results.isNotEmpty,
+        query: result.effectiveQuery ?? state.query,
         searchNotice: () => result.results.isEmpty && !isLoadMore
             ? 'عذراً، لم نجد نتائج حالياً'
             : result.notice,

@@ -79,6 +79,7 @@ class SerpApiShoppingSearchService {
     required List<ComparisonSearchResult> results,
     required bool fromCache,
     String? notice,
+    String? effectiveQuery,
   }) {
     final serpApiResultsCount = results
         .where(
@@ -97,6 +98,7 @@ class SerpApiShoppingSearchService {
       notice: notice,
       serpApiResultsCount: serpApiResultsCount,
       scrapedResultsCount: scrapedResultsCount,
+      effectiveQuery: effectiveQuery,
     );
   }
 
@@ -189,9 +191,18 @@ class SerpApiShoppingSearchService {
       );
     }
 
+    final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
+    String effectiveQuery = trimmedQuery;
+
+    // -- BARCODE TRANSLATION --
+    if (RegExp(r'^[0-9]{8,14}$').hasMatch(effectiveQuery) &&
+        serperApiKey.isNotEmpty) {
+      effectiveQuery = await _translateBarcode(effectiveQuery, serperApiKey);
+    }
+
     try {
       final results = await _fetchLiveResults(
-        trimmedQuery,
+        effectiveQuery,
         apiKey,
         city: city,
         targetStoreId: targetStoreId,
@@ -238,6 +249,7 @@ class SerpApiShoppingSearchService {
                 'تم تحديث النتائج الحية مباشرة حسب مدينة ${city.label}.',
                 'Live results were refreshed based on ${city.label}.',
               ),
+        effectiveQuery: effectiveQuery,
       );
     } catch (_) {
       if (cachedEntry != null && cachedEntry.results.isNotEmpty) {
@@ -254,8 +266,58 @@ class SerpApiShoppingSearchService {
     }
   }
 
+  Future<String> _translateBarcode(String barcode, String serperApiKey) async {
+    try {
+      final uri = Uri.https('google.serper.dev', '/search');
+      final response = await http.post(
+        uri,
+        headers: {
+          'X-API-KEY': serperApiKey,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'q': barcode,
+          'gl': 'sa',
+          'hl': 'ar',
+        }),
+      );
+      if (response.statusCode < 400) {
+        final payload = jsonDecode(response.body);
+        final organic = payload['organic'];
+        if (organic is List && organic.isNotEmpty) {
+          final title = stringValue(organic.first['title']) ?? '';
+          final snippet = stringValue(organic.first['snippet']) ?? '';
+
+          // Smarter title cleaning:
+          String cleanTitle = title
+              .replaceAll(
+                  RegExp(
+                      r'(بنده|بندة|Panda|العثيم|Othaim|كارفور|Carrefour|التميمي|Tamimi|لولو|Lulu|نون|Noon|امازون|Amazon|Jarir|جرير|Extra|اكسترا)',
+                      caseSensitive: false),
+                  '')
+              .split(RegExp(r'[|\-–]'))
+              .where((s) => s.trim().length > 3)
+              .join(' ')
+              .trim();
+
+          if (cleanTitle.length < 5 && snippet.isNotEmpty) {
+            cleanTitle = snippet.split(RegExp(r'[.\-–]')).first.trim();
+          }
+
+          if (cleanTitle.isNotEmpty &&
+              !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
+            return cleanTitle;
+          }
+        }
+      }
+    } catch (error) {
+      debugPrint('Barcode translation via Serper failed: $error');
+    }
+    return barcode;
+  }
+
   Future<List<ComparisonSearchResult>> _fetchLiveResults(
-    String query,
+    String effectiveQuery,
     String apiKey, {
     required MarketplaceSearchCity city,
     String? targetStoreId,
@@ -263,47 +325,8 @@ class SerpApiShoppingSearchService {
   }) async {
     final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     final results = <ComparisonSearchResult>[];
-    String effectiveQuery = query.trim();
 
     // Let local filtering handle the store filter to avoid breaking Google Shopping query
-
-    // -- BARCODE TRANSLATION: If the query is just a barcode number, find the actual product name --
-    final isBarcode = RegExp(r'^\d{8,}$').hasMatch(effectiveQuery);
-    if (isBarcode && serperApiKey.isNotEmpty) {
-      try {
-        final uri = Uri.https('google.serper.dev', '/search');
-        final response = await http.post(
-          uri,
-          headers: {
-            'X-API-KEY': serperApiKey,
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'q': effectiveQuery,
-            'gl': 'sa',
-            'hl': 'ar',
-          }),
-        );
-        if (response.statusCode < 400) {
-          final payload = jsonDecode(response.body);
-          final organic = payload['organic'];
-          if (organic is List && organic.isNotEmpty) {
-            final title = stringValue(organic.first['title']) ?? '';
-            // Extract the product name before any dash or pipe (e.g. "Nescafé Gold 200g - Panda")
-            final cleanTitle = title.split(RegExp(r'[|\-–]')).first.trim();
-            // Ensure the extracted title is not just numbers and has actual words
-            if (cleanTitle.isNotEmpty &&
-                !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
-              effectiveQuery = cleanTitle;
-              debugPrint(
-                  'Barcode $query translated to Product Name: $effectiveQuery via Serper');
-            }
-          }
-        }
-      } catch (error) {
-        debugPrint('Barcode translation via Serper failed: $error');
-      }
-    }
 
     if (kIsWeb) {
       final origin = Uri.base.origin;
