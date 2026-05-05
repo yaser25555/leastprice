@@ -265,12 +265,7 @@ class SerpApiShoppingSearchService {
     final results = <ComparisonSearchResult>[];
     String effectiveQuery = query.trim();
 
-    if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
-      final domain = domainForStoreId(targetStoreId);
-      if (domain != null && domain.isNotEmpty) {
-        effectiveQuery = '$effectiveQuery site:$domain';
-      }
-    }
+    // Let local filtering handle the store filter to avoid breaking Google Shopping query
 
     // -- BARCODE TRANSLATION: If the query is just a barcode number, find the actual product name --
     final isBarcode = RegExp(r'^\d{8,}$').hasMatch(effectiveQuery);

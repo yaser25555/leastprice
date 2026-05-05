@@ -21,6 +21,9 @@ class HomeSearchView {
     final state = ref.watch(homeSearchProvider);
     final notifier = ref.read(homeSearchProvider.notifier);
 
+    final displayResults =
+        isPaidPlanActive ? state.results : state.results.take(5).toList();
+
     return [
       SliverToBoxAdapter(
         child: Padding(
@@ -29,7 +32,7 @@ class HomeSearchView {
             searchController: searchController,
             focusNode: searchFocusNode,
             query: state.query,
-            resultsCount: state.results.length,
+            resultsCount: displayResults.length,
             dataSourceLabel: state.searchSourceLabel,
             searchHintText: tr(
               'ابحث عن أي منتج لمعرفة السعر الأقل',
@@ -76,7 +79,7 @@ class HomeSearchView {
       ),
       if (state.query.trim().isEmpty && !state.isSearchingOnline)
         const SliverToBoxAdapter(child: SearchSuggestionsCarousel())
-      else if (state.isSearchingOnline && state.results.isEmpty)
+      else if (state.isSearchingOnline && displayResults.isEmpty)
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 32, 20, 24),
@@ -87,7 +90,7 @@ class HomeSearchView {
             ),
           ),
         )
-      else if (state.results.isEmpty)
+      else if (displayResults.isEmpty)
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
           sliver: SliverToBoxAdapter(
@@ -108,10 +111,10 @@ class HomeSearchView {
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final result = state.results[index];
+                final result = displayResults[index];
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom: index == state.results.length - 1 ? 0 : 18,
+                    bottom: index == displayResults.length - 1 ? 0 : 18,
                   ),
                   child: ComparisonSearchResultCard(
                     result: result,
@@ -122,11 +125,11 @@ class HomeSearchView {
                   ),
                 );
               },
-              childCount: state.results.length,
+              childCount: displayResults.length,
             ),
           ),
         ),
-      if (state.searchNotice != null && state.results.isNotEmpty)
+      if (state.searchNotice != null && displayResults.isNotEmpty)
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),

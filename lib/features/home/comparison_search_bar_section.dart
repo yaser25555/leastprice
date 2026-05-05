@@ -191,7 +191,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.search,
                 onSubmitted: (value) {
-                  onFieldSubmitted();
+                  // Removed onFieldSubmitted() to prevent Autocomplete from overriding user's text
                   onSubmitted(value);
                 },
                 style: TextStyle(
