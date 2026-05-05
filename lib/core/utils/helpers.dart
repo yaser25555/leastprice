@@ -103,7 +103,6 @@ String localizedKnownLabel(String value) {
   return value;
 }
 
-
 class MarketplaceSearchCity {
   const MarketplaceSearchCity({
     required this.id,
@@ -457,7 +456,6 @@ extension ProductDataSourceLabel on ProductDataSource {
   }
 }
 
-
 extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
   String get label {
     switch (this) {
@@ -468,7 +466,6 @@ extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
     }
   }
 }
-
 
 extension ComparisonSearchChannelTypeLabel on ComparisonSearchChannelType {
   String get label {
