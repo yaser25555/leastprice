@@ -62,6 +62,8 @@ class LeastPriceDataConfig {
     'www.yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
     'sssports.com': 'https://go.urtrackinglink.com/SH9H3',
     'en-ae.sssports.com': 'https://go.urtrackinglink.com/SH9H3',
+    'nike.sa': 'https://go.urtrackinglink.com/SH9H4',
+    'www.nike.sa': 'https://go.urtrackinglink.com/SH9H4',
   };
 
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
