@@ -411,9 +411,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     _couponSubscription?.cancel();
     _systemHealthSubscription?.cancel();
     
-    _searchController
-      ..removeListener(_handleSearchChanged)
-      ..dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -672,19 +670,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
         ),
       );
     }
-  }
-
-  List<ComparisonSearchResult> _attachCouponsToSearchResults(
-    List<ComparisonSearchResult> results,
-  ) {
-    return results
-        .map(
-          (result) => result.copyWith(
-            matchedCoupon: _bestCouponForStore(result.storeId),
-            clearMatchedCoupon: true,
-          ),
-        )
-        .toList(growable: false);
   }
 
   Coupon? _bestCouponForStore(String storeId) {

@@ -1,5 +1,200 @@
 import 'package:leastprice/core/utils/helpers.dart';
 
+String? hostFromUrl(String url) {
+  final parsed = Uri.tryParse(url);
+  if (parsed != null && parsed.hasAuthority) {
+    return parsed.host.toLowerCase();
+  }
+  final fallback = Uri.tryParse('https://$url');
+  if (fallback != null && fallback.hasAuthority) {
+    return fallback.host.toLowerCase();
+  }
+  return null;
+}
+
+String? storeIdForHost(String? host) {
+  final normalizedHost = (host ?? '').toLowerCase();
+  if (normalizedHost.isEmpty) {
+    return null;
+  }
+  if (normalizedHost.contains('amazon')) return 'amazon';
+  if (normalizedHost.contains('noon')) return 'noon';
+  if (normalizedHost.contains('namshi')) return 'namshi';
+  if (normalizedHost.contains('hungerstation')) return 'hungerstation';
+  if (normalizedHost.contains('panda')) return 'panda';
+  if (normalizedHost.contains('othaim')) return 'othaim';
+  if (normalizedHost.contains('farm')) return 'almazraa';
+  if (normalizedHost.contains('lulu')) return 'lulu';
+  if (normalizedHost.contains('carrefour')) return 'carrefour';
+  if (normalizedHost.contains('tamimi')) return 'tamimi';
+  if (normalizedHost.contains('toyou')) return 'toyou';
+  if (normalizedHost.contains('keeta')) return 'keeta';
+  if (normalizedHost.contains('nahdi')) return 'nahdi';
+  if (normalizedHost.contains('dawaa')) return 'aldawaa';
+  if (normalizedHost.contains('jarir')) return 'jarir';
+  if (normalizedHost.contains('extra')) return 'extra';
+  return normalizedHost
+      .replaceFirst('www.', '')
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '');
+}
+
+String? domainForStoreId(String storeId) {
+  switch (storeId.trim().toLowerCase()) {
+    case 'amazon': return 'amazon.sa';
+    case 'noon': return 'noon.com';
+    case 'hungerstation': return 'hungerstation.com';
+    case 'panda': return 'panda.com.sa';
+    case 'othaim': return 'othaimmarkets.com';
+    case 'almazraa': return 'farm.com.sa';
+    case 'lulu': return 'luluhypermarket.com';
+    case 'carrefour': return 'carrefourksa.com';
+    case 'tamimi': return 'tamimimarkets.com';
+    case 'toyou': return 'toyou.io';
+    case 'keeta': return 'keeta.com.sa';
+    case 'nahdi': return 'nahdionline.com';
+    case 'aldawaa': return 'al-dawaa.com';
+    case 'jarir': return 'jarir.com';
+    case 'extra': return 'extra.com';
+    default: return null;
+  }
+}
+
+String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
+  final hostStoreId = storeIdForHost(hostFromUrl(url));
+  if (hostStoreId != null && hostStoreId.isNotEmpty) {
+    return hostStoreId;
+  }
+
+  final normalizedName = normalizeArabic(fallbackName ?? '');
+  if (normalizedName.contains('امازون') || normalizedName.contains('amazon')) {
+    return 'amazon';
+  }
+  if (normalizedName.contains('نون') || normalizedName.contains('noon')) {
+    return 'noon';
+  }
+  if (normalizedName.contains('نمشي') || normalizedName.contains('namshi')) {
+    return 'namshi';
+  }
+  if (normalizedName.contains('هنجرستيشن')) return 'hungerstation';
+  if (normalizedName.contains('بنده')) return 'panda';
+  if (normalizedName.contains('العثيم')) return 'othaim';
+  if (normalizedName.contains('المزرعه')) return 'almazraa';
+  if (normalizedName.contains('لولو')) return 'lulu';
+  if (normalizedName.contains('كارفور')) return 'carrefour';
+  if (normalizedName.contains('التميمي')) return 'tamimi';
+  if (normalizedName.contains('تويو')) return 'toyou';
+  if (normalizedName.contains('كيتا')) return 'keeta';
+  if (normalizedName.contains('النهدي')) return 'nahdi';
+  if (normalizedName.contains('الدواء')) return 'aldawaa';
+  if (normalizedName.contains('جرير') || normalizedName.contains('jarir')) {
+    return 'jarir';
+  }
+  if (normalizedName.contains('اكسترا') ||
+      normalizedName.contains('إكسترا') ||
+      normalizedName.contains('extra')) {
+    return 'extra';
+  }
+
+  final fallbackToken = normalizeStoreIdToken(fallbackName ?? '');
+  return fallbackToken.isEmpty ? null : fallbackToken;
+}
+
+String inferComparisonChannelType(
+  String storeId,
+  String productUrl,
+  String storeName,
+) {
+  final normalized =
+      normalizeArabic('$storeId ${hostFromUrl(productUrl) ?? ''} $storeName');
+  if (normalized.contains('nahdi') ||
+      normalized.contains('dawaa') ||
+      normalized.contains('نهدي') ||
+      normalized.contains('دواء')) {
+    return 'pharmacy';
+  }
+  if (normalized.contains('hungerstation') ||
+      normalized.contains('toyou') ||
+      normalized.contains('keeta') ||
+      normalized.contains('هنجرستيشن') ||
+      normalized.contains('تويو') ||
+      normalized.contains('كيتا')) {
+    return 'delivery';
+  }
+  if (normalized.contains('amazon') ||
+      normalized.contains('noon') ||
+      normalized.contains('namshi') ||
+      normalized.contains('امازون') ||
+      normalized.contains('نون') ||
+      normalized.contains('نمشي')) {
+    return 'marketplace';
+  }
+  if (normalized.contains('jarir') ||
+      normalized.contains('extra') ||
+      normalized.contains('جرير') ||
+      normalized.contains('اكسترا') ||
+      normalized.contains('إكسترا')) {
+    return 'electronics';
+  }
+  if (normalized.contains('panda') ||
+      normalized.contains('othaim') ||
+      normalized.contains('lulu') ||
+      normalized.contains('carrefour') ||
+      normalized.contains('tamimi') ||
+      normalized.contains('farm') ||
+      normalized.contains('بنده') ||
+      normalized.contains('العثيم') ||
+      normalized.contains('لولو') ||
+      normalized.contains('كارفور') ||
+      normalized.contains('التميمي') ||
+      normalized.contains('المزرعه')) {
+    return 'hypermarket';
+  }
+  return 'other';
+}
+
+String resolveStoreLogoUrl({
+  required String storeId,
+  required String productUrl,
+  String? fallbackName,
+}) {
+  const knownHosts = <String, String>{
+    'amazon': 'amazon.sa',
+    'noon': 'noon.com',
+    'namshi': 'namshi.com',
+    'hungerstation': 'hungerstation.com',
+    'panda': 'panda.sa',
+    'othaim': 'othaimmarkets.com',
+    'almazraa': 'farm.com.sa',
+    'lulu': 'luluhypermarket.com',
+    'carrefour': 'carrefourksa.com',
+    'tamimi': 'tamimimarkets.com',
+    'toyou': 'toyou.io',
+    'keeta': 'keeta.com',
+    'nahdi': 'nahdionline.com',
+    'aldawaa': 'al-dawaa.com',
+  };
+
+  final host = hostFromUrl(productUrl) ??
+      knownHosts[storeId] ??
+      knownHosts[normalizeStoreIdToken(storeId)] ??
+      knownHosts[normalizeStoreIdToken(
+        inferStoreIdFromUrl('', fallbackName: fallbackName) ?? '',
+      )];
+  if (host == null || host.isEmpty) {
+    return '';
+  }
+
+  return Uri.https('www.google.com', '/s2/favicons', {
+    'domain_url': 'https://$host',
+    'sz': '128',
+  }).toString();
+}
+
+String normalizeStoreIdToken(String value) {
+  return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '').trim();
+}
+
+
 String normalizedImageUrl(
   String? rawUrl, {
   String fallbackLabel = 'LeastPrice',
@@ -32,94 +227,4 @@ String normalizedImageUrl(
   }
 
   return value;
-}
-
-String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
-  final cleanUrl = url.trim().toLowerCase();
-  
-  if (cleanUrl.contains('amazon.sa') || cleanUrl.contains('amzn.to')) {
-    return 'amazon';
-  }
-  if (cleanUrl.contains('noon.com')) {
-    return 'noon';
-  }
-  if (cleanUrl.contains('jarir.com')) {
-    return 'jarir';
-  }
-  if (cleanUrl.contains('extra.com')) {
-    return 'extra';
-  }
-  if (cleanUrl.contains('nahdionline.com')) {
-    return 'nahdi';
-  }
-  if (cleanUrl.contains('al-dawaa.com')) {
-    return 'aldawaa';
-  }
-  if (cleanUrl.contains('panda-click.com') || cleanUrl.contains('panda.com')) {
-    return 'panda';
-  }
-  if (cleanUrl.contains('othaimmarkets.com')) {
-    return 'othaim';
-  }
-  if (cleanUrl.contains('carrefourksa.com')) {
-    return 'carrefour';
-  }
-  if (cleanUrl.contains('luluhypermarket.com')) {
-    return 'lulu';
-  }
-  if (cleanUrl.contains('niceonesa.com')) {
-    return 'niceone';
-  }
-  if (cleanUrl.contains('sephora.sa')) {
-    return 'sephora';
-  }
-  if (cleanUrl.contains('hungerstation.com')) {
-    return 'hungerstation';
-  }
-  if (cleanUrl.contains('jahez.net')) {
-    return 'jahez';
-  }
-  if (cleanUrl.contains('toyou.io')) {
-    return 'toyou';
-  }
-  if (cleanUrl.contains('whites.net')) {
-    return 'whites';
-  }
-
-  final name = (fallbackName ?? '').trim().toLowerCase();
-  if (name.isEmpty) return null;
-
-  if (name.contains('امازون') || name.contains('amazon')) return 'amazon';
-  if (name.contains('نون') || name.contains('noon')) return 'noon';
-  if (name.contains('جرير') || name.contains('jarir')) return 'jarir';
-  if (name.contains('اكسترا') || name.contains('extra')) return 'extra';
-  if (name.contains('النهدي') || name.contains('nahdi')) return 'nahdi';
-  if (name.contains('الدواء') || name.contains('aldawaa')) return 'aldawaa';
-  if (name.contains('بنده') || name.contains('panda')) return 'panda';
-  if (name.contains('العثيم') || name.contains('othaim')) return 'othaim';
-  if (name.contains('كارفور') || name.contains('carrefour')) return 'carrefour';
-  if (name.contains('لولو') || name.contains('lulu')) return 'lulu';
-  if (name.contains('نايس ون') || name.contains('niceone')) return 'niceone';
-  if (name.contains('سيفورا') || name.contains('sephora')) return 'sephora';
-  if (name.contains('هنقرستيشن') || name.contains('hungerstation')) return 'hungerstation';
-  if (name.contains('جاهز') || name.contains('jahez')) return 'jahez';
-  if (name.contains('تويو') || name.contains('toyou')) return 'toyou';
-  if (name.contains('وايتس') || name.contains('whites')) return 'whites';
-
-  return null;
-}
-
-String resolveStoreLogoUrl({
-  required String storeId,
-  required String productUrl,
-  required String fallbackName,
-}) {
-  final finalStoreId =
-      storeId == 'unknown' ? inferStoreIdFromUrl(productUrl, fallbackName: fallbackName) : storeId;
-
-  if (finalStoreId != null && finalStoreId != 'unknown') {
-    return 'assets/icons/brands/$finalStoreId.png';
-  }
-
-  return 'assets/icons/brands/default_store.png';
 }
