@@ -78,6 +78,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFFBA0C2F),
       'icon': Icons.directions_run_rounded,
     },
+    {
+      'name': 'ناتشورال تاتش',
+      'nameEn': 'Natural Touch',
+      'url': 'https://ntshop.sa/',
+      'color': Color(0xFF1B5E20),
+      'icon': Icons.spa_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {
