@@ -30,4 +30,4 @@ export 'rating_summary.dart';
 export 'search_info_pill.dart';
 export 'status_banner.dart';
 export 'search_suggestions_carousel.dart';
-export 'brand_offers_section.dart';
+export 'package:leastprice/features/home/brand_offers_section.dart';
