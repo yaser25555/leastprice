@@ -132,7 +132,10 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
       String effectiveQuery = state.query.trim();
       // Category enhancement removed to keep search broad as requested
 
+      String? targetStoreId;
       if (state.selectedStore != 'الكل' && state.selectedStore.isNotEmpty) {
+        targetStoreId =
+            inferStoreIdFromUrl('', fallbackName: state.selectedStore);
         final domain = domainForStoreId(state.selectedStore);
         if (domain != null) {
           effectiveQuery = '$effectiveQuery site:$domain';

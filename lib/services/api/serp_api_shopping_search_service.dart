@@ -463,29 +463,42 @@ class SerpApiShoppingSearchService {
     required MarketplaceSearchCity city,
     int page = 1,
   }) async {
-    final uri = Uri.https('google.serper.dev', '/shopping');
-    final response = await http.post(
-      uri,
-      headers: {
-        'X-API-KEY': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'q': query,
-        'gl': 'sa',
-        'hl': 'ar',
-        'location': city.serpApiLocation,
-        'page': page,
-      }),
-    );
+    if (apiKey.isEmpty) {
+      debugPrint('❌ SERPER ERROR: API Key is EMPTY! Please provide it.');
+      return [];
+    }
 
-    if (response.statusCode >= 400) {
-      throw Exception('Serper responded with ${response.statusCode}');
+    debugPrint('🌐 SERPER: Fetching results for "$query"...');
+
+    final uri = Uri.https('google.serper.dev', '/shopping');
+    final response = await http
+        .post(
+          uri,
+          headers: {
+            'X-API-KEY': apiKey,
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'q': query,
+            'gl': 'sa',
+            'hl': 'ar',
+            'location': city.serpApiLocation,
+            'page': page,
+          }),
+        )
+        .timeout(const Duration(seconds: 15));
+
+    debugPrint('📡 SERPER STATUS: ${response.statusCode}');
+
+    if (response.statusCode != 200) {
+      debugPrint('❌ SERPER ERROR BODY: ${response.body}');
+      return [];
     }
 
     final payload = jsonDecode(response.body);
     if (payload is! Map<String, dynamic>) {
-      throw const FormatException('Unexpected Serper payload');
+      debugPrint('❌ SERPER ERROR: Unexpected payload format');
+      return [];
     }
 
     return _parseSerperResults(payload);
