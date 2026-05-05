@@ -1,0 +1,61 @@
+﻿Analyzing leastprice...                                         
+
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\theme\app_palette.dart:31:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\theme\app_palette.dart:32:22 - deprecated_member_use
+   info - The imported package 'intl' isn't a dependency of the importing package - lib\core\utils\formatters.dart:1:8 - depend_on_referenced_packages
+warning - Unused import: 'package:leastprice/core/utils/helpers.dart' - lib\core\utils\url_utils.dart:1:8 - unused_import
+warning - Unused import: 'package:leastprice/core/theme/app_palette.dart' - lib\core\widgets\app_brand_mark.dart:3:8 - unused_import
+warning - The declaration '_launchUrl' isn't referenced - lib\features\cart\shopping_cart_screen.dart:12:16 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\cart\shopping_cart_screen.dart:102:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\cart\shopping_cart_screen.dart:138:58 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\features\home\comparison_search_bar_section.dart:102:27 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\comparison_search_result_card.dart:311:105 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\exclusive_deal_card.dart:38:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\exclusive_deal_card.dart:41:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\exclusive_deal_card.dart:63:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\exclusive_deal_card.dart:131:54 - deprecated_member_use
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\home\exclusive_deal_card.dart:150:27 - deprecated_member_use
+   info - 'share' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\home\exclusive_deal_card.dart:150:33 - deprecated_member_use
+   info - Unnecessary braces in a string interpolation - lib\features\home\exclusive_deal_card.dart:151:40 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\features\home\home_search_provider.dart:132:30 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\features\home\home_search_provider.dart:134:30 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\features\home\home_search_provider.dart:136:30 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\features\home\home_search_provider.dart:138:30 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\features\home\home_search_provider.dart:140:30 - unnecessary_brace_in_string_interps
+warning - The value of the field '_comparisonSearchService' isn't used - lib\features\home\least_price_home_page.dart:62:38 - unused_field
+  error - Undefined name '_comparisonSearchResults' - lib\features\home\least_price_home_page.dart:201:11 - undefined_identifier
+  error - Undefined name '_comparisonSearchResults' - lib\features\home\least_price_home_page.dart:202:13 - undefined_identifier
+  error - Undefined name '_comparisonSearchResults' - lib\features\home\least_price_home_page.dart:212:13 - undefined_identifier
+  error - Undefined name '_comparisonSearchResults' - lib\features\home\least_price_home_page.dart:213:15 - undefined_identifier
+   info - 'desiredAccuracy' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings - lib\features\home\least_price_home_page.dart:297:9 - deprecated_member_use
+  error - Undefined name '_selectedSearchCity' - lib\features\home\least_price_home_page.dart:340:9 - undefined_identifier
+  error - Undefined name '_query' - lib\features\home\least_price_home_page.dart:343:11 - undefined_identifier
+  error - The method '_runSmartSearch' isn't defined for the type '_LeastPriceHomePageState' - lib\features\home\least_price_home_page.dart:344:15 - undefined_method
+  error - Undefined name '_query' - lib\features\home\least_price_home_page.dart:344:31 - undefined_identifier
+  error - Undefined name '_handleSearchChanged' - lib\features\home\least_price_home_page.dart:424:24 - undefined_identifier
+warning - The declaration '_comparisonSearchFallbackMessage' isn't referenced - lib\features\home\least_price_home_page.dart:467:10 - unused_element
+  error - The method '_scheduleSmartSearch' isn't defined for the type '_LeastPriceHomePageState' - lib\features\home\least_price_home_page.dart:518:7 - undefined_method
+  error - Undefined name '_query' - lib\features\home\least_price_home_page.dart:518:28 - undefined_identifier
+  error - The method '_clearSmartSearchState' isn't defined for the type '_LeastPriceHomePageState' - lib\features\home\least_price_home_page.dart:520:7 - undefined_method
+  error - Undefined name '_query' - lib\features\home\least_price_home_page.dart:581:11 - undefined_identifier
+  error - The method '_runSmartSearch' isn't defined for the type '_LeastPriceHomePageState' - lib\features\home\least_price_home_page.dart:582:15 - undefined_method
+  error - Undefined name '_query' - lib\features\home\least_price_home_page.dart:582:31 - undefined_identifier
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\home\least_price_home_page.dart:783:11 - deprecated_member_use
+   info - 'share' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\home\least_price_home_page.dart:783:17 - deprecated_member_use
+warning - The value of the local variable 'comparisonDataSourceLabel' isn't used - lib\features\home\least_price_home_page.dart:987:27 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\search_suggestions_carousel.dart:142:69 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\search_suggestions_carousel.dart:156:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\search_suggestions_carousel.dart:167:63 - deprecated_member_use
+   info - Don't invoke 'print' in production code - test_search.dart:17:3 - avoid_print
+   info - Don't invoke 'print' in production code - test_search.dart:19:3 - avoid_print
+   info - Don't invoke 'print' in production code - test_search.dart:25:7 - avoid_print
+   info - Don't invoke 'print' in production code - test_search.dart:27:9 - avoid_print
+   info - Don't invoke 'print' in production code - test_search.dart:30:7 - avoid_print
+   info - Don't invoke 'print' in production code - test_search.dart:31:7 - avoid_print
+   info - Don't invoke 'print' in production code - test_search.dart:34:5 - avoid_print
+   info - Don't invoke 'print' in production code - test_serper.dart:23:3 - avoid_print
+   info - Don't invoke 'print' in production code - test_serper.dart:29:7 - avoid_print
+   info - Don't invoke 'print' in production code - test_serper.dart:31:9 - avoid_print
+   info - Don't invoke 'print' in production code - test_serper.dart:34:7 - avoid_print
+   info - Don't invoke 'print' in production code - test_serper.dart:37:5 - avoid_print
+

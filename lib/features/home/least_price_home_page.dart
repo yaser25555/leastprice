@@ -30,10 +30,12 @@ import 'package:leastprice/features/home/search_suggestions_carousel.dart';
 import 'package:leastprice/features/cart/shopping_cart_screen.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
 import 'home_exports.dart';
+import 'package:leastprice/features/home/home_search_provider.dart';
+import 'package:leastprice/features/home/home_search_view.dart';
 import 'package:leastprice/features/admin/admin_exports.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
-class LeastPriceHomePage extends StatefulWidget {
+class LeastPriceHomePage extends ConsumerStatefulWidget {
   const LeastPriceHomePage({
     super.key,
     required this.firebaseReady,
@@ -48,17 +50,16 @@ class LeastPriceHomePage extends StatefulWidget {
   final String? bootstrapNotice;
 
   @override
-  State<LeastPriceHomePage> createState() => _LeastPriceHomePageState();
+  ConsumerState<LeastPriceHomePage> createState() => _LeastPriceHomePageState();
 }
 
-class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
+class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final FirestoreCatalogService _catalogService =
       const FirestoreCatalogService();
   final ProductRepository _fallbackRepository = const ProductRepository();
-  final SerpApiShoppingSearchService _comparisonSearchService =
-      const SerpApiShoppingSearchService();
+
   final Connectivity _connectivity = Connectivity();
   late Stream<List<ProductComparison>> _productsStream;
   StreamSubscription<dynamic>? _connectivitySubscription;
@@ -66,29 +67,28 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   StreamSubscription<List<AdBannerItem>>? _bannerSubscription;
   StreamSubscription<List<Coupon>>? _couponSubscription;
   StreamSubscription<AutomationHealthStatus?>? _systemHealthSubscription;
-  Timer? _smartSearchDebounce;
-  String _query = '';
-  String? _selectedSearchCategory;
-  String _selectedSearchStore = 'الكل';
+  
+  
+  
+  
   final String _selectedCategoryId = ProductCategoryCatalog.allId;
-  MarketplaceSearchCity _selectedSearchCity = marketplaceSearchCities.first;
+  
   HomeCatalogSection _selectedHomeSection = HomeCatalogSection.comparisons;
   bool _hasInternet = true;
   bool _isRefreshing = false;
-  bool _isSearchingOnline = false;
-  bool _isLoadingMore = false;
+  
+  
   bool _isDetectingCity = false;
-  int _currentSearchOffset = 0;
-  bool _hasMoreSearchResults = true;
-  String? _smartSearchNotice;
-  String _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
+  
+  
+  
+  
   ProductDataSource _dataSource = ProductDataSource.remote;
   UserSavingsProfile _userProfile = UserSavingsProfile.initial();
   AutomationHealthStatus _systemHealth = AutomationHealthStatus.initial();
   List<AdBannerItem> _activeBanners = AdBannerItem.mockData;
   List<Coupon> _activeCoupons = const <Coupon>[];
-  List<ComparisonSearchResult> _comparisonSearchResults =
-      const <ComparisonSearchResult>[];
+  
   static const int _trialVisibleResultsCount = 5;
 
   bool get _isPaidPlanActive => _userProfile.planActivated;
@@ -147,7 +147,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_handleSearchChanged);
+    
     _userProfile = widget.initialUserProfile;
     _dataSource = widget.firebaseReady
         ? ProductDataSource.remote
@@ -197,9 +197,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         }
         setState(() {
           _activeCoupons = coupons;
-          _comparisonSearchResults = _attachCouponsToSearchResults(
-            _comparisonSearchResults,
-          );
         });
       }, onError: (Object error, StackTrace stackTrace) {
         _handleFirestorePermissionAwareError(
@@ -208,9 +205,6 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
           stackTrace,
           fallback: () {
             _activeCoupons = const <Coupon>[];
-            _comparisonSearchResults = _attachCouponsToSearchResults(
-              _comparisonSearchResults,
-            );
           },
         );
       });
@@ -335,12 +329,10 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         return;
       }
 
-      setState(() {
-        _selectedSearchCity = detectedCity!;
-      });
-
-      if (_query.trim().isNotEmpty && _hasInternet) {
-        await _runSmartSearch(_query, forceRefresh: true);
+      ref.read(homeSearchProvider.notifier).setCity(detectedCity);
+      final query = ref.read(homeSearchProvider).query;
+      if (query.trim().isNotEmpty && _hasInternet) {
+        await ref.read(homeSearchProvider.notifier).performSearch(forceRefresh: true);
       }
 
       if (showFeedback && mounted) {
@@ -418,7 +410,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     _bannerSubscription?.cancel();
     _couponSubscription?.cancel();
     _systemHealthSubscription?.cancel();
-    _smartSearchDebounce?.cancel();
+    
     _searchController
       ..removeListener(_handleSearchChanged)
       ..dispose();
@@ -441,55 +433,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     }
   }
 
-  void _handleSearchChanged() {
-    final nextQuery = _searchController.text;
-    setState(() {
-      _query = nextQuery;
-      if (nextQuery.trim().isNotEmpty) {
-        _selectedHomeSection = HomeCatalogSection.comparisons;
-      }
-    });
+  
 
-    _scheduleSmartSearch(nextQuery);
-  }
+  
 
-  void _clearSearch() {
-    _searchController.clear();
-  }
+  
 
-  Future<void> _submitComparisonSearch(String rawQuery) async {
-    _smartSearchDebounce?.cancel();
-    final nextQuery = rawQuery.trim();
-    if (nextQuery.isEmpty || !_hasInternet) {
-      _clearSmartSearchState();
-      return;
-    }
-
-    if (mounted) {
-      setState(() {
-        _query = rawQuery;
-        _selectedHomeSection = HomeCatalogSection.comparisons;
-      });
-    }
-
-    await _runSmartSearch(nextQuery, forceRefresh: true);
-  }
-
-  void _selectSearchCity(String cityId) {
-    final nextCity = marketplaceSearchCityById(cityId);
-    if (nextCity.id == _selectedSearchCity.id) {
-      return;
-    }
-
-    setState(() {
-      _selectedSearchCity = nextCity;
-      _selectedHomeSection = HomeCatalogSection.comparisons;
-    });
-
-    if (_query.trim().isNotEmpty && _hasInternet) {
-      unawaited(_runSmartSearch(_query, forceRefresh: true));
-    }
-  }
+  
 
   void _selectHomeSection(HomeCatalogSection section) {
     if (_selectedHomeSection == section) {
@@ -501,203 +451,17 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
     });
   }
 
-  void _scheduleSmartSearch(String rawQuery) {
-    _smartSearchDebounce?.cancel();
+  
 
-    final normalizedQuery = normalizeArabic(rawQuery);
-    if (normalizedQuery.isEmpty ||
-        normalizedQuery.length < 2 ||
-        !_hasInternet) {
-      _clearSmartSearchState();
-      return;
-    }
+  
 
-    _smartSearchDebounce = Timer(const Duration(milliseconds: 650), () {
-      unawaited(_runSmartSearch(rawQuery));
-    });
-  }
 
-  void _clearSmartSearchState() {
-    if (_comparisonSearchResults.isEmpty &&
-        _smartSearchNotice == null &&
-        !_isSearchingOnline) {
-      return;
-    }
 
-    if (!mounted) {
-      _comparisonSearchResults = const <ComparisonSearchResult>[];
-      _smartSearchNotice = null;
-      _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
-      _isSearchingOnline = false;
-      return;
-    }
+  
 
-    setState(() {
-      _comparisonSearchResults = const <ComparisonSearchResult>[];
-      _smartSearchNotice = null;
-      _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
-      _isSearchingOnline = false;
-      _isLoadingMore = false;
-      _currentSearchOffset = 0;
-      _hasMoreSearchResults = true;
-    });
-  }
+  
 
-  String _comparisonSearchFallbackMessage() {
-    return tr(
-      'عذراً، لم نجد نتائج حالياً',
-      'Sorry, we could not find results right now.',
-    );
-  }
-
-  Future<void> _performSerpSearch(
-    String trimmedQuery, {
-    bool forceRefresh = false,
-    bool isLoadMore = false,
-  }) async {
-    String effectiveQuery = trimmedQuery;
-    if (_selectedSearchCategory != null && trimmedQuery.isNotEmpty) {
-      if (_selectedSearchCategory == 'الإلكترونيات' || _selectedSearchCategory == 'Electronics') {
-         effectiveQuery = '$trimmedQuery الكترونيات';
-      } else if (_selectedSearchCategory == 'السوبر ماركت' || _selectedSearchCategory == 'Supermarket') {
-         effectiveQuery = '$trimmedQuery بقالة';
-      } else if (_selectedSearchCategory == 'المطاعم' || _selectedSearchCategory == 'Restaurants') {
-         effectiveQuery = '$trimmedQuery مطعم';
-      } else if (_selectedSearchCategory == 'المقاهي' || _selectedSearchCategory == 'Cafes') {
-         effectiveQuery = '$trimmedQuery كافيه';
-      } else if (_selectedSearchCategory == 'العيادات الطبية' || _selectedSearchCategory == 'Medical Clinics') {
-         effectiveQuery = '$trimmedQuery عيادة';
-      }
-    }
-
-    String? targetStoreId;
-    if (_selectedSearchStore != 'الكل' && trimmedQuery.isNotEmpty) {
-      targetStoreId = inferStoreIdFromUrl('', fallbackName: _selectedSearchStore);
-    }
-
-    final nextOffset = isLoadMore ? _currentSearchOffset + 20 : 0;
-
-    final result = await _comparisonSearchService.search(
-      query: effectiveQuery,
-      firebaseReady: widget.firebaseReady,
-      forceRefresh: forceRefresh || isLoadMore,
-      city: _selectedSearchCity,
-      targetStoreId: targetStoreId,
-      startOffset: nextOffset,
-    );
-
-    if (!mounted || normalizeArabic(trimmedQuery) != normalizeArabic(_query)) {
-      return;
-    }
-
-    setState(() {
-      List<ComparisonSearchResult> fullResults = _attachCouponsToSearchResults(result.results);
-      
-      final isBarcode = RegExp(r'^\d{8,}$').hasMatch(trimmedQuery);
-      if (isBarcode && fullResults.isNotEmpty) {
-        final referenceTitle = fullResults.first.title.toLowerCase();
-        final keywords = referenceTitle.split(' ').where((w) => w.length > 2).take(2).toList();
-        if (keywords.isNotEmpty) {
-           fullResults = fullResults.where((item) {
-             final t = item.title.toLowerCase();
-             return keywords.every((word) => t.contains(word));
-           }).toList();
-        }
-      }
-
-      _hasMoreSearchResults = result.results.isNotEmpty;
-      _currentSearchOffset = nextOffset;
-
-      final visibleResults = _isPaidPlanActive
-          ? fullResults
-          : fullResults.take(_trialVisibleResultsCount).toList(growable: false);
-      
-      _comparisonSearchResults = isLoadMore 
-          ? [..._comparisonSearchResults, ...visibleResults] 
-          : visibleResults;
-
-      _smartSearchNotice = _comparisonSearchResults.isEmpty
-          ? _comparisonSearchFallbackMessage()
-          : !_isPaidPlanActive && fullResults.length > _trialVisibleResultsCount
-              ? tr(
-                  'لعرض المزيد يرجى الاشتراك',
-                  'To view more, please subscribe',
-                )
-          : result.notice;
-      _comparisonSearchSourceLabel = result.fromCache
-          ? tr(
-              'نتائج محفوظة • ${_selectedSearchCity.label}',
-              'Cached results • ${_selectedSearchCity.label}',
-            )
-          : result.results.any((item) => item.isLiveDirect)
-              ? tr(
-                  'نتائج مباشرة • ${_selectedSearchCity.label}',
-                  'Live results • ${_selectedSearchCity.label}',
-                )
-              : tr(
-                  'بحث حي • ${_selectedSearchCity.label}',
-                  'Live search • ${_selectedSearchCity.label}',
-                );
-    });
-  }
-
-  Future<void> _runSmartSearch(
-    String rawQuery, {
-    bool forceRefresh = false,
-  }) async {
-    final trimmedQuery = rawQuery.trim();
-    if (trimmedQuery.isEmpty || !mounted || !_hasInternet) {
-      _clearSmartSearchState();
-      return;
-    }
-
-    setState(() {
-      _isSearchingOnline = true;
-      _smartSearchNotice = null;
-    });
-
-    try {
-      await _performSerpSearch(trimmedQuery, forceRefresh: forceRefresh);
-    } catch (error) {
-      debugPrint('LeastPrice marketplace search failed: $error');
-      if (!mounted ||
-          normalizeArabic(trimmedQuery) != normalizeArabic(_query)) {
-        return;
-      }
-
-      setState(() {
-        _comparisonSearchResults = const <ComparisonSearchResult>[];
-        _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
-        _smartSearchNotice = _comparisonSearchFallbackMessage();
-      });
-    } finally {
-      if (mounted && normalizeArabic(trimmedQuery) == normalizeArabic(_query)) {
-        setState(() {
-          _isSearchingOnline = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _loadMoreSearchResults() async {
-    if (_isLoadingMore || !_hasMoreSearchResults || !_isPaidPlanActive || !_hasInternet) return;
-    
-    setState(() {
-      _isLoadingMore = true;
-    });
-
-    try {
-      await _performSerpSearch(_query, isLoadMore: true);
-    } catch (e) {
-      debugPrint('Load more failed: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingMore = false;
-        });
-      }
-    }
-  }
+  
 
   void _handleConnectivityChange(
     dynamic rawStatus, {
@@ -737,9 +501,12 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     if (hasInternet) {
       unawaited(_refreshCatalog(showSuccessMessage: false));
-      _scheduleSmartSearch(_query);
+      final query = ref.read(homeSearchProvider).query;
+      if (query.trim().isNotEmpty) {
+         unawaited(ref.read(homeSearchProvider.notifier).performSearch());
+      }
     } else {
-      _clearSmartSearchState();
+      ref.read(homeSearchProvider.notifier).clearSearch();
     }
   }
 
@@ -800,8 +567,8 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
 
     try {
       await _catalogService.refreshProductsFromServer();
-      if (_query.trim().isNotEmpty) {
-        await _runSmartSearch(_query, forceRefresh: true);
+      if (ref.read(homeSearchProvider).query.trim().isNotEmpty) {
+        await ref.read(homeSearchProvider.notifier).performSearch(forceRefresh: true);
       }
       if (!mounted) return;
 
@@ -1196,8 +963,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         builder: (context, snapshot) {
           final appleStyle = isAppleInterface(context);
           final products = snapshot.data ?? const <ProductComparison>[];
-          final hasQuery = _query.trim().isNotEmpty;
-          final showOffersSection =
+                    final showOffersSection =
               _selectedHomeSection == HomeCatalogSection.offers;
           final showComparisonsSection =
               _selectedHomeSection == HomeCatalogSection.comparisons;
@@ -1207,10 +973,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
               _selectedHomeSection == HomeCatalogSection.plans;
           final showAboutSection =
               _selectedHomeSection == HomeCatalogSection.about;
-          final comparisonResults = _comparisonSearchResults;
-          final comparisonDataSourceLabel = showComparisonsSection
-              ? _comparisonSearchSourceLabel
-              : _dataSource.label;
+                    final comparisonDataSourceLabel = _dataSource.label;
 
           return DecoratedBox(
             decoration: BoxDecoration(
@@ -1256,55 +1019,14 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                     ),
                   ),
                   if (showComparisonsSection)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                        child: ComparisonSearchBarSection(
-                          searchController: _searchController,
-                          focusNode: _searchFocusNode,
-                          query: _query,
-                          resultsCount: comparisonResults.length,
-                          dataSourceLabel: comparisonDataSourceLabel,
-                          searchHintText: tr(
-                            'ابحث عن أي منتج لمعرفة السعر الأقل',
-                            'Search any product to find the lowest price',
-                          ),
-                          isSearchingOnline: _isSearchingOnline,
-                          availableCities: marketplaceSearchCities,
-                          selectedCityId: _selectedSearchCity.id,
-                          selectedCategory: _selectedSearchCategory,
-                          selectedStore: _selectedSearchStore,
-                          onCategorySelected: (category) {
-                            setState(() {
-                              if (_selectedSearchCategory == category) {
-                                _selectedSearchCategory = null;
-                              } else {
-                                _selectedSearchCategory = category;
-                              }
-                            });
-                          },
-                          onStoreSelected: (store) {
-                            setState(() {
-                              _selectedSearchStore = store;
-                            });
-                            if (_query.trim().isNotEmpty && _hasInternet) {
-                              unawaited(
-                                _runSmartSearch(_query, forceRefresh: true),
-                              );
-                            }
-                          },
-                          onCitySelected: _selectSearchCity,
-                          onClearSearch: _clearSearch,
-                          onSubmitted: (value) {
-                            unawaited(_submitComparisonSearch(value));
-                          },
-                          onDetectCityTap: () {
-                            unawaited(
-                              _detectCityFromCurrentLocation(showFeedback: true),
-                            );
-                          },
-                        ),
-                      ),
+                    ...HomeSearchView.buildSlivers(
+                      ref: ref,
+                      searchController: _searchController,
+                      searchFocusNode: _searchFocusNode,
+                      onOpenExternalUrl: _openExternalUrl,
+                      onCopyCoupon: _copyCouponCode,
+                      isPaidPlanActive: _isPaidPlanActive,
+                      onDetectCityTap: () => unawaited(_detectCityFromCurrentLocation(showFeedback: true)),
                     ),
                   if (showPlansSection)
                     SliverPadding(
@@ -1418,109 +1140,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                         ),
                       ),
                     ),
-                  if (showComparisonsSection &&
-                      !hasQuery &&
-                      !_isSearchingOnline)
-                    const SliverToBoxAdapter(child: SearchSuggestionsCarousel())
-                  else if (showComparisonsSection &&
-                      _isSearchingOnline &&
-                      comparisonResults.isEmpty)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(20, 32, 20, 24),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppPalette.comparisonEmerald,
-                          ),
-                        ),
-                      ),
-                    )
-                  else if (showComparisonsSection && comparisonResults.isEmpty)
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-                      sliver: SliverToBoxAdapter(
-                        child: ComparisonSearchPlaceholder(
-                          title: _smartSearchNotice?.trim().isNotEmpty == true
-                              ? _smartSearchNotice!
-                              : _comparisonSearchFallbackMessage(),
-                          icon: Icons.manage_search_rounded,
-                        ),
-                      ),
-                    )
-                  else if (showComparisonsSection)
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final result = comparisonResults[index];
 
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                bottom: index == comparisonResults.length - 1
-                                    ? 0
-                                    : 18,
-                              ),
-                              child: ComparisonSearchResultCard(
-                                result: result,
-                                onTap: () =>
-                                    _openExternalUrl(result.productUrl),
-                                onCopyCoupon: result.matchedCoupon == null
-                                    ? null
-                                    : () => _copyCouponCode(
-                                          result.matchedCoupon!.code,
-                                        ),
-                              ),
-                            );
-                          },
-                          childCount: comparisonResults.length,
-                        ),
-                      ),
-                    ),
-                  if (showComparisonsSection &&
-                      _smartSearchNotice != null &&
-                      comparisonResults.isNotEmpty)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _smartSearchNotice!,
-                              style: TextStyle(
-                                color: AppPalette.softNavy,
-                                fontSize: 12.8,
-                                fontWeight: FontWeight.w700,
-                                height: 1.45,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  if (showComparisonsSection && _isPaidPlanActive && comparisonResults.isNotEmpty && _hasMoreSearchResults)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-                        child: Center(
-                          child: _isLoadingMore 
-                              ? CircularProgressIndicator(color: AppPalette.comparisonEmerald)
-                              : TextButton.icon(
-                                  onPressed: _loadMoreSearchResults,
-                                  icon: Icon(Icons.expand_more_rounded, color: AppPalette.comparisonEmerald),
-                                  label: Text(
-                                    tr('تحميل المزيد', 'Load More'),
-                                    style: TextStyle(
-                                      color: AppPalette.comparisonEmerald,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
