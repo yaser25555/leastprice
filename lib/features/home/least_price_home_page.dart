@@ -14,19 +14,15 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/data/models/automation_health_status.dart';
-import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/ad_banner_item.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
 import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/models/coupon.dart';
-import 'package:leastprice/services/api/serp_api_shopping_search_service.dart';
 import 'package:leastprice/services/api/affiliate_link_service.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/data/repositories/product_repository.dart';
 import 'package:leastprice/core/utils/helpers.dart';
-import 'package:leastprice/features/home/plan_picker_section.dart';
-import 'package:leastprice/features/home/search_suggestions_carousel.dart';
 import 'package:leastprice/features/cart/shopping_cart_screen.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
 import 'home_exports.dart';
@@ -65,7 +61,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
   StreamSubscription<dynamic>? _connectivitySubscription;
   StreamSubscription<UserSavingsProfile?>? _userProfileSubscription;
   StreamSubscription<List<AdBannerItem>>? _bannerSubscription;
-  StreamSubscription<List<Coupon>>? _couponSubscription;
+
   StreamSubscription<AutomationHealthStatus?>? _systemHealthSubscription;
 
   final String _selectedCategoryId = ProductCategoryCatalog.allId;
@@ -76,11 +72,9 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
 
   bool _isDetectingCity = false;
 
-  ProductDataSource _dataSource = ProductDataSource.remote;
   UserSavingsProfile _userProfile = UserSavingsProfile.initial();
   AutomationHealthStatus _systemHealth = AutomationHealthStatus.initial();
   List<AdBannerItem> _activeBanners = AdBannerItem.mockData;
-  List<Coupon> _activeCoupons = const <Coupon>[];
 
   static const int _trialVisibleResultsCount = 5;
 
@@ -142,9 +136,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     super.initState();
 
     _userProfile = widget.initialUserProfile;
-    _dataSource = widget.firebaseReady
-        ? ProductDataSource.remote
-        : ProductDataSource.asset;
+
     _productsStream = _buildProductsStream();
 
     if (widget.firebaseReady) {
@@ -182,25 +174,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
           },
         );
       });
-      _couponSubscription = _catalogService.watchFeaturedCoupons().listen((
-        coupons,
-      ) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _activeCoupons = coupons;
-        });
-      }, onError: (Object error, StackTrace stackTrace) {
-        _handleFirestorePermissionAwareError(
-          'featured coupons',
-          error,
-          stackTrace,
-          fallback: () {
-            _activeCoupons = const <Coupon>[];
-          },
-        );
-      });
+
       _systemHealthSubscription = _catalogService.watchSystemHealth().listen((
         status,
       ) {
@@ -280,7 +254,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       }
 
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.medium),
       );
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
@@ -370,18 +344,13 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       if (mounted) {
         setState(() {
           _userProfile = result.referralProfile ?? _userProfile;
-          _dataSource = result.source;
         });
       }
 
       yield result.products;
     } catch (error) {
       debugPrint('LeastPrice fallback catalog failed: $error');
-      if (mounted) {
-        setState(() {
-          _dataSource = ProductDataSource.mock;
-        });
-      }
+
 
       yield ProductComparison.mockData;
     }
@@ -403,7 +372,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     _connectivitySubscription?.cancel();
     _userProfileSubscription?.cancel();
     _bannerSubscription?.cancel();
-    _couponSubscription?.cancel();
+
     _systemHealthSubscription?.cancel();
 
     _searchController.dispose();
@@ -649,43 +618,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     }
   }
 
-  Coupon? _bestCouponForStore(String storeId) {
-    final normalizedStoreId = normalizeStoreIdToken(storeId);
-    if (normalizedStoreId.isEmpty) {
-      return null;
-    }
-
-    final now = DateTime.now();
-    final matches = _activeCoupons
-        .where(
-          (coupon) =>
-              normalizeStoreIdToken(coupon.storeId) == normalizedStoreId &&
-              coupon.active &&
-              !coupon.isExpiredAt(now),
-        )
-        .toList();
-    if (matches.isEmpty) {
-      return null;
-    }
-
-    matches.sort((a, b) {
-      final discountCompare = (b.discountPercent ?? -1).compareTo(
-        a.discountPercent ?? -1,
-      );
-      if (discountCompare != 0) {
-        return discountCompare;
-      }
-
-      final expiryCompare = a.expiresAt.compareTo(b.expiresAt);
-      if (expiryCompare != 0) {
-        return expiryCompare;
-      }
-
-      return a.code.compareTo(b.code);
-    });
-    return matches.first;
-  }
-
   Future<void> _copyCouponCode(String code) async {
     final trimmedCode = code.trim();
     if (trimmedCode.isEmpty) {
@@ -731,11 +663,13 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
         .replaceAll('{USER_CODE}', _userProfile.inviteCode)
         .replaceAll('{APP_LINK}', inviteLink);
 
-    await Share.share(
-      message,
-      subject: tr(
-        'ادعُ صديقاً للتوفير مع أرخص سعر',
-        'Invite a friend to save with LeastPrice',
+    await SharePlus.instance.share(
+      ShareParams(
+        text: message,
+        subject: tr(
+          'ادعُ صديقاً للتوفير مع أرخص سعر',
+          'Invite a friend to save with LeastPrice',
+        ),
       ),
     );
   }
@@ -938,7 +872,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
               _selectedHomeSection == HomeCatalogSection.plans;
           final showAboutSection =
               _selectedHomeSection == HomeCatalogSection.about;
-          final comparisonDataSourceLabel = _dataSource.label;
 
           return DecoratedBox(
             decoration: BoxDecoration(

@@ -146,7 +146,7 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                     boxShadow: [
                       BoxShadow(
                         color: (item['gradient'] as List<Color>)[0]
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -160,7 +160,7 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                         child: Icon(
                           item['icon'] as IconData,
                           size: 100,
-                          color: AppPalette.pureWhite.withOpacity(0.15),
+                          color: AppPalette.pureWhite.withValues(alpha: 0.15),
                         ),
                       ),
                       Column(
@@ -171,7 +171,7 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                               Container(
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: AppPalette.pureWhite.withOpacity(0.2),
+                                  color: AppPalette.pureWhite.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(

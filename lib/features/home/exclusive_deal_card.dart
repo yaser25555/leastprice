@@ -36,10 +36,10 @@ class ExclusiveDealCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppPalette.dealsBorder.withOpacity(0.5)),
+          border: Border.all(color: AppPalette.dealsBorder.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
-              color: AppPalette.deepNavy.withOpacity(0.08),
+              color: AppPalette.deepNavy.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -61,7 +61,7 @@ class ExclusiveDealCard extends StatelessWidget {
                       errorBuilder: (_, __, ___) {
                         return Icon(
                           Icons.local_offer_rounded,
-                          color: AppPalette.dealsRed.withOpacity(0.5),
+                          color: AppPalette.dealsRed.withValues(alpha: 0.5),
                           size: 64,
                         );
                       },
@@ -129,7 +129,7 @@ class ExclusiveDealCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppPalette.dealsRed.withOpacity(0.1),
+                          color: AppPalette.dealsRed.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -149,8 +149,8 @@ class ExclusiveDealCard extends StatelessWidget {
                         icon: Icon(Icons.ios_share_rounded,
                             color: AppPalette.deepNavy),
                         onPressed: () {
-                          Share.share(
-                            'شاهد أحدث ${cleanTitle} عبر تطبيق LeastPrice! 🔥\nالرابط: ${deal.dealUrl}',
+                          SharePlus.instance.share(
+                            ShareParams(text: 'شاهد أحدث $cleanTitle عبر تطبيق LeastPrice! 🔥\nالرابط: ${deal.dealUrl}'),
                           );
                         },
                       ),

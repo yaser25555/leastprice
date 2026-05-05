@@ -111,6 +111,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
                         ),
                       );
                       if (result != null && result.isNotEmpty) {
+                        if (!context.mounted) return;
                         // Show a loading dialog while fetching the product name
                         showDialog(
                           context: context,

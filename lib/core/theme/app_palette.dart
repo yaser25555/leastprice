@@ -56,8 +56,8 @@ class AppPalette {
   static Color get pureWhite =>
       isFeminineTheme.value ? const Color(0xFFFFFFFF) : Colors.white;
   static Color pureWhiteOpacity(double opacity) => isFeminineTheme.value
-      ? const Color(0xFFFFFFFF).withOpacity(opacity)
-      : Colors.white.withOpacity(opacity);
+      ? const Color(0xFFFFFFFF).withValues(alpha: opacity)
+      : Colors.white.withValues(alpha: opacity);
 
   // -- Premium 3D Neumorphic Shadows --
   static List<BoxShadow> get premium3DBoxShadow => isFeminineTheme.value

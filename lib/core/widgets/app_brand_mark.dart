@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:leastprice/core/theme/app_palette.dart';
+
 
 class AppBrandMark extends StatelessWidget {
   const AppBrandMark({

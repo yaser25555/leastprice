@@ -133,19 +133,19 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
       if (state.selectedCategory != null) {
         if (state.selectedCategory == 'الإلكترونيات' ||
             state.selectedCategory == 'Electronics') {
-          effectiveQuery = '${effectiveQuery} الكترونيات';
+          effectiveQuery = '$effectiveQuery الكترونيات';
         } else if (state.selectedCategory == 'السوبر ماركت' ||
             state.selectedCategory == 'Supermarket') {
-          effectiveQuery = '${effectiveQuery} بقالة';
+          effectiveQuery = '$effectiveQuery بقالة';
         } else if (state.selectedCategory == 'المطاعم' ||
             state.selectedCategory == 'Restaurants') {
-          effectiveQuery = '${effectiveQuery} مطعم';
+          effectiveQuery = '$effectiveQuery مطعم';
         } else if (state.selectedCategory == 'المقاهي' ||
             state.selectedCategory == 'Cafes') {
-          effectiveQuery = '${effectiveQuery} كافيه';
+          effectiveQuery = '$effectiveQuery كافيه';
         } else if (state.selectedCategory == 'العيادات الطبية' ||
             state.selectedCategory == 'Medical Clinics') {
-          effectiveQuery = '${effectiveQuery} عيادة';
+          effectiveQuery = '$effectiveQuery عيادة';
         }
       }
 

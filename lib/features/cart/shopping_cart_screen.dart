@@ -4,17 +4,10 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
 import 'package:leastprice/features/home/comparison_image_fallback.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 
 class ShoppingCartScreen extends ConsumerWidget {
   const ShoppingCartScreen({super.key});
-
-  Future<void> _launchUrl(String urlString) async {
-    final url = Uri.parse(urlString);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -107,7 +100,7 @@ class ShoppingCartScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
@@ -147,7 +140,7 @@ class ShoppingCartScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: AppPalette.deepNavy.withOpacity(0.05),
+                              color: AppPalette.deepNavy.withValues(alpha: 0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
