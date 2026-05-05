@@ -130,36 +130,14 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
 
     try {
       String effectiveQuery = state.query.trim();
-      if (state.selectedCategory != null) {
-        if (state.selectedCategory == 'الإلكترونيات' ||
-            state.selectedCategory == 'Electronics') {
-          effectiveQuery = '$effectiveQuery الكترونيات';
-        } else if (state.selectedCategory == 'السوبر ماركت' ||
-            state.selectedCategory == 'Supermarket') {
-          effectiveQuery = '$effectiveQuery بقالة';
-        } else if (state.selectedCategory == 'المطاعم' ||
-            state.selectedCategory == 'Restaurants') {
-          effectiveQuery = '$effectiveQuery مطعم';
-        } else if (state.selectedCategory == 'المقاهي' ||
-            state.selectedCategory == 'Cafes') {
-          effectiveQuery = '$effectiveQuery كافيه';
-        } else if (state.selectedCategory == 'العيادات الطبية' ||
-            state.selectedCategory == 'Medical Clinics') {
-          effectiveQuery = '$effectiveQuery عيادة';
-        }
-      }
+      // Category enhancement removed to keep search broad as requested
 
       String? targetStoreId;
       String? storeDomain;
-      if (state.selectedStore != 'الكل') {
-        targetStoreId =
-            inferStoreIdFromUrl('', fallbackName: state.selectedStore);
-        storeDomain = domainForStoreId(targetStoreId ?? '');
-
-        // Enhance query by adding the store name and domain to force Google to find it
-        if (storeDomain != null) {
-          effectiveQuery =
-              '$effectiveQuery site:$storeDomain OR "${state.selectedStore}"';
+      if (state.selectedStore != 'الكل' && state.selectedStore.isNotEmpty) {
+        final domain = domainForStoreId(state.selectedStore);
+        if (domain != null) {
+          effectiveQuery = '$effectiveQuery site:$domain';
         } else {
           effectiveQuery = '$effectiveQuery "${state.selectedStore}"';
         }

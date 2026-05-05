@@ -776,39 +776,35 @@ class SerpApiShoppingSearchService {
       // If we are looking for a specific store, we still show other supported stores
       // but they will be sorted lower later. This ensures 'No Results' is avoided.
       final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
+      final storeNameLower = result.storeName.toLowerCase();
+      final storeIdLower = normalizedStoreId.toLowerCase();
 
-      // 1. Check if the Store ID is already in our supported list
-      if (normalizedStoreId.isNotEmpty && normalizedStoreId != 'unknown') {
-        if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
-          return true;
-        }
-      }
+      // 1. Direct Whitelist Match (ID or Host)
+      if (_saudiSupportedStoreIds.contains(storeIdLower)) return true;
 
-      // 2. Check if the Store Name matches any of our supported stores (Bilingual check)
-      final inferredFromName =
+      // 2. Name-based Match (Bilingual)
+      final inferredId =
           inferStoreIdFromUrl('', fallbackName: result.storeName);
-      if (inferredFromName != null &&
-          _saudiSupportedStoreIds.contains(inferredFromName)) {
+      if (inferredId != null && _saudiSupportedStoreIds.contains(inferredId)) {
         return true;
       }
 
-      // 3. Special case for trusted domains
+      // 3. Domain-based Match for major Saudi retailers
       if (productHost.contains('panda.sa') ||
           productHost.contains('noon.com') ||
           productHost.contains('amazon.sa') ||
           productHost.contains('othaim') ||
+          productHost.contains('lulu') ||
           productHost.contains('carrefour') ||
           productHost.contains('danube') ||
+          productHost.contains('bindawood') ||
           productHost.contains('tamimi')) {
         return true;
       }
 
-      // 4. Fallback for Google Shopping results that might be from valid stores
-      // but we couldn't infer them yet (we'll show them to avoid 'No Results')
-      if (productHost.contains('google.com') ||
-          normalizedStoreId.contains('google')) {
-        // If the store name looks like a real store (not just a generic string), allow it
-        if (result.storeName.length > 2 && !result.storeName.contains('http')) {
+      // 4. Smart Google Fallback
+      if (productHost.contains('google')) {
+        if (storeNameLower.length > 2 && !storeNameLower.contains('http')) {
           return true;
         }
       }
