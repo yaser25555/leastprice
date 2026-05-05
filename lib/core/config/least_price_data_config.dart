@@ -66,6 +66,8 @@ class LeastPriceDataConfig {
     'www.nike.sa': 'https://go.urtrackinglink.com/SH9H4',
     'hm.com': 'https://go.urtrackinglink.com/SH9H5',
     'ae.hm.com': 'https://go.urtrackinglink.com/SH9H5',
+    'ntshop.sa': 'https://go.urtrackinglink.com/SH9H5',
+    'www.ntshop.sa': 'https://go.urtrackinglink.com/SH9H5',
   };
 
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
