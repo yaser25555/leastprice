@@ -106,6 +106,7 @@ class SerpApiShoppingSearchService {
     required MarketplaceSearchCity city,
     bool forceRefresh = false,
     String? targetStoreId,
+    int startOffset = 0,
   }) async {
     final trimmedQuery = query.trim();
     final normalizedQuery = normalizeArabic(trimmedQuery);
@@ -120,7 +121,7 @@ class SerpApiShoppingSearchService {
     ComparisonSearchCacheEntry? cachedEntry;
 
     // 1. Try Local Cache (Fastest, Zero Cost)
-    if (!forceRefresh) {
+    if (!forceRefresh && startOffset == 0) {
       try {
         cachedEntry = await _localCache.fetchLocalSearchCache(
           trimmedQuery,
@@ -143,7 +144,7 @@ class SerpApiShoppingSearchService {
     }
 
     // 2. Try Firestore Cache
-    if (canUseFirestoreCache && !forceRefresh) {
+    if (canUseFirestoreCache && !forceRefresh && startOffset == 0) {
       try {
         cachedEntry = await _service.fetchComparisonSearchCache(
           trimmedQuery,
@@ -190,8 +191,9 @@ class SerpApiShoppingSearchService {
         apiKey,
         city: city,
         targetStoreId: targetStoreId,
+        startOffset: startOffset,
       );
-      if (results.isNotEmpty) {
+      if (results.isNotEmpty && startOffset == 0) {
         // Save to Local Cache
         try {
           await _localCache.saveLocalSearchCache(
@@ -253,6 +255,7 @@ class SerpApiShoppingSearchService {
     String apiKey, {
     required MarketplaceSearchCity city,
     String? targetStoreId,
+    int startOffset = 0,
   }) async {
     final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     final results = <ComparisonSearchResult>[];
@@ -303,11 +306,13 @@ class SerpApiShoppingSearchService {
           ? 'https://${LeastPriceDataConfig.functionsRegion}-leastprice-yaser.cloudfunctions.net/${LeastPriceDataConfig.hybridSearchFunctionName}'
           : '$origin/api/${LeastPriceDataConfig.hybridSearchFunctionName}';
           
+      final pageNum = (startOffset / 20).floor() + 1;
       final uri = Uri.parse(
         '$baseUrl'
         '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
         '&hl=${isAr ? 'ar' : 'en'}'
-        '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}',
+        '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}'
+        '&page=$pageNum',
       );
 
       final response = await http.get(
@@ -352,13 +357,14 @@ class SerpApiShoppingSearchService {
     }
 
     // Fetch from SerpApi
-    final serpApiResults = await _fetchSerpApiResults(effectiveQuery, apiKey, city: city);
+    final serpApiResults = await _fetchSerpApiResults(effectiveQuery, apiKey, city: city, startOffset: startOffset);
     results.addAll(serpApiResults);
 
     // Fetch from Serper if key is available
     if (serperApiKey.isNotEmpty) {
       try {
-        final serperResults = await _fetchSerperResults(effectiveQuery, serperApiKey, city: city);
+        final pageNum = (startOffset / 10).floor() + 1;
+        final serperResults = await _fetchSerperResults(effectiveQuery, serperApiKey, city: city, page: pageNum);
         results.addAll(serperResults);
       } catch (error) {
         debugPrint('Serper search failed: $error');
@@ -385,6 +391,7 @@ class SerpApiShoppingSearchService {
     String query,
     String apiKey, {
     required MarketplaceSearchCity city,
+    int startOffset = 0,
   }) async {
     final uri = Uri.https('serpapi.com', '/search.json', {
       'engine': 'google_shopping',
@@ -393,6 +400,7 @@ class SerpApiShoppingSearchService {
       'gl': 'sa',
       'hl': 'ar',
       'api_key': apiKey,
+      'start': startOffset.toString(),
     });
 
     final response = await http.get(uri);
@@ -412,6 +420,7 @@ class SerpApiShoppingSearchService {
     String query,
     String apiKey, {
     required MarketplaceSearchCity city,
+    int page = 1,
   }) async {
     final uri = Uri.https('google.serper.dev', '/search');
     final response = await http.post(
@@ -425,6 +434,7 @@ class SerpApiShoppingSearchService {
         'gl': 'sa',
         'hl': 'ar',
         'location': city.serpApiLocation,
+        'page': page,
       }),
     );
 

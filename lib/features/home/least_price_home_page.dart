@@ -76,7 +76,10 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   bool _hasInternet = true;
   bool _isRefreshing = false;
   bool _isSearchingOnline = false;
+  bool _isLoadingMore = false;
   bool _isDetectingCity = false;
+  int _currentSearchOffset = 0;
+  bool _hasMoreSearchResults = true;
   String? _smartSearchNotice;
   String _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
   ProductDataSource _dataSource = ProductDataSource.remote;
@@ -534,6 +537,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       _smartSearchNotice = null;
       _comparisonSearchSourceLabel = tr('بحث السوق', 'Market search');
       _isSearchingOnline = false;
+      _isLoadingMore = false;
+      _currentSearchOffset = 0;
+      _hasMoreSearchResults = true;
     });
   }
 
@@ -547,6 +553,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
   Future<void> _performSerpSearch(
     String trimmedQuery, {
     bool forceRefresh = false,
+    bool isLoadMore = false,
   }) async {
     String effectiveQuery = trimmedQuery;
     if (_selectedSearchCategory != null && trimmedQuery.isNotEmpty) {
@@ -568,12 +575,15 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       targetStoreId = inferStoreIdFromUrl('', fallbackName: _selectedSearchStore);
     }
 
+    final nextOffset = isLoadMore ? _currentSearchOffset + 20 : 0;
+
     final result = await _comparisonSearchService.search(
       query: effectiveQuery,
       firebaseReady: widget.firebaseReady,
-      forceRefresh: forceRefresh,
+      forceRefresh: forceRefresh || isLoadMore,
       city: _selectedSearchCity,
       targetStoreId: targetStoreId,
+      startOffset: nextOffset,
     );
 
     if (!mounted || normalizeArabic(trimmedQuery) != normalizeArabic(_query)) {
@@ -595,11 +605,18 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
         }
       }
 
+      _hasMoreSearchResults = result.results.isNotEmpty;
+      _currentSearchOffset = nextOffset;
+
       final visibleResults = _isPaidPlanActive
           ? fullResults
           : fullResults.take(_trialVisibleResultsCount).toList(growable: false);
-      _comparisonSearchResults = visibleResults;
-      _smartSearchNotice = result.results.isEmpty
+      
+      _comparisonSearchResults = isLoadMore 
+          ? [..._comparisonSearchResults, ...visibleResults] 
+          : visibleResults;
+
+      _smartSearchNotice = _comparisonSearchResults.isEmpty
           ? _comparisonSearchFallbackMessage()
           : !_isPaidPlanActive && fullResults.length > _trialVisibleResultsCount
               ? tr(
@@ -657,6 +674,26 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       if (mounted && normalizeArabic(trimmedQuery) == normalizeArabic(_query)) {
         setState(() {
           _isSearchingOnline = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadMoreSearchResults() async {
+    if (_isLoadingMore || !_hasMoreSearchResults || !_isPaidPlanActive || !_hasInternet) return;
+    
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    try {
+      await _performSerpSearch(_query, isLoadMore: true);
+    } catch (e) {
+      debugPrint('Load more failed: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingMore = false;
         });
       }
     }
@@ -1459,6 +1496,28 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                  if (showComparisonsSection && _isPaidPlanActive && comparisonResults.isNotEmpty && _hasMoreSearchResults)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+                        child: Center(
+                          child: _isLoadingMore 
+                              ? const CircularProgressIndicator(color: AppPalette.comparisonEmerald)
+                              : TextButton.icon(
+                                  onPressed: _loadMoreSearchResults,
+                                  icon: const Icon(Icons.expand_more_rounded, color: AppPalette.comparisonEmerald),
+                                  label: Text(
+                                    tr('تحميل المزيد', 'Load More'),
+                                    style: const TextStyle(
+                                      color: AppPalette.comparisonEmerald,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),
