@@ -60,6 +60,8 @@ class LeastPriceDataConfig {
     'www.noon.com': 'https://go.urtrackinglink.com/SH9H0',
     'yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
     'www.yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
+    'sssports.com': 'https://go.urtrackinglink.com/SH9H3',
+    'en-ae.sssports.com': 'https://go.urtrackinglink.com/SH9H3',
   };
 
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
