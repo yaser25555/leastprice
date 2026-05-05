@@ -6,7 +6,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class EmailVerificationPendingScreen extends StatefulWidget {
-  const EmailVerificationPendingScreen({super.key, 
+  const EmailVerificationPendingScreen({
+    super.key,
     required this.user,
   });
 
@@ -79,8 +80,7 @@ class _EmailVerificationPendingScreenState
       if (!mounted) return;
       setState(() {
         _isResending = false;
-        _statusMessage =
-            'تعذر إعادة إرسال رسالة التفعيل: $error';
+        _statusMessage = 'تعذر إعادة إرسال رسالة التفعيل: $error';
       });
     }
   }
@@ -173,8 +173,7 @@ class _EmailVerificationPendingScreenState
                             ),
                           )
                         : const Icon(Icons.verified_rounded),
-                    label: Text(tr(
-                        'تحققت من البريد', 'I verified my email')),
+                    label: Text(tr('تحققت من البريد', 'I verified my email')),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
@@ -188,15 +187,13 @@ class _EmailVerificationPendingScreenState
                             child: CircularProgressIndicator(strokeWidth: 2.2),
                           )
                         : const Icon(Icons.forward_to_inbox_rounded),
-                    label: Text(tr(
-                        'إعادة إرسال رابط التفعيل',
+                    label: Text(tr('إعادة إرسال رابط التفعيل',
                         'Resend verification link')),
                   ),
                   TextButton(
                     onPressed: _isRefreshing || _isResending ? null : _signOut,
-                    child: Text(tr(
-                        'استخدام بريد إلكتروني آخر',
-                        'Use another email')),
+                    child: Text(
+                        tr('استخدام بريد إلكتروني آخر', 'Use another email')),
                   ),
                 ],
               ),

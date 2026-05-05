@@ -18,18 +18,21 @@ class PushNotificationService {
         debugPrint('PushNotificationService: User granted permission.');
         if (!kIsWeb) {
           await _messaging.subscribeToTopic('weekly_offers').catchError((e) {
-            debugPrint('PushNotificationService: Error subscribing to weekly_offers: $e');
+            debugPrint(
+                'PushNotificationService: Error subscribing to weekly_offers: $e');
           });
         }
       } else {
-        debugPrint('PushNotificationService: User declined or has not accepted permission.');
+        debugPrint(
+            'PushNotificationService: User declined or has not accepted permission.');
       }
     } catch (e) {
       debugPrint('PushNotificationService: Failed to initialize. $e');
     }
   }
 
-  static Future<void> updatePremiumSubscription(UserSavingsProfile? profile) async {
+  static Future<void> updatePremiumSubscription(
+      UserSavingsProfile? profile) async {
     if (kIsWeb) {
       return; // Topic subscription is not supported on Flutter Web
     }

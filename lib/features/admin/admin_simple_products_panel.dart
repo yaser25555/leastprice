@@ -29,14 +29,14 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(tr('تمت إضافة المنتج بنجاح.',
-                  'Product added successfully.'))),
+              content: Text(tr(
+                  'تمت إضافة المنتج بنجاح.', 'Product added successfully.'))),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
       }
     }
   }
@@ -52,14 +52,14 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(tr('تم تحديث المنتج بنجاح.',
-                  'Product updated successfully.'))),
+              content: Text(tr(
+                  'تم تحديث المنتج بنجاح.', 'Product updated successfully.'))),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
       }
     }
   }
@@ -71,8 +71,7 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
           context: context,
           builder: (_) => AlertDialog(
             title: Text(tr('حذف المنتج', 'Delete product')),
-            content: Text(tr(
-                'هل تريد حذف "${product.expensiveName}"؟',
+            content: Text(tr('هل تريد حذف "${product.expensiveName}"؟',
                 'Do you want to delete "${product.expensiveName}"?')),
             actions: [
               TextButton(
@@ -90,15 +89,13 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
       await widget.service.deleteProduct(docId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text(tr('تم حذف المنتج.', 'Product deleted.'))),
+          SnackBar(content: Text(tr('تم حذف المنتج.', 'Product deleted.'))),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
       }
     }
   }
@@ -111,16 +108,14 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(tr(
-                  'تم نشر المنتجات التجريبية في Firestore.',
+              content: Text(tr('تم نشر المنتجات التجريبية في Firestore.',
                   'Mock products were published to Firestore.'))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(tr(
-                'خطأ أثناء النشر: $e', 'Publishing error: $e'))));
+            content: Text(tr('خطأ أثناء النشر: $e', 'Publishing error: $e'))));
       }
     }
   }
@@ -154,15 +149,14 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text(tr(
-                                'تم نشر "${p.expensiveName}".',
+                            content: Text(tr('تم نشر "${p.expensiveName}".',
                                 '"${p.expensiveName}" was published.'))),
                       );
                     }
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(tr('خطأ: $e', 'Error: $e'))));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
                     }
                   }
                 },
@@ -262,8 +256,7 @@ class _AdminSimpleProductsPanelState extends State<AdminSimpleProductsPanel> {
               if (snap.hasError)
                 Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(
-                      tr('خطأ: ${snap.error}', 'Error: ${snap.error}'),
+                  child: Text(tr('خطأ: ${snap.error}', 'Error: ${snap.error}'),
                       style: const TextStyle(color: Colors.red)),
                 ),
               if (isLoading)

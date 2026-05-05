@@ -7,7 +7,8 @@ import 'package:leastprice/features/home/exclusive_deal_card.dart';
 import 'home_exports.dart';
 
 class ExclusiveDealsCarousel extends StatefulWidget {
-  const ExclusiveDealsCarousel({super.key, 
+  const ExclusiveDealsCarousel({
+    super.key,
     required this.deals,
     required this.now,
   });

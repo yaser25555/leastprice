@@ -66,7 +66,8 @@ class AdminControlCenter extends StatelessWidget {
         stream: service.watchUserProfile(adminUser.uid),
         builder: (context, snapshot) {
           final profile = snapshot.data ?? UserSavingsProfile.initial();
-          final isMarketingManager = !_isPrimaryAdmin && profile.isMarketingManager;
+          final isMarketingManager =
+              !_isPrimaryAdmin && profile.isMarketingManager;
           final hasAdminAccess = _isPrimaryAdmin || isMarketingManager;
 
           if (!hasAdminAccess) {
@@ -96,8 +97,10 @@ class AdminControlCenter extends StatelessWidget {
           ];
 
           final pages = <Widget>[
-            if (_isPrimaryAdmin) const AdminSimpleBannersPanel(service: service),
-            if (_isPrimaryAdmin) const AdminSimpleProductsPanel(service: service),
+            if (_isPrimaryAdmin)
+              const AdminSimpleBannersPanel(service: service),
+            if (_isPrimaryAdmin)
+              const AdminSimpleProductsPanel(service: service),
             const AdminSimpleExclusiveDealsPanel(service: service),
             if (_isPrimaryAdmin)
               const AdminSimpleUsersPanel(

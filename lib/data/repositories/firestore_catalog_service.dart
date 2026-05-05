@@ -188,7 +188,8 @@ class FirestoreCatalogService {
     await _usersCollection.doc(normalizedUserId).set(
       {
         'planActivated': planActivated,
-        'planStatus': (planStatus ?? (planActivated ? 'active' : 'inactive')).trim(),
+        'planStatus':
+            (planStatus ?? (planActivated ? 'active' : 'inactive')).trim(),
         'planUpdatedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       },
@@ -280,7 +281,8 @@ class FirestoreCatalogService {
       if ((locationKey ?? '').trim().isNotEmpty) 'locationKey': locationKey,
       if ((locationLabel ?? '').trim().isNotEmpty)
         'locationLabel': locationLabel,
-      if ((targetStoreId ?? '').trim().isNotEmpty) 'targetStoreId': targetStoreId,
+      if ((targetStoreId ?? '').trim().isNotEmpty)
+        'targetStoreId': targetStoreId,
       'cachedAt': Timestamp.fromDate(DateTime.now()),
       'results': results.map((result) => result.toJson()).toList(),
       'lastUpdated': FieldValue.serverTimestamp(),
@@ -683,8 +685,8 @@ class FirestoreCatalogService {
       RegExp(r'[^a-zA-Z0-9_]+'),
       '_',
     );
-    final safeStore = (targetStoreId ?? '').trim().isEmpty 
-        ? 'all' 
+    final safeStore = (targetStoreId ?? '').trim().isEmpty
+        ? 'all'
         : targetStoreId!.trim().toLowerCase();
     return '$safeLocation--$safeStore--$safeQuery';
   }

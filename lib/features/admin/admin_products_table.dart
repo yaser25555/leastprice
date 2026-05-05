@@ -9,7 +9,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'admin_exports.dart';
 
 class AdminProductsTable extends StatefulWidget {
-  const AdminProductsTable({super.key, 
+  const AdminProductsTable({
+    super.key,
     required this.catalogService,
   });
 
@@ -47,8 +48,7 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'تعذر حفظ المنتج حالياً: $error',
+            content: Text(tr('تعذر حفظ المنتج حالياً: $error',
                 'Unable to save the product right now: $error'))),
       );
     }
@@ -59,8 +59,7 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
     if (documentId == null || documentId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'احفظ المنتج أولاً قبل نشره.',
+            content: Text(tr('احفظ المنتج أولاً قبل نشره.',
                 'Save the product first before publishing it.'))),
       );
       return;
@@ -71,16 +70,14 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'تم تحديث lastUpdated للمنتج بنجاح.',
+            content: Text(tr('تم تحديث lastUpdated للمنتج بنجاح.',
                 'Product lastUpdated was refreshed successfully.'))),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'تعذر نشر المنتج حالياً: $error',
+            content: Text(tr('تعذر نشر المنتج حالياً: $error',
                 'Unable to publish the product right now: $error'))),
       );
     }
@@ -91,8 +88,7 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
     if (documentId == null || documentId.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'هذا المنتج غير مرتبط بوثيقة Firestore.',
+            content: Text(tr('هذا المنتج غير مرتبط بوثيقة Firestore.',
                 'This product is not linked to a Firestore document.'))),
       );
       return;
@@ -127,15 +123,13 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
       await widget.catalogService.deleteProduct(documentId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(tr('تم حذف المنتج.', 'Product deleted.'))),
+        SnackBar(content: Text(tr('تم حذف المنتج.', 'Product deleted.'))),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'تعذر حذف المنتج حالياً: $error',
+            content: Text(tr('تعذر حذف المنتج حالياً: $error',
                 'Unable to delete the product right now: $error'))),
       );
     }
@@ -167,8 +161,7 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            tr('إدارة المنتجات',
-                                'Product management'),
+                            tr('إدارة المنتجات', 'Product management'),
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
@@ -256,27 +249,22 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
                               columns: [
                                 DataColumn(
                                     label: Text(tr('القسم', 'Category'))),
+                                DataColumn(label: Text(tr('النوع', 'Type'))),
                                 DataColumn(
-                                    label: Text(tr('النوع', 'Type'))),
-                                DataColumn(
-                                  label: Text(tr('المنتج المرجعي',
-                                      'Reference product')),
+                                  label: Text(tr(
+                                      'المنتج المرجعي', 'Reference product')),
                                 ),
+                                DataColumn(label: Text(tr('سعره', 'Price'))),
                                 DataColumn(
-                                    label: Text(tr('سعره', 'Price'))),
-                                DataColumn(
-                                  label: Text(tr('الخيار المقارن',
-                                      'Compared option')),
+                                  label: Text(
+                                      tr('الخيار المقارن', 'Compared option')),
                                 ),
-                                DataColumn(
-                                    label: Text(tr('سعره', 'Price'))),
-                                DataColumn(
-                                    label: Text(tr('الصور', 'Images'))),
+                                DataColumn(label: Text(tr('سعره', 'Price'))),
+                                DataColumn(label: Text(tr('الصور', 'Images'))),
                                 DataColumn(
                                     label: Text(tr('واتساب', 'WhatsApp'))),
                                 DataColumn(
-                                    label: Text(
-                                        tr('الإجراءات', 'Actions'))),
+                                    label: Text(tr('الإجراءات', 'Actions'))),
                               ],
                               rows: products.map((product) {
                                 return DataRow(
@@ -364,14 +352,12 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
                                             OutlinedButton(
                                               onPressed: () => _openEditor(
                                                   initialProduct: product),
-                                              child: Text(
-                                                  tr('تعديل', 'Edit')),
+                                              child: Text(tr('تعديل', 'Edit')),
                                             ),
                                             OutlinedButton(
                                               onPressed: () =>
                                                   _publishProduct(product),
-                                              child:
-                                                  Text(tr('نشر', 'Publish')),
+                                              child: Text(tr('نشر', 'Publish')),
                                             ),
                                             OutlinedButton(
                                               onPressed: () =>
@@ -380,8 +366,7 @@ class _AdminProductsTableState extends State<AdminProductsTable> {
                                                 foregroundColor:
                                                     const Color(0xFFC24E4E),
                                               ),
-                                              child:
-                                                  Text(tr('حذف', 'Delete')),
+                                              child: Text(tr('حذف', 'Delete')),
                                             ),
                                           ],
                                         ),

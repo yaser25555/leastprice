@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class AuthLoadingScreen extends StatelessWidget {
-  const AuthLoadingScreen({super.key, 
+  const AuthLoadingScreen({
+    super.key,
     this.title = '',
     this.message = '',
   });

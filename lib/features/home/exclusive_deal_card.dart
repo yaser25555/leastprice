@@ -27,7 +27,8 @@ class ExclusiveDealCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cleanTitle = deal.title.replaceAll('عروض ', '').replaceAll(' عروض', '').trim();
+    final cleanTitle =
+        deal.title.replaceAll('عروض ', '').replaceAll(' عروض', '').trim();
 
     return GestureDetector(
       onTap: _launchDeal,
@@ -99,7 +100,7 @@ class ExclusiveDealCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Details Section at the bottom
             Container(
               padding: const EdgeInsets.all(20),
@@ -140,12 +141,13 @@ class ExclusiveDealCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Bottom Row: Action
                   Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.ios_share_rounded, color: AppPalette.deepNavy),
+                        icon: Icon(Icons.ios_share_rounded,
+                            color: AppPalette.deepNavy),
                         onPressed: () {
                           Share.share(
                             'شاهد أحدث ${cleanTitle} عبر تطبيق LeastPrice! 🔥\nالرابط: ${deal.dealUrl}',
@@ -183,4 +185,3 @@ class ExclusiveDealCard extends StatelessWidget {
     );
   }
 }
-

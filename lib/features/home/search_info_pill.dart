@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 
 class SearchInfoPill extends StatelessWidget {
-  const SearchInfoPill({super.key, 
+  const SearchInfoPill({
+    super.key,
     required this.icon,
     required this.label,
   });

@@ -52,7 +52,8 @@ class HomeSearchState {
   }) {
     return HomeSearchState(
       query: query ?? this.query,
-      selectedCategory: selectedCategory != null ? selectedCategory() : this.selectedCategory,
+      selectedCategory:
+          selectedCategory != null ? selectedCategory() : this.selectedCategory,
       selectedStore: selectedStore ?? this.selectedStore,
       selectedCity: selectedCity ?? this.selectedCity,
       isSearchingOnline: isSearchingOnline ?? this.isSearchingOnline,
@@ -74,7 +75,8 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
     return HomeSearchState(selectedCity: marketplaceSearchCities.first);
   }
 
-  final SerpApiShoppingSearchService _searchService = const SerpApiShoppingSearchService();
+  final SerpApiShoppingSearchService _searchService =
+      const SerpApiShoppingSearchService();
 
   void updateInternetStatus(bool hasInternet) {
     state = state.copyWith(hasInternet: hasInternet);
@@ -107,7 +109,8 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
     );
   }
 
-  Future<void> performSearch({bool forceRefresh = false, bool isLoadMore = false}) async {
+  Future<void> performSearch(
+      {bool forceRefresh = false, bool isLoadMore = false}) async {
     if (state.query.trim().isEmpty || !state.hasInternet) {
       clearSearch();
       return;
@@ -128,22 +131,28 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
     try {
       String effectiveQuery = state.query.trim();
       if (state.selectedCategory != null) {
-        if (state.selectedCategory == 'الإلكترونيات' || state.selectedCategory == 'Electronics') {
-           effectiveQuery = '${effectiveQuery} الكترونيات';
-        } else if (state.selectedCategory == 'السوبر ماركت' || state.selectedCategory == 'Supermarket') {
-           effectiveQuery = '${effectiveQuery} بقالة';
-        } else if (state.selectedCategory == 'المطاعم' || state.selectedCategory == 'Restaurants') {
-           effectiveQuery = '${effectiveQuery} مطعم';
-        } else if (state.selectedCategory == 'المقاهي' || state.selectedCategory == 'Cafes') {
-           effectiveQuery = '${effectiveQuery} كافيه';
-        } else if (state.selectedCategory == 'العيادات الطبية' || state.selectedCategory == 'Medical Clinics') {
-           effectiveQuery = '${effectiveQuery} عيادة';
+        if (state.selectedCategory == 'الإلكترونيات' ||
+            state.selectedCategory == 'Electronics') {
+          effectiveQuery = '${effectiveQuery} الكترونيات';
+        } else if (state.selectedCategory == 'السوبر ماركت' ||
+            state.selectedCategory == 'Supermarket') {
+          effectiveQuery = '${effectiveQuery} بقالة';
+        } else if (state.selectedCategory == 'المطاعم' ||
+            state.selectedCategory == 'Restaurants') {
+          effectiveQuery = '${effectiveQuery} مطعم';
+        } else if (state.selectedCategory == 'المقاهي' ||
+            state.selectedCategory == 'Cafes') {
+          effectiveQuery = '${effectiveQuery} كافيه';
+        } else if (state.selectedCategory == 'العيادات الطبية' ||
+            state.selectedCategory == 'Medical Clinics') {
+          effectiveQuery = '${effectiveQuery} عيادة';
         }
       }
 
       String? targetStoreId;
       if (state.selectedStore != 'الكل') {
-        targetStoreId = inferStoreIdFromUrl('', fallbackName: state.selectedStore);
+        targetStoreId =
+            inferStoreIdFromUrl('', fallbackName: state.selectedStore);
       }
 
       final nextOffset = isLoadMore ? state.currentOffset + 20 : 0;
@@ -157,7 +166,8 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
         startOffset: nextOffset,
       );
 
-      final newResults = isLoadMore ? [...state.results, ...result.results] : result.results;
+      final newResults =
+          isLoadMore ? [...state.results, ...result.results] : result.results;
 
       state = state.copyWith(
         results: newResults,
@@ -188,4 +198,6 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
   }
 }
 
-final homeSearchProvider = NotifierProvider<HomeSearchNotifier, HomeSearchState>(HomeSearchNotifier.new);
+final homeSearchProvider =
+    NotifierProvider<HomeSearchNotifier, HomeSearchState>(
+        HomeSearchNotifier.new);

@@ -30,8 +30,8 @@ class AdminDashboardAuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return AuthLoadingScreen(
-            title: tr('جارٍ تجهيز لوحة التحكم',
-                'Preparing the admin dashboard'),
+            title:
+                tr('جارٍ تجهيز لوحة التحكم', 'Preparing the admin dashboard'),
             message: tr(
               'نربط لوحة الإدارة بخدمات Firebase ونجهز صلاحيات المشرف.',
               'We are connecting the dashboard to Firebase and preparing admin access.',

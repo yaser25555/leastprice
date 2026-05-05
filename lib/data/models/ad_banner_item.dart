@@ -61,8 +61,8 @@ class AdBannerItem {
       ),
       targetUrl: stringValue(json['targetUrl']) ??
           LeastPriceDataConfig.adminWhatsAppUrl,
-      storeName: stringValue(json['storeName']) ??
-          tr('متجر متعاقد', 'Partner store'),
+      storeName:
+          stringValue(json['storeName']) ?? tr('متجر متعاقد', 'Partner store'),
       active: boolValue(json['active'], defaultValue: true),
       order: intValue(json['order']),
     );
@@ -92,5 +92,4 @@ class AdBannerItem {
   }
 
   static List<AdBannerItem> get mockData => [];
-
 }

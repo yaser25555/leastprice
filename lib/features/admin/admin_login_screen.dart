@@ -118,8 +118,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                   const Center(child: AppBrandMark(size: 72, borderRadius: 24)),
                   const SizedBox(height: 16),
                   Text(
-                    tr('لوحة تحكم LeastPrice',
-                        'LeastPrice Admin Dashboard'),
+                    tr('لوحة تحكم LeastPrice', 'LeastPrice Admin Dashboard'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 24,

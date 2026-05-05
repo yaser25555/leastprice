@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 
 class CompactMetricPill extends StatelessWidget {
-  const CompactMetricPill({super.key, 
+  const CompactMetricPill({
+    super.key,
     required this.icon,
     required this.label,
   });
@@ -39,7 +40,8 @@ class CompactMetricPill extends StatelessWidget {
 }
 
 class CompactStatPill extends StatelessWidget {
-  const CompactStatPill({super.key, 
+  const CompactStatPill({
+    super.key,
     required this.icon,
     required this.label,
   });

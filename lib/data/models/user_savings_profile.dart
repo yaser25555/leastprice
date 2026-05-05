@@ -30,7 +30,8 @@ class UserSavingsProfile {
   final String planStatus;
   final String adminRole;
 
-  bool get isMarketingManager => adminRole.trim().toLowerCase() == 'marketing_manager';
+  bool get isMarketingManager =>
+      adminRole.trim().toLowerCase() == 'marketing_manager';
 
   factory UserSavingsProfile.initial() {
     return const UserSavingsProfile(
@@ -67,7 +68,9 @@ class UserSavingsProfile {
           'أنا وفرت {SAVED_AMOUNT} ريال باستخدام تطبيق أرخص سعر! '
               'حمل التطبيق الآن واستخدم كود الدعوة الخاص بي: {USER_CODE}\n{APP_LINK}',
       planActivated: boolValue(
-        json['planActivated'] ?? json['premiumActive'] ?? json['subscriptionActive'],
+        json['planActivated'] ??
+            json['premiumActive'] ??
+            json['subscriptionActive'],
       ),
       planStatus: stringValue(json['planStatus']) ?? 'inactive',
       adminRole: stringValue(json['adminRole']) ?? 'user',

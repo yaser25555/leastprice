@@ -22,9 +22,7 @@ class HomeSectionSwitcher extends StatelessWidget {
         color: AppPalette.cardBackground,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: appleStyle
-              ? const Color(0xFFDCE0E8)
-              : AppPalette.cardBorder,
+          color: appleStyle ? const Color(0xFFDCE0E8) : AppPalette.cardBorder,
         ),
         boxShadow: appleStyle
             ? const []

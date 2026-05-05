@@ -4,7 +4,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class GlobalRuntimeErrorScreen extends StatelessWidget {
-  const GlobalRuntimeErrorScreen({super.key, 
+  const GlobalRuntimeErrorScreen({
+    super.key,
     required this.details,
   });
 

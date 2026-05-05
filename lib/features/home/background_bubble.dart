@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-
 class BackgroundBubble extends StatelessWidget {
-  const BackgroundBubble({super.key, 
+  const BackgroundBubble({
+    super.key,
     required this.size,
     required this.color,
   });

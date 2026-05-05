@@ -67,28 +67,21 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
   StreamSubscription<List<AdBannerItem>>? _bannerSubscription;
   StreamSubscription<List<Coupon>>? _couponSubscription;
   StreamSubscription<AutomationHealthStatus?>? _systemHealthSubscription;
-  
-  
-  
-  
+
   final String _selectedCategoryId = ProductCategoryCatalog.allId;
-  
+
   HomeCatalogSection _selectedHomeSection = HomeCatalogSection.comparisons;
   bool _hasInternet = true;
   bool _isRefreshing = false;
-  
-  
+
   bool _isDetectingCity = false;
-  
-  
-  
-  
+
   ProductDataSource _dataSource = ProductDataSource.remote;
   UserSavingsProfile _userProfile = UserSavingsProfile.initial();
   AutomationHealthStatus _systemHealth = AutomationHealthStatus.initial();
   List<AdBannerItem> _activeBanners = AdBannerItem.mockData;
   List<Coupon> _activeCoupons = const <Coupon>[];
-  
+
   static const int _trialVisibleResultsCount = 5;
 
   bool get _isPaidPlanActive => _userProfile.planActivated;
@@ -147,7 +140,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
   @override
   void initState() {
     super.initState();
-    
+
     _userProfile = widget.initialUserProfile;
     _dataSource = widget.firebaseReady
         ? ProductDataSource.remote
@@ -332,7 +325,9 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       ref.read(homeSearchProvider.notifier).setCity(detectedCity);
       final query = ref.read(homeSearchProvider).query;
       if (query.trim().isNotEmpty && _hasInternet) {
-        await ref.read(homeSearchProvider.notifier).performSearch(forceRefresh: true);
+        await ref
+            .read(homeSearchProvider.notifier)
+            .performSearch(forceRefresh: true);
       }
 
       if (showFeedback && mounted) {
@@ -410,7 +405,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     _bannerSubscription?.cancel();
     _couponSubscription?.cancel();
     _systemHealthSubscription?.cancel();
-    
+
     _searchController.dispose();
     super.dispose();
   }
@@ -431,14 +426,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     }
   }
 
-  
-
-  
-
-  
-
-  
-
   void _selectHomeSection(HomeCatalogSection section) {
     if (_selectedHomeSection == section) {
       return;
@@ -448,18 +435,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       _selectedHomeSection = section;
     });
   }
-
-  
-
-  
-
-
-
-  
-
-  
-
-  
 
   void _handleConnectivityChange(
     dynamic rawStatus, {
@@ -501,7 +476,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       unawaited(_refreshCatalog(showSuccessMessage: false));
       final query = ref.read(homeSearchProvider).query;
       if (query.trim().isNotEmpty) {
-         unawaited(ref.read(homeSearchProvider.notifier).performSearch());
+        unawaited(ref.read(homeSearchProvider.notifier).performSearch());
       }
     } else {
       ref.read(homeSearchProvider.notifier).clearSearch();
@@ -566,7 +541,9 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     try {
       await _catalogService.refreshProductsFromServer();
       if (ref.read(homeSearchProvider).query.trim().isNotEmpty) {
-        await ref.read(homeSearchProvider.notifier).performSearch(forceRefresh: true);
+        await ref
+            .read(homeSearchProvider.notifier)
+            .performSearch(forceRefresh: true);
       }
       if (!mounted) return;
 
@@ -929,14 +906,17 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ShoppingCartScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const ShoppingCartScreen()),
                     );
                   },
                   backgroundColor: AppPalette.orange,
-                  icon: const Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white),
+                  icon: const Icon(Icons.shopping_cart_checkout_rounded,
+                      color: Colors.white),
                   label: Text(
                     '${cartItems.length} منتجات',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
             ],
@@ -948,7 +928,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
         builder: (context, snapshot) {
           final appleStyle = isAppleInterface(context);
           final products = snapshot.data ?? const <ProductComparison>[];
-                    final showOffersSection =
+          final showOffersSection =
               _selectedHomeSection == HomeCatalogSection.offers;
           final showComparisonsSection =
               _selectedHomeSection == HomeCatalogSection.comparisons;
@@ -958,7 +938,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
               _selectedHomeSection == HomeCatalogSection.plans;
           final showAboutSection =
               _selectedHomeSection == HomeCatalogSection.about;
-                    final comparisonDataSourceLabel = _dataSource.label;
+          final comparisonDataSourceLabel = _dataSource.label;
 
           return DecoratedBox(
             decoration: BoxDecoration(
@@ -1011,7 +991,8 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       onOpenExternalUrl: _openExternalUrl,
                       onCopyCoupon: _copyCouponCode,
                       isPaidPlanActive: _isPaidPlanActive,
-                      onDetectCityTap: () => unawaited(_detectCityFromCurrentLocation(showFeedback: true)),
+                      onDetectCityTap: () => unawaited(
+                          _detectCityFromCurrentLocation(showFeedback: true)),
                     ),
                   if (showPlansSection)
                     SliverPadding(
@@ -1090,7 +1071,8 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       child: ExclusiveDealsSection(
                         stream: widget.firebaseReady
                             ? _catalogService.watchExclusiveDeals()
-                            : Stream<List<ExclusiveDeal>>.value(ExclusiveDeal.mockData),
+                            : Stream<List<ExclusiveDeal>>.value(
+                                ExclusiveDeal.mockData),
                       ),
                     ),
                   if (showOffersSection)
@@ -1125,7 +1107,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                         ),
                       ),
                     ),
-
                 ],
               ),
             ),

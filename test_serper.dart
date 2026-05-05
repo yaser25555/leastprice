@@ -21,7 +21,7 @@ void main() async {
   );
 
   print('Status code: ${response.statusCode}');
-  
+
   if (response.statusCode == 200) {
     final payload = jsonDecode(response.body);
     final organic = payload['organic'];

@@ -1,4 +1,3 @@
-
 import 'package:leastprice/core/config/least_price_data_config.dart';
 
 class AffiliateLinkService {

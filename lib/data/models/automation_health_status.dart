@@ -1,4 +1,3 @@
-
 import 'package:leastprice/core/utils/helpers.dart';
 
 class AutomationHealthStatus {

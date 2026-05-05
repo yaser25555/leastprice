@@ -332,8 +332,7 @@ class _AdminProductEditorDialogState extends State<AdminProductEditorDialog> {
                     label: tr('إضافة صورة اختيارية', 'Optional image'),
                     uploading: _isUploadingReferenceImage,
                     validator: _validateUrl,
-                    textFieldLabel:
-                        tr('إضافة صورة اختيارية', 'Optional image'),
+                    textFieldLabel: tr('إضافة صورة اختيارية', 'Optional image'),
                     helperText: tr(
                       'يمكنك رفع صورة للمنتج المرجعي أو تركها فارغة.',
                       'You can upload a reference product image or leave it empty.',
@@ -365,8 +364,7 @@ class _AdminProductEditorDialogState extends State<AdminProductEditorDialog> {
                     label: tr('إضافة صورة اختيارية', 'Optional image'),
                     uploading: _isUploadingComparisonImage,
                     validator: _validateUrl,
-                    textFieldLabel:
-                        tr('إضافة صورة اختيارية', 'Optional image'),
+                    textFieldLabel: tr('إضافة صورة اختيارية', 'Optional image'),
                     helperText: tr(
                       'يمكنك رفع صورة للخيار المقارن أو تركها فارغة.',
                       'You can upload a comparison image or leave it empty.',

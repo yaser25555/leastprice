@@ -17,7 +17,6 @@ bool isAdminDashboardRequest([Uri? uri]) {
       target.queryParameters['view']?.toLowerCase() == 'admin';
 }
 
-
 String? normalizeEmailAddress(String rawEmail) {
   final value = rawEmail.trim().toLowerCase();
   if (value.isEmpty) {

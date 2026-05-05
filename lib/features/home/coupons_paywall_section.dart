@@ -12,13 +12,13 @@ class CouponsPaywallSection extends StatelessWidget {
   final VoidCallback onUpgradeTap;
 
   static List<_PaywallStore> get _featuredStores => [
-    _PaywallStore('Amazon', Color(0xFFFF9900), Color(0xFF232F3E)),
-    _PaywallStore('Noon', Color(0xFFFEEE00), Color(0xFF1F1F1F)),
-    _PaywallStore('Namshi', Color(0xFF7E3CC0), AppPalette.pureWhite),
-    _PaywallStore('iHerb', Color(0xFF4FA72E), AppPalette.pureWhite),
-    _PaywallStore('Sephora', Color(0xFF111111), AppPalette.pureWhite),
-    _PaywallStore('SHEIN', Color(0xFF222222), AppPalette.pureWhite),
-  ];
+        _PaywallStore('Amazon', Color(0xFFFF9900), Color(0xFF232F3E)),
+        _PaywallStore('Noon', Color(0xFFFEEE00), Color(0xFF1F1F1F)),
+        _PaywallStore('Namshi', Color(0xFF7E3CC0), AppPalette.pureWhite),
+        _PaywallStore('iHerb', Color(0xFF4FA72E), AppPalette.pureWhite),
+        _PaywallStore('Sephora', Color(0xFF111111), AppPalette.pureWhite),
+        _PaywallStore('SHEIN', Color(0xFF222222), AppPalette.pureWhite),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +128,7 @@ class CouponsPaywallSection extends StatelessWidget {
                   SizedBox(height: 8),
                   _BenefitRow(
                     accent: AppPalette.orangeCoral,
-                    label: tr('نسخ الكود بضغطة واحدة',
-                        'One-tap code copy'),
+                    label: tr('نسخ الكود بضغطة واحدة', 'One-tap code copy'),
                   ),
                 ],
               ),
@@ -263,4 +262,3 @@ class _BenefitRow extends StatelessWidget {
     );
   }
 }
-

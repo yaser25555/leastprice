@@ -29,14 +29,14 @@ class _AdminSimpleBannersPanelState extends State<AdminSimpleBannersPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(tr('تمت إضافة البنر بنجاح.',
-                  'Banner added successfully.'))),
+              content: Text(
+                  tr('تمت إضافة البنر بنجاح.', 'Banner added successfully.'))),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
       }
     }
   }
@@ -52,14 +52,14 @@ class _AdminSimpleBannersPanelState extends State<AdminSimpleBannersPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(tr('تم تحديث البنر بنجاح.',
-                  'Banner updated successfully.'))),
+              content: Text(
+                  tr('تم تحديث البنر بنجاح.', 'Banner updated successfully.'))),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
       }
     }
   }
@@ -87,14 +87,13 @@ class _AdminSimpleBannersPanelState extends State<AdminSimpleBannersPanel> {
       await widget.service.deleteAdBanner(banner.id);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(tr('تم حذف البنر.', 'Banner deleted.'))),
+          SnackBar(content: Text(tr('تم حذف البنر.', 'Banner deleted.'))),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
       }
     }
   }
@@ -107,16 +106,14 @@ class _AdminSimpleBannersPanelState extends State<AdminSimpleBannersPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(tr(
-                  'تم نشر البنرات التجريبية في Firestore.',
+              content: Text(tr('تم نشر البنرات التجريبية في Firestore.',
                   'Mock banners were published to Firestore.'))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(tr(
-                'خطأ أثناء النشر: $e', 'Publishing error: $e'))));
+            content: Text(tr('خطأ أثناء النشر: $e', 'Publishing error: $e'))));
       }
     }
   }
@@ -160,8 +157,8 @@ class _AdminSimpleBannersPanelState extends State<AdminSimpleBannersPanel> {
                     }
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(tr('خطأ: $e', 'Error: $e'))));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(tr('خطأ: $e', 'Error: $e'))));
                     }
                   }
                 },
@@ -260,8 +257,7 @@ class _AdminSimpleBannersPanelState extends State<AdminSimpleBannersPanel> {
               if (snap.hasError)
                 Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(
-                      tr('خطأ: ${snap.error}', 'Error: ${snap.error}'),
+                  child: Text(tr('خطأ: ${snap.error}', 'Error: ${snap.error}'),
                       style: const TextStyle(color: Colors.red)),
                 ),
               if (isLoading)

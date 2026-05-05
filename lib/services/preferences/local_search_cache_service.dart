@@ -10,9 +10,12 @@ class LocalSearchCacheService {
   static const String _cachePrefix = 'leastprice_search_';
 
   String _buildKey(String query, String? locationKey, String? targetStoreId) {
-    final safeQuery = query.replaceAll(RegExp(r'[^a-zA-Z0-9\u0600-\u06FF]+'), '_');
-    final safeLocation = (locationKey ?? 'saudi_arabia').replaceAll(RegExp(r'[^a-zA-Z0-9_]+'), '_');
-    final safeStore = (targetStoreId ?? 'all').replaceAll(RegExp(r'[^a-zA-Z0-9_]+'), '_');
+    final safeQuery =
+        query.replaceAll(RegExp(r'[^a-zA-Z0-9\u0600-\u06FF]+'), '_');
+    final safeLocation = (locationKey ?? 'saudi_arabia')
+        .replaceAll(RegExp(r'[^a-zA-Z0-9_]+'), '_');
+    final safeStore =
+        (targetStoreId ?? 'all').replaceAll(RegExp(r'[^a-zA-Z0-9_]+'), '_');
     return '$_cachePrefix$safeLocation--$safeStore--$safeQuery';
   }
 
@@ -31,8 +34,9 @@ class LocalSearchCacheService {
     try {
       final json = jsonDecode(jsonString);
       final cachedAtIso = json['cachedAt'] as String?;
-      final cachedAt = cachedAtIso != null 
-          ? DateTime.tryParse(cachedAtIso) ?? DateTime.fromMillisecondsSinceEpoch(0)
+      final cachedAt = cachedAtIso != null
+          ? DateTime.tryParse(cachedAtIso) ??
+              DateTime.fromMillisecondsSinceEpoch(0)
           : DateTime.fromMillisecondsSinceEpoch(0);
 
       final entry = ComparisonSearchCacheEntry(
@@ -40,8 +44,9 @@ class LocalSearchCacheService {
         normalizedQuery: stringValue(json['normalizedQuery']) ?? '',
         cachedAt: cachedAt,
         results: (json['results'] as List?)
-            ?.map((e) => ComparisonSearchResult.fromJson(e))
-            .toList() ?? [],
+                ?.map((e) => ComparisonSearchResult.fromJson(e))
+                .toList() ??
+            [],
       );
 
       if (!entry.isFresh) {

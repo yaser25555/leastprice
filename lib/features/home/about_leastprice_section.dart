@@ -100,11 +100,11 @@ class AboutLeastPriceSection extends StatelessWidget {
             title: tr('الدفع عبر التحويل البنكي', 'Bank transfer payment'),
             description: tr(
               'لتفعيل الخطة، يرجى التحويل إلى بنك الإنماء.\n'
-              'الآيبان: SA7005000068202380361000\n'
-              'بعد التحويل يتم تفعيل الخطة يدويًا، وعند وجود مشكلة في التفعيل يرجى التواصل على الرقم: 00966558570889',
+                  'الآيبان: SA7005000068202380361000\n'
+                  'بعد التحويل يتم تفعيل الخطة يدويًا، وعند وجود مشكلة في التفعيل يرجى التواصل على الرقم: 00966558570889',
               'To activate your plan, please transfer to Bank Alinma.\n'
-              'IBAN: SA7005000068202380361000\n'
-              'The plan is activated manually after transfer. If you face any activation issue, contact: 00966558570889',
+                  'IBAN: SA7005000068202380361000\n'
+                  'The plan is activated manually after transfer. If you face any activation issue, contact: 00966558570889',
             ),
           ),
           const SizedBox(height: 14),

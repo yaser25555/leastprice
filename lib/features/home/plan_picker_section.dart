@@ -63,7 +63,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
     switch (tier) {
       case LeastPricePlanTier.free:
         return [
-          tr('عرض أول ${widget.visibleResultsCount} نتائج فقط', 'Shows only the first ${widget.visibleResultsCount} results'),
+          tr('عرض أول ${widget.visibleResultsCount} نتائج فقط',
+              'Shows only the first ${widget.visibleResultsCount} results'),
           tr('اختيار المدينة يدويًا', 'Manual city selection'),
           tr('دعم أساسي', 'Basic support'),
         ];
@@ -71,11 +72,13 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
       case LeastPricePlanTier.yearly:
         return [
           tr('عرض جميع النتائج بدون حد', 'Unlimited full results'),
-          tr('فتح جميع ميزات البحث والمقارنة', 'Unlock all search & comparison features'),
+          tr('فتح جميع ميزات البحث والمقارنة',
+              'Unlock all search & comparison features'),
           tr('كوبونات خصم حصرية من أمازون ونون ونمشي وغيرها',
               'Exclusive discount coupons from Amazon, Noon, Namshi & more'),
           tr('أولوية في الدعم بعد التحويل', 'Priority support after transfer'),
-          tr('إشعارات فورية للعروض السريعة (اللقطات)', 'Instant notifications for quick deals (steals)'),
+          tr('إشعارات فورية للعروض السريعة (اللقطات)',
+              'Instant notifications for quick deals (steals)'),
         ];
     }
   }
@@ -152,8 +155,7 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
               ),
               if (widget.isPaidActive)
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     gradient: AppPalette.gradientWarmCta,
                     borderRadius: BorderRadius.circular(999),
@@ -201,7 +203,8 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                                 end: Alignment.bottomRight,
                                 colors: [
                                   AppPalette.deepNavy,
-                                  AppPalette.orangeCrimson.withValues(alpha: 0.35),
+                                  AppPalette.orangeCrimson
+                                      .withValues(alpha: 0.35),
                                 ],
                               )
                             : null,
@@ -363,11 +366,11 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
                   Text(
                     tr(
                       'بنك الإنماء\n'
-                      'الآيبان: SA7005000068202380361000\n'
-                      'بعد التحويل يتم تفعيل الخطة يدويًا.',
+                          'الآيبان: SA7005000068202380361000\n'
+                          'بعد التحويل يتم تفعيل الخطة يدويًا.',
                       'Bank Alinma\n'
-                      'IBAN: SA7005000068202380361000\n'
-                      'Plan activation is done manually after transfer.',
+                          'IBAN: SA7005000068202380361000\n'
+                          'Plan activation is done manually after transfer.',
                     ),
                     style: TextStyle(
                       color: AppPalette.pureWhite.withValues(alpha: 0.85),
@@ -419,4 +422,3 @@ class _PlanPickerSectionState extends State<PlanPickerSection> {
     );
   }
 }
-

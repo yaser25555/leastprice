@@ -620,12 +620,6 @@ List<String> stringListValue(Object? value) {
       .toList();
 }
 
-
-
-
-
-
-
 ComparisonSearchSourceType comparisonSearchSourceTypeFromString(String? value) {
   final normalized = (value ?? '').trim().toLowerCase();
   if (normalized.contains('scrap') || normalized.contains('live')) {
@@ -653,24 +647,6 @@ ComparisonSearchChannelType comparisonSearchChannelTypeFromString(
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool isAdminPathToken(String? rawValue) {
   final value = (rawValue ?? '').trim().toLowerCase().replaceAll('\\', '/');
   if (value.isEmpty) {
@@ -682,5 +658,3 @@ bool isAdminPathToken(String? rawValue) {
       value.endsWith('/admin') ||
       value.startsWith('/admin?');
 }
-
-

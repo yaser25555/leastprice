@@ -128,7 +128,9 @@ class SerpApiShoppingSearchService {
           locationKey: city.id,
           targetStoreId: targetStoreId,
         );
-        if (cachedEntry != null && cachedEntry.results.isNotEmpty && cachedEntry.isFresh) {
+        if (cachedEntry != null &&
+            cachedEntry.results.isNotEmpty &&
+            cachedEntry.isFresh) {
           return ComparisonSearchResponse(
             results: cachedEntry.results,
             fromCache: true,
@@ -151,7 +153,9 @@ class SerpApiShoppingSearchService {
           locationKey: city.id,
           targetStoreId: targetStoreId,
         );
-        if (cachedEntry != null && cachedEntry.results.isNotEmpty && cachedEntry.isFresh) {
+        if (cachedEntry != null &&
+            cachedEntry.results.isNotEmpty &&
+            cachedEntry.isFresh) {
           // Save to local cache for next time
           await _localCache.saveLocalSearchCache(
             query: trimmedQuery,
@@ -288,9 +292,11 @@ class SerpApiShoppingSearchService {
             // Extract the product name before any dash or pipe (e.g. "Nescafé Gold 200g - Panda")
             final cleanTitle = title.split(RegExp(r'[|\-–]')).first.trim();
             // Ensure the extracted title is not just numbers and has actual words
-            if (cleanTitle.isNotEmpty && !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
+            if (cleanTitle.isNotEmpty &&
+                !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
               effectiveQuery = cleanTitle;
-              debugPrint('Barcode $query translated to Product Name: $effectiveQuery');
+              debugPrint(
+                  'Barcode $query translated to Product Name: $effectiveQuery');
             }
           }
         }
@@ -301,11 +307,12 @@ class SerpApiShoppingSearchService {
 
     if (kIsWeb) {
       final origin = Uri.base.origin;
-      final isLocalhost = origin.contains('localhost') || origin.contains('127.0.0.1');
-      final baseUrl = isLocalhost 
+      final isLocalhost =
+          origin.contains('localhost') || origin.contains('127.0.0.1');
+      final baseUrl = isLocalhost
           ? 'https://${LeastPriceDataConfig.functionsRegion}-leastprice-yaser.cloudfunctions.net/${LeastPriceDataConfig.hybridSearchFunctionName}'
           : '$origin/api/${LeastPriceDataConfig.hybridSearchFunctionName}';
-          
+
       final pageNum = (startOffset / 20).floor() + 1;
       final uri = Uri.parse(
         '$baseUrl'
@@ -350,21 +357,25 @@ class SerpApiShoppingSearchService {
               .toList()
           : <ComparisonSearchResult>[];
 
-      final filteredHybridResults =
-          _filterSupportedSaudiStoreResults(hybridResults, targetStoreId: targetStoreId);
+      final filteredHybridResults = _filterSupportedSaudiStoreResults(
+          hybridResults,
+          targetStoreId: targetStoreId);
       filteredHybridResults.sort(_compareSearchResults);
       return filteredHybridResults;
     }
 
     // Fetch from SerpApi
-    final serpApiResults = await _fetchSerpApiResults(effectiveQuery, apiKey, city: city, startOffset: startOffset);
+    final serpApiResults = await _fetchSerpApiResults(effectiveQuery, apiKey,
+        city: city, startOffset: startOffset);
     results.addAll(serpApiResults);
 
     // Fetch from Serper if key is available
     if (serperApiKey.isNotEmpty) {
       try {
         final pageNum = (startOffset / 10).floor() + 1;
-        final serperResults = await _fetchSerperResults(effectiveQuery, serperApiKey, city: city, page: pageNum);
+        final serperResults = await _fetchSerperResults(
+            effectiveQuery, serperApiKey,
+            city: city, page: pageNum);
         results.addAll(serperResults);
       } catch (error) {
         debugPrint('Serper search failed: $error');
@@ -374,15 +385,17 @@ class SerpApiShoppingSearchService {
     // Fetch from Google Local if food-related query
     if (_isFoodRelatedQuery(effectiveQuery)) {
       try {
-        final localResults = await _fetchLocalResults(effectiveQuery, apiKey, city: city);
+        final localResults =
+            await _fetchLocalResults(effectiveQuery, apiKey, city: city);
         results.addAll(localResults);
       } catch (error) {
         debugPrint('Google Local search failed: $error');
       }
     }
 
-    final filteredResults = _filterSupportedSaudiStoreResults(results, targetStoreId: targetStoreId)
-      ..sort(_compareSearchResults);
+    final filteredResults =
+        _filterSupportedSaudiStoreResults(results, targetStoreId: targetStoreId)
+          ..sort(_compareSearchResults);
 
     return filteredResults;
   }
@@ -449,7 +462,9 @@ class SerpApiShoppingSearchService {
 
     return _parseSerperResults(payload);
   }
-  List<ComparisonSearchResult> _parseLocalResults(Map<String, dynamic> payload) {
+
+  List<ComparisonSearchResult> _parseLocalResults(
+      Map<String, dynamic> payload) {
     final results = <ComparisonSearchResult>[];
     final seen = <String>{};
 
@@ -479,12 +494,14 @@ class SerpApiShoppingSearchService {
         price: price,
         storeName: title,
         storeId: inferStoreIdFromUrl(link) ?? 'local',
-        storeLogoUrl: resolveStoreLogoUrl(storeId: inferStoreIdFromUrl(link) ?? 'local', productUrl: link),
+        storeLogoUrl: resolveStoreLogoUrl(
+            storeId: inferStoreIdFromUrl(link) ?? 'local', productUrl: link),
         imageUrl: stringValue(item['thumbnail']) ?? '',
         productUrl: link,
         currency: 'SAR',
         sourceType: ComparisonSearchSourceType.serpApi,
-        channelType: ComparisonSearchChannelType.delivery, // Assume delivery for food
+        channelType:
+            ComparisonSearchChannelType.delivery, // Assume delivery for food
         isLiveDirect: false,
         tag: 'عرض وجبة', // Tag for food deals
       );
@@ -501,6 +518,7 @@ class SerpApiShoppingSearchService {
 
     return results;
   }
+
   Future<List<ComparisonSearchResult>> _fetchLocalResults(
     String query,
     String apiKey, {
@@ -607,7 +625,8 @@ class SerpApiShoppingSearchService {
     return results;
   }
 
-  List<ComparisonSearchResult> _parseSerperResults(Map<String, dynamic> payload) {
+  List<ComparisonSearchResult> _parseSerperResults(
+      Map<String, dynamic> payload) {
     final results = <ComparisonSearchResult>[];
     final seen = <String>{};
 
@@ -631,7 +650,8 @@ class SerpApiShoppingSearchService {
       }
 
       // Try to extract price from snippet or title
-      final priceText = extractMarketplacePrice(snippet) ?? extractMarketplacePrice(title);
+      final priceText =
+          extractMarketplacePrice(snippet) ?? extractMarketplacePrice(title);
       if (priceText == null) {
         return; // Skip if no price
       }
@@ -641,11 +661,13 @@ class SerpApiShoppingSearchService {
         price: priceText,
         storeName: inferStoreIdFromUrl(link) ?? 'Google Search',
         storeId: inferStoreIdFromUrl(link) ?? 'google',
-        storeLogoUrl: resolveStoreLogoUrl(storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
+        storeLogoUrl: resolveStoreLogoUrl(
+            storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
         imageUrl: '', // Serper may not have images
         productUrl: link,
         currency: 'SAR',
-        sourceType: ComparisonSearchSourceType.serpApi, // Treat as serpapi for now
+        sourceType:
+            ComparisonSearchSourceType.serpApi, // Treat as serpapi for now
         channelType: ComparisonSearchChannelType.marketplace,
         isLiveDirect: false,
       );
@@ -681,7 +703,8 @@ class SerpApiShoppingSearchService {
       if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
         return true;
       }
-      if (normalizedStoreId.contains('google') || productHost.contains('google')) {
+      if (normalizedStoreId.contains('google') ||
+          productHost.contains('google')) {
         return true;
       }
       return false;
@@ -694,7 +717,7 @@ class SerpApiShoppingSearchService {
   ) {
     final priceDifference = (first.price - second.price).abs();
     final minPrice = first.price < second.price ? first.price : second.price;
-    
+
     // Give preferred stores a small tolerance (5% of the price or up to 15 SAR)
     // to bubble them to the top if they are extremely close to the lowest price.
     final tolerance = (minPrice * 0.05).clamp(2.0, 15.0);

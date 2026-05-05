@@ -291,8 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'تم إنشاء الحساب بنجاح. يمكنك الدخول مباشرة باستخدام البريد الإلكتروني وكلمة المرور.',
                 'Your account was created successfully. You can now sign in using your email and password.',
               )
-            : tr('تم تسجيل الدخول بنجاح.',
-                'Signed in successfully.');
+            : tr('تم تسجيل الدخول بنجاح.', 'Signed in successfully.');
       });
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -448,8 +447,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             autofillHints: const [AutofillHints.email],
                             decoration: InputDecoration(
-                              labelText: tr(
-                                  'البريد الإلكتروني', 'Email'),
+                              labelText: tr('البريد الإلكتروني', 'Email'),
                               hintText: 'name@example.com',
                               prefixIcon:
                                   const Icon(Icons.alternate_email_rounded),
@@ -461,10 +459,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             obscureText: _obscurePassword,
                             autofillHints: const [AutofillHints.password],
                             decoration: InputDecoration(
-                              labelText:
-                                  tr('كلمة المرور', 'Password'),
-                              hintText: tr('6 أحرف أو أكثر',
-                                  '6 characters or more'),
+                              labelText: tr('كلمة المرور', 'Password'),
+                              hintText:
+                                  tr('6 أحرف أو أكثر', '6 characters or more'),
                               prefixIcon: const Icon(Icons.lock_rounded),
                               suffixIcon: IconButton(
                                 onPressed: () {
@@ -487,7 +484,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             controlAffinity: ListTileControlAffinity.leading,
                             activeColor: AppPalette.orange,
                             title: Text(
-                            tr(
+                              tr(
                                 'تذكر بريدي الإلكتروني',
                                 'Remember my email',
                               ),
@@ -511,8 +508,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                labelText:
-                                    tr('رقم الجوال', 'Phone number'),
+                                labelText: tr('رقم الجوال', 'Phone number'),
                                 hintText: '05XXXXXXXX',
                                 prefixIcon:
                                     const Icon(Icons.phone_android_rounded),
@@ -574,11 +570,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                             label: Text(
                               _isSubmitting
-                                  ? tr('جارٍ التنفيذ...',
-                                      'Processing...')
+                                  ? tr('جارٍ التنفيذ...', 'Processing...')
                                   : (_isRegisterMode
-                                      ? tr('إنشاء الحساب',
-                                          'Create account')
+                                      ? tr('إنشاء الحساب', 'Create account')
                                       : tr('دخول', 'Sign in')),
                             ),
                           ),
@@ -596,8 +590,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 _statusMessage = null;
                                               });
                                             },
-                                  child: Text(tr(
-                                      'إنشاء حساب', 'Create account')),
+                                  child:
+                                      Text(tr('إنشاء حساب', 'Create account')),
                                 ),
                                 const Spacer(),
                                 TextButton(

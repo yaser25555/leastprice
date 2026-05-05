@@ -4,7 +4,8 @@ import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class RateAlternativeDialog extends StatefulWidget {
-  const RateAlternativeDialog({super.key, 
+  const RateAlternativeDialog({
+    super.key,
     required this.product,
   });
 
@@ -35,8 +36,7 @@ class _RateAlternativeDialogState extends State<RateAlternativeDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              tr('تقييم جودة الخيار المقارن',
-                  'Rate the compared option'),
+              tr('تقييم جودة الخيار المقارن', 'Rate the compared option'),
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
@@ -107,8 +107,7 @@ class _RateAlternativeDialogState extends State<RateAlternativeDialog> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(_selectedRating),
-                    child:
-                        Text(tr('إرسال التقييم', 'Submit rating')),
+                    child: Text(tr('إرسال التقييم', 'Submit rating')),
                   ),
                 ),
               ],

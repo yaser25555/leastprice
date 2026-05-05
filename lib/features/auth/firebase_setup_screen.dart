@@ -4,7 +4,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class FirebaseSetupScreen extends StatelessWidget {
-  const FirebaseSetupScreen({super.key, 
+  const FirebaseSetupScreen({
+    super.key,
     this.message,
   });
 

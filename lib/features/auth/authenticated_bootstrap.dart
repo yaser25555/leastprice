@@ -43,8 +43,7 @@ class _AuthenticatedBootstrapState extends State<AuthenticatedBootstrap> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return AuthLoadingScreen(
-            title:
-                tr('جارٍ تجهيز حسابك', 'Preparing your account'),
+            title: tr('جارٍ تجهيز حسابك', 'Preparing your account'),
             message: tr(
               'نربط ملفك الشخصي والدعوات والعروض قبل فتح التطبيق.',
               'We are linking your profile, invites, and offers before opening the app.',

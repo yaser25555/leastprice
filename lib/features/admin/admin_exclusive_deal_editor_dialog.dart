@@ -9,7 +9,8 @@ import 'package:leastprice/features/admin/admin_image_input_section.dart';
 import 'package:leastprice/features/admin/admin_image_upload_service.dart';
 
 class AdminExclusiveDealEditorDialog extends StatefulWidget {
-  const AdminExclusiveDealEditorDialog({super.key, 
+  const AdminExclusiveDealEditorDialog({
+    super.key,
     this.initialDeal,
   });
 
@@ -201,8 +202,7 @@ class _AdminExclusiveDealEditorDialogState
                   Text(
                     widget.initialDeal == null
                         ? tr('إضافة عرض حصري', 'Add exclusive deal')
-                        : tr('تعديل العرض الحصري',
-                            'Edit exclusive deal'),
+                        : tr('تعديل العرض الحصري', 'Edit exclusive deal'),
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -225,8 +225,7 @@ class _AdminExclusiveDealEditorDialogState
                     label: tr('إضافة صورة اختيارية', 'Optional image'),
                     uploading: _isUploadingImage,
                     validator: _validateUrl,
-                    textFieldLabel:
-                        tr('إضافة صورة اختيارية', 'Optional image'),
+                    textFieldLabel: tr('إضافة صورة اختيارية', 'Optional image'),
                     helperText: tr(
                       'يمكنك رفع صورة للعرض أو تركها فارغة.',
                       'You can upload a deal image or leave it empty.',
@@ -245,8 +244,8 @@ class _AdminExclusiveDealEditorDialogState
                       labelText: tr('السعر قبل', 'Before price'),
                       prefixIcon: Icon(Icons.money_off_csred_rounded),
                     ),
-                    validator: (value) => _validatePrice(
-                        value, tr('السعر قبل', 'Before price')),
+                    validator: (value) =>
+                        _validatePrice(value, tr('السعر قبل', 'Before price')),
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
@@ -281,8 +280,7 @@ class _AdminExclusiveDealEditorDialogState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  tr('تاريخ انتهاء العرض',
-                                      'Deal expiry date'),
+                                  tr('تاريخ انتهاء العرض', 'Deal expiry date'),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w800,
                                     color: Color(0xFF1B2F5E),

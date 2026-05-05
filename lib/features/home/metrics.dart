@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 
 class InviteMetric extends StatelessWidget {
-  const InviteMetric({super.key, 
+  const InviteMetric({
+    super.key,
     required this.icon,
     required this.label,
   });
@@ -39,7 +40,8 @@ class InviteMetric extends StatelessWidget {
 }
 
 class StatPill extends StatelessWidget {
-  const StatPill({super.key, 
+  const StatPill({
+    super.key,
     required this.icon,
     required this.label,
   });

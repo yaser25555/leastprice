@@ -1,5 +1,3 @@
-
-
 class PendingAuthSession {
   const PendingAuthSession._();
 

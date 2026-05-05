@@ -35,9 +35,22 @@ class ComparisonSearchResult {
   bool get isScraped => sourceType == ComparisonSearchSourceType.scraper;
   bool get isPreferredMarketplace {
     const preferred = {
-      'noon', 'amazon', 'jarir', 'extra', 'nahdi', 'aldawaa', 
-      'hungerstation', 'panda', 'othaim', 'carrefour', 'niceone', 
-      'sephora', 'jahez', 'toyou', 'whites', 'lulu'
+      'noon',
+      'amazon',
+      'jarir',
+      'extra',
+      'nahdi',
+      'aldawaa',
+      'hungerstation',
+      'panda',
+      'othaim',
+      'carrefour',
+      'niceone',
+      'sephora',
+      'jahez',
+      'toyou',
+      'whites',
+      'lulu'
     };
     return preferred.contains(storeId.toLowerCase());
   }

@@ -5,7 +5,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/ad_banner_item.dart';
 
 class BannerCarousel extends StatefulWidget {
-  const BannerCarousel({super.key, 
+  const BannerCarousel({
+    super.key,
     required this.banners,
     required this.onTap,
   });
@@ -134,7 +135,8 @@ class _BannerCarouselState extends State<BannerCarousel> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppPalette.softOrange.withValues(alpha: 0.28),
+                                  color: AppPalette.softOrange
+                                      .withValues(alpha: 0.28),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Text(

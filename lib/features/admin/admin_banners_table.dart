@@ -8,7 +8,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'admin_exports.dart';
 
 class AdminBannersTable extends StatefulWidget {
-  const AdminBannersTable({super.key, 
+  const AdminBannersTable({
+    super.key,
     required this.catalogService,
   });
 
@@ -58,8 +59,7 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(tr(
-                'تم تحديث lastUpdated للبنر بنجاح.',
+            content: Text(tr('تم تحديث lastUpdated للبنر بنجاح.',
                 'Banner lastUpdated was refreshed successfully.'))),
       );
     } catch (error) {
@@ -77,8 +77,7 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
           context: context,
           builder: (context) => AlertDialog(
             title: Text(tr('حذف البنر', 'Delete banner')),
-            content: Text(tr(
-                'هل تريد حذف البنر "${banner.title}" نهائياً؟',
+            content: Text(tr('هل تريد حذف البنر "${banner.title}" نهائياً؟',
                 'Do you want to permanently delete the banner "${banner.title}"?')),
             actions: [
               TextButton(
@@ -102,8 +101,7 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
       await widget.catalogService.deleteAdBanner(banner.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(tr('تم حذف البنر.', 'Banner deleted.'))),
+        SnackBar(content: Text(tr('تم حذف البنر.', 'Banner deleted.'))),
       );
     } catch (error) {
       if (!mounted) return;
@@ -141,8 +139,7 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            tr('إدارة البنرات الإعلانية',
-                                'Banner management'),
+                            tr('إدارة البنرات الإعلانية', 'Banner management'),
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
@@ -227,19 +224,13 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
                                 const Color(0xFFF2FBF7),
                               ),
                               columns: [
+                                DataColumn(label: Text(tr('المتجر', 'Store'))),
+                                DataColumn(label: Text(tr('العنوان', 'Title'))),
+                                DataColumn(label: Text(tr('الترتيب', 'Order'))),
+                                DataColumn(label: Text(tr('الحالة', 'Status'))),
+                                DataColumn(label: Text(tr('الصورة', 'Image'))),
                                 DataColumn(
-                                    label: Text(tr('المتجر', 'Store'))),
-                                DataColumn(
-                                    label: Text(tr('العنوان', 'Title'))),
-                                DataColumn(
-                                    label: Text(tr('الترتيب', 'Order'))),
-                                DataColumn(
-                                    label: Text(tr('الحالة', 'Status'))),
-                                DataColumn(
-                                    label: Text(tr('الصورة', 'Image'))),
-                                DataColumn(
-                                    label: Text(
-                                        tr('الإجراءات', 'Actions'))),
+                                    label: Text(tr('الإجراءات', 'Actions'))),
                               ],
                               rows: banners.map((banner) {
                                 return DataRow(
@@ -305,14 +296,12 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
                                             OutlinedButton(
                                               onPressed: () => _openEditor(
                                                   initialBanner: banner),
-                                              child: Text(
-                                                  tr('تعديل', 'Edit')),
+                                              child: Text(tr('تعديل', 'Edit')),
                                             ),
                                             OutlinedButton(
                                               onPressed: () =>
                                                   _publishBanner(banner),
-                                              child:
-                                                  Text(tr('نشر', 'Publish')),
+                                              child: Text(tr('نشر', 'Publish')),
                                             ),
                                             OutlinedButton(
                                               onPressed: () =>
@@ -321,8 +310,7 @@ class _AdminBannersTableState extends State<AdminBannersTable> {
                                                 foregroundColor:
                                                     const Color(0xFFC24E4E),
                                               ),
-                                              child:
-                                                  Text(tr('حذف', 'Delete')),
+                                              child: Text(tr('حذف', 'Delete')),
                                             ),
                                           ],
                                         ),

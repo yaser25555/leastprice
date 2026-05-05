@@ -1,4 +1,3 @@
-
 import 'package:leastprice/data/models/comparison_search_result.dart';
 
 class ComparisonSearchResponse {

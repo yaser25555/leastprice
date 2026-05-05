@@ -210,8 +210,10 @@ class AdminSimpleUsersPanel extends StatelessWidget {
                                     ),
                                     label: Text(
                                       user.isMarketingManager
-                                          ? tr('سحب التسويق', 'Revoke marketing')
-                                          : tr('مدير تسويق', 'Marketing manager'),
+                                          ? tr(
+                                              'سحب التسويق', 'Revoke marketing')
+                                          : tr('مدير تسويق',
+                                              'Marketing manager'),
                                     ),
                                   ),
                               ],

@@ -24,7 +24,8 @@ class ShoppingCartScreen extends ConsumerWidget {
     // Group items by store to show potential savings
     final Map<String, double> storeTotals = {};
     for (var item in cartItems) {
-      storeTotals[item.storeName] = (storeTotals[item.storeName] ?? 0) + item.price;
+      storeTotals[item.storeName] =
+          (storeTotals[item.storeName] ?? 0) + item.price;
     }
 
     return Scaffold(
@@ -52,15 +53,20 @@ class ShoppingCartScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.remove_shopping_cart_rounded, size: 80, color: AppPalette.softNavy),
+                  Icon(Icons.remove_shopping_cart_rounded,
+                      size: 80, color: AppPalette.softNavy),
                   const SizedBox(height: 16),
                   Text(
                     tr('السلة فارغة حالياً', 'Cart is currently empty'),
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppPalette.deepNavy),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppPalette.deepNavy),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    tr('ابحث عن المنتجات وأضفها للسلة لمقارنة إجمالي التكلفة', 'Search for products and add them to compare total cost'),
+                    tr('ابحث عن المنتجات وأضفها للسلة لمقارنة إجمالي التكلفة',
+                        'Search for products and add them to compare total cost'),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: AppPalette.mutedText),
                   ),
@@ -82,8 +88,10 @@ class ShoppingCartScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       Text(
-                        tr('التكلفة الإجمالية لطلباتك', 'Total Cost of your items'),
-                        style: TextStyle(color: AppPalette.paleOrange, fontSize: 14),
+                        tr('التكلفة الإجمالية لطلباتك',
+                            'Total Cost of your items'),
+                        style: TextStyle(
+                            color: AppPalette.paleOrange, fontSize: 14),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -104,12 +112,15 @@ class ShoppingCartScreen extends ConsumerWidget {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.tips_and_updates_rounded, color: Colors.amber),
+                              const Icon(Icons.tips_and_updates_rounded,
+                                  color: Colors.amber),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  tr('نصيحة: لقد جمعت منتجات من متاجر مختلفة. التسوق من متجر واحد قد يوفر رسوم التوصيل.', 'Tip: You collected items from different stores. Shopping from one store might save delivery fees.'),
-                                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                                  tr('نصيحة: لقد جمعت منتجات من متاجر مختلفة. التسوق من متجر واحد قد يوفر رسوم التوصيل.',
+                                      'Tip: You collected items from different stores. Shopping from one store might save delivery fees.'),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 12),
                                 ),
                               ),
                             ],
@@ -119,13 +130,14 @@ class ShoppingCartScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                
+
                 // Cart Items List
                 Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: cartItems.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
                       return Container(
@@ -151,7 +163,8 @@ class ShoppingCartScreen extends ConsumerWidget {
                                       width: 60,
                                       height: 60,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => const ComparisonImageFallback(),
+                                      errorBuilder: (_, __, ___) =>
+                                          const ComparisonImageFallback(),
                                     )
                                   : const ComparisonImageFallback(),
                             ),
@@ -173,11 +186,15 @@ class ShoppingCartScreen extends ConsumerWidget {
                                   const SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      Icon(Icons.storefront_rounded, size: 14, color: AppPalette.mutedText),
+                                      Icon(Icons.storefront_rounded,
+                                          size: 14,
+                                          color: AppPalette.mutedText),
                                       const SizedBox(width: 4),
                                       Text(
                                         item.storeName,
-                                        style: TextStyle(color: AppPalette.mutedText, fontSize: 12),
+                                        style: TextStyle(
+                                            color: AppPalette.mutedText,
+                                            fontSize: 12),
                                       ),
                                     ],
                                   ),
@@ -197,9 +214,14 @@ class ShoppingCartScreen extends ConsumerWidget {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    ref.read(shoppingCartProvider.notifier).removeItem(item.productUrl);
+                                    ref
+                                        .read(shoppingCartProvider.notifier)
+                                        .removeItem(item.productUrl);
                                   },
-                                  icon: const Icon(Icons.remove_circle_outline_rounded, color: Colors.redAccent, size: 20),
+                                  icon: const Icon(
+                                      Icons.remove_circle_outline_rounded,
+                                      color: Colors.redAccent,
+                                      size: 20),
                                   constraints: const BoxConstraints(),
                                   padding: const EdgeInsets.only(top: 8),
                                 ),

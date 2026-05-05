@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 
-
 class AdminDashboardSectionCard extends StatelessWidget {
-  const AdminDashboardSectionCard({super.key, 
+  const AdminDashboardSectionCard({
+    super.key,
     required this.child,
   });
 

@@ -57,7 +57,6 @@ String normalizeArabic(String input) {
       .trim();
 }
 
-
 String formatPercentage(double value) {
   return '${formatAmountValue(value)}%';
 }

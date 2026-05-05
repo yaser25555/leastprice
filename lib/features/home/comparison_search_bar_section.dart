@@ -9,7 +9,8 @@ import 'package:leastprice/services/api/open_food_facts_service.dart';
 import 'home_exports.dart';
 
 class ComparisonSearchBarSection extends StatelessWidget {
-  const ComparisonSearchBarSection({super.key, 
+  const ComparisonSearchBarSection({
+    super.key,
     required this.searchController,
     required this.focusNode,
     required this.query,
@@ -47,7 +48,20 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final ValueChanged<String> onSubmitted;
   final VoidCallback onDetectCityTap;
 
-  static const List<String> supportedStores = ['الكل', 'بنده', 'العثيم', 'كارفور', 'الدانوب', 'التميمي', 'جرير', 'اكسترا', 'أمازون', 'نون', 'النهدي', 'الدواء'];
+  static const List<String> supportedStores = [
+    'الكل',
+    'بنده',
+    'العثيم',
+    'كارفور',
+    'الدانوب',
+    'التميمي',
+    'جرير',
+    'اكسترا',
+    'أمازون',
+    'نون',
+    'النهدي',
+    'الدواء'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -102,17 +116,19 @@ class ComparisonSearchBarSection extends StatelessWidget {
                           context: context,
                           barrierDismissible: false,
                           builder: (context) => Center(
-                            child: CircularProgressIndicator(color: AppPalette.orange),
+                            child: CircularProgressIndicator(
+                                color: AppPalette.orange),
                           ),
                         );
-                        
-                        final productName = await OpenFoodFactsService.getProductNameFromBarcode(result);
-                        
+
+                        final productName = await OpenFoodFactsService
+                            .getProductNameFromBarcode(result);
+
                         // Close the loading dialog
                         if (context.mounted) {
                           Navigator.pop(context);
                         }
-                        
+
                         if (productName != null && productName.isNotEmpty) {
                           searchController.text = productName;
                           onSubmitted(productName);
@@ -120,11 +136,13 @@ class ComparisonSearchBarSection extends StatelessWidget {
                           // If OpenFoodFacts didn't find the product, fall back to searching by the raw barcode
                           searchController.text = result;
                           onSubmitted(result);
-                          
+
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(tr('لم نتمكن من التعرف على اسم المنتج، سنبحث برقم الباركود', 'Could not identify product name, searching by barcode')),
+                                content: Text(tr(
+                                    'لم نتمكن من التعرف على اسم المنتج، سنبحث برقم الباركود',
+                                    'Could not identify product name, searching by barcode')),
                                 backgroundColor: AppPalette.dealsRed,
                               ),
                             );
@@ -158,7 +176,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.electrical_services_rounded,
                   label: tr('الإلكترونيات', 'Electronics'),
-                  isSelected: selectedCategory == tr('الإلكترونيات', 'Electronics'),
+                  isSelected:
+                      selectedCategory == tr('الإلكترونيات', 'Electronics'),
                   onTap: () {
                     onCategorySelected(tr('الإلكترونيات', 'Electronics'));
                     focusNode.requestFocus();
@@ -168,7 +187,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.local_grocery_store_rounded,
                   label: tr('السوبر ماركت', 'Supermarket'),
-                  isSelected: selectedCategory == tr('السوبر ماركت', 'Supermarket'),
+                  isSelected:
+                      selectedCategory == tr('السوبر ماركت', 'Supermarket'),
                   onTap: () {
                     onCategorySelected(tr('السوبر ماركت', 'Supermarket'));
                     focusNode.requestFocus();
@@ -198,9 +218,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 _CategoryChip(
                   icon: Icons.medical_services_rounded,
                   label: tr('العيادات الطبية', 'Medical Clinics'),
-                  isSelected: selectedCategory == tr('العيادات الطبية', 'Medical Clinics'),
+                  isSelected: selectedCategory ==
+                      tr('العيادات الطبية', 'Medical Clinics'),
                   onTap: () {
-                    onCategorySelected(tr('العيادات الطبية', 'Medical Clinics'));
+                    onCategorySelected(
+                        tr('العيادات الطبية', 'Medical Clinics'));
                     focusNode.requestFocus();
                   },
                 ),
@@ -212,9 +234,12 @@ class ComparisonSearchBarSection extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                   decoration: BoxDecoration(
-                    color: appleStyle ? AppPalette.cardBackground : AppPalette.deepNavy,
+                    color: appleStyle
+                        ? AppPalette.cardBackground
+                        : AppPalette.deepNavy,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: appleStyle
@@ -270,7 +295,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         onPressed: onDetectCityTap,
-                        tooltip: tr('تحديد المدينة تلقائياً', 'Detect city automatically'),
+                        tooltip: tr('تحديد المدينة تلقائياً',
+                            'Detect city automatically'),
                         icon: Icon(
                           Icons.my_location_rounded,
                           color: AppPalette.accentSkyDeep,
@@ -283,9 +309,12 @@ class ComparisonSearchBarSection extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                   decoration: BoxDecoration(
-                    color: appleStyle ? AppPalette.cardBackground : AppPalette.deepNavy,
+                    color: appleStyle
+                        ? AppPalette.cardBackground
+                        : AppPalette.deepNavy,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: appleStyle
@@ -357,8 +386,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
               ),
               SearchInfoPill(
                 icon: Icons.trending_down_rounded,
-                label: tr('ترتيب من الأقل سعراً',
-                    'Lowest price first'),
+                label: tr('ترتيب من الأقل سعراً', 'Lowest price first'),
               ),
               SearchInfoPill(
                 icon: isSearchingOnline
@@ -392,7 +420,9 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ActionChip(
-      avatar: Icon(icon, color: isSelected ? AppPalette.pureWhite : AppPalette.orange, size: 16),
+      avatar: Icon(icon,
+          color: isSelected ? AppPalette.pureWhite : AppPalette.orange,
+          size: 16),
       label: Text(
         label,
         style: TextStyle(
@@ -401,8 +431,11 @@ class _CategoryChip extends StatelessWidget {
           fontSize: 13,
         ),
       ),
-      backgroundColor: isSelected ? AppPalette.orange : AppPalette.cardBackground,
-      side: BorderSide(color: isSelected ? AppPalette.orange : AppPalette.cardBorder, width: 1.2),
+      backgroundColor:
+          isSelected ? AppPalette.orange : AppPalette.cardBackground,
+      side: BorderSide(
+          color: isSelected ? AppPalette.orange : AppPalette.cardBorder,
+          width: 1.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onPressed: onTap,
     );

@@ -1,4 +1,3 @@
-
 import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/core/utils/helpers.dart';

@@ -5,7 +5,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class AuthBootstrapErrorScreen extends StatelessWidget {
-  const AuthBootstrapErrorScreen({super.key, 
+  const AuthBootstrapErrorScreen({
+    super.key,
     required this.message,
     required this.onRetry,
     required this.onSignOut,
@@ -44,8 +45,7 @@ class AuthBootstrapErrorScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  tr('تعذر فتح حسابك',
-                      'Unable to open your account'),
+                  tr('تعذر فتح حسابك', 'Unable to open your account'),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,

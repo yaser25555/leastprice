@@ -7,7 +7,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'admin_exports.dart';
 
 class AdminProductManagerPanel extends StatefulWidget {
-  const AdminProductManagerPanel({super.key, 
+  const AdminProductManagerPanel({
+    super.key,
     required this.catalogService,
   });
 
@@ -37,10 +38,8 @@ class _AdminProductManagerPanelState extends State<AdminProductManagerPanel> {
         SnackBar(
           content: Text(
             initialProduct == null
-                ? tr('تمت إضافة المنتج بنجاح.',
-                    'Product added successfully.')
-                : tr('تم تحديث المنتج بنجاح.',
-                    'Product updated successfully.'),
+                ? tr('تمت إضافة المنتج بنجاح.', 'Product added successfully.')
+                : tr('تم تحديث المنتج بنجاح.', 'Product updated successfully.'),
           ),
         ),
       );
@@ -151,8 +150,7 @@ class _AdminProductManagerPanelState extends State<AdminProductManagerPanel> {
       await widget.catalogService.deleteProduct(documentId);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(tr('تم حذف المنتج.', 'Product deleted.'))),
+        SnackBar(content: Text(tr('تم حذف المنتج.', 'Product deleted.'))),
       );
     } catch (error) {
       if (!mounted) return;

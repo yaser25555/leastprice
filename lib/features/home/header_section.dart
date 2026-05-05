@@ -8,7 +8,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'home_exports.dart';
 
 class HeaderSection extends StatelessWidget {
-  const HeaderSection({super.key, 
+  const HeaderSection({
+    super.key,
     required this.currentUserLabel,
     required this.inviteCode,
     required this.invitedFriendsCount,
@@ -46,8 +47,7 @@ class HeaderSection extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color:
-                    appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
+                color: appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
                 blurRadius: appleStyle ? 20 : 28,
                 offset: Offset(0, appleStyle ? 12 : 18),
               ),
@@ -174,8 +174,7 @@ class HeaderSection extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              tr('كودك: $inviteCode',
-                                  'Your code: $inviteCode'),
+                              tr('كودك: $inviteCode', 'Your code: $inviteCode'),
                               style: TextStyle(
                                 color: AppPalette.pureWhite,
                                 fontWeight: FontWeight.w700,
@@ -223,8 +222,10 @@ class HeaderSection extends StatelessWidget {
                             onPressed: onInviteTap,
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppPalette.pureWhite,
-                              side: BorderSide(color: AppPalette.pureWhiteOpacity(0.33)),
-                              backgroundColor: AppPalette.pureWhiteOpacity(0.06),
+                              side: BorderSide(
+                                  color: AppPalette.pureWhiteOpacity(0.33)),
+                              backgroundColor:
+                                  AppPalette.pureWhiteOpacity(0.06),
                             ),
                             icon: const Icon(Icons.share_rounded),
                             label: Text(
@@ -249,7 +250,8 @@ class HeaderSection extends StatelessWidget {
 }
 
 class CompactHeaderSection extends StatefulWidget {
-  const CompactHeaderSection({super.key, 
+  const CompactHeaderSection({
+    super.key,
     required this.currentUserLabel,
     required this.inviteCode,
     required this.invitedFriendsCount,
@@ -294,8 +296,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
             ),
             boxShadow: [
               BoxShadow(
-                color:
-                    appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
+                color: appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
                 blurRadius: appleStyle ? 20 : 28,
                 offset: Offset(0, appleStyle ? 12 : 18),
               ),
@@ -348,7 +349,8 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                               const SizedBox(height: 2),
                               Row(
                                 children: [
-                                  const Icon(Icons.person_rounded, size: 14, color: Color(0xFFFFD9BA)),
+                                  const Icon(Icons.person_rounded,
+                                      size: 14, color: Color(0xFFFFD9BA)),
                                   const SizedBox(width: 4),
                                   Text(
                                     '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
@@ -364,7 +366,9 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                           ),
                         ),
                         Icon(
-                          _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                          _isExpanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
                           color: AppPalette.paleOrange,
                         ),
                         const SizedBox(width: 6),
@@ -412,7 +416,11 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                               padding: const EdgeInsets.all(10),
                               minimumSize: const Size(38, 38),
                             ),
-                            icon: Icon(isFem ? Icons.spa_rounded : Icons.palette_rounded, size: 18),
+                            icon: Icon(
+                                isFem
+                                    ? Icons.spa_rounded
+                                    : Icons.palette_rounded,
+                                size: 18),
                             tooltip: tr('تغيير الثيم', 'Change Theme'),
                           ),
                         ),
@@ -447,24 +455,24 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.discount_rounded, color: AppPalette.orange, size: 16),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      tr(
-                                        'كود الدعوة',
-                                        'Invite code',
-                                      ),
-                                      style: TextStyle(
-                                        color: AppPalette.paleOrange,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w800,
-                                      ),
+                                  child: Row(
+                                children: [
+                                  Icon(Icons.discount_rounded,
+                                      color: AppPalette.orange, size: 16),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    tr(
+                                      'كود الدعوة',
+                                      'Invite code',
                                     ),
-                                  ],
-                                )
-                              ),
+                                    style: TextStyle(
+                                      color: AppPalette.paleOrange,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              )),
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -496,10 +504,10 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                                       padding: const EdgeInsets.all(10),
                                       minimumSize: const Size(36, 36),
                                     ),
-                                    tooltip: tr('مشاركة الدعوة',
-                                        'Share invite'),
-                                    icon:
-                                        const Icon(Icons.share_rounded, size: 18),
+                                    tooltip:
+                                        tr('مشاركة الدعوة', 'Share invite'),
+                                    icon: const Icon(Icons.share_rounded,
+                                        size: 18),
                                   ),
                                 ],
                               ),

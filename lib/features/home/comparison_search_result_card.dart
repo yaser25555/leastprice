@@ -163,10 +163,12 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   if (result.matchedCoupon != null) ...[
                     const SizedBox(height: 6),
                     InkWell(
-                      onTap: onCopyCoupon != null ? () {
-                        HapticFeedback.selectionClick();
-                        onCopyCoupon!();
-                      } : null,
+                      onTap: onCopyCoupon != null
+                          ? () {
+                              HapticFeedback.selectionClick();
+                              onCopyCoupon!();
+                            }
+                          : null,
                       borderRadius: BorderRadius.circular(18),
                       child: Ink(
                         padding: const EdgeInsets.symmetric(
@@ -264,7 +266,8 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   Consumer(
                     builder: (context, ref, child) {
                       final cartItems = ref.watch(shoppingCartProvider);
-                      final isInCart = cartItems.any((item) => item.productUrl == result.productUrl);
+                      final isInCart = cartItems
+                          .any((item) => item.productUrl == result.productUrl);
 
                       return Row(
                         children: [
@@ -279,8 +282,10 @@ class ComparisonSearchResultCard extends StatelessWidget {
                                   vertical: 8,
                                 ),
                               ),
-                              icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                              label: Text(tr('فتح المتجر', 'Open store'), style: const TextStyle(fontSize: 12)),
+                              icon: const Icon(Icons.open_in_new_rounded,
+                                  size: 16),
+                              label: Text(tr('فتح المتجر', 'Open store'),
+                                  style: const TextStyle(fontSize: 12)),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -288,35 +293,55 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             onPressed: () {
                               HapticFeedback.lightImpact();
                               if (isInCart) {
-                                ref.read(shoppingCartProvider.notifier).removeItem(result.productUrl);
+                                ref
+                                    .read(shoppingCartProvider.notifier)
+                                    .removeItem(result.productUrl);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(tr('تمت إزالة المنتج من السلة', 'Item removed from cart')),
+                                    content: Text(tr(
+                                        'تمت إزالة المنتج من السلة',
+                                        'Item removed from cart')),
                                     backgroundColor: Colors.redAccent,
                                     duration: const Duration(seconds: 1),
                                   ),
                                 );
                               } else {
-                                ref.read(shoppingCartProvider.notifier).addItem(result);
+                                ref
+                                    .read(shoppingCartProvider.notifier)
+                                    .addItem(result);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(tr('تمت إضافة المنتج للسلة', 'Item added to cart')),
-                                    backgroundColor: AppPalette.comparisonEmerald,
+                                    content: Text(tr('تمت إضافة المنتج للسلة',
+                                        'Item added to cart')),
+                                    backgroundColor:
+                                        AppPalette.comparisonEmerald,
                                     duration: const Duration(seconds: 1),
                                   ),
                                 );
                               }
                             },
                             style: FilledButton.styleFrom(
-                              backgroundColor: isInCart ? AppPalette.softOrange : AppPalette.paleOrange.withOpacity(0.2),
-                              foregroundColor: isInCart ? AppPalette.orange : AppPalette.deepNavy,
+                              backgroundColor: isInCart
+                                  ? AppPalette.softOrange
+                                  : AppPalette.paleOrange.withOpacity(0.2),
+                              foregroundColor: isInCart
+                                  ? AppPalette.orange
+                                  : AppPalette.deepNavy,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
                               ),
                             ),
-                            icon: Icon(isInCart ? Icons.shopping_cart_rounded : Icons.add_shopping_cart_rounded, size: 16),
-                            label: Text(isInCart ? tr('بالسلة', 'In Cart') : tr('للسلة', 'To Cart'), style: const TextStyle(fontSize: 12)),
+                            icon: Icon(
+                                isInCart
+                                    ? Icons.shopping_cart_rounded
+                                    : Icons.add_shopping_cart_rounded,
+                                size: 16),
+                            label: Text(
+                                isInCart
+                                    ? tr('بالسلة', 'In Cart')
+                                    : tr('للسلة', 'To Cart'),
+                                style: const TextStyle(fontSize: 12)),
                           ),
                         ],
                       );

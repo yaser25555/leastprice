@@ -1,5 +1,3 @@
-
-
 class SmartSearchCandidate {
   const SmartSearchCandidate({
     required this.name,

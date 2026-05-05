@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-
 class AdminNetworkThumbnail extends StatelessWidget {
-  const AdminNetworkThumbnail({super.key, 
+  const AdminNetworkThumbnail({
+    super.key,
     required this.imageUrl,
     required this.label,
   });

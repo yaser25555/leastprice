@@ -4,7 +4,8 @@ import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class ComparisonInsights extends StatelessWidget {
-  const ComparisonInsights({super.key, 
+  const ComparisonInsights({
+    super.key,
     required this.comparison,
     required this.onLocationTap,
   });
@@ -56,7 +57,8 @@ class ComparisonInsights extends StatelessWidget {
 }
 
 class InsightRow extends StatelessWidget {
-  const InsightRow({super.key, 
+  const InsightRow({
+    super.key,
     required this.icon,
     required this.title,
     required this.value,

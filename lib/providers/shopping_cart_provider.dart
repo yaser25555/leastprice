@@ -26,6 +26,7 @@ class ShoppingCartNotifier extends Notifier<List<ComparisonSearchResult>> {
   }
 }
 
-final shoppingCartProvider = NotifierProvider<ShoppingCartNotifier, List<ComparisonSearchResult>>(() {
+final shoppingCartProvider =
+    NotifierProvider<ShoppingCartNotifier, List<ComparisonSearchResult>>(() {
   return ShoppingCartNotifier();
 });

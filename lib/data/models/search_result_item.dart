@@ -1,5 +1,3 @@
-
-
 class SearchResultItem {
   const SearchResultItem({
     required this.title,

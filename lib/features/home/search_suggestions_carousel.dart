@@ -7,7 +7,8 @@ class SearchSuggestionsCarousel extends StatefulWidget {
   const SearchSuggestionsCarousel({super.key});
 
   @override
-  State<SearchSuggestionsCarousel> createState() => _SearchSuggestionsCarouselState();
+  State<SearchSuggestionsCarousel> createState() =>
+      _SearchSuggestionsCarouselState();
 }
 
 class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
@@ -18,13 +19,15 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
   final List<Map<String, dynamic>> _suggestions = [
     {
       'title': 'الإلكترونيات والجوالات',
-      'subtitle': 'قارن أسعار الهواتف الذكية، الحواسيب، والإلكترونيات الاستهلاكية لتجد أفضل الصفقات.',
+      'subtitle':
+          'قارن أسعار الهواتف الذكية، الحواسيب، والإلكترونيات الاستهلاكية لتجد أفضل الصفقات.',
       'icon': Icons.devices_rounded,
       'gradient': const [Color(0xFF5E72E4), Color(0xFF825EE4)],
     },
     {
       'title': 'المواد الغذائية والسوبرماركت',
-      'subtitle': 'ابحث عن منتجات البقالة اليومية والمواد الغذائية لتوفير المزيد في ميزانيتك.',
+      'subtitle':
+          'ابحث عن منتجات البقالة اليومية والمواد الغذائية لتوفير المزيد في ميزانيتك.',
       'icon': Icons.shopping_basket_rounded,
       'gradient': const [Color(0xFF2DCE89), Color(0xFF2DCECC)],
     },
@@ -36,7 +39,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
     },
     {
       'title': 'العطور والتجميل',
-      'subtitle': 'تشكيلة واسعة من العطور ومستحضرات التجميل مع مقارنة دقيقة للأسعار.',
+      'subtitle':
+          'تشكيلة واسعة من العطور ومستحضرات التجميل مع مقارنة دقيقة للأسعار.',
       'icon': Icons.face_retouching_natural_rounded,
       'gradient': const [Color(0xFFF5365C), Color(0xFFF56036)],
     },
@@ -86,7 +90,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
-              Icon(Icons.auto_awesome_rounded, color: AppPalette.orange, size: 20),
+              Icon(Icons.auto_awesome_rounded,
+                  color: AppPalette.orange, size: 20),
               const SizedBox(width: 8),
               Text(
                 tr('اكتشف أفضل الصفقات', 'Discover top deals'),
@@ -128,7 +133,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                   );
                 },
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24),
@@ -139,7 +145,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: (item['gradient'] as List<Color>)[0].withOpacity(0.3),
+                        color: (item['gradient'] as List<Color>)[0]
+                            .withOpacity(0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),

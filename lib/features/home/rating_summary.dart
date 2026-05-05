@@ -5,7 +5,8 @@ import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class RatingSummary extends StatelessWidget {
-  const RatingSummary({super.key, 
+  const RatingSummary({
+    super.key,
     required this.comparison,
     required this.onTap,
   });
@@ -20,8 +21,7 @@ class RatingSummary extends StatelessWidget {
             '${comparison.rating.toStringAsFixed(1)} ⭐ - ${comparison.reviewCount} تقييم',
             '${comparison.rating.toStringAsFixed(1)} ? - ${comparison.reviewCount} reviews',
           )
-        : tr('ابدأ أول تقييم لهذا الخيار',
-            'Be the first to rate this option');
+        : tr('ابدأ أول تقييم لهذا الخيار', 'Be the first to rate this option');
 
     return InkWell(
       onTap: onTap,
@@ -75,7 +75,8 @@ class RatingSummary extends StatelessWidget {
 }
 
 class RatingStars extends StatelessWidget {
-  const RatingStars({super.key, 
+  const RatingStars({
+    super.key,
     required this.rating,
   });
 

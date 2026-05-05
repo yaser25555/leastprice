@@ -73,132 +73,140 @@ class LeastPriceApp extends StatelessWidget {
         return ValueListenableBuilder<String>(
           valueListenable: appLang,
           builder: (context, lang, _) {
-        final isEnglish = lang == 'en';
+            final isEnglish = lang == 'en';
 
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: isEnglish ? 'LeastPrice' : 'أرخص سعر',
-          locale: Locale(lang),
-          scrollBehavior: const LeastPriceScrollBehavior(),
-          supportedLocales: const [
-            Locale('ar'),
-            Locale('en'),
-          ],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          theme: ThemeData(
-            useMaterial3: true,
-            platform:
-                applePlatform ? TargetPlatform.iOS : TargetPlatform.android,
-            colorScheme: scheme,
-            scaffoldBackgroundColor: AppPalette.shellBackground,
-            pageTransitionsTheme: const PageTransitionsTheme(
-              builders: <TargetPlatform, PageTransitionsBuilder>{
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: isEnglish ? 'LeastPrice' : 'أرخص سعر',
+              locale: Locale(lang),
+              scrollBehavior: const LeastPriceScrollBehavior(),
+              supportedLocales: const [
+                Locale('ar'),
+                Locale('en'),
+              ],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              theme: ThemeData(
+                useMaterial3: true,
+                platform:
+                    applePlatform ? TargetPlatform.iOS : TargetPlatform.android,
+                colorScheme: scheme,
+                scaffoldBackgroundColor: AppPalette.shellBackground,
+                pageTransitionsTheme: const PageTransitionsTheme(
+                  builders: <TargetPlatform, PageTransitionsBuilder>{
+                    TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                    TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+                    TargetPlatform.android:
+                        FadeForwardsPageTransitionsBuilder(),
+                  },
+                ),
+                cupertinoOverrideTheme: CupertinoThemeData(
+                  primaryColor: AppPalette.orange,
+                  scaffoldBackgroundColor: AppPalette.shellBackground,
+                  barBackgroundColor: AppPalette.softOrange,
+                ),
+                snackBarTheme: const SnackBarThemeData(
+                  behavior: SnackBarBehavior.floating,
+                ),
+                inputDecorationTheme: InputDecorationTheme(
+                  filled: true,
+                  fillColor: AppPalette.cardBackground,
+                  hintStyle: TextStyle(color: AppPalette.mutedText),
+                  labelStyle: TextStyle(color: AppPalette.paleOrange),
+                  prefixIconColor: AppPalette.orange,
+                  suffixIconColor: AppPalette.orange,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(applePlatform ? 16 : 18),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(applePlatform ? 16 : 18),
+                    borderSide: BorderSide(
+                      color: AppPalette.cardBorder,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(applePlatform ? 16 : 18),
+                    borderSide: BorderSide(
+                      color: AppPalette.orange,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+                cardTheme: CardThemeData(
+                  color: AppPalette.cardBackground,
+                  surfaceTintColor: Colors.transparent,
+                  elevation: applePlatform ? 2 : 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(applePlatform ? 24 : 20),
+                    side: BorderSide(
+                      color: AppPalette.cardBorder,
+                    ),
+                  ),
+                ),
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppPalette.orange,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(54),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(applePlatform ? 16 : 18),
+                    ),
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15.5,
+                    ),
+                  ),
+                ),
+                outlinedButtonTheme: OutlinedButtonThemeData(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(54),
+                    foregroundColor: AppPalette.paleOrange,
+                    side: BorderSide(
+                      color: AppPalette.paleOrange,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(applePlatform ? 16 : 18),
+                    ),
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+              builder: (context, child) {
+                return Directionality(
+                  textDirection:
+                      isEnglish ? TextDirection.ltr : TextDirection.rtl,
+                  child: child ?? const SizedBox.shrink(),
+                );
               },
-            ),
-            cupertinoOverrideTheme: CupertinoThemeData(
-              primaryColor: AppPalette.orange,
-              scaffoldBackgroundColor: AppPalette.shellBackground,
-              barBackgroundColor: AppPalette.softOrange,
-            ),
-            snackBarTheme: const SnackBarThemeData(
-              behavior: SnackBarBehavior.floating,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              filled: true,
-              fillColor: AppPalette.cardBackground,
-              hintStyle: TextStyle(color: AppPalette.mutedText),
-              labelStyle: TextStyle(color: AppPalette.paleOrange),
-              prefixIconColor: AppPalette.orange,
-              suffixIconColor: AppPalette.orange,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 18,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
-                borderSide: BorderSide(
-                  color: AppPalette.cardBorder,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
-                borderSide: BorderSide(
-                  color: AppPalette.orange,
-                  width: 1.5,
-                ),
-              ),
-            ),
-            cardTheme: CardThemeData(
-              color: AppPalette.cardBackground,
-              surfaceTintColor: Colors.transparent,
-              elevation: applePlatform ? 2 : 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(applePlatform ? 24 : 20),
-                side: BorderSide(
-                  color: AppPalette.cardBorder,
-                ),
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppPalette.orange,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(54),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
-                ),
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15.5,
-                ),
-              ),
-            ),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(54),
-                foregroundColor: AppPalette.paleOrange,
-                side: BorderSide(
-                  color: AppPalette.paleOrange,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(applePlatform ? 16 : 18),
-                ),
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
-          builder: (context, child) {
-            return Directionality(
-              textDirection: isEnglish ? TextDirection.ltr : TextDirection.rtl,
-              child: child ?? const SizedBox.shrink(),
+              home: isAdminDashboardRequest()
+                  ? AdminDashboardAuthGate(
+                      firebaseReady: firebaseBootstrapNotice == null,
+                      bootstrapNotice: firebaseBootstrapNotice,
+                    )
+                  : AuthGate(
+                      firebaseReady: firebaseBootstrapNotice == null,
+                      bootstrapNotice: firebaseBootstrapNotice,
+                    ),
             );
           },
-          home: isAdminDashboardRequest()
-              ? AdminDashboardAuthGate(
-                  firebaseReady: firebaseBootstrapNotice == null,
-                  bootstrapNotice: firebaseBootstrapNotice,
-                )
-              : AuthGate(
-                  firebaseReady: firebaseBootstrapNotice == null,
-                  bootstrapNotice: firebaseBootstrapNotice,
-                ),
         );
-      },
-    );
       },
     );
   }

@@ -7,7 +7,8 @@ import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class AdminAccessDeniedScreen extends StatelessWidget {
-  const AdminAccessDeniedScreen({super.key, 
+  const AdminAccessDeniedScreen({
+    super.key,
     required this.user,
   });
 
@@ -49,8 +50,7 @@ class AdminAccessDeniedScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    tr('هذا الحساب ليس مشرفاً',
-                        'This account is not an admin'),
+                    tr('هذا الحساب ليس مشرفاً', 'This account is not an admin'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 22,

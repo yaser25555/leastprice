@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 
 class ComparisonSearchPlaceholder extends StatelessWidget {
-  const ComparisonSearchPlaceholder({super.key, 
+  const ComparisonSearchPlaceholder({
+    super.key,
     required this.title,
     required this.icon,
   });

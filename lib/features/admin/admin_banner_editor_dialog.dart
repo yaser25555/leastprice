@@ -8,7 +8,8 @@ import 'package:leastprice/features/admin/admin_image_input_section.dart';
 import 'package:leastprice/features/admin/admin_image_upload_service.dart';
 
 class AdminBannerEditorDialog extends StatefulWidget {
-  const AdminBannerEditorDialog({super.key, 
+  const AdminBannerEditorDialog({
+    super.key,
     this.initialBanner,
   });
 
@@ -63,9 +64,7 @@ class _AdminBannerEditorDialogState extends State<AdminBannerEditorDialog> {
   String? _validateUrl(String? value, {bool required = false}) {
     final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) {
-      return required
-          ? tr('هذا الرابط مطلوب.', 'This URL is required.')
-          : null;
+      return required ? tr('هذا الرابط مطلوب.', 'This URL is required.') : null;
     }
 
     final uri = Uri.tryParse(trimmed);
@@ -188,8 +187,7 @@ class _AdminBannerEditorDialogState extends State<AdminBannerEditorDialog> {
                     controller: _subtitleController,
                     maxLines: 2,
                     decoration: InputDecoration(
-                      labelText:
-                          tr('الوصف المختصر', 'Short description'),
+                      labelText: tr('الوصف المختصر', 'Short description'),
                       prefixIcon: Icon(Icons.subject_rounded),
                     ),
                   ),
@@ -199,8 +197,7 @@ class _AdminBannerEditorDialogState extends State<AdminBannerEditorDialog> {
                     label: tr('إضافة صورة اختيارية', 'Optional image'),
                     uploading: _isUploadingImage,
                     validator: _validateUrl,
-                    textFieldLabel:
-                        tr('إضافة صورة اختيارية', 'Optional image'),
+                    textFieldLabel: tr('إضافة صورة اختيارية', 'Optional image'),
                     helperText: tr(
                       'يمكنك رفع صورة للبنر أو ترك هذا الحقل فارغاً.',
                       'You can upload a banner image or leave this field empty.',

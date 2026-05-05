@@ -83,8 +83,7 @@ class ExclusiveDeal {
 
     return ExclusiveDeal(
       id: stringValue(json['id']) ?? '',
-      title:
-          stringValue(json['title']) ?? tr('عرض حصري', 'Exclusive deal'),
+      title: stringValue(json['title']) ?? tr('عرض حصري', 'Exclusive deal'),
       imageUrl: normalizedImageUrl(
         stringValue(json['imageUrl']) ?? '',
         fallbackLabel: stringValue(json['title']) ?? 'Exclusive Deal',

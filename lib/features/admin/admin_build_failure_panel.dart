@@ -5,7 +5,8 @@ import 'package:leastprice/features/admin/admin_dashboard_section_card.dart';
 import 'admin_exports.dart';
 
 class AdminBuildFailurePanel extends StatelessWidget {
-  const AdminBuildFailurePanel({super.key, 
+  const AdminBuildFailurePanel({
+    super.key,
     required this.message,
   });
 

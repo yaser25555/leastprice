@@ -87,8 +87,8 @@ class ComparisonCard extends StatelessWidget {
                   return Column(
                     children: [
                       ProductPane(
-                        label: tr('الخيار الأعلى سعراً',
-                            'Higher-priced option'),
+                        label:
+                            tr('الخيار الأعلى سعراً', 'Higher-priced option'),
                         name: comparison.expensiveName,
                         price: comparison.expensivePrice,
                         imageUrl: comparison.expensiveImageUrl,
@@ -104,8 +104,7 @@ class ComparisonCard extends StatelessWidget {
                         ),
                       ),
                       ProductPane(
-                        label: tr('الخيار الأفضل قيمة',
-                            'Best value option'),
+                        label: tr('الخيار الأفضل قيمة', 'Best value option'),
                         name: comparison.alternativeName,
                         price: comparison.alternativePrice,
                         imageUrl: comparison.alternativeImageUrl,
@@ -120,8 +119,8 @@ class ComparisonCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ProductPane(
-                        label: tr('الخيار الأعلى سعراً',
-                            'Higher-priced option'),
+                        label:
+                            tr('الخيار الأعلى سعراً', 'Higher-priced option'),
                         name: comparison.expensiveName,
                         price: comparison.expensivePrice,
                         imageUrl: comparison.expensiveImageUrl,
@@ -139,8 +138,7 @@ class ComparisonCard extends StatelessWidget {
                     ),
                     Expanded(
                       child: ProductPane(
-                        label: tr('الخيار الأفضل قيمة',
-                            'Best value option'),
+                        label: tr('الخيار الأفضل قيمة', 'Best value option'),
                         name: comparison.alternativeName,
                         price: comparison.alternativePrice,
                         imageUrl: comparison.alternativeImageUrl,
@@ -217,8 +215,7 @@ class ComparisonCard extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: onShareTap,
                           icon: const Icon(Icons.share_rounded),
-                          label: Text(tr(
-                              'مشاركة التوفير', 'Share savings')),
+                          label: Text(tr('مشاركة التوفير', 'Share savings')),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -244,8 +241,7 @@ class ComparisonCard extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: onShareTap,
                         icon: const Icon(Icons.share_rounded),
-                        label: Text(
-                            tr('مشاركة التوفير', 'Share savings')),
+                        label: Text(tr('مشاركة التوفير', 'Share savings')),
                       ),
                     ),
                     const SizedBox(width: 10),

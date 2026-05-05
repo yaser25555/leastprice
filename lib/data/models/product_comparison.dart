@@ -253,12 +253,7 @@ class ProductComparison {
           'https://www.amazon.sa/s?k=%D9%82%D9%87%D9%88%D8%A9+%D8%A8%D8%A7%D8%AC%D8%A9',
       rating: 4.6,
       reviewCount: 184,
-      tags: [
-        'نسكافيه',
-        'باجة',
-        'قهوة فورية',
-        'مشروبات ساخنة'
-      ],
+      tags: ['نسكافيه', 'باجة', 'قهوة فورية', 'مشروبات ساخنة'],
     ),
     const ProductComparison(
       categoryId: 'detergents',
@@ -323,12 +318,7 @@ class ProductComparison {
       buyUrl: 'https://www.noon.com/saudi-en/search?q=rabea%20tea',
       rating: 4.8,
       reviewCount: 240,
-      tags: [
-        'ليبتون',
-        'ربيع',
-        'شاي سعودي',
-        'مشروب ساخن'
-      ],
+      tags: ['ليبتون', 'ربيع', 'شاي سعودي', 'مشروب ساخن'],
     ),
     const ProductComparison(
       categoryId: 'restaurants',
@@ -337,23 +327,15 @@ class ProductComparison {
       expensivePrice: 26.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80',
-      alternativeName:
-          'برجر مدخن من مطعم برجر الشرقية - الخبر',
+      alternativeName: 'برجر مدخن من مطعم برجر الشرقية - الخبر',
       alternativePrice: 18.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.hungerstation.com/sa-en',
       rating: 4.9,
       reviewCount: 278,
-      tags: [
-        'بيج ماك',
-        'برجر',
-        'الخبر',
-        'مطعم مميز',
-        'الشرقية'
-      ],
-      localLocationLabel:
-          'الخبر - طريق الأمير تركي - مطعم برجر الشرقية',
+      tags: ['بيج ماك', 'برجر', 'الخبر', 'مطعم مميز', 'الشرقية'],
+      localLocationLabel: 'الخبر - طريق الأمير تركي - مطعم برجر الشرقية',
       localLocationUrl: 'https://maps.google.com/?q=Khobar+burger+restaurant',
     ),
     const ProductComparison(
@@ -370,14 +352,8 @@ class ProductComparison {
       buyUrl: 'https://jahez.net',
       rating: 4.7,
       reviewCount: 163,
-      tags: [
-        'كرسبي',
-        'دجاج',
-        'مطاعم الخبر',
-        'أفضل قيمة'
-      ],
-      localLocationLabel:
-          'الخبر - حي الحزام الذهبي - مطعم أهل الخبر',
+      tags: ['كرسبي', 'دجاج', 'مطاعم الخبر', 'أفضل قيمة'],
+      localLocationLabel: 'الخبر - حي الحزام الذهبي - مطعم أهل الخبر',
       localLocationUrl: 'https://maps.google.com/?q=Khobar+crispy+chicken',
     ),
     const ProductComparison(
@@ -394,12 +370,7 @@ class ProductComparison {
       buyUrl: 'https://mrsool.co',
       rating: 4.8,
       reviewCount: 121,
-      tags: [
-        'قهوة باردة',
-        'مقهى مميز',
-        'لاتيه',
-        'الشرقية'
-      ],
+      tags: ['قهوة باردة', 'مقهى مميز', 'لاتيه', 'الشرقية'],
       localLocationLabel: 'الخبر - الكورنيش - مقهى شرقي',
       localLocationUrl: 'https://maps.google.com/?q=Khobar+coffee+shop',
     ),
@@ -417,14 +388,8 @@ class ProductComparison {
       buyUrl: 'https://www.amazon.sa/s?k=sauvage+alternative',
       rating: 4.9,
       reviewCount: 312,
-      tags: [
-        'سافاج',
-        'نخبة العود',
-        'براند سعودي',
-        'بديل عطري'
-      ],
-      fragranceNotes:
-          'برغموت، فلفل سيشوان، أمبروكسان، لمسة خشبية منعشة',
+      tags: ['سافاج', 'نخبة العود', 'براند سعودي', 'بديل عطري'],
+      fragranceNotes: 'برغموت، فلفل سيشوان، أمبروكسان، لمسة خشبية منعشة',
     ),
     const ProductComparison(
       categoryId: 'perfumes',
@@ -433,8 +398,7 @@ class ProductComparison {
       expensivePrice: 1210.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=900&q=80',
-      alternativeName:
-          'بديل بنفس الرائحة من العربية للعود',
+      alternativeName: 'بديل بنفس الرائحة من العربية للعود',
       alternativePrice: 245.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=900&q=80',
@@ -442,8 +406,7 @@ class ProductComparison {
       rating: 4.8,
       reviewCount: 204,
       tags: ['بكارات', 'العربية للعود', 'عود', 'عنبر'],
-      fragranceNotes:
-          'زعفران، ياسمين، عنبر، أخشاب دافئة وسكر محروق',
+      fragranceNotes: 'زعفران، ياسمين، عنبر، أخشاب دافئة وسكر محروق',
     ),
     const ProductComparison(
       categoryId: 'perfumes',
@@ -459,14 +422,8 @@ class ProductComparison {
       buyUrl: 'https://www.amazon.sa/s?k=ibrahim+alqurashi+perfume',
       rating: 4.7,
       reviewCount: 177,
-      tags: [
-        'شانيل',
-        'إبراهيم القرشي',
-        'فلورال',
-        'مسك'
-      ],
-      fragranceNotes:
-          'برتقال، ورد تركي، باتشولي، مسك أبيض',
+      tags: ['شانيل', 'إبراهيم القرشي', 'فلورال', 'مسك'],
+      fragranceNotes: 'برتقال، ورد تركي، باتشولي، مسك أبيض',
     ),
     const ProductComparison(
       categoryId: 'cosmetics',
@@ -482,12 +439,7 @@ class ProductComparison {
       buyUrl: 'https://www.noon.com/saudi-en/search?q=niacinamide+serum',
       rating: 4.6,
       reviewCount: 143,
-      tags: [
-        'نياسيناميد',
-        'سيروم',
-        'بشرة',
-        'أفضل قيمة'
-      ],
+      tags: ['نياسيناميد', 'سيروم', 'بشرة', 'أفضل قيمة'],
       activeIngredients:
           'Niacinamide 10% + Zinc PCA لتنظيم الدهون وتقليل مظهر المسام',
     ),
@@ -498,20 +450,14 @@ class ProductComparison {
       expensivePrice: 220.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1570194065650-d99fb4d8a5c8?auto=format&fit=crop&w=900&q=80',
-      alternativeName:
-          'سيروم فيتامين C من براند سعودي للعناية',
+      alternativeName: 'سيروم فيتامين C من براند سعودي للعناية',
       alternativePrice: 96.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=900&q=80',
       buyUrl: 'https://www.amazon.sa/s?k=vitamin+c+serum',
       rating: 4.5,
       reviewCount: 109,
-      tags: [
-        'فيتامين سي',
-        'سيروم',
-        'نضارة',
-        'مكونات فعالة'
-      ],
+      tags: ['فيتامين سي', 'سيروم', 'نضارة', 'مكونات فعالة'],
       activeIngredients:
           'Vitamin C + Hyaluronic Acid + Vitamin E لإشراقة وترطيب أعمق',
     ),
@@ -522,8 +468,7 @@ class ProductComparison {
       expensivePrice: 58.00,
       expensiveImageUrl:
           'https://images.unsplash.com/photo-1631730486782-d5a6bdf9a7ec?auto=format&fit=crop&w=900&q=80',
-      alternativeName:
-          'كونسيلر اقتصادي بتغطية خفيفة من بوتيك سعودي',
+      alternativeName: 'كونسيلر اقتصادي بتغطية خفيفة من بوتيك سعودي',
       alternativePrice: 27.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80',
@@ -531,8 +476,7 @@ class ProductComparison {
       rating: 4.4,
       reviewCount: 86,
       tags: ['كونسيلر', 'مكياج', 'تغطية', 'أفضل قيمة'],
-      activeIngredients:
-          'Pigment blend + Glycerin لترطيب خفيف وثبات يومي',
+      activeIngredients: 'Pigment blend + Glycerin لترطيب خفيف وثبات يومي',
     ),
     const ProductComparison(
       categoryId: 'pharmacy',
@@ -567,8 +511,7 @@ class ProductComparison {
       rating: 4.3,
       reviewCount: 75,
       tags: ['بانادول', 'برد', 'صيدلية', 'دواء'],
-      activeIngredients:
-          'باراسيتامول + مزيل احتقان بتركيبة اقتصادية مشابهة',
+      activeIngredients: 'باراسيتامول + مزيل احتقان بتركيبة اقتصادية مشابهة',
     ),
   ];
 }

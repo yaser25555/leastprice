@@ -10,7 +10,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'admin_exports.dart';
 
 class AdminExclusiveDealsTable extends StatefulWidget {
-  const AdminExclusiveDealsTable({super.key, 
+  const AdminExclusiveDealsTable({
+    super.key,
     required this.catalogService,
   });
 
@@ -46,10 +47,8 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
         SnackBar(
           content: Text(
             initialDeal == null
-                ? tr('تمت إضافة العرض بنجاح.',
-                    'Deal added successfully.')
-                : tr('تم تحديث العرض بنجاح.',
-                    'Deal updated successfully.'),
+                ? tr('تمت إضافة العرض بنجاح.', 'Deal added successfully.')
+                : tr('تم تحديث العرض بنجاح.', 'Deal updated successfully.'),
           ),
         ),
       );
@@ -188,8 +187,7 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      tr('إدارة العروض الحصرية',
-                          'Exclusive deals management'),
+                      tr('إدارة العروض الحصرية', 'Exclusive deals management'),
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -273,24 +271,18 @@ class _AdminExclusiveDealsTableState extends State<AdminExclusiveDealsTable> {
                           AppPalette.dealsSoftRed,
                         ),
                         columns: [
+                          DataColumn(label: Text(tr('العنوان', 'Title'))),
                           DataColumn(
-                              label: Text(tr('العنوان', 'Title'))),
+                              label: Text(tr('السعر قبل', 'Before price'))),
                           DataColumn(
-                              label: Text(
-                                  tr('السعر قبل', 'Before price'))),
-                          DataColumn(
-                              label:
-                                  Text(tr('السعر بعد', 'After price'))),
-                          DataColumn(
-                              label: Text(tr('التوفير', 'Savings'))),
-                          DataColumn(
-                              label: Text(tr('الانتهاء', 'Expiry'))),
+                              label: Text(tr('السعر بعد', 'After price'))),
+                          DataColumn(label: Text(tr('التوفير', 'Savings'))),
+                          DataColumn(label: Text(tr('الانتهاء', 'Expiry'))),
                           DataColumn(label: Text(tr('الحالة', 'Status'))),
                           DataColumn(label: Text(tr('الصورة', 'Image'))),
                           DataColumn(
                               label: Text(tr('أضيف بواسطة', 'Added by'))),
-                          DataColumn(
-                              label: Text(tr('الإجراءات', 'Actions'))),
+                          DataColumn(label: Text(tr('الإجراءات', 'Actions'))),
                         ],
                         rows: deals.map((deal) {
                           final isExpired = deal.isExpiredAt(now);

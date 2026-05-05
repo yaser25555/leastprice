@@ -1,4 +1,3 @@
-
 import 'package:leastprice/data/models/product_comparison.dart';
 
 class SmartSearchDiscoveryResult {

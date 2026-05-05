@@ -7,7 +7,8 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'admin_exports.dart';
 
 class AdminBannerManagerPanel extends StatefulWidget {
-  const AdminBannerManagerPanel({super.key, 
+  const AdminBannerManagerPanel({
+    super.key,
     required this.catalogService,
   });
 
@@ -37,10 +38,8 @@ class _AdminBannerManagerPanelState extends State<AdminBannerManagerPanel> {
         SnackBar(
           content: Text(
             initialBanner == null
-                ? tr('تمت إضافة البنر بنجاح.',
-                    'Banner added successfully.')
-                : tr('تم تحديث البنر بنجاح.',
-                    'Banner updated successfully.'),
+                ? tr('تمت إضافة البنر بنجاح.', 'Banner added successfully.')
+                : tr('تم تحديث البنر بنجاح.', 'Banner updated successfully.'),
           ),
         ),
       );
@@ -121,8 +120,7 @@ class _AdminBannerManagerPanelState extends State<AdminBannerManagerPanel> {
       await widget.catalogService.deleteAdBanner(banner.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(tr('تم حذف البنر.', 'Banner deleted.'))),
+        SnackBar(content: Text(tr('تم حذف البنر.', 'Banner deleted.'))),
       );
     } catch (error) {
       if (!mounted) return;
@@ -261,8 +259,7 @@ class _AdminBannerManagerPanelState extends State<AdminBannerManagerPanel> {
                                   runSpacing: 8,
                                   children: [
                                     AdminStatusChip(
-                                      label:
-                                          banner.active ? 'نشط' : 'مخفي',
+                                      label: banner.active ? 'نشط' : 'مخفي',
                                       color: banner.active
                                           ? const Color(0xFFE8711A)
                                           : const Color(0xFF9A6B6B),

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 
 class StatusBanner extends StatelessWidget {
-  const StatusBanner({super.key, 
+  const StatusBanner({
+    super.key,
     required this.icon,
     required this.title,
     required this.message,
