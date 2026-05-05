@@ -74,6 +74,8 @@ class LeastPriceDataConfig {
     'www.underarmour.ae': 'https://go.urtrackinglink.com/SH9H7',
     'mamasandpapas.ae': 'https://go.urtrackinglink.com/SH9H8',
     'www.mamasandpapas.ae': 'https://go.urtrackinglink.com/SH9H8',
+    'bloomingdales.ae': 'https://go.urtrackinglink.com/SH9H9',
+    'www.bloomingdales.ae': 'https://go.urtrackinglink.com/SH9H9',
   };
 
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
