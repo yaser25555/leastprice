@@ -114,11 +114,14 @@ class ComparisonSearchBarSection extends StatelessWidget {
             onSelected: (String selection) {
               onSubmitted(selection);
             },
-            optionsViewBuilder: (BuildContext context, AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+            optionsViewBuilder: (BuildContext context,
+                AutocompleteOnSelected<String> onSelected,
+                Iterable<String> options) {
               return Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0, right: 16.0, left: 16.0),
+                  padding:
+                      const EdgeInsets.only(top: 8.0, right: 16.0, left: 16.0),
                   child: Material(
                     color: AppPalette.cardBackground,
                     elevation: 8.0,
@@ -127,7 +130,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         maxHeight: 250,
-                        maxWidth: MediaQuery.of(context).size.width - 64, // Accounts for padding
+                        maxWidth: MediaQuery.of(context).size.width -
+                            64, // Accounts for padding
                       ),
                       child: ListView.separated(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -150,7 +154,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.search_rounded, size: 18, color: AppPalette.paleOrange),
+                                  Icon(Icons.search_rounded,
+                                      size: 18, color: AppPalette.paleOrange),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
@@ -162,7 +167,10 @@ class ComparisonSearchBarSection extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  Icon(Icons.north_west_rounded, size: 16, color: AppPalette.paleOrange.withValues(alpha: 0.5)),
+                                  Icon(Icons.north_west_rounded,
+                                      size: 16,
+                                      color: AppPalette.paleOrange
+                                          .withValues(alpha: 0.5)),
                                 ],
                               ),
                             ),
@@ -174,7 +182,10 @@ class ComparisonSearchBarSection extends StatelessWidget {
                 ),
               );
             },
-            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+            fieldViewBuilder: (BuildContext context,
+                TextEditingController textEditingController,
+                FocusNode focusNode,
+                VoidCallback onFieldSubmitted) {
               return TextField(
                 controller: textEditingController,
                 focusNode: focusNode,
@@ -207,7 +218,8 @@ class ComparisonSearchBarSection extends StatelessWidget {
                           final result = await Navigator.push<String>(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const BarcodeScannerScreen(),
+                              builder: (context) =>
+                                  const BarcodeScannerScreen(),
                             ),
                           );
                           if (result != null && result.isNotEmpty) {

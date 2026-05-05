@@ -700,7 +700,9 @@ class SerpApiShoppingSearchService {
       final result = ComparisonSearchResult(
         title: title,
         price: priceValue,
-        storeName: source.isNotEmpty ? source : (inferStoreIdFromUrl(link) ?? 'Google Shopping'),
+        storeName: source.isNotEmpty
+            ? source
+            : (inferStoreIdFromUrl(link) ?? 'Google Shopping'),
         storeId: inferStoreIdFromUrl(link) ?? 'google',
         storeLogoUrl: resolveStoreLogoUrl(
             storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
