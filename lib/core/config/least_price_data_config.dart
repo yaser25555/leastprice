@@ -1,5 +1,16 @@
 import 'package:leastprice/core/utils/helpers.dart';
 
+/// App-wide configuration constants.
+///
+/// **Sensitive values** (API keys, passwords) are injected at build time via
+/// `--dart-define`. Example build command:
+///
+/// ```bash
+/// flutter run \
+///   --dart-define=SERPAPI_KEY=your_key \
+///   --dart-define=SERPER_API_KEY=your_key \
+///   --dart-define=ADMIN_PASSWORD=your_password
+/// ```
 class LeastPriceDataConfig {
   const LeastPriceDataConfig._();
 
@@ -33,22 +44,32 @@ class LeastPriceDataConfig {
     'ADMIN_WHATSAPP_URL',
     defaultValue: 'https://wa.me/966558570889',
   );
+
+  /// Admin password — pass via `--dart-define=ADMIN_PASSWORD=...` at build time.
   static const String adminPassword = String.fromEnvironment(
     'ADMIN_PASSWORD',
-    defaultValue: '123456',
+    defaultValue: '',
   );
+
   static const String affiliateTag = 'leastprice09-21';
   static const int comparisonSearchCacheHours = 24;
+
+  /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
   static const String serpApiKey = String.fromEnvironment(
     'SERPAPI_KEY',
-    defaultValue:
-        '8f5e0a4c11cb0e6972f549ee390b083531ca2545ef1c02593c20efae8e917861',
+    defaultValue: '',
   );
+
   static const String originalOnSaleTag = 'المنتج الأصلي عليه عرض حالياً';
   static const SearchProviderType searchProviderType =
       SearchProviderType.serper;
-  static const String serperApiKey =
-      String.fromEnvironment('SERPER_API_KEY', defaultValue: 'f7fa2546aac3050cc7972a4265217d42c3c38ff4c');
+
+  /// Serper API key — pass via `--dart-define=SERPER_API_KEY=...` at build time.
+  static const String serperApiKey = String.fromEnvironment(
+    'SERPER_API_KEY',
+    defaultValue: '',
+  );
+
   static const String tavilyApiKey =
       String.fromEnvironment('TAVILY_API_KEY', defaultValue: '');
   static const bool enableAutomaticPriceRefresh = true;

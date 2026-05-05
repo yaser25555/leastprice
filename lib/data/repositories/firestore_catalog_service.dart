@@ -236,6 +236,7 @@ class FirestoreCatalogService {
   Future<ComparisonSearchCacheEntry?> fetchComparisonSearchCache(
     String query, {
     String? locationKey,
+    String? targetStoreId,
   }) async {
     final normalizedQuery = normalizeArabic(query);
     if (normalizedQuery.length < 2) {
@@ -245,6 +246,7 @@ class FirestoreCatalogService {
     final documentId = _buildComparisonSearchCacheDocumentId(
       normalizedQuery,
       locationKey: locationKey,
+      targetStoreId: targetStoreId,
     );
     final snapshot =
         await _comparisonSearchCacheCollection.doc(documentId).get();
@@ -260,6 +262,7 @@ class FirestoreCatalogService {
     required List<ComparisonSearchResult> results,
     String? locationKey,
     String? locationLabel,
+    String? targetStoreId,
   }) async {
     final normalizedQuery = normalizeArabic(query);
     if (normalizedQuery.length < 2 || results.isEmpty) {
@@ -269,6 +272,7 @@ class FirestoreCatalogService {
     final documentId = _buildComparisonSearchCacheDocumentId(
       normalizedQuery,
       locationKey: locationKey,
+      targetStoreId: targetStoreId,
     );
     await _comparisonSearchCacheCollection.doc(documentId).set({
       'query': query.trim(),
@@ -276,6 +280,7 @@ class FirestoreCatalogService {
       if ((locationKey ?? '').trim().isNotEmpty) 'locationKey': locationKey,
       if ((locationLabel ?? '').trim().isNotEmpty)
         'locationLabel': locationLabel,
+      if ((targetStoreId ?? '').trim().isNotEmpty) 'targetStoreId': targetStoreId,
       'cachedAt': Timestamp.fromDate(DateTime.now()),
       'results': results.map((result) => result.toJson()).toList(),
       'lastUpdated': FieldValue.serverTimestamp(),
@@ -665,6 +670,7 @@ class FirestoreCatalogService {
   String _buildComparisonSearchCacheDocumentId(
     String normalizedQuery, {
     String? locationKey,
+    String? targetStoreId,
   }) {
     final normalizedLocation = (locationKey ?? '').trim().isEmpty
         ? 'saudi_arabia'
@@ -677,7 +683,10 @@ class FirestoreCatalogService {
       RegExp(r'[^a-zA-Z0-9_]+'),
       '_',
     );
-    return '$safeLocation--$safeQuery';
+    final safeStore = (targetStoreId ?? '').trim().isEmpty 
+        ? 'all' 
+        : targetStoreId!.trim().toLowerCase();
+    return '$safeLocation--$safeStore--$safeQuery';
   }
 
   String _buildReferralCodeFromUserId(String userId) {

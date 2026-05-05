@@ -181,9 +181,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     setState(() {
       _rememberMe = creds.remember;
-      if (creds.remember) {
-        if (creds.email.isNotEmpty) _emailController.text = creds.email;
-        if (creds.password.isNotEmpty) _passwordController.text = creds.password;
+      if (creds.remember && creds.email.isNotEmpty) {
+        _emailController.text = creds.email;
       }
     });
   }
@@ -192,7 +191,6 @@ class _LoginScreenState extends State<LoginScreen> {
     await UserPreferencesService.saveCredentials(
       remember: _rememberMe,
       email: email,
-      password: _passwordController.text.trim(),
     );
   }
 
@@ -490,8 +488,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             activeColor: AppPalette.orange,
                             title: Text(
                             tr(
-                                'تذكر بيانات الدخول على هذا الجهاز',
-                                'Remember my login on this device',
+                                'تذكر بريدي الإلكتروني',
+                                'Remember my email',
                               ),
                               style: TextStyle(
                                 color: AppPalette.panelText,

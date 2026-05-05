@@ -727,6 +727,27 @@ String? storeIdForHost(String? host) {
       .replaceAll(RegExp(r'[^a-z0-9]+'), '');
 }
 
+String? domainForStoreId(String storeId) {
+  switch (storeId.trim().toLowerCase()) {
+    case 'amazon': return 'amazon.sa';
+    case 'noon': return 'noon.com';
+    case 'hungerstation': return 'hungerstation.com';
+    case 'panda': return 'panda.com.sa';
+    case 'othaim': return 'othaimmarkets.com';
+    case 'almazraa': return 'farm.com.sa';
+    case 'lulu': return 'luluhypermarket.com';
+    case 'carrefour': return 'carrefourksa.com';
+    case 'tamimi': return 'tamimimarkets.com';
+    case 'toyou': return 'toyou.io';
+    case 'keeta': return 'keeta.com.sa';
+    case 'nahdi': return 'nahdionline.com';
+    case 'aldawaa': return 'al-dawaa.com';
+    case 'jarir': return 'jarir.com';
+    case 'extra': return 'extra.com';
+    default: return null;
+  }
+}
+
 String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   final hostStoreId = storeIdForHost(hostFromUrl(url));
   if (hostStoreId != null && hostStoreId.isNotEmpty) {

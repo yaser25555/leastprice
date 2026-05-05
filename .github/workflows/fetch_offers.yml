@@ -9,7 +9,6 @@ on:
 jobs:
   fetch_offers:
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3

@@ -54,7 +54,7 @@ service cloud.firestore {
     }
 
     match /search_requests/{documentId} {
-      allow create, update: if true;
+      allow create, update: if isSignedIn();
       allow read, delete: if isAdmin();
     }
 

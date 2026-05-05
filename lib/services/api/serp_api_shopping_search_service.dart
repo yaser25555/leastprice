@@ -103,6 +103,7 @@ class SerpApiShoppingSearchService {
     required bool firebaseReady,
     required MarketplaceSearchCity city,
     bool forceRefresh = false,
+    String? targetStoreId,
   }) async {
     final trimmedQuery = query.trim();
     final normalizedQuery = normalizeArabic(trimmedQuery);
@@ -120,6 +121,7 @@ class SerpApiShoppingSearchService {
         cachedEntry = await _service.fetchComparisonSearchCache(
           trimmedQuery,
           locationKey: city.id,
+          targetStoreId: targetStoreId,
         );
       } catch (error) {
         debugPrint('LeastPrice comparison cache read skipped: $error');
@@ -143,6 +145,7 @@ class SerpApiShoppingSearchService {
         trimmedQuery,
         apiKey,
         city: city,
+        targetStoreId: targetStoreId,
       );
       if (canUseFirestoreCache && results.isNotEmpty) {
         try {
@@ -151,6 +154,7 @@ class SerpApiShoppingSearchService {
             results: results,
             locationKey: city.id,
             locationLabel: city.label,
+            targetStoreId: targetStoreId,
           );
         } catch (error) {
           debugPrint('LeastPrice comparison cache save skipped: $error');
@@ -189,10 +193,18 @@ class SerpApiShoppingSearchService {
     String query,
     String apiKey, {
     required MarketplaceSearchCity city,
+    String? targetStoreId,
   }) async {
     final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     final results = <ComparisonSearchResult>[];
     String effectiveQuery = query.trim();
+
+    if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
+      final domain = domainForStoreId(targetStoreId);
+      if (domain != null && domain.isNotEmpty) {
+        effectiveQuery = '$effectiveQuery site:$domain';
+      }
+    }
 
     // -- BARCODE TRANSLATION: If the query is just a barcode number, find the actual product name --
     final isBarcode = RegExp(r'^\d{8,}$').hasMatch(effectiveQuery);
@@ -275,7 +287,7 @@ class SerpApiShoppingSearchService {
           : <ComparisonSearchResult>[];
 
       final filteredHybridResults =
-          _filterSupportedSaudiStoreResults(hybridResults);
+          _filterSupportedSaudiStoreResults(hybridResults, targetStoreId: targetStoreId);
       filteredHybridResults.sort(_compareSearchResults);
       return filteredHybridResults;
     }
@@ -304,7 +316,7 @@ class SerpApiShoppingSearchService {
       }
     }
 
-    final filteredResults = _filterSupportedSaudiStoreResults(results)
+    final filteredResults = _filterSupportedSaudiStoreResults(results, targetStoreId: targetStoreId)
       ..sort(_compareSearchResults);
 
     return filteredResults;
@@ -380,14 +392,12 @@ class SerpApiShoppingSearchService {
       final item = rawItem as Map<String, dynamic>;
       final title = stringValue(item['title'])?.trim() ?? '';
       final link = stringValue(item['link'])?.trim() ?? '';
-      final rating = doubleValue(item['rating']);
-      final reviews = intValue(item['reviews']) ?? 0;
 
       if (title.isEmpty || link.isEmpty) {
         return;
       }
 
-      final fingerprint = normalizeArabic('${title}|${link}');
+      final fingerprint = normalizeArabic('$title|$link');
       if (!seen.add(fingerprint)) {
         return;
       }
@@ -546,7 +556,7 @@ class SerpApiShoppingSearchService {
         return;
       }
 
-      final fingerprint = normalizeArabic('${title}|${link}');
+      final fingerprint = normalizeArabic('$title|$link');
       if (!seen.add(fingerprint)) {
         return;
       }
@@ -585,10 +595,16 @@ class SerpApiShoppingSearchService {
   }
 
   List<ComparisonSearchResult> _filterSupportedSaudiStoreResults(
-    List<ComparisonSearchResult> results,
-  ) {
+    List<ComparisonSearchResult> results, {
+    String? targetStoreId,
+  }) {
     return results.where((result) {
       final normalizedStoreId = result.storeId.trim().toLowerCase();
+
+      if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
+        return normalizedStoreId == targetStoreId.trim().toLowerCase();
+      }
+
       final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
       if (normalizedStoreId.isEmpty || normalizedStoreId == 'unknown') {
         return true;

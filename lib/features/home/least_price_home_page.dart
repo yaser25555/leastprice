@@ -563,8 +563,9 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       }
     }
 
+    String? targetStoreId;
     if (_selectedSearchStore != 'الكل' && trimmedQuery.isNotEmpty) {
-      effectiveQuery = '$effectiveQuery $_selectedSearchStore';
+      targetStoreId = inferStoreIdFromUrl('', fallbackName: _selectedSearchStore);
     }
 
     final result = await _comparisonSearchService.search(
@@ -572,6 +573,7 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
       firebaseReady: widget.firebaseReady,
       forceRefresh: forceRefresh,
       city: _selectedSearchCity,
+      targetStoreId: targetStoreId,
     );
 
     if (!mounted || normalizeArabic(trimmedQuery) != normalizeArabic(_query)) {
