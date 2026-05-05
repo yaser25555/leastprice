@@ -323,7 +323,8 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             style: FilledButton.styleFrom(
                               backgroundColor: isInCart
                                   ? AppPalette.softOrange
-                                  : AppPalette.paleOrange.withValues(alpha: 0.2),
+                                  : AppPalette.paleOrange
+                                      .withValues(alpha: 0.2),
                               foregroundColor: isInCart
                                   ? AppPalette.orange
                                   : AppPalette.deepNavy,

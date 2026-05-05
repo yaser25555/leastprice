@@ -254,7 +254,8 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       }
 
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.medium),
+        locationSettings:
+            const LocationSettings(accuracy: LocationAccuracy.medium),
       );
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
@@ -350,7 +351,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       yield result.products;
     } catch (error) {
       debugPrint('LeastPrice fallback catalog failed: $error');
-
 
       yield ProductComparison.mockData;
     }

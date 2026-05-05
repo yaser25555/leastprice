@@ -36,7 +36,8 @@ class ExclusiveDealCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: AppPalette.dealsBorder.withValues(alpha: 0.5)),
+          border:
+              Border.all(color: AppPalette.dealsBorder.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
               color: AppPalette.deepNavy.withValues(alpha: 0.08),
@@ -150,7 +151,9 @@ class ExclusiveDealCard extends StatelessWidget {
                             color: AppPalette.deepNavy),
                         onPressed: () {
                           SharePlus.instance.share(
-                            ShareParams(text: 'شاهد أحدث $cleanTitle عبر تطبيق LeastPrice! 🔥\nالرابط: ${deal.dealUrl}'),
+                            ShareParams(
+                                text:
+                                    'شاهد أحدث $cleanTitle عبر تطبيق LeastPrice! 🔥\nالرابط: ${deal.dealUrl}'),
                           );
                         },
                       ),

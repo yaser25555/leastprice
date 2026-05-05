@@ -171,7 +171,8 @@ class _SearchSuggestionsCarouselState extends State<SearchSuggestionsCarousel> {
                               Container(
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: AppPalette.pureWhite.withValues(alpha: 0.2),
+                                  color: AppPalette.pureWhite
+                                      .withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(

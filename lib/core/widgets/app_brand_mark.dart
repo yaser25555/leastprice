@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
 class AppBrandMark extends StatelessWidget {
   const AppBrandMark({
     super.key,

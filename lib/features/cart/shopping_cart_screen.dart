@@ -5,7 +5,6 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
 import 'package:leastprice/features/home/comparison_image_fallback.dart';
 
-
 class ShoppingCartScreen extends ConsumerWidget {
   const ShoppingCartScreen({super.key});
 
@@ -140,7 +139,8 @@ class ShoppingCartScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: AppPalette.deepNavy.withValues(alpha: 0.05),
+                              color:
+                                  AppPalette.deepNavy.withValues(alpha: 0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
