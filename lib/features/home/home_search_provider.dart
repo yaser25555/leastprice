@@ -153,6 +153,7 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
       if (state.selectedStore != 'الكل') {
         targetStoreId =
             inferStoreIdFromUrl('', fallbackName: state.selectedStore);
+        effectiveQuery = '$effectiveQuery ${state.selectedStore}';
       }
 
       final nextOffset = isLoadMore ? state.currentOffset + 20 : 0;

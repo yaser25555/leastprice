@@ -744,7 +744,7 @@ class SerpApiShoppingSearchService {
 
       final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
       if (normalizedStoreId.isEmpty || normalizedStoreId == 'unknown') {
-        return true;
+        return false;
       }
       if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
         return true;
