@@ -441,6 +441,49 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 14),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: ValueListenableBuilder<String>(
+                              valueListenable: appLang,
+                              builder: (context, lang, _) => GestureDetector(
+                                onTap: () {
+                                  appLang.value = lang == 'ar' ? 'en' : 'ar';
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: AppPalette.deepNavy
+                                        .withValues(alpha: 0.06),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: AppPalette.paleOrange
+                                            .withValues(alpha: 0.25)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.language_rounded,
+                                          size: 18,
+                                          color: AppPalette.paleOrange),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        lang == 'ar'
+                                            ? 'Switch to English'
+                                            : 'تغيير للغة العربية',
+                                        style: TextStyle(
+                                          color: AppPalette.paleOrange,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 16),
                           TextField(
                             controller: _emailController,

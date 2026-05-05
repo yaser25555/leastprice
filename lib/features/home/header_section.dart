@@ -98,32 +98,6 @@ class HeaderSection extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      ValueListenableBuilder<String>(
-                        valueListenable: appLang,
-                        builder: (context, lang, _) => GestureDetector(
-                          onTap: () {
-                            appLang.value = lang == 'ar' ? 'en' : 'ar';
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0x1AFFFFFF),
-                              borderRadius: BorderRadius.circular(20),
-                              border:
-                                  Border.all(color: const Color(0x33FFFFFF)),
-                            ),
-                            child: Text(
-                              lang == 'ar' ? 'EN' : 'AR',
-                              style: TextStyle(
-                                color: AppPalette.pureWhite,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                       const SizedBox(width: 6),
                       IconButton(
                         onPressed: onLogoutTap,
@@ -372,35 +346,6 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                           color: AppPalette.paleOrange,
                         ),
                         const SizedBox(width: 6),
-                        ValueListenableBuilder<String>(
-                          valueListenable: appLang,
-                          builder: (context, lang, _) => GestureDetector(
-                            onTap: () {
-                              appLang.value = lang == 'ar' ? 'en' : 'ar';
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 9,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0x24E8711A),
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(
-                                  color: const Color(0x55FFD9BA),
-                                ),
-                              ),
-                              child: Text(
-                                lang == 'ar' ? 'EN' : 'AR',
-                                style: TextStyle(
-                                  color: AppPalette.paleOrange,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
                         const SizedBox(width: 6),
                         ValueListenableBuilder<bool>(
                           valueListenable: isFeminineTheme,
