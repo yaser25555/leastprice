@@ -1505,13 +1505,13 @@ class _LeastPriceHomePageState extends State<LeastPriceHomePage> {
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                         child: Center(
                           child: _isLoadingMore 
-                              ? const CircularProgressIndicator(color: AppPalette.comparisonEmerald)
+                              ? CircularProgressIndicator(color: AppPalette.comparisonEmerald)
                               : TextButton.icon(
                                   onPressed: _loadMoreSearchResults,
-                                  icon: const Icon(Icons.expand_more_rounded, color: AppPalette.comparisonEmerald),
+                                  icon: Icon(Icons.expand_more_rounded, color: AppPalette.comparisonEmerald),
                                   label: Text(
                                     tr('تحميل المزيد', 'Load More'),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppPalette.comparisonEmerald,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,

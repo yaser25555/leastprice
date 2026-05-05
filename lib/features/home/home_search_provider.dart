@@ -68,8 +68,11 @@ class HomeSearchState {
   }
 }
 
-class HomeSearchNotifier extends StateNotifier<HomeSearchState> {
-  HomeSearchNotifier() : super(HomeSearchState(selectedCity: marketplaceSearchCities.first));
+class HomeSearchNotifier extends Notifier<HomeSearchState> {
+  @override
+  HomeSearchState build() {
+    return HomeSearchState(selectedCity: marketplaceSearchCities.first);
+  }
 
   final SerpApiShoppingSearchService _searchService = const SerpApiShoppingSearchService();
 
@@ -185,6 +188,4 @@ class HomeSearchNotifier extends StateNotifier<HomeSearchState> {
   }
 }
 
-final homeSearchProvider = StateNotifierProvider<HomeSearchNotifier, HomeSearchState>((ref) {
-  return HomeSearchNotifier();
-});
+final homeSearchProvider = NotifierProvider<HomeSearchNotifier, HomeSearchState>(HomeSearchNotifier.new);
