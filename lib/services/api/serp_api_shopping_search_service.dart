@@ -735,13 +735,18 @@ class SerpApiShoppingSearchService {
     List<ComparisonSearchResult> results, {
     String? targetStoreId,
   }) {
-    return results.where((result) {
+    final filtered = results.where((result) {
       final normalizedStoreId = result.storeId.trim().toLowerCase();
 
-      if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
-        return normalizedStoreId == targetStoreId.trim().toLowerCase();
+      // Always show results from the explicitly selected store if they match
+      if (targetStoreId != null &&
+          targetStoreId.trim().isNotEmpty &&
+          normalizedStoreId == targetStoreId.trim().toLowerCase()) {
+        return true;
       }
 
+      // If we are looking for a specific store, we still show other supported stores
+      // but they will be sorted lower later. This ensures 'No Results' is avoided.
       final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
       if (normalizedStoreId.isEmpty || normalizedStoreId == 'unknown') {
         return false;
@@ -755,6 +760,25 @@ class SerpApiShoppingSearchService {
       }
       return false;
     }).toList(growable: false);
+
+    // If a target store is selected, we perform a special sort:
+    // 1. Target store results first.
+    // 2. Then by price.
+    if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
+      final target = targetStoreId.trim().toLowerCase();
+      filtered.sort((a, b) {
+        final aMatch = a.storeId.toLowerCase() == target;
+        final bMatch = b.storeId.toLowerCase() == target;
+        if (aMatch != bMatch) {
+          return aMatch ? -1 : 1;
+        }
+        return _compareSearchResults(a, b);
+      });
+    } else {
+      filtered.sort(_compareSearchResults);
+    }
+
+    return filtered;
   }
 
   int _compareSearchResults(

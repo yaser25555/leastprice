@@ -91,17 +91,39 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   if (normalizedName.contains('نمشي') || normalizedName.contains('namshi')) {
     return 'namshi';
   }
-  if (normalizedName.contains('هنجرستيشن')) return 'hungerstation';
-  if (normalizedName.contains('بنده')) return 'panda';
-  if (normalizedName.contains('العثيم')) return 'othaim';
-  if (normalizedName.contains('المزرعه')) return 'almazraa';
-  if (normalizedName.contains('لولو')) return 'lulu';
-  if (normalizedName.contains('كارفور')) return 'carrefour';
-  if (normalizedName.contains('التميمي')) return 'tamimi';
-  if (normalizedName.contains('تويو')) return 'toyou';
-  if (normalizedName.contains('كيتا')) return 'keeta';
-  if (normalizedName.contains('النهدي')) return 'nahdi';
-  if (normalizedName.contains('الدواء')) return 'aldawaa';
+  if (normalizedName.contains('هنجرستيشن') || normalizedName.contains('hungerstation')) {
+    return 'hungerstation';
+  }
+  if (normalizedName.contains('بنده') || normalizedName.contains('panda')) {
+    return 'panda';
+  }
+  if (normalizedName.contains('العثيم') || normalizedName.contains('othaim')) {
+    return 'othaim';
+  }
+  if (normalizedName.contains('المزرعه') || normalizedName.contains('almazraa') || normalizedName.contains('farm')) {
+    return 'almazraa';
+  }
+  if (normalizedName.contains('لولو') || normalizedName.contains('lulu')) {
+    return 'lulu';
+  }
+  if (normalizedName.contains('كارفور') || normalizedName.contains('carrefour')) {
+    return 'carrefour';
+  }
+  if (normalizedName.contains('التميمي') || normalizedName.contains('tamimi')) {
+    return 'tamimi';
+  }
+  if (normalizedName.contains('تويو') || normalizedName.contains('toyou')) {
+    return 'toyou';
+  }
+  if (normalizedName.contains('كيتا') || normalizedName.contains('keeta')) {
+    return 'keeta';
+  }
+  if (normalizedName.contains('النهدي') || normalizedName.contains('nahdi')) {
+    return 'nahdi';
+  }
+  if (normalizedName.contains('الدواء') || normalizedName.contains('dawaa') || normalizedName.contains('aldawaa')) {
+    return 'aldawaa';
+  }
   if (normalizedName.contains('جرير') || normalizedName.contains('jarir')) {
     return 'jarir';
   }
