@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/services/api/affiliate_link_service.dart';
 
 class ExclusiveDealCard extends StatelessWidget {
   const ExclusiveDealCard({
@@ -18,7 +19,8 @@ class ExclusiveDealCard extends StatelessWidget {
 
   Future<void> _launchDeal() async {
     if (deal.dealUrl.isNotEmpty) {
-      final uri = Uri.parse(deal.dealUrl);
+      final affiliateUrl = AffiliateLinkService.prepareForOpen(deal.dealUrl);
+      final uri = Uri.parse(affiliateUrl);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
       }

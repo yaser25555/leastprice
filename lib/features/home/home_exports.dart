@@ -30,3 +30,4 @@ export 'rating_summary.dart';
 export 'search_info_pill.dart';
 export 'status_banner.dart';
 export 'search_suggestions_carousel.dart';
+export 'brand_offers_section.dart';
