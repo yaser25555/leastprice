@@ -74,10 +74,26 @@ class AffiliateLinkService {
       return normalized;
     }
 
-    final parameters = Map<String, String>.from(uri.queryParameters);
-    parameters['tag'] = LeastPriceDataConfig.affiliateTag;
+    final host = uri.host.toLowerCase();
 
-    return uri.replace(queryParameters: parameters).toString();
+    // 1. Handle Redirect Strategy (DCMnetwork, ArabClicks, etc.)
+    if (LeastPriceDataConfig.affiliateStoreLinks.containsKey(host)) {
+      final trackingBase = LeastPriceDataConfig.affiliateStoreLinks[host]!;
+      // DCMnetwork uses ?url= or &url= for deep linking.
+      // We append the encoded target URL to the tracking link.
+      final separator = trackingBase.contains('?') ? '&' : '?';
+      final encodedTarget = Uri.encodeComponent(normalized);
+      return '$trackingBase${separator}url=$encodedTarget';
+    }
+
+    // 2. Handle Amazon Strategy (Append ?tag=)
+    if (host.contains('amazon.sa')) {
+      final parameters = Map<String, String>.from(uri.queryParameters);
+      parameters['tag'] = LeastPriceDataConfig.affiliateTag;
+      return uri.replace(queryParameters: parameters).toString();
+    }
+
+    return normalized;
   }
 
   static bool isSupportedStore(Uri uri) {

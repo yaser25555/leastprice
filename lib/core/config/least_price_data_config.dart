@@ -54,6 +54,14 @@ class LeastPriceDataConfig {
   static const String affiliateTag = 'leastprice09-21';
   static const int comparisonSearchCacheHours = 24;
 
+  /// DCMnetwork tracking links map
+  static const Map<String, String> affiliateStoreLinks = {
+    'noon.com': 'https://go.urtrackinglink.com/SH9H0',
+    'www.noon.com': 'https://go.urtrackinglink.com/SH9H0',
+    'yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
+    'www.yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
+  };
+
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
   static const String serpApiKey = String.fromEnvironment(
     'SERPAPI_KEY',
