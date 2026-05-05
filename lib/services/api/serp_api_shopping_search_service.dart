@@ -435,7 +435,7 @@ class SerpApiShoppingSearchService {
     required MarketplaceSearchCity city,
     int page = 1,
   }) async {
-    final uri = Uri.https('google.serper.dev', '/search');
+    final uri = Uri.https('google.serper.dev', '/shopping');
     final response = await http.post(
       uri,
       headers: {
@@ -630,7 +630,7 @@ class SerpApiShoppingSearchService {
     final results = <ComparisonSearchResult>[];
     final seen = <String>{};
 
-    void addResult(dynamic rawItem) {
+    void addOrganicResult(dynamic rawItem) {
       if (rawItem is! Map) {
         return;
       }
@@ -663,11 +663,10 @@ class SerpApiShoppingSearchService {
         storeId: inferStoreIdFromUrl(link) ?? 'google',
         storeLogoUrl: resolveStoreLogoUrl(
             storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
-        imageUrl: '', // Serper may not have images
+        imageUrl: '', // Serper may not have images in organic
         productUrl: link,
         currency: 'SAR',
-        sourceType:
-            ComparisonSearchSourceType.serpApi, // Treat as serpapi for now
+        sourceType: ComparisonSearchSourceType.serpApi,
         channelType: ComparisonSearchChannelType.marketplace,
         isLiveDirect: false,
       );
@@ -675,10 +674,55 @@ class SerpApiShoppingSearchService {
       results.add(result);
     }
 
+    void addShoppingResult(dynamic rawItem) {
+      if (rawItem is! Map) return;
+
+      final item = rawItem as Map<String, dynamic>;
+      final title = stringValue(item['title'])?.trim() ?? '';
+      final link = stringValue(item['link'])?.trim() ?? '';
+      final priceString = stringValue(item['price'])?.trim() ?? '';
+      final imageUrl = stringValue(item['imageUrl'])?.trim() ?? '';
+      final source = stringValue(item['source'])?.trim() ?? '';
+
+      if (title.isEmpty || link.isEmpty || priceString.isEmpty) return;
+
+      final fingerprint = normalizeArabic('$title|$link');
+      if (!seen.add(fingerprint)) return;
+
+      final priceValue = extractMarketplacePrice(priceString);
+      if (priceValue == null || priceValue <= 0) return;
+
+      final result = ComparisonSearchResult(
+        title: title,
+        price: priceValue,
+        storeName: source.isNotEmpty ? source : (inferStoreIdFromUrl(link) ?? 'Google Shopping'),
+        storeId: inferStoreIdFromUrl(link) ?? 'google',
+        storeLogoUrl: resolveStoreLogoUrl(
+            storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
+        imageUrl: imageUrl,
+        productUrl: link,
+        currency: 'SAR',
+        sourceType: ComparisonSearchSourceType.serpApi,
+        channelType: ComparisonSearchChannelType.marketplace,
+        isLiveDirect: false,
+      );
+
+      results.add(result);
+    }
+
+    // Try parsing shopping results first (more accurate)
+    final shoppingResults = payload['shopping'];
+    if (shoppingResults is List) {
+      for (final item in shoppingResults) {
+        addShoppingResult(item);
+      }
+    }
+
+    // Fallback to organic results
     final organicResults = payload['organic'];
     if (organicResults is List) {
       for (final item in organicResults) {
-        addResult(item);
+        addOrganicResult(item);
       }
     }
 

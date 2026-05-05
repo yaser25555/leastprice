@@ -152,6 +152,7 @@ class SearchHit:
     title: str
     link: str
     snippet: str
+    price: Optional[float] = None
 
     @property
     def host(self) -> str:
@@ -445,7 +446,7 @@ class SearchClient:
 
     def _search_serper(self, query: str) -> List[SearchHit]:
         response = requests.post(
-            SERPER_ENDPOINT,
+            "https://google.serper.dev/shopping",
             headers={
                 "Content-Type": "application/json",
                 "X-API-KEY": self.api_key,
@@ -460,19 +461,46 @@ class SearchClient:
         )
         response.raise_for_status()
         payload = response.json()
-        organic = payload.get("organic")
-        if not isinstance(organic, list):
-            return []
+        shopping = payload.get("shopping")
+        if not isinstance(shopping, list):
+            # Fallback to organic if shopping is empty or missing
+            organic = payload.get("organic")
+            if not isinstance(organic, list):
+                return []
+            return [
+                SearchHit(
+                    title=safe_string(item.get("title")),
+                    link=safe_string(item.get("link")),
+                    snippet=safe_string(item.get("snippet")),
+                )
+                for item in organic
+                if safe_string(item.get("link"))
+            ]
 
-        return [
-            SearchHit(
-                title=safe_string(item.get("title")),
-                link=safe_string(item.get("link")),
-                snippet=safe_string(item.get("snippet")),
+        hits = []
+        for item in shopping:
+            link = safe_string(item.get("link"))
+            if not link:
+                continue
+            
+            price_text = safe_string(item.get("price"))
+            parsed_price = None
+            if price_text:
+                for pattern in PRICE_PATTERNS:
+                    match = pattern.search(price_text)
+                    if match:
+                        parsed_price = safe_float(match.group(1))
+                        break
+
+            hits.append(
+                SearchHit(
+                    title=safe_string(item.get("title")),
+                    link=link,
+                    snippet=price_text,  # store price text as snippet for fallback
+                    price=parsed_price,
+                )
             )
-            for item in organic
-            if safe_string(item.get("link"))
-        ]
+        return hits
 
     def _search_tavily(self, query: str) -> List[SearchHit]:
         response = requests.post(
@@ -1334,6 +1362,8 @@ def clean_result_title(title: str, fallback_query: str) -> str:
 def extract_price_from_hit(hit: Optional[SearchHit]) -> Optional[float]:
     if hit is None:
         return None
+    if getattr(hit, 'price', None) is not None and hit.price > 0:
+        return hit.price
     return extract_price(f"{hit.title} {hit.snippet}")
 
 
