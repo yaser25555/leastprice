@@ -4,11 +4,11 @@
 // `--dart-define`. Example build command:
 //
 // ```bash
-/// flutter run \
-///   --dart-define=SERPAPI_KEY=your_key \
-///   --dart-define=SERPER_API_KEY=your_key \
-///   --dart-define=ADMIN_PASSWORD=your_password
-/// ```
+// flutter run \
+//   --dart-define=SERPAPI_KEY=your_key \
+//   --dart-define=SERPER_API_KEY=your_key \
+//   --dart-define=ADMIN_PASSWORD=your_password
+// ```
 import 'package:leastprice/core/config/enums.dart';
 
 class LeastPriceDataConfig {
