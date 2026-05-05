@@ -304,8 +304,7 @@ class SerpApiShoppingSearchService {
             cleanTitle = snippet.split(RegExp(r'[.\-–]')).first.trim();
           }
 
-          if (cleanTitle.isNotEmpty &&
-              !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
+          if (cleanTitle.isNotEmpty && !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
             return cleanTitle;
           }
         }

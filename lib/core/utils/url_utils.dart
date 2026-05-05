@@ -91,7 +91,8 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   if (normalizedName.contains('نمشي') || normalizedName.contains('namshi')) {
     return 'namshi';
   }
-  if (normalizedName.contains('هنجرستيشن') || normalizedName.contains('hungerstation')) {
+  if (normalizedName.contains('هنجرستيشن') ||
+      normalizedName.contains('hungerstation')) {
     return 'hungerstation';
   }
   if (normalizedName.contains('بنده') || normalizedName.contains('panda')) {
@@ -100,13 +101,16 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   if (normalizedName.contains('العثيم') || normalizedName.contains('othaim')) {
     return 'othaim';
   }
-  if (normalizedName.contains('المزرعه') || normalizedName.contains('almazraa') || normalizedName.contains('farm')) {
+  if (normalizedName.contains('المزرعه') ||
+      normalizedName.contains('almazraa') ||
+      normalizedName.contains('farm')) {
     return 'almazraa';
   }
   if (normalizedName.contains('لولو') || normalizedName.contains('lulu')) {
     return 'lulu';
   }
-  if (normalizedName.contains('كارفور') || normalizedName.contains('carrefour')) {
+  if (normalizedName.contains('كارفور') ||
+      normalizedName.contains('carrefour')) {
     return 'carrefour';
   }
   if (normalizedName.contains('التميمي') || normalizedName.contains('tamimi')) {
@@ -121,7 +125,9 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   if (normalizedName.contains('النهدي') || normalizedName.contains('nahdi')) {
     return 'nahdi';
   }
-  if (normalizedName.contains('الدواء') || normalizedName.contains('dawaa') || normalizedName.contains('aldawaa')) {
+  if (normalizedName.contains('الدواء') ||
+      normalizedName.contains('dawaa') ||
+      normalizedName.contains('aldawaa')) {
     return 'aldawaa';
   }
   if (normalizedName.contains('جرير') || normalizedName.contains('jarir')) {

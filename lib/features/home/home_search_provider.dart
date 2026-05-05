@@ -155,10 +155,11 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
         targetStoreId =
             inferStoreIdFromUrl('', fallbackName: state.selectedStore);
         storeDomain = domainForStoreId(targetStoreId ?? '');
-        
+
         // Enhance query by adding the store name and domain to force Google to find it
         if (storeDomain != null) {
-          effectiveQuery = '$effectiveQuery site:$storeDomain OR "${state.selectedStore}"';
+          effectiveQuery =
+              '$effectiveQuery site:$storeDomain OR "${state.selectedStore}"';
         } else {
           effectiveQuery = '$effectiveQuery "${state.selectedStore}"';
         }
