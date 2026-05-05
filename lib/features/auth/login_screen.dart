@@ -413,7 +413,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'LeastPrice',
+                                      'أقل سعر - LeastPrice',
                                       style: TextStyle(
                                         fontSize: appleStyle ? 24 : 22,
                                         fontWeight: FontWeight.w900,

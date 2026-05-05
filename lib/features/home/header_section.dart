@@ -77,7 +77,7 @@ class HeaderSection extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              tr('أرخص سعر - LeastPrice', 'LeastPrice'),
+                              tr('أقل سعر - LP', 'LP'),
                               style: TextStyle(
                                 color: AppPalette.pureWhite,
                                 fontSize: 22,
@@ -338,7 +338,7 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'LeastPrice',
+                                'LP',
                                 style: TextStyle(
                                   color: AppPalette.paleOrange,
                                   fontSize: 16,

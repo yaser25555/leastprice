@@ -77,7 +77,7 @@ class LeastPriceApp extends StatelessWidget {
 
             return MaterialApp(
               debugShowCheckedModeBanner: false,
-              title: isEnglish ? 'LeastPrice' : 'أرخص سعر',
+              title: isEnglish ? 'LeastPrice' : 'أقل سعر',
               locale: Locale(lang),
               scrollBehavior: const LeastPriceScrollBehavior(),
               supportedLocales: const [

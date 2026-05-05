@@ -667,7 +667,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       ShareParams(
         text: message,
         subject: tr(
-          'ادعُ صديقاً للتوفير مع أرخص سعر',
+          'ادعُ صديقاً للتوفير مع أقل سعر',
           'Invite a friend to save with LeastPrice',
         ),
       ),
