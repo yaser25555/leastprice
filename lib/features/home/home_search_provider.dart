@@ -150,10 +150,18 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
       }
 
       String? targetStoreId;
+      String? storeDomain;
       if (state.selectedStore != 'الكل') {
         targetStoreId =
             inferStoreIdFromUrl('', fallbackName: state.selectedStore);
-        effectiveQuery = '$effectiveQuery ${state.selectedStore}';
+        storeDomain = domainForStoreId(targetStoreId ?? '');
+        
+        // Enhance query by adding the store name and domain to force Google to find it
+        if (storeDomain != null) {
+          effectiveQuery = '$effectiveQuery site:$storeDomain OR "${state.selectedStore}"';
+        } else {
+          effectiveQuery = '$effectiveQuery "${state.selectedStore}"';
+        }
       }
 
       final nextOffset = isLoadMore ? state.currentOffset + 20 : 0;
