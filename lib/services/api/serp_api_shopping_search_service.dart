@@ -37,6 +37,12 @@ class SerpApiShoppingSearchService {
     'aldawaa',
     'jarir',
     'extra',
+    'namshi',
+    'ntshop',
+    'ikea',
+    'saco',
+    'niceone',
+    'goldenscent',
   };
 
   static const Set<String> _foodRelatedKeywords = {
@@ -773,13 +779,19 @@ class SerpApiShoppingSearchService {
       if (normalizedStoreId.isEmpty || normalizedStoreId == 'unknown') {
         return false;
       }
+
+      // Strict Whitelist check
       if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
         return true;
       }
-      if (normalizedStoreId.contains('google') ||
-          productHost.contains('google')) {
+
+      // Special case for trusted domains that might not have a simple ID
+      if (productHost.contains('panda.sa') ||
+          productHost.contains('noon.com') ||
+          productHost.contains('amazon.sa')) {
         return true;
       }
+
       return false;
     }).toList(growable: false);
 

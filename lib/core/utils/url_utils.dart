@@ -33,6 +33,18 @@ String? storeIdForHost(String? host) {
   if (normalizedHost.contains('dawaa')) return 'aldawaa';
   if (normalizedHost.contains('jarir')) return 'jarir';
   if (normalizedHost.contains('extra')) return 'extra';
+  if (normalizedHost.contains('danube')) return 'danube';
+  if (normalizedHost.contains('bindawood')) return 'bindawood';
+  if (normalizedHost.contains('manuel')) return 'manuel';
+  if (normalizedHost.contains('ikea')) return 'ikea';
+  if (normalizedHost.contains('saco')) return 'saco';
+  if (normalizedHost.contains('niceone')) return 'niceone';
+  if (normalizedHost.contains('goldenscent')) return 'goldenscent';
+  if (normalizedHost.contains('sephora')) return 'sephora';
+  if (normalizedHost.contains('abyat')) return 'abyat';
+  if (normalizedHost.contains('homecentre')) return 'homecentre';
+  if (normalizedHost.contains('homebox')) return 'homebox';
+  if (normalizedHost.contains('blackbox')) return 'blackbox';
   return normalizedHost
       .replaceFirst('www.', '')
       .replaceAll(RegExp(r'[^a-z0-9]+'), '');
@@ -70,6 +82,30 @@ String? domainForStoreId(String storeId) {
       return 'jarir.com';
     case 'extra':
       return 'extra.com';
+    case 'danube':
+      return 'danube.sa';
+    case 'bindawood':
+      return 'bindawood.com';
+    case 'manuel':
+      return 'manuelmarket.com';
+    case 'ikea':
+      return 'ikea.com.sa';
+    case 'saco':
+      return 'saco.sa';
+    case 'niceone':
+      return 'niceonesa.com';
+    case 'goldenscent':
+      return 'goldenscent.com';
+    case 'sephora':
+      return 'sephora.sa';
+    case 'abyat':
+      return 'abyat.com';
+    case 'homecentre':
+      return 'homecentre.com';
+    case 'homebox':
+      return 'homeboxstores.com';
+    case 'blackbox':
+      return 'blackbox.com.sa';
     default:
       return null;
   }
@@ -137,6 +173,48 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
       normalizedName.contains('إكسترا') ||
       normalizedName.contains('extra')) {
     return 'extra';
+  }
+  if (normalizedName.contains('الدانوب') || normalizedName.contains('danube')) {
+    return 'danube';
+  }
+  if (normalizedName.contains('بن داود') ||
+      normalizedName.contains('bindawood')) {
+    return 'bindawood';
+  }
+  if (normalizedName.contains('مانويل') || normalizedName.contains('manuel')) {
+    return 'manuel';
+  }
+  if (normalizedName.contains('ايكيا') || normalizedName.contains('ikea')) {
+    return 'ikea';
+  }
+  if (normalizedName.contains('ساكو') || normalizedName.contains('saco')) {
+    return 'saco';
+  }
+  if (normalizedName.contains('نايس ون') ||
+      normalizedName.contains('niceone')) {
+    return 'niceone';
+  }
+  if (normalizedName.contains('قولدن سنت') ||
+      normalizedName.contains('goldenscent')) {
+    return 'goldenscent';
+  }
+  if (normalizedName.contains('سيفورا') || normalizedName.contains('sephora')) {
+    return 'sephora';
+  }
+  if (normalizedName.contains('ابيات') || normalizedName.contains('abyat')) {
+    return 'abyat';
+  }
+  if (normalizedName.contains('هوم سنتر') ||
+      normalizedName.contains('homecentre')) {
+    return 'homecentre';
+  }
+  if (normalizedName.contains('هوم بوكس') ||
+      normalizedName.contains('homebox')) {
+    return 'homebox';
+  }
+  if (normalizedName.contains('الصندوق الاسود') ||
+      normalizedName.contains('blackbox')) {
+    return 'blackbox';
   }
 
   final fallbackToken = normalizeStoreIdToken(fallbackName ?? '');
