@@ -70,6 +70,8 @@ class LeastPriceDataConfig {
     'www.ntshop.sa': 'https://go.urtrackinglink.com/SH9H5',
     'hudabeauty.com': 'https://go.urtrackinglink.com/SH9H6',
     'www.hudabeauty.com': 'https://go.urtrackinglink.com/SH9H6',
+    'underarmour.ae': 'https://go.urtrackinglink.com/SH9H7',
+    'www.underarmour.ae': 'https://go.urtrackinglink.com/SH9H7',
   };
 
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
