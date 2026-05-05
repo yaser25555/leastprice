@@ -60,7 +60,17 @@ jobs:
           printf "%s" "$GOOGLE_SERVICES_JSON_BASE64" | tr -d '\n\r\t ' | base64 -d > android/app/google-services.json
 
       - name: Build APK (release)
-        run: flutter build apk --release
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: >
+          flutter build apk --release 
+          --dart-define=SERPAPI_KEY="$SERPAPI_KEY" 
+          --dart-define=SERPER_API_KEY="$SERPER_API_KEY" 
+          --dart-define=ADMIN_PASSWORD="$ADMIN_PASSWORD" 
+          --dart-define=TAVILY_API_KEY="$TAVILY_API_KEY"
 
       - name: Prepare stable APK name
         run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/leastprice.apk
