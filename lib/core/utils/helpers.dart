@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
+import 'package:leastprice/core/config/enums.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
 
 export 'formatters.dart';
 export 'validators.dart';
 export 'url_utils.dart';
+export 'package:leastprice/core/config/enums.dart';
 
 import 'formatters.dart';
 
@@ -101,13 +103,6 @@ String localizedKnownLabel(String value) {
   return value;
 }
 
-enum HomeCatalogSection {
-  offers,
-  comparisons,
-  coupons,
-  plans,
-  about,
-}
 
 class MarketplaceSearchCity {
   const MarketplaceSearchCity({
@@ -474,14 +469,6 @@ extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
   }
 }
 
-enum ComparisonSearchChannelType {
-  marketplace,
-  hypermarket,
-  delivery,
-  pharmacy,
-  electronics,
-  other,
-}
 
 extension ComparisonSearchChannelTypeLabel on ComparisonSearchChannelType {
   String get label {

@@ -1,24 +1,15 @@
-
-/// App-wide configuration constants.
-///
-/// **Sensitive values** (API keys, passwords) are injected at build time via
-/// `--dart-define`. Example build command:
-///
-/// ```bash
+// App-wide configuration constants.
+//
+// **Sensitive values** (API keys, passwords) are injected at build time via
+// `--dart-define`. Example build command:
+//
+// ```bash
 /// flutter run \
 ///   --dart-define=SERPAPI_KEY=your_key \
 ///   --dart-define=SERPER_API_KEY=your_key \
 ///   --dart-define=ADMIN_PASSWORD=your_password
 /// ```
-enum SearchProviderType {
-  serper,
-  tavily,
-}
-
-enum ComparisonSearchSourceType {
-  serpApi,
-  scraper,
-}
+import 'package:leastprice/core/config/enums.dart';
 
 class LeastPriceDataConfig {
   const LeastPriceDataConfig._();
