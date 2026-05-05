@@ -190,6 +190,7 @@ class SerpApiShoppingSearchService {
       return ComparisonSearchResponse(
         results: cachedEntry?.results ?? const <ComparisonSearchResult>[],
         fromCache: cachedEntry != null,
+        searchNotice: 'Error: SerpAPI key missing',
         notice: tr(
           'عذراً، لم نجد نتائج حالياً',
           'Sorry, we could not find results right now.',
@@ -257,18 +258,23 @@ class SerpApiShoppingSearchService {
               ),
         effectiveQuery: effectiveQuery,
       );
-    } catch (_) {
+    } catch (e) {
       if (cachedEntry != null && cachedEntry.results.isNotEmpty) {
         return _buildResponse(
           results: cachedEntry.results,
           fromCache: true,
           notice: tr(
-            'تعذر تحديث النتائج الحية حالياً، لذلك نعرض آخر نتائج محفوظة لهذه المدينة.',
-            'Live refresh failed, so the latest saved results for this city are shown.',
+            'تعذر تحديث النتائج الحية ($e)، لذلك نعرض آخر نتائج محفوظة لهذه المدينة.',
+            'Live refresh failed ($e), so the latest saved results for this city are shown.',
           ),
         );
       }
-      rethrow;
+      return _buildResponse(
+        results: [],
+        fromCache: false,
+        notice: 'Technical Error: $e',
+        effectiveQuery: effectiveQuery,
+      );
     }
   }
 

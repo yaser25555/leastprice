@@ -164,7 +164,9 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
         hasMoreResults: result.results.isNotEmpty,
         query: result.effectiveQuery ?? state.query,
         searchNotice: () => result.results.isEmpty && !isLoadMore
-            ? 'عذراً، لم نجد نتائج حالياً'
+            ? (result.notice?.isNotEmpty == true
+                ? result.notice!
+                : 'عذراً، لم نجد نتائج حالياً')
             : result.notice,
         searchSourceLabel: result.fromCache
             ? 'نتائج محفوظة • ${state.selectedCity.label}'
@@ -174,7 +176,7 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
       if (!isLoadMore) {
         state = state.copyWith(
           results: [],
-          searchNotice: () => 'عذراً، لم نجد نتائج حالياً',
+          searchNotice: () => 'Error: $e',
           searchSourceLabel: 'بحث السوق',
         );
       }
