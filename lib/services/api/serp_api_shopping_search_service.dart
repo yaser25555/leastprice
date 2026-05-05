@@ -190,11 +190,10 @@ class SerpApiShoppingSearchService {
       return ComparisonSearchResponse(
         results: cachedEntry?.results ?? const <ComparisonSearchResult>[],
         fromCache: cachedEntry != null,
-        searchNotice: 'Error: SerpAPI key missing',
-        notice: tr(
+        notice: 'Error: SerpAPI key missing - ${tr(
           'عذراً، لم نجد نتائج حالياً',
           'Sorry, we could not find results right now.',
-        ),
+        )}',
       );
     }
 
