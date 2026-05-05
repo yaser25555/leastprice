@@ -462,15 +462,6 @@ extension ProductDataSourceLabel on ProductDataSource {
   }
 }
 
-enum SearchProviderType {
-  serper,
-  tavily,
-}
-
-enum ComparisonSearchSourceType {
-  serpApi,
-  scraper,
-}
 
 extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
   String get label {

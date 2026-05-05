@@ -1,4 +1,3 @@
-import 'package:leastprice/core/utils/helpers.dart';
 
 /// App-wide configuration constants.
 ///
@@ -11,6 +10,16 @@ import 'package:leastprice/core/utils/helpers.dart';
 ///   --dart-define=SERPER_API_KEY=your_key \
 ///   --dart-define=ADMIN_PASSWORD=your_password
 /// ```
+enum SearchProviderType {
+  serper,
+  tavily,
+}
+
+enum ComparisonSearchSourceType {
+  serpApi,
+  scraper,
+}
+
 class LeastPriceDataConfig {
   const LeastPriceDataConfig._();
 
