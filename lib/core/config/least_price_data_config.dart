@@ -76,6 +76,8 @@ class LeastPriceDataConfig {
     'www.mamasandpapas.ae': 'https://go.urtrackinglink.com/SH9H8',
     'bloomingdales.ae': 'https://go.urtrackinglink.com/SH9H9',
     'www.bloomingdales.ae': 'https://go.urtrackinglink.com/SH9H9',
+    'puma.com': 'https://go.urtrackinglink.com/SH9HB',
+    'sa.puma.com': 'https://go.urtrackinglink.com/SH9HB',
   };
 
   /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
