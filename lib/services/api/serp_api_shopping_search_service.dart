@@ -776,20 +776,41 @@ class SerpApiShoppingSearchService {
       // If we are looking for a specific store, we still show other supported stores
       // but they will be sorted lower later. This ensures 'No Results' is avoided.
       final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
-      if (normalizedStoreId.isEmpty || normalizedStoreId == 'unknown') {
-        return false;
+
+      // 1. Check if the Store ID is already in our supported list
+      if (normalizedStoreId.isNotEmpty && normalizedStoreId != 'unknown') {
+        if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
+          return true;
+        }
       }
 
-      // Strict Whitelist check
-      if (_saudiSupportedStoreIds.contains(normalizedStoreId)) {
+      // 2. Check if the Store Name matches any of our supported stores (Bilingual check)
+      final inferredFromName =
+          inferStoreIdFromUrl('', fallbackName: result.storeName);
+      if (inferredFromName != null &&
+          _saudiSupportedStoreIds.contains(inferredFromName)) {
         return true;
       }
 
-      // Special case for trusted domains that might not have a simple ID
+      // 3. Special case for trusted domains
       if (productHost.contains('panda.sa') ||
           productHost.contains('noon.com') ||
-          productHost.contains('amazon.sa')) {
+          productHost.contains('amazon.sa') ||
+          productHost.contains('othaim') ||
+          productHost.contains('carrefour') ||
+          productHost.contains('danube') ||
+          productHost.contains('tamimi')) {
         return true;
+      }
+
+      // 4. Fallback for Google Shopping results that might be from valid stores
+      // but we couldn't infer them yet (we'll show them to avoid 'No Results')
+      if (productHost.contains('google.com') ||
+          normalizedStoreId.contains('google')) {
+        // If the store name looks like a real store (not just a generic string), allow it
+        if (result.storeName.length > 2 && !result.storeName.contains('http')) {
+          return true;
+        }
       }
 
       return false;
