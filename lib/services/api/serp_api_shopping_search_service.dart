@@ -8,6 +8,7 @@ import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/data/models/comparison_search_response.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/comparison_search_cache_entry.dart';
+import 'package:leastprice/services/preferences/local_search_cache_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class SerpApiShoppingSearchService {
@@ -19,6 +20,7 @@ class SerpApiShoppingSearchService {
 
   FirestoreCatalogService get _service =>
       _catalogService ?? const FirestoreCatalogService();
+  final LocalSearchCacheService _localCache = const LocalSearchCacheService();
   static const Set<String> _saudiSupportedStoreIds = {
     'amazon',
     'noon',
@@ -116,13 +118,55 @@ class SerpApiShoppingSearchService {
 
     final canUseFirestoreCache = firebaseReady && !kIsWeb;
     ComparisonSearchCacheEntry? cachedEntry;
-    if (canUseFirestoreCache) {
+
+    // 1. Try Local Cache (Fastest, Zero Cost)
+    if (!forceRefresh) {
+      try {
+        cachedEntry = await _localCache.fetchLocalSearchCache(
+          trimmedQuery,
+          locationKey: city.id,
+          targetStoreId: targetStoreId,
+        );
+        if (cachedEntry != null && cachedEntry.results.isNotEmpty && cachedEntry.isFresh) {
+          return ComparisonSearchResponse(
+            results: cachedEntry.results,
+            fromCache: true,
+            notice: tr(
+              'نتائج محفوظة من جهازك • ${city.label}',
+              'Saved results from your device • ${city.label}',
+            ),
+          );
+        }
+      } catch (error) {
+        debugPrint('LeastPrice local cache read skipped: $error');
+      }
+    }
+
+    // 2. Try Firestore Cache
+    if (canUseFirestoreCache && !forceRefresh) {
       try {
         cachedEntry = await _service.fetchComparisonSearchCache(
           trimmedQuery,
           locationKey: city.id,
           targetStoreId: targetStoreId,
         );
+        if (cachedEntry != null && cachedEntry.results.isNotEmpty && cachedEntry.isFresh) {
+          // Save to local cache for next time
+          await _localCache.saveLocalSearchCache(
+            query: trimmedQuery,
+            results: cachedEntry.results,
+            locationKey: city.id,
+            targetStoreId: targetStoreId,
+          );
+          return ComparisonSearchResponse(
+            results: cachedEntry.results,
+            fromCache: true,
+            notice: tr(
+              'نتائج محفوظة • ${city.label}',
+              'Cached results • ${city.label}',
+            ),
+          );
+        }
       } catch (error) {
         debugPrint('LeastPrice comparison cache read skipped: $error');
       }
@@ -147,17 +191,32 @@ class SerpApiShoppingSearchService {
         city: city,
         targetStoreId: targetStoreId,
       );
-      if (canUseFirestoreCache && results.isNotEmpty) {
+      if (results.isNotEmpty) {
+        // Save to Local Cache
         try {
-          await _service.saveComparisonSearchCache(
+          await _localCache.saveLocalSearchCache(
             query: trimmedQuery,
             results: results,
             locationKey: city.id,
-            locationLabel: city.label,
             targetStoreId: targetStoreId,
           );
         } catch (error) {
-          debugPrint('LeastPrice comparison cache save skipped: $error');
+          debugPrint('LeastPrice local cache save skipped: $error');
+        }
+
+        // Save to Firestore Cache
+        if (canUseFirestoreCache) {
+          try {
+            await _service.saveComparisonSearchCache(
+              query: trimmedQuery,
+              results: results,
+              locationKey: city.id,
+              locationLabel: city.label,
+              targetStoreId: targetStoreId,
+            );
+          } catch (error) {
+            debugPrint('LeastPrice comparison cache save skipped: $error');
+          }
         }
       }
 
