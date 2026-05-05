@@ -78,96 +78,198 @@ class ComparisonSearchBarSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          TextField(
-            controller: searchController,
+          RawAutocomplete<String>(
             focusNode: focusNode,
-            textInputAction: TextInputAction.search,
-            onSubmitted: onSubmitted,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppPalette.orange,
-            ),
-            decoration: InputDecoration(
-              hintText: searchHintText,
-              hintStyle: TextStyle(
-                color: AppPalette.paleOrange,
-                fontWeight: FontWeight.w600,
-              ),
-              prefixIcon: Icon(
-                Icons.search_rounded,
-                color: AppPalette.orange,
-              ),
-              suffixIcon: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      HapticFeedback.lightImpact();
-                      final result = await Navigator.push<String>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const BarcodeScannerScreen(),
+            textEditingController: searchController,
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text.trim().isEmpty) {
+                return const Iterable<String>.empty();
+              }
+              final query = textEditingValue.text.toLowerCase().trim();
+              const popularSearchTerms = [
+                'ايفون 15',
+                'ايفون 15 برو ماكس',
+                'ايفون 14',
+                'سامسونج s24',
+                'سامسونج s23 ultra',
+                'شاشة ذكية 65 بوصة',
+                'بلايستيشن 5',
+                'حفاضات بامبرز',
+                'حليب نيدو',
+                'قهوة عربية',
+                'كبسولات نسبريسو',
+                'مكيف سبليت',
+                'قلاية هوائية فيليبس',
+                'لابتوب ابل ماك بوك',
+                'عطر ديور سوفاج',
+                'سماعات ابل ايربودز',
+                'ساعة ابل',
+                'زيت زيتون',
+                'مياه نوفا'
+              ];
+              return popularSearchTerms.where((String option) {
+                return option.contains(query);
+              });
+            },
+            onSelected: (String selection) {
+              onSubmitted(selection);
+            },
+            optionsViewBuilder: (BuildContext context, AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, right: 16.0, left: 16.0),
+                  child: Material(
+                    color: AppPalette.cardBackground,
+                    elevation: 8.0,
+                    borderRadius: BorderRadius.circular(16),
+                    shadowColor: Colors.black.withValues(alpha: 0.2),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: 250,
+                        maxWidth: MediaQuery.of(context).size.width - 64, // Accounts for padding
+                      ),
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        separatorBuilder: (context, index) => Divider(
+                          color: AppPalette.panelText.withValues(alpha: 0.05),
+                          height: 1,
                         ),
-                      );
-                      if (result != null && result.isNotEmpty) {
-                        if (!context.mounted) return;
-                        // Show a loading dialog while fetching the product name
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => Center(
-                            child: CircularProgressIndicator(
-                                color: AppPalette.orange),
-                          ),
-                        );
-
-                        final productName = await OpenFoodFactsService
-                            .getProductNameFromBarcode(result);
-
-                        // Close the loading dialog
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
-
-                        if (productName != null && productName.isNotEmpty) {
-                          searchController.text = productName;
-                          onSubmitted(productName);
-                        } else {
-                          // If OpenFoodFacts didn't find the product, fall back to searching by the raw barcode
-                          searchController.text = result;
-                          onSubmitted(result);
-
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(tr(
-                                    'لم نتمكن من التعرف على اسم المنتج، سنبحث برقم الباركود',
-                                    'Could not identify product name, searching by barcode')),
-                                backgroundColor: AppPalette.dealsRed,
+                        itemBuilder: (BuildContext context, int index) {
+                          final String option = options.elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              onSelected(option);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 12.0,
                               ),
-                            );
-                          }
-                        }
-                      }
-                    },
-                    icon: Icon(
-                      Icons.qr_code_scanner_rounded,
-                      color: AppPalette.orange,
-                    ),
-                    tooltip: tr('بحث بالباركود', 'Search by barcode'),
-                  ),
-                  if (hasQuery)
-                    IconButton(
-                      onPressed: onClearSearch,
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: AppPalette.orange,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.search_rounded, size: 18, color: AppPalette.paleOrange),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      option,
+                                      style: TextStyle(
+                                        color: AppPalette.panelText,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(Icons.north_west_rounded, size: 16, color: AppPalette.paleOrange.withValues(alpha: 0.5)),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                ],
-              ),
-            ),
+                  ),
+                ),
+              );
+            },
+            fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
+              return TextField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (value) {
+                  onFieldSubmitted();
+                  onSubmitted(value);
+                },
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppPalette.orange,
+                ),
+                decoration: InputDecoration(
+                  hintText: searchHintText,
+                  hintStyle: TextStyle(
+                    color: AppPalette.paleOrange,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search_rounded,
+                    color: AppPalette.orange,
+                  ),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          HapticFeedback.lightImpact();
+                          final result = await Navigator.push<String>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BarcodeScannerScreen(),
+                            ),
+                          );
+                          if (result != null && result.isNotEmpty) {
+                            if (!context.mounted) return;
+                            // Show a loading dialog while fetching the product name
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => Center(
+                                child: CircularProgressIndicator(
+                                    color: AppPalette.orange),
+                              ),
+                            );
+
+                            final productName = await OpenFoodFactsService
+                                .getProductNameFromBarcode(result);
+
+                            // Close the loading dialog
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+
+                            if (productName != null && productName.isNotEmpty) {
+                              textEditingController.text = productName;
+                              onSubmitted(productName);
+                            } else {
+                              // If OpenFoodFacts didn't find the product, fall back to searching by the raw barcode
+                              textEditingController.text = result;
+                              onSubmitted(result);
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(tr(
+                                        'لم نتمكن من التعرف على اسم المنتج، سنبحث برقم الباركود',
+                                        'Could not identify product name, searching by barcode')),
+                                    backgroundColor: AppPalette.dealsRed,
+                                  ),
+                                );
+                              }
+                            }
+                          }
+                        },
+                        icon: Icon(
+                          Icons.qr_code_scanner_rounded,
+                          color: AppPalette.orange,
+                        ),
+                        tooltip: tr('بحث بالباركود', 'Search by barcode'),
+                      ),
+                      if (hasQuery)
+                        IconButton(
+                          onPressed: onClearSearch,
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: AppPalette.orange,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 14),
           SingleChildScrollView(
