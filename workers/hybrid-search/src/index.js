@@ -1442,7 +1442,10 @@ function parsePriceValue(value) {
     return { value: null, currency: 'SAR' };
   }
 
-  const forbiddenUnits = ['k', 'inch', 'بوصة', 'جم', 'مل', 'جرام', 'كجم', 'وات', 'w', 'v', 'فولت'];
+  const forbiddenUnits = [
+    'k', 'inch', 'بوصة', 'جم', 'مل', 'جرام', 'كجم', 'وات', 'w', 'v', 'فولت', 
+    'هرتز', 'hz', 'fps', 'gb', 'mb', 'tb', 'جيجا', 'ميج', 'بكسل', 'pixel'
+  ];
   const candidates = [];
 
   for (const match of matches) {
