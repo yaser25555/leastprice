@@ -392,11 +392,13 @@ class SerpApiShoppingSearchService {
     );
 
     final apiKey = LeastPriceDataConfig.serpApiKey.trim();
+    final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     final response = await http.get(
       uri,
       headers: {
         'accept': 'application/json',
         if (apiKey.isNotEmpty) 'x-serpapi-key': apiKey,
+        if (serperApiKey.isNotEmpty) 'x-serper-key': serperApiKey,
       },
     ).timeout(const Duration(seconds: 25));
     if (response.statusCode >= 400) {

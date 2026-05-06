@@ -303,6 +303,9 @@ export default {
     const serpApiKey = String(
       request.headers.get('x-serpapi-key') || env.SERPAPI_KEY || '',
     ).trim();
+    const serperApiKey = String(
+      request.headers.get('x-serper-key') || env.SERPER_KEY || env.SERPER_API_KEY || '',
+    ).trim();
     const dataForSeoLogin = String(env.DATAFORSEO_LOGIN || '').trim();
     const dataForSeoPassword = String(env.DATAFORSEO_PASSWORD || '').trim();
     const canUseDataForSeo = Boolean(dataForSeoLogin && dataForSeoPassword);
@@ -311,6 +314,7 @@ export default {
 
     let dataForSeoResults = [];
     let serpApiResults = [];
+    let serperResults = [];
     let scrapedResults = [];
 
     const scraperPromise = scrapePriorityStores(query, targetedStores);
@@ -336,6 +340,14 @@ export default {
       }
     }
 
+    if (dataForSeoResults.length === 0 && serpApiResults.length === 0 && serperApiKey) {
+      try {
+        serperResults = await searchSerper(query, serperApiKey, { location, hl });
+      } catch (error) {
+        console.warn('Serper search failed.', { query, error: String(error) });
+      }
+    }
+
     try {
       scrapedResults = await scraperPromise;
     } catch (error) {
@@ -345,6 +357,7 @@ export default {
     const mergedResults = mergeHybridSearchResults([
       ...dataForSeoResults,
       ...serpApiResults,
+      ...serperResults,
       ...scrapedResults,
     ]);
     const filteredResults = SAUDI_FAMOUS_STORES_ONLY
@@ -446,6 +459,77 @@ async function searchSerpApi(query, apiKey, { location = 'Saudi Arabia', hl = 'a
   }
 
   return candidates;
+}
+
+async function searchSerper(query, apiKey, { location = 'Saudi Arabia', hl = 'ar' } = {}) {
+  const url = 'https://google.serper.dev/shopping';
+  const payload = {
+    q: query,
+    location: location,
+    gl: 'sa',
+    hl: hl,
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'X-API-KEY': apiKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+  if (!data || !Array.isArray(data.shopping)) {
+    return [];
+  }
+
+  const candidates = [];
+  for (const item of data.shopping) {
+    const result = normalizeSerperResult(item);
+    if (result) {
+      candidates.push(result);
+    }
+  }
+
+  return candidates;
+}
+
+function normalizeSerperResult(item) {
+  if (!item || typeof item !== 'object') {
+    return null;
+  }
+
+  const title = item.title;
+  const productUrl = item.link;
+  const imageUrl = item.imageUrl;
+  const priceInfo = parsePriceValue(item.price);
+
+  if (!title || !productUrl || priceInfo.value == null || priceInfo.value <= 0) {
+    return null;
+  }
+
+  const storeName = item.source;
+  const store = resolveStoreInfo({ storeName, productUrl });
+
+  return {
+    title: cleanProductTitle(title),
+    priceValue: priceInfo.value,
+    price: formatPriceLabel(priceInfo.value, priceInfo.currency),
+    currency: priceInfo.currency,
+    storeName: store.name || storeName || 'Online store',
+    storeId: store.id,
+    storeLogoUrl: buildStoreLogoUrl(store.host || productUrl),
+    imageUrl: normalizeImageUrl(imageUrl),
+    productUrl,
+    sourceType: 'serper',
+    channelType: store.channelType,
+    isLiveDirect: false,
+  };
 }
 
 async function searchDataForSeo(
