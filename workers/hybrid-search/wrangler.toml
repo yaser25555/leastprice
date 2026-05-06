@@ -1,0 +1,8 @@
+name = "leastprice-hybrid-search"
+main = "src/index.js"
+compatibility_date = "2026-05-06"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[observability.logs]
+enabled = true

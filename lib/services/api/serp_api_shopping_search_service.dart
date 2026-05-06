@@ -31,6 +31,8 @@ class SerpApiShoppingSearchService {
     'lulu',
     'carrefour',
     'tamimi',
+    'danube',
+    'bindawood',
     'toyou',
     'keeta',
     'nahdi',
@@ -43,6 +45,8 @@ class SerpApiShoppingSearchService {
     'saco',
     'niceone',
     'goldenscent',
+    'abyat',
+    'homecentre',
   };
 
   static const Set<String> _foodRelatedKeywords = {
@@ -70,6 +74,10 @@ class SerpApiShoppingSearchService {
     'cake',
     'عصير',
     'juice',
+    'رز',
+    'ارز',
+    'شعير',
+    'مصري',
     'شاي',
     'tea',
     'مكولات',
@@ -378,7 +386,8 @@ class SerpApiShoppingSearchService {
       '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
       '&hl=${isAr ? 'ar' : 'en'}'
       '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}'
-      '&page=$pageNum',
+      '&page=$pageNum'
+      '${targetStoreId != null && targetStoreId.trim().isNotEmpty ? '&store=${Uri.encodeQueryComponent(targetStoreId)}' : ''}',
     );
 
     final response = await http.get(
@@ -424,6 +433,14 @@ class SerpApiShoppingSearchService {
   }
 
   String _hybridSearchBaseUrl() {
+    final override =
+        LeastPriceDataConfig.hybridSearchBaseUrlOverride.trim();
+    if (override.isNotEmpty) {
+      return override.endsWith('/')
+          ? override.substring(0, override.length - 1)
+          : override;
+    }
+
     if (kIsWeb) {
       final origin = Uri.base.origin;
       final isLocalhost =
@@ -462,7 +479,8 @@ class SerpApiShoppingSearchService {
         '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
         '&hl=${isAr ? 'ar' : 'en'}'
         '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}'
-        '&page=$pageNum',
+        '&page=$pageNum'
+        '${targetStoreId != null && targetStoreId.trim().isNotEmpty ? '&store=${Uri.encodeQueryComponent(targetStoreId)}' : ''}',
       );
 
       final response = await http.get(
@@ -940,24 +958,49 @@ class SerpApiShoppingSearchService {
       return false;
     }).toList(growable: false);
 
-    // If a target store is selected, we perform a special sort:
-    // 1. Target store results first.
-    // 2. Then by price.
     if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
-      final target = targetStoreId.trim().toLowerCase();
-      filtered.sort((a, b) {
-        final aMatch = a.storeId.toLowerCase() == target;
-        final bMatch = b.storeId.toLowerCase() == target;
-        if (aMatch != bMatch) {
-          return aMatch ? -1 : 1;
-        }
-        return _compareSearchResults(a, b);
-      });
-    } else {
-      filtered.sort(_compareSearchResults);
+      final strictMatches = filtered
+          .where((result) => _matchesTargetStore(result, targetStoreId))
+          .toList(growable: false);
+      strictMatches.sort(_compareSearchResults);
+      return strictMatches;
     }
 
+    filtered.sort(_compareSearchResults);
+
     return filtered;
+  }
+
+  bool _matchesTargetStore(
+    ComparisonSearchResult result,
+    String targetStoreId,
+  ) {
+    final normalizedTarget = targetStoreId.trim().toLowerCase();
+    if (normalizedTarget.isEmpty) {
+      return false;
+    }
+
+    if (result.storeId.trim().toLowerCase() == normalizedTarget) {
+      return true;
+    }
+
+    final inferredStoreId = inferStoreIdFromUrl(
+      result.productUrl,
+      fallbackName: result.storeName,
+    );
+    if ((inferredStoreId ?? '').trim().toLowerCase() == normalizedTarget) {
+      return true;
+    }
+
+    final targetDomain = domainForStoreId(normalizedTarget);
+    final resultHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
+    if (targetDomain != null &&
+        targetDomain.isNotEmpty &&
+        resultHost.contains(targetDomain.toLowerCase())) {
+      return true;
+    }
+
+    return false;
   }
 
   int _compareSearchResults(

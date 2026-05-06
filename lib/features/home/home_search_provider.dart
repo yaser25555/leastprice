@@ -130,17 +130,26 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
 
     try {
       String effectiveQuery = state.query.trim();
-      // Category enhancement removed to keep search broad as requested
+      final selectedCategory = state.selectedCategory?.trim() ?? '';
+      if (selectedCategory.isNotEmpty) {
+        final normalizedQuery = normalizeArabic(effectiveQuery);
+        final normalizedCategory = normalizeArabic(selectedCategory);
+        if (!normalizedQuery.contains(normalizedCategory)) {
+          effectiveQuery = '$effectiveQuery $selectedCategory';
+        }
+      }
 
       String? targetStoreId;
       if (state.selectedStore != 'الكل' && state.selectedStore.isNotEmpty) {
         targetStoreId =
             inferStoreIdFromUrl('', fallbackName: state.selectedStore);
-        final domain = domainForStoreId(state.selectedStore);
-        if (domain != null) {
-          effectiveQuery = '$effectiveQuery site:$domain';
-        } else {
-          effectiveQuery = '$effectiveQuery "${state.selectedStore}"';
+        if (targetStoreId != null && targetStoreId.isNotEmpty) {
+          final domain = domainForStoreId(targetStoreId);
+          if (domain != null) {
+            effectiveQuery = '$effectiveQuery site:$domain';
+          } else {
+            effectiveQuery = '$effectiveQuery "${state.selectedStore}"';
+          }
         }
       }
 
@@ -166,7 +175,9 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
         searchNotice: () => result.results.isEmpty && !isLoadMore
             ? (result.notice?.isNotEmpty == true
                 ? result.notice!
-                : 'عذراً، لم نجد نتائج حالياً')
+                : (targetStoreId != null && targetStoreId.isNotEmpty
+                    ? 'لم نجد نتائج في المتجر المحدد حالياً'
+                    : 'عذراً، لم نجد نتائج حالياً'))
             : result.notice,
         searchSourceLabel: result.fromCache
             ? 'نتائج محفوظة • ${state.selectedCity.label}'

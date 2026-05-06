@@ -36,6 +36,13 @@ const PRIORITY_STORES = [
     searchUrls: [],
   },
   {
+    id: 'namshi',
+    name: 'نمشي',
+    channelType: 'marketplace',
+    hosts: ['namshi.com', 'www.namshi.com', 'en-sa.namshi.com', 'ar-sa.namshi.com'],
+    searchUrls: [],
+  },
+  {
     id: 'hungerstation',
     name: 'HungerStation',
     channelType: 'delivery',
@@ -181,6 +188,62 @@ const PRIORITY_STORES = [
         `https://www.extra.com/ar-sa/search/?text=${encodeURIComponent(query)}`,
     ],
   },
+  {
+    id: 'danube',
+    name: 'الدانوب',
+    channelType: 'hypermarket',
+    hosts: ['danube.sa', 'www.danube.sa'],
+    searchUrls: [],
+  },
+  {
+    id: 'bindawood',
+    name: 'بن داود',
+    channelType: 'hypermarket',
+    hosts: ['bindawood.com', 'www.bindawood.com'],
+    searchUrls: [],
+  },
+  {
+    id: 'ikea',
+    name: 'ايكيا',
+    channelType: 'electronics',
+    hosts: ['ikea.com.sa', 'www.ikea.com.sa'],
+    searchUrls: [],
+  },
+  {
+    id: 'saco',
+    name: 'ساكو',
+    channelType: 'electronics',
+    hosts: ['saco.sa', 'www.saco.sa'],
+    searchUrls: [],
+  },
+  {
+    id: 'niceone',
+    name: 'نايس ون',
+    channelType: 'marketplace',
+    hosts: ['niceonesa.com', 'www.niceonesa.com'],
+    searchUrls: [],
+  },
+  {
+    id: 'goldenscent',
+    name: 'قولدن سنت',
+    channelType: 'marketplace',
+    hosts: ['goldenscent.com', 'www.goldenscent.com'],
+    searchUrls: [],
+  },
+  {
+    id: 'abyat',
+    name: 'ابيات',
+    channelType: 'electronics',
+    hosts: ['abyat.com', 'www.abyat.com'],
+    searchUrls: [],
+  },
+  {
+    id: 'homecentre',
+    name: 'هوم سنتر',
+    channelType: 'electronics',
+    hosts: ['homecentre.com', 'www.homecentre.com'],
+    searchUrls: [],
+  },
 ];
 
 const STORE_BY_HOST = new Map();
@@ -323,6 +386,9 @@ exports.hybridMarketplaceSearch = functionsV1
     const query = String(request.query.q || '').trim();
     const location = String(request.query.location || 'Saudi Arabia').trim() || 'Saudi Arabia';
     const hl = String(request.query.hl || 'ar').trim().toLowerCase() === 'en' ? 'en' : 'ar';
+    const requestedStoreId = String(request.query.store || '')
+      .trim()
+      .toLowerCase();
     if (query.length < 2) {
       response.status(400).json({
         error: 'invalid-query',
@@ -338,7 +404,7 @@ exports.hybridMarketplaceSearch = functionsV1
     const dataForSeoPassword = String(process.env.DATAFORSEO_PASSWORD || '').trim();
     const canUseDataForSeo = Boolean(dataForSeoLogin && dataForSeoPassword);
     const searchVertical = inferSearchVertical(query);
-    const targetedStores = selectStoresForVertical(searchVertical);
+    const targetedStores = selectStoresForSearch(searchVertical, requestedStoreId);
     const scraperPromise = scrapePriorityStores(query, targetedStores);
     let dataForSeoResults = [];
     let serpApiResults = [];
@@ -389,10 +455,14 @@ exports.hybridMarketplaceSearch = functionsV1
     const filteredResults = SAUDI_FAMOUS_STORES_ONLY
       ? filterToPriorityStores(mergedResults)
       : mergedResults;
-    const finalResults = filteredResults.slice(0, MAX_TOTAL_RESULTS);
+    const storeScopedResults = requestedStoreId
+      ? filterResultsByStoreId(filteredResults, requestedStoreId)
+      : filteredResults;
+    const finalResults = storeScopedResults.slice(0, MAX_TOTAL_RESULTS);
 
     response.status(200).json({
       query,
+      requestedStoreId,
       vertical: searchVertical,
       targetedStores: targetedStores.map((store) => ({
         id: store.id,
@@ -1051,6 +1121,28 @@ function filterToPriorityStores(results) {
   });
 }
 
+function filterResultsByStoreId(results, requestedStoreId) {
+  const normalizedRequestedStoreId = String(requestedStoreId || '')
+    .trim()
+    .toLowerCase();
+  if (!normalizedRequestedStoreId) {
+    return results;
+  }
+
+  return results.filter((item) => {
+    const directStoreId = String(item?.storeId || '').trim().toLowerCase();
+    if (directStoreId === normalizedRequestedStoreId) {
+      return true;
+    }
+
+    const resolvedStore = resolveStoreInfo({
+      storeName: item?.storeName || '',
+      productUrl: item?.productUrl || '',
+    });
+    return String(resolvedStore?.id || '').trim().toLowerCase() === normalizedRequestedStoreId;
+  });
+}
+
 function inferSearchVertical(query) {
   const normalized = normalizeArabic(query);
   const pharmacyHints = [
@@ -1067,6 +1159,9 @@ function inferSearchVertical(query) {
     'حليب',
     'خبز',
     'رز',
+    'ارز',
+    'شعير',
+    'مصري',
     'سكر',
     'عصير',
     'ماء',
@@ -1156,6 +1251,24 @@ function selectStoresForVertical(vertical) {
         ),
       );
   }
+}
+
+function selectStoresForSearch(vertical, requestedStoreId) {
+  const normalizedRequestedStoreId = String(requestedStoreId || '')
+    .trim()
+    .toLowerCase();
+  if (!normalizedRequestedStoreId) {
+    return selectStoresForVertical(vertical);
+  }
+
+  const requestedStore = PRIORITY_STORES.find(
+    (store) => store.id === normalizedRequestedStoreId,
+  );
+  if (requestedStore) {
+    return [requestedStore];
+  }
+
+  return selectStoresForVertical(vertical);
 }
 
 function resolveStoreInfo({ storeName, productUrl }) {
