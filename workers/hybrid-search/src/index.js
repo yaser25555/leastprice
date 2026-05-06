@@ -45,10 +45,10 @@ const PRIORITY_STORES = [
     id: 'panda',
     name: 'بنده',
     channelType: 'hypermarket',
-    hosts: ['panda.sa', 'www.panda.sa'],
+    hosts: ['panda.com.sa', 'panda.sa', 'www.panda.com.sa', 'www.panda.sa'],
     searchUrls: [
-      (query) => `https://www.panda.sa/ar/search?text=${encodeURIComponent(query)}`,
-      (query) => `https://www.panda.sa/en/search?text=${encodeURIComponent(query)}`,
+      (query) => `https://www.panda.com.sa/ar/search?q=${encodeURIComponent(query)}`,
+      (query) => `https://www.panda.com.sa/ar/search?text=${encodeURIComponent(query)}`,
     ],
   },
   {
@@ -58,9 +58,7 @@ const PRIORITY_STORES = [
     hosts: ['othaimmarkets.com', 'www.othaimmarkets.com'],
     searchUrls: [
       (query) =>
-        `https://www.othaimmarkets.com/ar-SA/search?q=${encodeURIComponent(query)}`,
-      (query) =>
-        `https://www.othaimmarkets.com/en-US/search?q=${encodeURIComponent(query)}`,
+        `https://www.othaimmarkets.com/catalogsearch/result/?q=${encodeURIComponent(query)}`,
     ],
   },
   {
@@ -368,15 +366,20 @@ export default {
     // FALLBACK: If a specific store is requested and we got ZERO results, try a general web search with 'site:'
     if (requestedStoreId && (dataForSeoResults.length + serpApiResults.length + serperResults.length + scrapedResults.length === 0)) {
       const requestedStore = PRIORITY_STORES.find(s => s.id === requestedStoreId.toLowerCase());
-      if (requestedStore && requestedStore.hosts && requestedStore.hosts.length > 0 && serperApiKey) {
-        try {
-          const fallbackResults = await searchSerperGeneral(query, serperApiKey, { 
-            site: requestedStore.hosts[0],
-            location 
-          });
-          serperResults = fallbackResults;
-        } catch (e) {
-          console.warn('Fallback general search failed', e);
+      if (requestedStore && requestedStore.hosts && serperApiKey) {
+        for (const host of requestedStore.hosts) {
+          try {
+            const fallbackResults = await searchSerperGeneral(query, serperApiKey, { 
+              site: host,
+              location 
+            });
+            if (fallbackResults.length > 0) {
+              serperResults = fallbackResults;
+              break; // Stop if we found results for this host
+            }
+          } catch (e) {
+            console.warn(`Fallback search for ${host} failed`, e);
+          }
         }
       }
     }
