@@ -362,6 +362,22 @@ export default {
     // Wait for all APIs and Scrapers (with timeout)
     await Promise.allSettled([...apiPromises, scraperPromise.then(res => scrapedResults = res)]);
 
+    // FALLBACK: If a specific store is requested and we got ZERO results, try a general web search with 'site:'
+    if (requestedStoreId && (dataForSeoResults.length + serpApiResults.length + serperResults.length + scrapedResults.length === 0)) {
+      const requestedStore = PRIORITY_STORES.find(s => s.id === requestedStoreId.toLowerCase());
+      if (requestedStore && requestedStore.hosts && requestedStore.hosts.length > 0 && serperApiKey) {
+        try {
+          const fallbackResults = await searchSerperGeneral(query, serperApiKey, { 
+            site: requestedStore.hosts[0],
+            location 
+          });
+          serperResults = fallbackResults;
+        } catch (e) {
+          console.warn('Fallback general search failed', e);
+        }
+      }
+    }
+
     const mergedResults = mergeHybridSearchResults([
       ...dataForSeoResults,
       ...serpApiResults,
@@ -460,6 +476,76 @@ async function searchSerpApi(query, apiKey, { location = 'Saudi Arabia', hl = 'a
   }
 
   return candidates;
+}
+
+async function searchSerperGeneral(query, apiKey, { site, location = 'Saudi Arabia' } = {}) {
+  const url = 'https://google.serper.dev/search';
+  const payload = {
+    q: `site:${site} ${query}`,
+    location: location,
+    gl: 'sa',
+    hl: 'ar',
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'X-API-KEY': apiKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+  if (!data || !Array.isArray(data.organic)) {
+    return [];
+  }
+
+  const candidates = [];
+  for (const item of data.organic) {
+    const result = normalizeSerperGeneralResult(item, site);
+    if (result) {
+      candidates.push(result);
+    }
+  }
+
+  return candidates;
+}
+
+function normalizeSerperGeneralResult(item, site) {
+  if (!item || !item.title || !item.link) {
+    return null;
+  }
+
+  // General search snippets sometimes contain price info
+  const snippet = item.snippet || '';
+  const priceInfo = parsePriceValue(snippet);
+  
+  // If no price found in snippet, we can't show it as a product result
+  if (priceInfo.value == null || priceInfo.value <= 0) {
+    return null;
+  }
+
+  const store = resolveStoreInfo({ storeName: '', productUrl: item.link });
+
+  return {
+    title: cleanProductTitle(item.title),
+    priceValue: priceInfo.value,
+    price: formatPriceLabel(priceInfo.value, priceInfo.currency),
+    currency: priceInfo.currency,
+    storeName: store.name,
+    storeId: store.id,
+    storeLogoUrl: buildStoreLogoUrl(site),
+    imageUrl: '',
+    productUrl: item.link,
+    sourceType: 'serper_general',
+    channelType: store.channelType,
+    isLiveDirect: false,
+  };
 }
 
 async function searchSerper(query, apiKey, { location = 'Saudi Arabia', hl = 'ar' } = {}) {
