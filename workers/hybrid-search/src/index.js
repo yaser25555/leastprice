@@ -337,7 +337,7 @@ export default {
 
     if (canUseDataForSeo) {
       apiPromises.push(
-        searchDataForSeo(effectiveApiQuery, {
+        searchDataForSeo(requestedStoreId ? siteSpecificQuery : effectiveApiQuery, {
           location,
           hl,
           login: dataForSeoLogin,
@@ -348,14 +348,14 @@ export default {
 
     if (serpApiKey) {
       apiPromises.push(
-        searchSerpApi(effectiveApiQuery, serpApiKey, { location, hl })
+        searchSerpApi(requestedStoreId ? siteSpecificQuery : effectiveApiQuery, serpApiKey, { location, hl })
           .then(res => serpApiResults = res).catch(() => {})
       );
     }
 
     if (serperApiKey) {
       apiPromises.push(
-        searchSerper(effectiveApiQuery, serperApiKey, { location, hl })
+        searchSerper(requestedStoreId ? siteSpecificQuery : effectiveApiQuery, serperApiKey, { location, hl })
           .then(res => serperResults = res).catch(() => {})
       );
     }
