@@ -1437,8 +1437,8 @@ function parsePriceValue(value) {
   }
 
   // 2. If no currency match, find all candidate numbers
-  // We avoid numbers followed by 'K', 'inch', 'gm', 'kg' etc.
-  const matches = text.match(/([0-9]+(?:\.[0-9]{1,2})?)(?!\s*[kK]|(?:\s*inch)|(?:\s*gm)|(?:\s*kg))/g);
+  // We avoid numbers followed by 'K', 'inch', 'gm', 'kg' or Arabic units like 'بوصة', 'جم', 'مل'
+  const matches = text.match(/([0-9]+(?:\.[0-9]{1,2})?)(?!\s*[kK]|(?:\s*inch)|(?:\s*بوصة)|(?:\s*جم)|(?:\s*مل)|(?:\s*جرام)|(?:\s*كجم))/g);
   if (!matches || matches.length === 0) {
     return { value: null, currency: 'SAR' };
   }
