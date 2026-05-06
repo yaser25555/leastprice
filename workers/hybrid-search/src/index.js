@@ -2,10 +2,10 @@ import * as cheerio from 'cheerio';
 
 const HYBRID_SEARCH_USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 LeastPriceBot/1.0';
-const REQUEST_TIMEOUT_MS = 15000;
+const REQUEST_TIMEOUT_MS = 8000;
 const MAX_RESULTS_PER_STORE = 8;
 const MAX_TOTAL_RESULTS = 40;
-const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key';
+const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key, X-Serper-Key, x-serper-key';
 const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
 const SAUDI_FAMOUS_STORES_ONLY = true;
 
@@ -312,47 +312,46 @@ export default {
     const searchVertical = inferSearchVertical(query);
     const targetedStores = selectStoresForSearch(searchVertical, requestedStoreId);
 
+    // Limit scraping to top 6 stores to improve speed
+    const storesToScrape = targetedStores.slice(0, 6);
+
     let dataForSeoResults = [];
     let serpApiResults = [];
     let serperResults = [];
     let scrapedResults = [];
 
-    const scraperPromise = scrapePriorityStores(query, targetedStores);
+    const scraperPromise = scrapePriorityStores(query, storesToScrape);
+
+    // Run APIs in parallel for better speed if we have multiple keys
+    const apiPromises = [];
 
     if (canUseDataForSeo) {
-      try {
-        dataForSeoResults = await searchDataForSeo(query, {
+      apiPromises.push(
+        searchDataForSeo(query, {
           location,
           hl,
           login: dataForSeoLogin,
           password: dataForSeoPassword,
-        });
-      } catch (error) {
-        console.warn('DataForSEO search failed.', { query, error: String(error) });
-      }
+        }).then(res => dataForSeoResults = res).catch(() => {})
+      );
     }
 
-    if (dataForSeoResults.length === 0 && serpApiKey) {
-      try {
-        serpApiResults = await searchSerpApi(query, serpApiKey, { location, hl });
-      } catch (error) {
-        console.warn('SerpApi search failed.', { query, error: String(error) });
-      }
+    if (serpApiKey) {
+      apiPromises.push(
+        searchSerpApi(query, serpApiKey, { location, hl })
+          .then(res => serpApiResults = res).catch(() => {})
+      );
     }
 
-    if (dataForSeoResults.length === 0 && serpApiResults.length === 0 && serperApiKey) {
-      try {
-        serperResults = await searchSerper(query, serperApiKey, { location, hl });
-      } catch (error) {
-        console.warn('Serper search failed.', { query, error: String(error) });
-      }
+    if (serperApiKey) {
+      apiPromises.push(
+        searchSerper(query, serperApiKey, { location, hl })
+          .then(res => serperResults = res).catch(() => {})
+      );
     }
 
-    try {
-      scrapedResults = await scraperPromise;
-    } catch (error) {
-      console.warn('HTML scraping failed.', { query, error: String(error) });
-    }
+    // Wait for all APIs and Scrapers (with timeout)
+    await Promise.allSettled([...apiPromises, scraperPromise.then(res => scrapedResults = res)]);
 
     const mergedResults = mergeHybridSearchResults([
       ...dataForSeoResults,
@@ -373,24 +372,17 @@ export default {
         query,
         requestedStoreId,
         vertical: searchVertical,
-        targetedStores: targetedStores.map((store) => ({
-          id: store.id,
-          name: store.name,
-          channelType: store.channelType,
-        })),
         counts: {
           total: finalResults.length,
           dataforseo: dataForSeoResults.length,
           serpApi: serpApiResults.length,
+          serper: serperResults.length,
           scraper: scrapedResults.length,
-          hypermarket: finalResults.filter((item) => item.channelType === 'hypermarket')
-            .length,
-          delivery: finalResults.filter((item) => item.channelType === 'delivery').length,
-          pharmacy: finalResults.filter((item) => item.channelType === 'pharmacy').length,
         },
         notice: buildHybridSearchNotice({
           dataForSeoResults,
           serpApiResults,
+          serperResults,
           scrapedResults,
         }),
         results: finalResults,
@@ -984,21 +976,21 @@ function buildHybridSearchResult({
   };
 }
 
-function buildHybridSearchNotice({ dataForSeoResults, serpApiResults, scrapedResults }) {
-  if (scrapedResults.length > 0 && dataForSeoResults.length > 0) {
-    return 'تم دمج نتائج DataForSEO مع الزحف المباشر من مواقع المتاجر المحلية.';
-  }
-  if (scrapedResults.length > 0 && serpApiResults.length > 0) {
-    return 'تم دمج نتائج SerpApi مع الزحف المباشر من مواقع المتاجر المحلية.';
+function buildHybridSearchNotice({ dataForSeoResults, serpApiResults, serperResults, scrapedResults }) {
+  if (scrapedResults.length > 0 && (dataForSeoResults.length > 0 || serpApiResults.length > 0 || serperResults.length > 0)) {
+    return 'تم دمج نتائج البحث العالمية مع الزحف المباشر من مواقع المتاجر المحلية.';
   }
   if (dataForSeoResults.length > 0) {
     return 'تم عرض نتائج DataForSEO حسب المدينة المحددة.';
   }
-  if (scrapedResults.length > 0) {
-    return 'تم عرض نتائج مباشرة من مواقع المتاجر الرسمية.';
+  if (serperResults.length > 0) {
+    return 'تم عرض نتائج Serper.dev بدقة عالية.';
   }
   if (serpApiResults.length > 0) {
-    return 'تم عرض نتائج SerpApi، ولم يتوفر سحب HTML مباشر مناسب حالياً.';
+    return 'تم عرض نتائج SerpApi للمقارنة.';
+  }
+  if (scrapedResults.length > 0) {
+    return 'تم عرض نتائج مباشرة من مواقع المتاجر الرسمية.';
   }
   return 'لم نجد نتائج مناسبة لهذا البحث حالياً.';
 }
