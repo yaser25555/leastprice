@@ -1429,7 +1429,14 @@ function parsePriceValue(value) {
     return { value: null, currency: 'SAR' };
   }
 
-  // Find all candidate numbers
+  // 1. Try to find a number immediately followed or preceded by a currency symbol
+  const currencyMatch = text.match(/((?:SAR|ريال|ر\.?\s?س)\s*([0-9]+(?:\.[0-9]{1,2})?))|(([0-9]+(?:\.[0-9]{1,2})?)\s*(?:SAR|ريال|ر\.?\s?س))/i);
+  if (currencyMatch) {
+    const val = Number.parseFloat(currencyMatch[2] || currencyMatch[4]);
+    if (val > 0) return { value: val, currency: 'SAR' };
+  }
+
+  // 2. If no currency match, find all candidate numbers
   const matches = text.match(/([0-9]+(?:\.[0-9]{1,2})?)/g);
   if (!matches || matches.length === 0) {
     return { value: null, currency: 'SAR' };
@@ -1442,19 +1449,26 @@ function parsePriceValue(value) {
     return { value: null, currency: 'SAR' };
   }
 
-  // Filter out numbers that look like years (1990-2030) if we have other options
-  let finalValue = candidates[0];
+  // Filter out common sizes/years/quantities if possible
+  // We exclude numbers that look like years (1990-2030) or common TV sizes if there's a better alternative
+  const badCandidates = new Set([24, 32, 40, 43, 50, 55, 65, 75, 85, 100, 500, 1000, 2023, 2024, 2025, 2026]);
+  
+  const betterCandidates = candidates.filter(val => !badCandidates.has(val));
+  let finalValue = betterCandidates.length > 0 ? betterCandidates[0] : candidates[0];
+
+  // If we have a very small number and a large number, the large one is more likely the price for electronics
   if (candidates.length > 1) {
-    const nonYear = candidates.filter(val => val < 1900 || val > 2050);
-    if (nonYear.length > 0) {
-      finalValue = nonYear[0];
+    const maxVal = Math.max(...candidates);
+    const minVal = Math.min(...candidates);
+    if (maxVal > 500 && minVal < 100) {
+      // Likely a case of "50 inch TV for 1500 SAR"
+      finalValue = maxVal;
     }
   }
 
-  const currency = /(SAR|ريال|ر\.?\s?س)/i.test(text) ? 'SAR' : 'SAR';
   return {
     value: Number.isFinite(finalValue) ? finalValue : null,
-    currency,
+    currency: 'SAR',
   };
 }
 
