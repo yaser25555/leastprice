@@ -4,8 +4,11 @@ import 'package:http/http.dart' as http;
 
 void main() async {
   final query = 'iphone 14';
-  final apiKey =
-      '8f5e0a4c11cb0e6972f549ee390b083531ca2545ef1c02593c20efae8e917861';
+  const apiKey = String.fromEnvironment('SERPAPI_KEY');
+  if (apiKey.trim().isEmpty) {
+    print('Pass SERPAPI_KEY with --dart-define to run this smoke test.');
+    return;
+  }
 
   final uri = Uri.https('serpapi.com', '/search.json', {
     'engine': 'google_shopping',

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/home/search_info_pill.dart';
-import 'package:leastprice/features/search/barcode_scanner_screen.dart';
-import 'package:leastprice/services/api/open_food_facts_service.dart';
 import 'home_exports.dart';
 
 class ComparisonSearchBarSection extends StatelessWidget {
@@ -220,63 +217,6 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        onPressed: () async {
-                          HapticFeedback.lightImpact();
-                          final result = await Navigator.push<String>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const BarcodeScannerScreen(),
-                            ),
-                          );
-                          if (result != null && result.isNotEmpty) {
-                            if (!context.mounted) return;
-                            // Show a loading dialog while fetching the product name
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => Center(
-                                child: CircularProgressIndicator(
-                                    color: AppPalette.orange),
-                              ),
-                            );
-
-                            final productName = await OpenFoodFactsService
-                                .getProductNameFromBarcode(result);
-
-                            // Close the loading dialog
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-
-                            if (productName != null && productName.isNotEmpty) {
-                              textEditingController.text = productName;
-                              onSubmitted(productName);
-                            } else {
-                              // If OpenFoodFacts didn't find the product, fall back to searching by the raw barcode
-                              textEditingController.text = result;
-                              onSubmitted(result);
-
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(tr(
-                                        'لم نتمكن من التعرف على اسم المنتج، سنبحث برقم الباركود',
-                                        'Could not identify product name, searching by barcode')),
-                                    backgroundColor: AppPalette.dealsRed,
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-                        icon: Icon(
-                          Icons.qr_code_scanner_rounded,
-                          color: AppPalette.orange,
-                        ),
-                        tooltip: tr('بحث بالباركود', 'Search by barcode'),
-                      ),
                       if (hasQuery)
                         IconButton(
                           onPressed: onClearSearch,

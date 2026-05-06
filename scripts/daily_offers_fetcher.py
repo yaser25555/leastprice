@@ -7,7 +7,6 @@ and uploads them to the 'exclusive_deals' Firestore collection.
 """
 
 import os
-import json
 import re
 from datetime import datetime, timedelta
 import argparse
@@ -21,10 +20,7 @@ from firebase_admin import credentials, firestore
 
 # Constants
 COLLECTION_NAME = "exclusive_deals"
-DEFAULT_CREDENTIALS_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    "leastprice-yaser-firebase-adminsdk-fbsvc-759edd3dbc.json"
-)
+DEFAULT_CREDENTIALS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
 
 # Target stores and their official offers URLs
 STORE_URLS_MAP = {
@@ -43,6 +39,10 @@ STORE_URLS_MAP = {
 TARGET_STORES = list(STORE_URLS_MAP.keys())
 
 def initialize_firebase(credentials_path):
+    if not credentials_path:
+        raise RuntimeError(
+            "Missing --credentials or GOOGLE_APPLICATION_CREDENTIALS."
+        )
     if not os.path.exists(credentials_path):
         raise FileNotFoundError(f"Credentials file not found: {credentials_path}")
     

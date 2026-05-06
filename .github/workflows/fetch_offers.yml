@@ -22,6 +22,23 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install requests beautifulsoup4 firebase-admin
+
+    - name: Write Firebase service account
+      env:
+        FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        python - <<'PY'
+        import os
+        from pathlib import Path
+
+        payload = os.environ["FIREBASE_SERVICE_ACCOUNT_JSON"]
+        target = Path(os.environ["RUNNER_TEMP"]) / "leastprice-service-account.json"
+        target.write_text(payload, encoding="utf-8")
+
+        github_env = Path(os.environ["GITHUB_ENV"])
+        with github_env.open("a", encoding="utf-8") as handle:
+            handle.write(f"GOOGLE_APPLICATION_CREDENTIALS={target}\n")
+        PY
         
     - name: Run Scraper Bot
       env:

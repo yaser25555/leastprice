@@ -15,6 +15,7 @@ class LeastPriceDataConfig {
   static const String usersCollectionName = 'users';
   static const String popularProductsCollectionName = 'popular_products';
   static const String searchRequestsCollectionName = 'search_requests';
+  static const String barcodeFeedbackCollectionName = 'barcode_feedback';
   static const String systemHealthCollectionName = 'system_health';
   static const String systemHealthDocumentId = 'daily_price_bot';
   static const String remoteJsonUrl =
@@ -88,4 +89,8 @@ class LeastPriceDataConfig {
   static const String tavilyApiKey =
       String.fromEnvironment('TAVILY_API_KEY', defaultValue: '');
   static const bool enableAutomaticPriceRefresh = true;
+  static const bool enableDirectClientSearchFallback = bool.fromEnvironment(
+    'ENABLE_DIRECT_CLIENT_SEARCH_FALLBACK',
+    defaultValue: false,
+  );
 }

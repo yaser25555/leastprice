@@ -186,7 +186,8 @@ class SerpApiShoppingSearchService {
     }
 
     final apiKey = LeastPriceDataConfig.serpApiKey.trim();
-    if (apiKey.isEmpty) {
+    if (apiKey.isEmpty &&
+        LeastPriceDataConfig.enableDirectClientSearchFallback) {
       return ComparisonSearchResponse(
         results: cachedEntry?.results ?? const <ComparisonSearchResult>[],
         fromCache: cachedEntry != null,
@@ -207,13 +208,24 @@ class SerpApiShoppingSearchService {
     }
 
     try {
-      final results = await _fetchLiveResults(
+      var results = await _fetchHybridResults(
         effectiveQuery,
-        apiKey,
         city: city,
         targetStoreId: targetStoreId,
         startOffset: startOffset,
       );
+      if (!kIsWeb &&
+          results.isEmpty &&
+          apiKey.isNotEmpty &&
+          LeastPriceDataConfig.enableDirectClientSearchFallback) {
+        results = await _fetchDirectProviderResults(
+          effectiveQuery,
+          apiKey,
+          city: city,
+          targetStoreId: targetStoreId,
+          startOffset: startOffset,
+        );
+      }
       if (results.isNotEmpty && startOffset == 0) {
         // Save to Local Cache
         try {
@@ -258,6 +270,33 @@ class SerpApiShoppingSearchService {
         effectiveQuery: effectiveQuery,
       );
     } catch (e) {
+      if (!kIsWeb &&
+          apiKey.isNotEmpty &&
+          LeastPriceDataConfig.enableDirectClientSearchFallback) {
+        try {
+          final fallbackResults = await _fetchDirectProviderResults(
+            effectiveQuery,
+            apiKey,
+            city: city,
+            targetStoreId: targetStoreId,
+            startOffset: startOffset,
+          );
+          if (fallbackResults.isNotEmpty) {
+            return _buildResponse(
+              results: fallbackResults,
+              fromCache: false,
+              notice: tr(
+                'ØªÙ… Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…ØµØ¯Ø± Ø¨Ø­Ø« Ø¨Ø¯ÙŠÙ„ Ø¨Ø¹Ø¯ ØªØ¹Ø°Ø± Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ù‡Ø¬ÙŠÙ†.',
+                'A fallback search source was used after hybrid search was unavailable.',
+              ),
+              effectiveQuery: effectiveQuery,
+            );
+          }
+        } catch (fallbackError) {
+          debugPrint('LeastPrice direct search fallback failed: $fallbackError');
+        }
+      }
+
       if (cachedEntry != null && cachedEntry.results.isNotEmpty) {
         return _buildResponse(
           results: cachedEntry.results,
@@ -326,7 +365,78 @@ class SerpApiShoppingSearchService {
     return barcode;
   }
 
-  Future<List<ComparisonSearchResult>> _fetchLiveResults(
+  Future<List<ComparisonSearchResult>> _fetchHybridResults(
+    String effectiveQuery, {
+    required MarketplaceSearchCity city,
+    String? targetStoreId,
+    int startOffset = 0,
+  }) async {
+    final baseUrl = _hybridSearchBaseUrl();
+    final pageNum = (startOffset / 20).floor() + 1;
+    final uri = Uri.parse(
+      '$baseUrl'
+      '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
+      '&hl=${isAr ? 'ar' : 'en'}'
+      '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}'
+      '&page=$pageNum',
+    );
+
+    final response = await http.get(
+      uri,
+      headers: const {
+        'accept': 'application/json',
+      },
+    ).timeout(const Duration(seconds: 25));
+    if (response.statusCode >= 400) {
+      throw Exception(
+          'Hybrid marketplace search responded with ${response.statusCode}');
+    }
+
+    final payload = jsonDecode(response.body);
+    if (payload is! Map<String, dynamic>) {
+      throw const FormatException('Unexpected hybrid search payload');
+    }
+
+    final rows = payload['results'];
+    final hybridResults = rows is List
+        ? rows
+            .whereType<Map>()
+            .map(
+              (row) => ComparisonSearchResult.fromJson(
+                Map<String, dynamic>.from(row),
+              ),
+            )
+            .where(
+              (result) =>
+                  result.title.trim().isNotEmpty &&
+                  result.productUrl.trim().isNotEmpty &&
+                  result.price > 0,
+            )
+            .toList()
+        : <ComparisonSearchResult>[];
+
+    final filteredHybridResults = _filterSupportedSaudiStoreResults(
+      hybridResults,
+      targetStoreId: targetStoreId,
+    );
+    filteredHybridResults.sort(_compareSearchResults);
+    return filteredHybridResults;
+  }
+
+  String _hybridSearchBaseUrl() {
+    if (kIsWeb) {
+      final origin = Uri.base.origin;
+      final isLocalhost =
+          origin.contains('localhost') || origin.contains('127.0.0.1');
+      if (!isLocalhost) {
+        return '$origin/api/${LeastPriceDataConfig.hybridSearchFunctionName}';
+      }
+    }
+
+    return 'https://${LeastPriceDataConfig.functionsRegion}-leastprice-yaser.cloudfunctions.net/${LeastPriceDataConfig.hybridSearchFunctionName}';
+  }
+
+  Future<List<ComparisonSearchResult>> _fetchDirectProviderResults(
     String effectiveQuery,
     String apiKey, {
     required MarketplaceSearchCity city,

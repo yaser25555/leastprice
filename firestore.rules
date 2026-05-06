@@ -17,6 +17,97 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.adminRole == 'marketing_manager';
     }
 
+    function isValidSearchText(value) {
+      return value is string &&
+        value.size() >= 2 &&
+        value.size() <= 120;
+    }
+
+    function isValidSearchRequestCreate() {
+      return request.resource.data.keys().hasOnly([
+        'query',
+        'normalizedQuery',
+        'categoryId',
+        'categoryLabel',
+        'requestCount',
+        'status',
+        'source',
+        'firstRequestedAt',
+        'lastRequestedAt'
+      ]) &&
+      isValidSearchText(request.resource.data.query) &&
+      isValidSearchText(request.resource.data.normalizedQuery) &&
+      request.resource.data.categoryId is string &&
+      request.resource.data.categoryId.size() <= 40 &&
+      request.resource.data.categoryLabel is string &&
+      request.resource.data.categoryLabel.size() <= 80 &&
+      request.resource.data.requestCount == 1 &&
+      request.resource.data.status == 'pending' &&
+      request.resource.data.source == 'app_search';
+    }
+
+    function isValidSearchRequestUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'query',
+        'normalizedQuery',
+        'categoryId',
+        'categoryLabel',
+        'requestCount',
+        'status',
+        'source',
+        'lastRequestedAt'
+      ]) &&
+      isValidSearchText(request.resource.data.query) &&
+      isValidSearchText(request.resource.data.normalizedQuery) &&
+      request.resource.data.categoryId is string &&
+      request.resource.data.categoryId.size() <= 40 &&
+      request.resource.data.categoryLabel is string &&
+      request.resource.data.categoryLabel.size() <= 80 &&
+      request.resource.data.requestCount is int &&
+      request.resource.data.requestCount >= resource.data.requestCount &&
+      request.resource.data.requestCount <= resource.data.requestCount + 1 &&
+      request.resource.data.requestCount <= 1000 &&
+      request.resource.data.status == 'pending' &&
+      request.resource.data.source == 'app_search';
+    }
+
+    function isValidBarcodeFeedbackCreate() {
+      return request.resource.data.keys().hasOnly([
+        'barcode',
+        'normalizedBarcode',
+        'productName',
+        'categoryLabel',
+        'cityLabel',
+        'selectedStore',
+        'status',
+        'source',
+        'userId',
+        'userEmail',
+        'createdAt',
+        'updatedAt'
+      ]) &&
+      request.resource.data.barcode is string &&
+      request.resource.data.barcode.size() >= 8 &&
+      request.resource.data.barcode.size() <= 32 &&
+      request.resource.data.normalizedBarcode is string &&
+      request.resource.data.normalizedBarcode.size() >= 8 &&
+      request.resource.data.normalizedBarcode.size() <= 32 &&
+      isValidSearchText(request.resource.data.productName) &&
+      (!('categoryLabel' in request.resource.data) ||
+        (request.resource.data.categoryLabel is string &&
+         request.resource.data.categoryLabel.size() <= 80)) &&
+      (!('cityLabel' in request.resource.data) ||
+        (request.resource.data.cityLabel is string &&
+         request.resource.data.cityLabel.size() <= 80)) &&
+      (!('selectedStore' in request.resource.data) ||
+        (request.resource.data.selectedStore is string &&
+         request.resource.data.selectedStore.size() <= 80)) &&
+      request.resource.data.status == 'pending_review' &&
+      request.resource.data.source == 'barcode_manual_help' &&
+      (!('userId' in request.resource.data) ||
+        request.resource.data.userId == request.auth.uid);
+    }
+
     match /products/{productId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
@@ -39,7 +130,7 @@ service cloud.firestore {
 
     match /comparison_search_cache/{documentId} {
       allow read: if true;
-      allow create, update: if isSignedIn();
+      allow create, update: if isAdmin();
       allow delete: if isAdmin();
     }
 
@@ -54,8 +145,14 @@ service cloud.firestore {
     }
 
     match /search_requests/{documentId} {
-      allow create, update: if isSignedIn();
+      allow create: if isSignedIn() && isValidSearchRequestCreate();
+      allow update: if isSignedIn() && isValidSearchRequestUpdate();
       allow read, delete: if isAdmin();
+    }
+
+    match /barcode_feedback/{documentId} {
+      allow create: if isSignedIn() && isValidBarcodeFeedbackCreate();
+      allow read, update, delete: if isAdmin();
     }
 
     match /users/{userId} {

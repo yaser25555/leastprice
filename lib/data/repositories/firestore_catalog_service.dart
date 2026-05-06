@@ -38,6 +38,8 @@ class FirestoreCatalogService {
           .collection(LeastPriceDataConfig.comparisonSearchCacheCollectionName);
   CollectionReference<Map<String, dynamic>> get _usersCollection =>
       firestore.collection(LeastPriceDataConfig.usersCollectionName);
+  CollectionReference<Map<String, dynamic>> get _barcodeFeedbackCollection =>
+      firestore.collection(LeastPriceDataConfig.barcodeFeedbackCollectionName);
   CollectionReference<Map<String, dynamic>> get _systemHealthCollection =>
       firestore.collection(LeastPriceDataConfig.systemHealthCollectionName);
   CollectionReference<Map<String, dynamic>> get _searchRequestsCollection =>
@@ -607,6 +609,39 @@ class FirestoreCatalogService {
     }
 
     await requestDocument.set(createPayload, SetOptions(merge: true));
+  }
+
+  Future<void> submitBarcodeFeedback({
+    required String barcode,
+    required String productName,
+    String? categoryLabel,
+    String? cityLabel,
+    String? selectedStore,
+  }) async {
+    final trimmedBarcode = barcode.trim();
+    final trimmedProductName = productName.trim();
+    if (trimmedBarcode.length < 8 || trimmedProductName.length < 2) {
+      return;
+    }
+
+    final currentUser = FirebaseAuth.instance.currentUser;
+    await _barcodeFeedbackCollection.add({
+      'barcode': trimmedBarcode,
+      'normalizedBarcode': normalizeArabic(trimmedBarcode),
+      'productName': trimmedProductName,
+      if ((categoryLabel ?? '').trim().isNotEmpty)
+        'categoryLabel': categoryLabel!.trim(),
+      if ((cityLabel ?? '').trim().isNotEmpty) 'cityLabel': cityLabel!.trim(),
+      if ((selectedStore ?? '').trim().isNotEmpty)
+        'selectedStore': selectedStore!.trim(),
+      'status': 'pending_review',
+      'source': 'barcode_manual_help',
+      if (currentUser != null) 'userId': currentUser.uid,
+      if ((currentUser?.email ?? '').trim().isNotEmpty)
+        'userEmail': currentUser!.email!.trim().toLowerCase(),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> submitRating(

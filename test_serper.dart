@@ -4,7 +4,11 @@ import 'package:http/http.dart' as http;
 
 void main() async {
   final query = 'iphone 14';
-  final apiKey = 'f7fa2546aac3050cc7972a4265217d42c3c38ff4c';
+  const apiKey = String.fromEnvironment('SERPER_API_KEY');
+  if (apiKey.trim().isEmpty) {
+    print('Pass SERPER_API_KEY with --dart-define to run this smoke test.');
+    return;
+  }
 
   final uri = Uri.https('google.serper.dev', '/search');
   final response = await http.post(
