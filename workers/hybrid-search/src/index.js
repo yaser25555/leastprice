@@ -1420,23 +1420,55 @@ function parsePriceValue(value) {
     return { value, currency: 'SAR' };
   }
 
-  const normalized = normalizeDigits(String(value))
+  const text = normalizeDigits(String(value))
     .replace(/&nbsp;/gi, ' ')
     .replace(/[,،]/g, '')
     .trim();
-  if (!normalized) {
+
+  if (!text) {
     return { value: null, currency: 'SAR' };
   }
 
-  const currency = /(SAR|ريال|ر\.?\s?س)/i.test(normalized) ? 'SAR' : 'SAR';
-  const match = normalized.match(/([0-9]+(?:\.[0-9]{1,2})?)/);
-  if (!match) {
-    return { value: null, currency };
+  // Common keywords that indicate this is NOT the main price (e.g. installment, year)
+  const ignorePatterns = [
+    /\b(قسط|شهري|شهر|monthly|installment|starts from|ابتداء من)\b/i,
+  ];
+  
+  if (ignorePatterns.some(p => p.test(text))) {
+    // If it contains installment keywords, we should be very careful or skip
+    // For now, let's just try to find a number that ISN'T the installment one if possible
   }
 
-  const parsed = Number.parseFloat(match[1]);
+  // Find all candidate numbers
+  const matches = [...text.matchAll(/([0-9]+(?:\.[0-9]{1,2})?)/g)];
+  if (matches.length === 0) {
+    return { value: null, currency: 'SAR' };
+  }
+
+  // Filter out numbers that look like years (1990-2030) unless they are the only number
+  const candidates = matches.map(m => Number.parseFloat(m[1]))
+    .filter(val => val > 0);
+
+  if (candidates.length === 0) {
+    return { value: null, currency: 'SAR' };
+  }
+
+  let finalValue = candidates[0];
+
+  // If we have multiple numbers, try to pick the one that's NOT a year
+  if (candidates.length > 1) {
+    const nonYearCandidates = candidates.filter(val => val < 1900 || val > 2050);
+    if (nonYearCandidates.length > 0) {
+      finalValue = nonYearCandidates[0];
+    } else {
+      // If all look like years, pick the one that doesn't end in 0 or 4/5 if multiple
+      finalValue = candidates[0];
+    }
+  }
+
+  const currency = /(SAR|ريال|ر\.?\s?س)/i.test(text) ? 'SAR' : 'SAR';
   return {
-    value: Number.isFinite(parsed) ? parsed : null,
+    value: Number.isFinite(finalValue) ? finalValue : null,
     currency,
   };
 }
