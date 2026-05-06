@@ -391,10 +391,12 @@ class SerpApiShoppingSearchService {
       '${targetStoreId != null && targetStoreId.trim().isNotEmpty ? '&store=${Uri.encodeQueryComponent(targetStoreId)}' : ''}',
     );
 
+    final apiKey = LeastPriceDataConfig.serpApiKey.trim();
     final response = await http.get(
       uri,
-      headers: const {
+      headers: {
         'accept': 'application/json',
+        if (apiKey.isNotEmpty) 'x-serpapi-key': apiKey,
       },
     ).timeout(const Duration(seconds: 25));
     if (response.statusCode >= 400) {
