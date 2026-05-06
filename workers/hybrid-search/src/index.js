@@ -1436,15 +1436,33 @@ function parsePriceValue(value) {
     if (val > 0) return { value: val, currency: 'SAR' };
   }
 
-  // 2. If no currency match, find all candidate numbers
-  // We avoid numbers followed by 'K', 'inch', 'gm', 'kg' or Arabic units like 'بوصة', 'جم', 'مل'
-  const matches = text.match(/([0-9]+(?:\.[0-9]{1,2})?)(?!\s*[kK]|(?:\s*inch)|(?:\s*بوصة)|(?:\s*جم)|(?:\s*مل)|(?:\s*جرام)|(?:\s*كجم))/g);
-  if (!matches || matches.length === 0) {
+  // 2. If no currency match, find all candidate numbers and check their context
+  const matches = [...text.matchAll(/([0-9]+(?:\.[0-9]{1,2})?)/g)];
+  if (matches.length === 0) {
     return { value: null, currency: 'SAR' };
   }
 
-  const candidates = matches.map(m => Number.parseFloat(m))
-    .filter(val => val > 0 && !isNaN(val));
+  const forbiddenUnits = ['k', 'inch', 'بوصة', 'جم', 'مل', 'جرام', 'كجم', 'وات', 'w', 'v', 'فولت'];
+  const candidates = [];
+
+  for (const match of matches) {
+    const val = Number.parseFloat(match[1]);
+    if (isNaN(val) || val <= 0) continue;
+
+    // Check the text immediately following this number
+    const index = match.index;
+    const afterText = text.slice(index + match[0].length, index + match[0].length + 15).toLowerCase();
+    
+    const isForbidden = forbiddenUnits.some(unit => {
+      // Ensure the unit is not part of another word, e.g. "SAR"
+      const unitRegex = new RegExp(`^\\s*${unit}\\b|^\\s*${unit}\\s`, 'i');
+      return unitRegex.test(afterText);
+    });
+
+    if (!isForbidden) {
+      candidates.push(val);
+    }
+  }
 
   if (candidates.length === 0) {
     return { value: null, currency: 'SAR' };
