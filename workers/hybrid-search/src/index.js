@@ -1425,44 +1425,29 @@ function parsePriceValue(value) {
     .replace(/[,،]/g, '')
     .trim();
 
-  if (!text) {
+  if (!text || text.length > 500) {
     return { value: null, currency: 'SAR' };
-  }
-
-  // Common keywords that indicate this is NOT the main price (e.g. installment, year)
-  const ignorePatterns = [
-    /\b(قسط|شهري|شهر|monthly|installment|starts from|ابتداء من)\b/i,
-  ];
-  
-  if (ignorePatterns.some(p => p.test(text))) {
-    // If it contains installment keywords, we should be very careful or skip
-    // For now, let's just try to find a number that ISN'T the installment one if possible
   }
 
   // Find all candidate numbers
-  const matches = [...text.matchAll(/([0-9]+(?:\.[0-9]{1,2})?)/g)];
-  if (matches.length === 0) {
+  const matches = text.match(/([0-9]+(?:\.[0-9]{1,2})?)/g);
+  if (!matches || matches.length === 0) {
     return { value: null, currency: 'SAR' };
   }
 
-  // Filter out numbers that look like years (1990-2030) unless they are the only number
-  const candidates = matches.map(m => Number.parseFloat(m[1]))
-    .filter(val => val > 0);
+  const candidates = matches.map(m => Number.parseFloat(m))
+    .filter(val => val > 0 && !isNaN(val));
 
   if (candidates.length === 0) {
     return { value: null, currency: 'SAR' };
   }
 
+  // Filter out numbers that look like years (1990-2030) if we have other options
   let finalValue = candidates[0];
-
-  // If we have multiple numbers, try to pick the one that's NOT a year
   if (candidates.length > 1) {
-    const nonYearCandidates = candidates.filter(val => val < 1900 || val > 2050);
-    if (nonYearCandidates.length > 0) {
-      finalValue = nonYearCandidates[0];
-    } else {
-      // If all look like years, pick the one that doesn't end in 0 or 4/5 if multiple
-      finalValue = candidates[0];
+    const nonYear = candidates.filter(val => val < 1900 || val > 2050);
+    if (nonYear.length > 0) {
+      finalValue = nonYear[0];
     }
   }
 
