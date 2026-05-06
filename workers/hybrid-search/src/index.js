@@ -312,6 +312,15 @@ export default {
     const searchVertical = inferSearchVertical(query);
     const targetedStores = selectStoresForSearch(searchVertical, requestedStoreId);
 
+    // If a specific store is requested, we can use the 'site:' operator to get more accurate results from APIs
+    let effectiveApiQuery = query;
+    if (requestedStoreId) {
+      const requestedStore = PRIORITY_STORES.find(s => s.id === requestedStoreId.toLowerCase());
+      if (requestedStore && requestedStore.hosts && requestedStore.hosts.length > 0) {
+        effectiveApiQuery = `site:${requestedStore.hosts[0]} ${query}`;
+      }
+    }
+
     // Limit scraping to top 6 stores to improve speed
     const storesToScrape = targetedStores.slice(0, 6);
 
@@ -327,7 +336,7 @@ export default {
 
     if (canUseDataForSeo) {
       apiPromises.push(
-        searchDataForSeo(query, {
+        searchDataForSeo(effectiveApiQuery, {
           location,
           hl,
           login: dataForSeoLogin,
@@ -338,14 +347,14 @@ export default {
 
     if (serpApiKey) {
       apiPromises.push(
-        searchSerpApi(query, serpApiKey, { location, hl })
+        searchSerpApi(effectiveApiQuery, serpApiKey, { location, hl })
           .then(res => serpApiResults = res).catch(() => {})
       );
     }
 
     if (serperApiKey) {
       apiPromises.push(
-        searchSerper(query, serperApiKey, { location, hl })
+        searchSerper(effectiveApiQuery, serperApiKey, { location, hl })
           .then(res => serperResults = res).catch(() => {})
       );
     }
@@ -1268,7 +1277,14 @@ function isRelevantToQuery(title, query) {
     return true;
   }
 
-  return tokens.some((token) => normalizedTitle.includes(token));
+  // If query is short (1-2 words), require at least one token
+  if (tokens.length <= 2) {
+    return tokens.some((token) => normalizedTitle.includes(token));
+  }
+
+  // For longer queries, require at least 50% of tokens to match to increase accuracy
+  const matchCount = tokens.filter((token) => normalizedTitle.includes(token)).length;
+  return matchCount >= Math.ceil(tokens.length / 2);
 }
 
 function cleanProductTitle(title) {
