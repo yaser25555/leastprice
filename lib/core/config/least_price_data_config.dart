@@ -14,7 +14,8 @@ class LeastPriceDataConfig {
   static const String hybridSearchFunctionName = 'hybridMarketplaceSearch';
   static const String hybridSearchBaseUrlOverride = String.fromEnvironment(
     'HYBRID_SEARCH_BASE_URL',
-    defaultValue: 'https://leastprice-hybrid-search.leastprice-yaser.workers.dev',
+    defaultValue:
+        'https://leastprice-hybrid-search.leastprice-yaser.workers.dev',
   );
   static const String usersCollectionName = 'users';
   static const String popularProductsCollectionName = 'popular_products';

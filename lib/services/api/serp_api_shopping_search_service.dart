@@ -301,7 +301,8 @@ class SerpApiShoppingSearchService {
             );
           }
         } catch (fallbackError) {
-          debugPrint('LeastPrice direct search fallback failed: $fallbackError');
+          debugPrint(
+              'LeastPrice direct search fallback failed: $fallbackError');
         }
       }
 
@@ -433,8 +434,7 @@ class SerpApiShoppingSearchService {
   }
 
   String _hybridSearchBaseUrl() {
-    final override =
-        LeastPriceDataConfig.hybridSearchBaseUrlOverride.trim();
+    final override = LeastPriceDataConfig.hybridSearchBaseUrlOverride.trim();
     if (override.isNotEmpty) {
       return override.endsWith('/')
           ? override.substring(0, override.length - 1)
