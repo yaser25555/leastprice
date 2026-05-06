@@ -397,6 +397,14 @@ export default {
         query,
         requestedStoreId,
         vertical: searchVertical,
+        debug: {
+          effectiveApiQuery,
+          targetedStores: targetedStores.map(s => s.id),
+          storesToScrape: storesToScrape.map(s => s.id),
+          canUseDataForSeo,
+          hasSerpApiKey: !!serpApiKey,
+          hasSerperApiKey: !!serperApiKey,
+        },
         counts: {
           total: finalResults.length,
           dataforseo: dataForSeoResults.length,
