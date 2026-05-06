@@ -27,14 +27,14 @@ async function runTests() {
   for (const test of queries) {
     const url = `${workerUrl}?q=${encodeURIComponent(test.q)}&store=${test.store}`;
     console.log(`\nTesting: "${test.q}" in ${test.store}`);
-    console.log(`URL: ${url}`);
     try {
       const result = await fetchJson(url);
       const data = result.data;
       
       console.log(`Status: ${result.status}`);
+      console.log(`Debug: ${JSON.stringify(data.debug, null, 2)}`);
       console.log(`Counts: ${JSON.stringify(data.counts)}`);
-      console.log(`Total Results: ${data.results?.length || 0}`);
+      console.log(`Notice: ${data.notice}`);
       
       if (data.results && data.results.length > 0) {
         console.log(`Top result: ${data.results[0].title} - ${data.results[0].price} at ${data.results[0].storeName}`);

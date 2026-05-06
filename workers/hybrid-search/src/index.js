@@ -312,12 +312,15 @@ export default {
     const searchVertical = inferSearchVertical(query);
     const targetedStores = selectStoresForSearch(searchVertical, requestedStoreId);
 
-    // If a specific store is requested, we can use the 'site:' operator to get more accurate results from APIs
-    let effectiveApiQuery = query;
+    // For Shopping APIs, 'site:' operator often breaks results. 
+    // We'll use the clean query for APIs and filter locally, 
+    // but we'll keep the site-specific query for the general search fallback.
+    const effectiveApiQuery = query;
+    let siteSpecificQuery = query;
     if (requestedStoreId) {
       const requestedStore = PRIORITY_STORES.find(s => s.id === requestedStoreId.toLowerCase());
       if (requestedStore && requestedStore.hosts && requestedStore.hosts.length > 0) {
-        effectiveApiQuery = `site:${requestedStore.hosts[0]} ${query}`;
+        siteSpecificQuery = `site:${requestedStore.hosts[0]} ${query}`;
       }
     }
 
@@ -399,6 +402,7 @@ export default {
         vertical: searchVertical,
         debug: {
           effectiveApiQuery,
+          siteSpecificQuery,
           targetedStores: targetedStores.map(s => s.id),
           storesToScrape: storesToScrape.map(s => s.id),
           canUseDataForSeo,
