@@ -411,6 +411,12 @@ export default {
           canUseDataForSeo,
           hasSerpApiKey: !!serpApiKey,
           hasSerperApiKey: !!serperApiKey,
+          mergedCount: mergedResults.length,
+          firstMergedResult: mergedResults.length > 0 ? {
+            title: mergedResults[0].title,
+            storeId: mergedResults[0].storeId,
+            productUrl: mergedResults[0].productUrl
+          } : null
         },
         counts: {
           total: finalResults.length,
