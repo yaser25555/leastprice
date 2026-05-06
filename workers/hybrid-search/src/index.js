@@ -7,7 +7,7 @@ const MAX_RESULTS_PER_STORE = 8;
 const MAX_TOTAL_RESULTS = 40;
 const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key, X-Serper-Key, x-serper-key';
 const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
-const SAUDI_FAMOUS_STORES_ONLY = true;
+const SAUDI_FAMOUS_STORES_ONLY = false;
 
 const PRIORITY_STORES = [
   {
