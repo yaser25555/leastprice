@@ -18,9 +18,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
     required this.availableCities,
     required this.selectedCityId,
     required this.selectedCategory,
-    required this.selectedStore,
     required this.onCategorySelected,
-    required this.onStoreSelected,
     required this.onCitySelected,
     required this.onClearSearch,
     required this.onSubmitted,
@@ -37,36 +35,11 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final List<MarketplaceSearchCity> availableCities;
   final String selectedCityId;
   final String? selectedCategory;
-  final String selectedStore;
   final ValueChanged<String> onCategorySelected;
-  final ValueChanged<String> onStoreSelected;
   final ValueChanged<String> onCitySelected;
   final VoidCallback onClearSearch;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onDetectCityTap;
-
-  static const List<String> supportedStores = [
-    'الكل',
-    'بنده',
-    'العثيم',
-    'كارفور',
-    'الدانوب',
-    'التميمي',
-    'لولو',
-    'جرير',
-    'اكسترا',
-    'أمازون',
-    'نون',
-    'نمشي',
-    'نايس ون',
-    'قولدن سنت',
-    'النهدي',
-    'الدواء',
-    'ايكيا',
-    'ساكو',
-    'ابيات',
-    'هوم سنتر',
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -362,68 +335,6 @@ class ComparisonSearchBarSection extends StatelessWidget {
                       icon: Icon(
                         Icons.my_location_rounded,
                         color: AppPalette.accentSkyDeep,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                decoration: BoxDecoration(
-                  color: appleStyle
-                      ? AppPalette.cardBackground
-                      : AppPalette.deepNavy,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: appleStyle
-                        ? const Color(0xFFDCE1EA)
-                        : AppPalette.paleOrange,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.storefront_outlined,
-                      color: AppPalette.accentSkyDeep,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedStore,
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(18),
-                          dropdownColor: AppPalette.cardBackground,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            color: AppPalette.orange,
-                            fontSize: 14.5,
-                          ),
-                          icon: Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppPalette.orange,
-                          ),
-                          items: supportedStores
-                              .map(
-                                (store) => DropdownMenuItem<String>(
-                                  value: store,
-                                  child: Text(
-                                    store,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      color: AppPalette.orange,
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            if (value != null) onStoreSelected(value);
-                          },
-                        ),
                       ),
                     ),
                   ],

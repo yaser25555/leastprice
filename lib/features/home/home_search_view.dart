@@ -42,18 +42,12 @@ class HomeSearchView {
             availableCities: marketplaceSearchCities,
             selectedCityId: state.selectedCity.id,
             selectedCategory: state.selectedCategory,
-            selectedStore: state.selectedStore,
+            selectedCategory: state.selectedCategory,
             onCategorySelected: (category) {
               if (state.selectedCategory == category) {
                 notifier.setCategory(null);
               } else {
                 notifier.setCategory(category);
-              }
-            },
-            onStoreSelected: (store) {
-              notifier.setStore(store);
-              if (state.query.trim().isNotEmpty && state.hasInternet) {
-                notifier.performSearch(forceRefresh: true);
               }
             },
             onCitySelected: (cityId) {
