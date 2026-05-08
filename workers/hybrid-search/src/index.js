@@ -49,6 +49,13 @@ const PRIORITY_STORES = [
     searchUrls: [
       (query) => `https://panda.sa/ar/plp?search_key=${encodeURIComponent(query)}`,
     ],
+    // Store-specific selectors to increase accuracy
+    selectors: {
+      card: 'div.relative.flex.flex-col.overflow-hidden',
+      title: 'a.line-clamp-3',
+      price: 'div.flex.items-baseline.gap-1 span',
+      image: 'img[data-nimg="1"]',
+    },
   },
   {
     id: 'othaim',
@@ -327,9 +334,9 @@ export default {
     let dataForSeoResults = [];
     let serpApiResults = [];
     let serperResults = [];
+    // Scraper is disabled to prioritize accuracy and trust.
+    const scraperPromise = Promise.resolve([]);
     let scrapedResults = [];
-
-    const scraperPromise = scrapePriorityStores(query, storesToScrape);
 
     // Run APIs in parallel for better speed if we have multiple keys
     const apiPromises = [];
@@ -921,7 +928,11 @@ function extractCardResults($, store, searchUrl, query) {
     'div.relative.flex.flex-col',
   ];
 
-  for (const selector of selectors) {
+  // Use store-specific selectors if available
+  const customSelectors = store.selectors || {};
+  const searchSelectors = customSelectors.card ? [customSelectors.card, ...selectors] : selectors;
+
+  for (const selector of searchSelectors) {
     $(selector)
       .slice(0, 80)
       .each((_, element) => {
@@ -942,10 +953,12 @@ function extractCardResults($, store, searchUrl, query) {
 }
 
 function buildScrapedResultFromCard(card, store, searchUrl, query) {
+  const customSelectors = store.selectors || {};
   const title = cleanProductTitle(
     firstNonEmpty([
       card.attr('data-name'),
       card.attr('data-product-name'),
+      customSelectors.title ? card.find(customSelectors.title).first().text() : null,
       card.find('[itemprop="name"]').attr('content'),
       card.find('[itemprop="name"]').first().text(),
       card.find('[data-testid*="product-name"]').first().text(),
@@ -969,6 +982,7 @@ function buildScrapedResultFromCard(card, store, searchUrl, query) {
     firstNonEmpty([
       card.attr('data-price'),
       card.attr('data-product-price'),
+      customSelectors.price ? card.find(customSelectors.price).first().text() : null,
       card.find('[itemprop="price"]').attr('content'),
       card.find('[data-price]').attr('data-price'),
       card.find('[class*="price"]').first().text(),
@@ -1386,14 +1400,22 @@ function isRelevantToQuery(title, query) {
     return true;
   }
 
-  // If query is short (1-2 words), require at least one token
-  if (tokens.length <= 2) {
-    return tokens.some((token) => normalizedTitle.includes(token));
+  // Blacklist check to avoid ads, flyers, etc.
+  const blacklist = ['مجلة', 'عروض', 'بروشور', 'flyer', 'magazine', 'offers'];
+  if (blacklist.some(term => normalizedTitle.includes(term))) {
+    return false;
   }
 
-  // For longer queries, require at least 50% of tokens to match to increase accuracy
+  // Exact phrase match for short queries (1 word)
+  if (tokens.length === 1) {
+    return normalizedTitle.includes(tokens[0]);
+  }
+
+  // For longer queries, require at least 60% of tokens to match
   const matchCount = tokens.filter((token) => normalizedTitle.includes(token)).length;
-  return matchCount >= Math.ceil(tokens.length / 2);
+  const matchPercentage = matchCount / tokens.length;
+  
+  return matchPercentage >= 0.6;
 }
 
 function cleanProductTitle(title) {
@@ -1455,8 +1477,9 @@ function parsePriceValue(value) {
     'k', 'inch', 'بوصة', 'جم', 'مل', 'جرام', 'كجم', 'وات', 'w', 'v', 'فولت', 
     'هرتز', 'hz', 'fps', 'gb', 'mb', 'tb', 'جيجا', 'ميج', 'بكسل', 'pixel',
     'l', 'لتر', 'pcs', 'حبة', 'قطعة', 'sachet', 'كيس', 'عبوة', 'mg', 'ملجم', 'مجم',
-    'gm', 'g', 'kg', 'lb', 'oz'
+    'gm', 'g', 'kg', 'lb', 'oz', '100g', '100مل', '100جرام', '100g', '100'
   ];
+  const unitKeywords = ['لكل', 'سعر الوحدة', 'per', 'unit'];
   const candidates = [];
 
   for (const match of matches) {
@@ -1467,11 +1490,11 @@ function parsePriceValue(value) {
     const afterText = text.slice(index + match[0].length, index + match[0].length + 20).toLowerCase();
     const beforeText = text.slice(Math.max(0, index - 15), index).toLowerCase();
     
-    // Check if this number is followed by a unit
+    // Check if this number is followed by a unit or preceded by a unit keyword
     const isForbidden = forbiddenUnits.some(unit => {
       const unitRegex = new RegExp(`^\\s*${unit}\\b|^\\s*${unit}\\s`, 'i');
       return unitRegex.test(afterText);
-    });
+    }) || unitKeywords.some(kw => beforeText.includes(kw));
 
     if (!isForbidden) {
       candidates.push({
