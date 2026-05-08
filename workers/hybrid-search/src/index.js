@@ -47,8 +47,8 @@ const PRIORITY_STORES = [
     channelType: 'hypermarket',
     hosts: ['panda.com.sa', 'panda.sa', 'www.panda.com.sa', 'www.panda.sa'],
     searchUrls: [
+      (query) => `https://panda.sa/ar/plp?search_key=${encodeURIComponent(query)}`,
       (query) => `https://www.panda.com.sa/ar/search?q=${encodeURIComponent(query)}`,
-      (query) => `https://www.panda.com.sa/ar/search?text=${encodeURIComponent(query)}`,
     ],
   },
   {
@@ -919,6 +919,7 @@ function extractCardResults($, store, searchUrl, query) {
     '.item.product',
     '.grid__item',
     '[class*="product"][class*="item"]',
+    'div.relative.flex.flex-col',
   ];
 
   for (const selector of selectors) {
@@ -954,8 +955,10 @@ function buildScrapedResultFromCard(card, store, searchUrl, query) {
       card.find('.name').first().text(),
       card.find('h2').first().text(),
       card.find('h3').first().text(),
+      card.find('a.line-clamp-3').first().text(),
       card.find('a[title]').attr('title'),
       card.find('img[alt]').attr('alt'),
+      card.find('span').first().text(),
     ]),
   );
 
