@@ -45,10 +45,9 @@ const PRIORITY_STORES = [
     id: 'panda',
     name: 'بنده',
     channelType: 'hypermarket',
-    hosts: ['panda.com.sa', 'panda.sa', 'www.panda.com.sa', 'www.panda.sa'],
+    hosts: ['panda.sa', 'www.panda.sa'],
     searchUrls: [
       (query) => `https://panda.sa/ar/plp?search_key=${encodeURIComponent(query)}`,
-      (query) => `https://www.panda.com.sa/ar/search?q=${encodeURIComponent(query)}`,
     ],
   },
   {

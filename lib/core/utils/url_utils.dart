@@ -59,7 +59,7 @@ String? domainForStoreId(String storeId) {
     case 'hungerstation':
       return 'hungerstation.com';
     case 'panda':
-      return 'panda.com.sa';
+      return 'panda.sa';
     case 'othaim':
       return 'othaimmarkets.com';
     case 'almazraa':
