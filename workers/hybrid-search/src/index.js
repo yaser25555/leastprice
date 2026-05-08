@@ -1420,31 +1420,40 @@ function parsePriceValue(value) {
     return { value, currency: 'SAR' };
   }
 
-  const text = normalizeDigits(String(value))
+  // Handle Arabic separators before removing commas/spaces
+  let text = normalizeDigits(String(value))
     .replace(/&nbsp;/gi, ' ')
-    .replace(/[,،]/g, '')
+    .replace(/٫/g, '.')  // Arabic decimal separator
+    .replace(/٬/g, '')   // Arabic thousands separator
+    .replace(/,/g, '')   // English thousands separator
+    .replace(/،/g, '')   // Arabic comma
     .trim();
 
-  if (!text || text.length > 500) {
+  if (!text || text.length > 1000) {
     return { value: null, currency: 'SAR' };
   }
 
   // 1. Try to find a number immediately followed or preceded by a currency symbol
-  const currencyMatch = text.match(/((?:SAR|ريال|ر\.?\s?س)\s*([0-9]+(?:\.[0-9]{1,2})?))|(([0-9]+(?:\.[0-9]{1,2})?)\s*(?:SAR|ريال|ر\.?\s?س))/i);
+  const currencySymbols = 'SAR|ريال|ر\.?\s?س|SR|S\.R|ريالاً|ريالات';
+  const priceRegex = `([0-9]+(?:\\.[0-9]{1,3})?)`;
+  const currencyMatch = text.match(new RegExp(`(?:(?:${currencySymbols})\\s*${priceRegex})|(?:${priceRegex}\\s*(?:${currencySymbols}))`, 'i'));
+  
   if (currencyMatch) {
-    const val = Number.parseFloat(currencyMatch[2] || currencyMatch[4]);
+    const val = Number.parseFloat(currencyMatch[1] || currencyMatch[2]);
     if (val > 0) return { value: val, currency: 'SAR' };
   }
 
-  // 2. If no currency match, find all candidate numbers and check their context
-  const matches = [...text.matchAll(/([0-9]+(?:\.[0-9]{1,2})?)/g)];
+  // 2. Find all candidate numbers
+  const matches = [...text.matchAll(/([0-9]+(?:\.[0-9]{1,3})?)/g)];
   if (matches.length === 0) {
     return { value: null, currency: 'SAR' };
   }
 
   const forbiddenUnits = [
     'k', 'inch', 'بوصة', 'جم', 'مل', 'جرام', 'كجم', 'وات', 'w', 'v', 'فولت', 
-    'هرتز', 'hz', 'fps', 'gb', 'mb', 'tb', 'جيجا', 'ميج', 'بكسل', 'pixel'
+    'هرتز', 'hz', 'fps', 'gb', 'mb', 'tb', 'جيجا', 'ميج', 'بكسل', 'pixel',
+    'l', 'لتر', 'pcs', 'حبة', 'قطعة', 'sachet', 'كيس', 'عبوة', 'mg', 'ملجم', 'مجم',
+    'gm', 'g', 'kg', 'lb', 'oz'
   ];
   const candidates = [];
 
@@ -1452,18 +1461,22 @@ function parsePriceValue(value) {
     const val = Number.parseFloat(match[1]);
     if (isNaN(val) || val <= 0) continue;
 
-    // Check the text immediately following this number
     const index = match.index;
-    const afterText = text.slice(index + match[0].length, index + match[0].length + 15).toLowerCase();
+    const afterText = text.slice(index + match[0].length, index + match[0].length + 20).toLowerCase();
+    const beforeText = text.slice(Math.max(0, index - 15), index).toLowerCase();
     
+    // Check if this number is followed by a unit
     const isForbidden = forbiddenUnits.some(unit => {
-      // Ensure the unit is not part of another word, e.g. "SAR"
       const unitRegex = new RegExp(`^\\s*${unit}\\b|^\\s*${unit}\\s`, 'i');
       return unitRegex.test(afterText);
     });
 
     if (!isForbidden) {
-      candidates.push(val);
+      candidates.push({
+        value: val,
+        isLikelyPrice: (new RegExp(currencySymbols, 'i').test(afterText) || new RegExp(currencySymbols, 'i').test(beforeText)),
+        index: index
+      });
     }
   }
 
@@ -1471,19 +1484,26 @@ function parsePriceValue(value) {
     return { value: null, currency: 'SAR' };
   }
 
-  // Filter out common sizes/years/quantities if possible
-  // We exclude numbers that look like years (1990-2030) or common TV sizes if there's a better alternative
-  const badCandidates = new Set([24, 32, 40, 43, 50, 55, 65, 75, 85, 100, 500, 1000, 2023, 2024, 2025, 2026]);
-  
-  const betterCandidates = candidates.filter(val => !badCandidates.has(val));
-  let finalValue = betterCandidates.length > 0 ? betterCandidates[0] : candidates[0];
+  // Priority 1: If any candidate was near a currency symbol (even if currencyMatch failed due to complex spacing)
+  const priceCandidates = candidates.filter(c => c.isLikelyPrice);
+  if (priceCandidates.length > 0) {
+    return { value: priceCandidates[0].value, currency: 'SAR' };
+  }
 
-  // If we have a very small number and a large number, the large one is more likely the price for electronics
+  // Priority 2: Filter out very small numbers that look like quantities or versions if there are larger numbers
+  const badCandidates = new Set([24, 32, 40, 43, 50, 55, 65, 75, 85, 2023, 2024, 2025, 2026]); 
+  const filtered = candidates.filter(c => !badCandidates.has(c.value));
+  
+  // Pick the LAST one from filtered or candidates, as prices are usually at the end of snippets
+  const finalCandidates = filtered.length > 0 ? filtered : candidates;
+  let finalValue = finalCandidates[finalCandidates.length - 1].value;
+
+  // Electronics heuristic: if we have a very large number and some small numbers, pick the large one
   if (candidates.length > 1) {
-    const maxVal = Math.max(...candidates);
-    const minVal = Math.min(...candidates);
-    if (maxVal > 500 && minVal < 100) {
-      // Likely a case of "50 inch TV for 1500 SAR"
+    const values = candidates.map(c => c.value);
+    const maxVal = Math.max(...values);
+    const minVal = Math.min(...values);
+    if (maxVal > 100 && minVal < 10) {
       finalValue = maxVal;
     }
   }

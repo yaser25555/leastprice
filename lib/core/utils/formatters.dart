@@ -10,38 +10,87 @@ String formatAmountValue(double amount) {
 }
 
 double? extractMarketplacePrice(String text) {
-  final normalized = text
+  // 1. Initial cleanup: handle Arabic separators and remove commas for thousands
+  final cleanText = text
       .replaceAll('٫', '.')
       .replaceAll('٬', '')
       .replaceAll(',', '')
-      .replaceAll(
-          RegExp(r'(?:SAR|ر\.?\s?س|ريال(?:\s+سعودي)?)', caseSensitive: false),
-          ' ')
+      .replaceAll('،', '')
       .trim();
-  if (normalized.isEmpty) {
-    return null;
-  }
 
-  final patterns = <RegExp>[
-    RegExp(
-      r'(?:ر\.?\s?س|ريال|SAR)\s*([0-9]+(?:\.[0-9]{1,2})?)',
-      caseSensitive: false,
-    ),
-    RegExp(
-      r'([0-9]+(?:\.[0-9]{1,2})?)\s*(?:ر\.?\s?س|ريال|SAR)',
-      caseSensitive: false,
-    ),
-    RegExp(r'([0-9]+(?:\.[0-9]{1,2})?)'),
+  if (cleanText.isEmpty) return null;
+
+  const currencySymbols =
+      r'(?:SAR|ر\.?\s?س|ريال(?:\s+سعودي)?|SR|S\.R|ريالاً|ريالات)';
+
+  // 2. Try explicit matches with currency nearby (High Confidence)
+  final explicitPatterns = [
+    RegExp('$currencySymbols\\s*([0-9]+(?:\\.[0-9]{1,3})?)',
+        caseSensitive: false),
+    RegExp('([0-9]+(?:\\.[0-9]{1,3})?)\\s*$currencySymbols',
+        caseSensitive: false),
   ];
 
-  for (final pattern in patterns) {
-    final match = pattern.firstMatch(normalized);
+  for (final pattern in explicitPatterns) {
+    final match = pattern.firstMatch(cleanText);
     if (match != null) {
       return double.tryParse(match.group(1) ?? '');
     }
   }
 
-  return null;
+  // 3. Fallback: Find all numeric candidates and pick the most likely one (Usually the last one)
+  final allMatches =
+      RegExp(r'([0-9]+(?:\.[0-9]{1,3})?)').allMatches(cleanText).toList();
+  if (allMatches.isEmpty) return null;
+
+  const forbiddenUnits = [
+    'k',
+    'inch',
+    'بوصة',
+    'جم',
+    'مل',
+    'جرام',
+    'كجم',
+    'وات',
+    'w',
+    'v',
+    'هرتز',
+    'hz',
+    'gb',
+    'mb',
+    'tb',
+    'جيجا',
+    'ميج',
+    'بكسل',
+    'pixel',
+    'l',
+    'لتر',
+    'pcs',
+    'حبة',
+    'قطعة'
+  ];
+
+  final candidates = <double>[];
+  for (final match in allMatches) {
+    final val = double.tryParse(match.group(1) ?? '');
+    if (val == null || val <= 0) continue;
+
+    // Check context for units
+    final end = match.end;
+    final context = cleanText
+        .substring(end, (end + 15).clamp(0, cleanText.length))
+        .toLowerCase();
+    final isForbidden = forbiddenUnits.any((u) => context.contains(u));
+
+    if (!isForbidden) {
+      candidates.add(val);
+    }
+  }
+
+  if (candidates.isEmpty) return null;
+
+  // Most prices in shopping results appear at the end of snippets or cards
+  return candidates.last;
 }
 
 String normalizeArabic(String input) {
