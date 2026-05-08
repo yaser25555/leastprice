@@ -1671,3 +1671,39 @@ exports.notifyPremiumQuickDeals = functionsV1
       });
     }
   });
+
+
+exports.notifyNewUpdate = functionsV1
+  .region('us-central1')
+  .firestore.document('config/app_info')
+  .onUpdate(async (change) => {
+    const newData = change.after.data();
+    const oldData = change.before.data();
+
+    if (newData.latest_version === oldData.latest_version) {
+      return null;
+    }
+
+    const payload = {
+      notification: {
+        title: 'تحديث جديد متوفر! 🚀',
+        body: newData.message_ar || 'قم بتحديث التطبيق الآن للحصول على أفضل دقة للأسعار والمتاجر الجديدة.',
+      },
+      data: {
+        type: 'app_update',
+        version: newData.latest_version,
+        update_url: newData.update_url || '',
+        is_mandatory: String(newData.force_update || 'false'),
+        click_action: 'FLUTTER_NOTIFICATION_CLICK',
+      },
+    };
+
+    try {
+      await admin.messaging().sendToTopic('all_users', payload);
+      logger.info('Update notification sent successfully for version:', newData.latest_version);
+    } catch (error) {
+      logger.error('Error sending update notification:', error);
+    }
+
+    return null;
+  });

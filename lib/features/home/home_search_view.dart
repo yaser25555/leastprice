@@ -42,7 +42,6 @@ class HomeSearchView {
             availableCities: marketplaceSearchCities,
             selectedCityId: state.selectedCity.id,
             selectedCategory: state.selectedCategory,
-            selectedCategory: state.selectedCategory,
             onCategorySelected: (category) {
               if (state.selectedCategory == category) {
                 notifier.setCategory(null);
