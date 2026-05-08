@@ -17,6 +17,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Increment Version
+        run: |
+          python scripts/increment_version.py
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add pubspec.yaml
+          git commit -m "chore: bump version [skip ci]" || echo "No changes to commit"
+          git push
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -76,9 +90,39 @@ jobs:
         run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/leastprice.apk
 
       - name: Publish GitHub Release (latest)
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apk-${{ github.run_number }}
-          name: Latest APK
+          name: Latest APK (v${{ github.run_number }})
           files: build/app/outputs/flutter-apk/leastprice.apk
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install PyYAML firebase-admin
+
+      - name: Write Firebase service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          payload = os.environ["FIREBASE_SERVICE_ACCOUNT_JSON"]
+          target = Path(os.environ["RUNNER_TEMP"]) / "leastprice-service-account.json"
+          target.write_text(payload, encoding="utf-8")
+
+          github_env = Path(os.environ["GITHUB_ENV"])
+          with github_env.open("a", encoding="utf-8") as handle:
+              handle.write(f"GOOGLE_APPLICATION_CREDENTIALS={target}\n")
+          PY
+
+      - name: Update Firestore with new version
+        run: |
+          python scripts/update_app_version.py --url "https://github.com/yaser25555/leastprice/releases/download/apk-${{ github.run_number }}/leastprice.apk"
 

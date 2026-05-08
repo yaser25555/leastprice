@@ -6,6 +6,8 @@ import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/features/home/least_price_home_page.dart';
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/core/widgets/app_update_dialog.dart';
+import 'package:leastprice/services/system/app_update_service.dart';
 import 'auth_exports.dart';
 
 class AuthenticatedBootstrap extends StatefulWidget {
@@ -34,6 +36,28 @@ class _AuthenticatedBootstrapState extends State<AuthenticatedBootstrap> {
       user: widget.user,
       pendingInviteCode: PendingAuthSession.consumeInviteCode(),
     );
+    _checkUpdates();
+  }
+
+  void _checkUpdates() async {
+    // Small delay to ensure UI is ready
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    final updateInfo = await AppUpdateService.checkUpdate();
+    if (updateInfo != null && mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: !updateInfo['forceUpdate'],
+        builder: (context) => AppUpdateDialog(
+          latestVersion: updateInfo['latestVersion'],
+          updateUrl: updateInfo['updateUrl'],
+          forceUpdate: updateInfo['forceUpdate'],
+          messageAr: updateInfo['messageAr'],
+          messageEn: updateInfo['messageEn'],
+        ),
+      );
+    }
   }
 
   @override
