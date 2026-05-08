@@ -44,6 +44,7 @@ class AppUpdateDialog extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: AppPalette.orange.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
