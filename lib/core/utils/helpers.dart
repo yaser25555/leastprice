@@ -17,6 +17,7 @@ import 'formatters.dart';
 final ValueNotifier<String> appLang = ValueNotifier<String>('ar');
 
 bool get isAr => appLang.value == 'ar';
+bool get isEn => appLang.value == 'en';
 bool get isAppleTargetPlatform =>
     defaultTargetPlatform == TargetPlatform.iOS ||
     defaultTargetPlatform == TargetPlatform.macOS;
