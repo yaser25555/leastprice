@@ -52,5 +52,5 @@ if __name__ == "__main__":
     parser.add_argument('--url', type=str, help='Download URL for the new APK')
     parser.add_argument('--force', action='store_true', help='Force users to update')
     
-    args = parser.parse_with_known_args()[0]
+    args = parser.parse_known_args()[0]
     update_version_in_firestore(version=args.version, update_url=args.url, force_update=args.force)
