@@ -124,7 +124,6 @@ jobs:
               handle.write(f"GOOGLE_APPLICATION_CREDENTIALS={target}\n")
           PY
 
-      - name: Update Firestore with new version
+      - name: Update Firestore with new version info
         run: |
-          python scripts/update_app_version.py --url "https://github.com/yaser25555/leastprice/releases/download/apk-${{ github.run_number }}/leastprice.apk"
-
+          python scripts/update_app_version.py --url "https://github.com/${{ github.repository }}/releases/download/apk-${{ github.run_number }}/leastprice.apk" --force
