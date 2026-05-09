@@ -1030,10 +1030,19 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                     ),
                   if (showCouponsSection && !_isPaidPlanActive)
                     SliverToBoxAdapter(
-                      child: CouponsPaywallSection(
-                        onUpgradeTap: () => _selectHomeSection(
-                          HomeCatalogSection.plans,
-                        ),
+                      child: StreamBuilder<List<Coupon>>(
+                        stream: _catalogService.watchFeaturedCoupons(),
+                        builder: (context, snapshot) {
+                          final count = (snapshot.data ?? [])
+                              .where((c) => c.active && !c.isExpiredAt(DateTime.now()))
+                              .length;
+                          return CouponsPaywallSection(
+                            couponCount: count,
+                            onUpgradeTap: () => _selectHomeSection(
+                              HomeCatalogSection.plans,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   if (showAboutSection)

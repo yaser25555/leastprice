@@ -98,4 +98,6 @@ class LeastPriceDataConfig {
     'ENABLE_DIRECT_CLIENT_SEARCH_FALLBACK',
     defaultValue: false,
   );
+
+  static const String oneSignalAppId = '715316fc-13d0-4fee-b0f8-860b4d38dee6';
 }

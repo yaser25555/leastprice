@@ -7,9 +7,11 @@ class CouponsPaywallSection extends StatelessWidget {
   const CouponsPaywallSection({
     super.key,
     required this.onUpgradeTap,
+    this.couponCount = 0,
   });
 
   final VoidCallback onUpgradeTap;
+  final int couponCount;
 
   static List<_PaywallStore> get _featuredStores => [
         _PaywallStore('Amazon', Color(0xFFFF9900), Color(0xFF232F3E)),
@@ -69,16 +71,31 @@ class CouponsPaywallSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            Text(
-              tr(
-                'كوبونات حصرية في انتظارك',
-                'Exclusive coupons waiting for you',
-              ),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppPalette.panelText,
-                fontWeight: FontWeight.w900,
-                fontSize: 19,
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 600),
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: Text(
+                key: ValueKey(couponCount),
+                couponCount > 0
+                    ? tr(
+                        'يوجد $couponCount كوبون بانتظارك',
+                        'There are $couponCount coupons waiting for you',
+                      )
+                    : tr(
+                        'كوبونات حصرية في انتظارك',
+                        'Exclusive coupons waiting for you',
+                      ),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppPalette.panelText,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 19,
+                ),
               ),
             ),
             const SizedBox(height: 6),

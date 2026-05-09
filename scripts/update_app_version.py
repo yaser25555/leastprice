@@ -11,21 +11,20 @@ def update_version_in_firestore(version=None, update_url=None, force_update=Fals
             pubspec = yaml.safe_load(f)
             version = pubspec.get('version', '1.0.0').split('+')[0]
     
-    print(f"🚀 Updating App Version to: {version}")
+    print(f"Updating App Version to: {version}")
 
     # 2. Initialize Firebase
-    # Assumes GOOGLE_APPLICATION_CREDENTIALS is set or service account exists
-    try:
-        cred = credentials.ApplicationDefault()
+    service_account_path = 'leastprice-yaser-firebase-adminsdk-fbsvc-759edd3dbc.json'
+    
+    if os.path.exists(service_account_path):
+        cred = credentials.Certificate(service_account_path)
         firebase_admin.initialize_app(cred)
-    except Exception:
-        # Fallback for local testing if path is known
-        service_account_path = 'leastprice-yaser-firebase-adminsdk-fbsvc-759edd3dbc.json'
-        if os.path.exists(service_account_path):
-            cred = credentials.Certificate(service_account_path)
+    else:
+        try:
+            cred = credentials.ApplicationDefault()
             firebase_admin.initialize_app(cred)
-        else:
-            print("❌ Error: Firebase credentials not found.")
+        except Exception as e:
+            print(f"Error: Firebase credentials not found. {e}")
             return
 
     db = firestore.client()
@@ -44,7 +43,7 @@ def update_version_in_firestore(version=None, update_url=None, force_update=Fals
         data['update_url'] = update_url
     
     doc_ref.set(data, merge=True)
-    print("✅ Firestore updated successfully!")
+    print("Firestore updated successfully!")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Update App Version in Firestore')

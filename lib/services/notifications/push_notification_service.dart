@@ -1,5 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/models/user_savings_profile.dart';
 
 class PushNotificationService {
@@ -7,7 +9,14 @@ class PushNotificationService {
 
   static Future<void> initialize() async {
     try {
-      // Request permissions (primarily for iOS, but good practice globally)
+      // Initialize OneSignal
+      if (!kIsWeb) {
+        OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+        OneSignal.initialize(LeastPriceDataConfig.oneSignalAppId);
+        OneSignal.Notifications.requestPermission(true);
+      }
+
+      // Request Firebase permissions (primarily for iOS, but good practice globally)
       final settings = await _messaging.requestPermission(
         alert: true,
         badge: true,
