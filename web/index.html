@@ -76,6 +76,21 @@
     // Make Firebase available globally for Flutter
     window.firebase = { app, db, auth, storage };
   </script>
+
+  <!-- OneSignal Web SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalAwareData = window.OneSignalAwareData || [];
+    window.OneSignal = window.OneSignal || function (args) {
+      window.OneSignalAwareData.push(args);
+    };
+    OneSignal(function (OneSignal) {
+      OneSignal.init({
+        appId: "715316fc-13d0-4fee-b0f8-860b4d38dee6",
+        allowLocalhostAsSecureOrigin: true,
+      });
+    });
+  </script>
 </head>
 <body>
   <script>
