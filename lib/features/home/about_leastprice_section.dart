@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/core/widgets/app_brand_mark.dart';
+import 'package:leastprice/features/legal/privacy_policy_screen.dart';
 
 class AboutLeastPriceSection extends StatelessWidget {
   const AboutLeastPriceSection({
@@ -30,7 +31,7 @@ class AboutLeastPriceSection extends StatelessWidget {
                 BoxShadow(
                   color: AppPalette.shadow,
                   blurRadius: 18,
-                  offset: Offset(0, 12),
+                  offset: const Offset(0, 12),
                 ),
               ],
             ),
@@ -117,6 +118,22 @@ class AboutLeastPriceSection extends StatelessWidget {
             ),
             actionLabel: tr('اتصل بنا', 'Contact Us'),
             onTap: onContactTap,
+          ),
+          const SizedBox(height: 14),
+          _AboutFeatureCard(
+            icon: Icons.policy_rounded,
+            title: tr('الشروط والخصوصية', 'Terms & Privacy'),
+            description: tr(
+              'يمكنك الاطلاع على سياسة الخصوصية وكيفية حماية بياناتك الشخصية داخل التطبيق.',
+              'You can view our privacy policy and how we protect your personal data inside the app.',
+            ),
+            actionLabel: tr('عرض السياسة', 'View Policy'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
+              );
+            },
           ),
         ],
       ),
