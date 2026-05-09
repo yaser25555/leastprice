@@ -77,7 +77,7 @@ class _AdminDashboardBodyState extends State<AdminDashboardBody>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -94,16 +94,7 @@ class _AdminDashboardBodyState extends State<AdminDashboardBody>
           color: AppPalette.cardBackground,
           child: TabBar(
             controller: _tabController,
-            isScrollable: true,
             tabs: [
-              Tab(
-                icon: const Icon(Icons.view_carousel_rounded),
-                text: tr('البنرات', 'Banners'),
-              ),
-              Tab(
-                icon: const Icon(Icons.compare_arrows_rounded),
-                text: tr('المقارنات', 'Comparisons'),
-              ),
               Tab(
                 icon: const Icon(Icons.local_offer_rounded),
                 text: tr('العروض', 'Deals'),
@@ -112,6 +103,10 @@ class _AdminDashboardBodyState extends State<AdminDashboardBody>
                 icon: const Icon(Icons.notifications_active_rounded),
                 text: tr('الإشعارات', 'Notifications'),
               ),
+              Tab(
+                icon: const Icon(Icons.people_alt_rounded),
+                text: tr('المستخدمين', 'Users'),
+              ),
             ],
           ),
         ),
@@ -119,10 +114,9 @@ class _AdminDashboardBodyState extends State<AdminDashboardBody>
           child: TabBarView(
             controller: _tabController,
             children: [
-              AdminBannersTable(catalogService: widget.service),
-              AdminProductsTable(catalogService: widget.service),
               AdminExclusiveDealsTable(catalogService: widget.service),
               const AdminNotificationPanel(),
+              AdminSimpleUsersPanel(catalogService: widget.service),
             ],
           ),
         ),
