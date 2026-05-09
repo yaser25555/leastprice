@@ -18,6 +18,7 @@ class AdminDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const service = FirestoreCatalogService();
+    final isPrimaryAdmin = adminUser.email == LeastPriceDataConfig.adminEmail;
 
     return Scaffold(
       backgroundColor: AppPalette.shellBackground,
@@ -57,14 +58,23 @@ class AdminDashboardScreen extends StatelessWidget {
           const SizedBox(width: 16),
         ],
       ),
-      body: AdminDashboardBody(service: service),
+      body: AdminDashboardBody(
+        service: service,
+        isPrimaryAdmin: isPrimaryAdmin,
+      ),
     );
   }
 }
 
 class AdminDashboardBody extends StatefulWidget {
-  const AdminDashboardBody({super.key, required this.service});
+  const AdminDashboardBody({
+    super.key,
+    required this.service,
+    required this.isPrimaryAdmin,
+  });
+
   final FirestoreCatalogService service;
+  final bool isPrimaryAdmin;
 
   @override
   State<AdminDashboardBody> createState() => _AdminDashboardBodyState();
@@ -116,7 +126,10 @@ class _AdminDashboardBodyState extends State<AdminDashboardBody>
             children: [
               AdminExclusiveDealsTable(catalogService: widget.service),
               const AdminNotificationPanel(),
-              AdminSimpleUsersPanel(catalogService: widget.service),
+              AdminSimpleUsersPanel(
+                service: widget.service,
+                isPrimaryAdmin: widget.isPrimaryAdmin,
+              ),
             ],
           ),
         ),
