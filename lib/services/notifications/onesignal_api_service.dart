@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:leastprice/core/config/least_price_data_config.dart';
 
@@ -41,11 +42,11 @@ class OneSignalApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
-        print('OneSignal API Error: ${response.body}');
+        debugPrint('OneSignal API Error: ${response.body}');
         return false;
       }
     } catch (e) {
-      print('OneSignal API Exception: $e');
+      debugPrint('OneSignal API Exception: $e');
       return false;
     }
   }
