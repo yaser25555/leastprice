@@ -1,0 +1,12 @@
+{
+  "app_id": "715316fc-13d0-4fee-b0f8-860b4d38dee6",
+  "include_player_ids": ["02225f94-ac1b-43d1-a938-e97677d65ac0"],
+  "contents": {
+    "en": "Test for Huawei Device!",
+    "ar": "تجربة لهاتف هواوي!"
+  },
+  "headings": {
+    "en": "Direct Test",
+    "ar": "تجربة مباشرة"
+  }
+}

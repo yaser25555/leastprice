@@ -160,9 +160,9 @@ service cloud.firestore {
       allow create: if isAdmin() || (
         isSignedIn() &&
         request.auth.uid == userId &&
-        !('adminRole' in request.resource.data) &&
-        !('planActivated' in request.resource.data) &&
-        !('planStatus' in request.resource.data)
+        (!('adminRole' in request.resource.data) || request.resource.data.adminRole == 'user') &&
+        (!('planActivated' in request.resource.data) || request.resource.data.planActivated == false) &&
+        (!('planStatus' in request.resource.data) || request.resource.data.planStatus == 'inactive')
       );
       allow update: if isAdmin() || (
         isSignedIn() &&
