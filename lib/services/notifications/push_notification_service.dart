@@ -21,6 +21,10 @@ class PushNotificationService {
             debugPrint(
                 'PushNotificationService: Error subscribing to weekly_offers: $e');
           });
+          await _messaging.subscribeToTopic('app_updates').catchError((e) {
+            debugPrint(
+                'PushNotificationService: Error subscribing to app_updates: $e');
+          });
         }
       } else {
         debugPrint(

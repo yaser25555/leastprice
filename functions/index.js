@@ -1686,21 +1686,24 @@ exports.notifyNewUpdate = functionsV1
 
     const payload = {
       notification: {
-        title: 'تحديث جديد متوفر! 🚀',
-        body: newData.message_ar || 'قم بتحديث التطبيق الآن للحصول على أفضل دقة للأسعار والمتاجر الجديدة.',
+        title: 'تحديث جديد متوفر الآن! 🚀',
+        body: newData.message_ar || 'يوجد تحديث جديد يتضمن تحسينات هامة لجلب الأسعار من المتاجر السعودية وتطوير أداء البحث.',
       },
       data: {
         type: 'app_update',
-        version: newData.latest_version,
-        update_url: newData.update_url || '',
+        version: String(newData.latest_version),
+        update_url: String(newData.update_url || ''),
         is_mandatory: String(newData.force_update || 'false'),
-        click_action: 'FLUTTER_NOTIFICATION_CLICK',
       },
+      topic: 'app_updates',
     };
 
     try {
-      await admin.messaging().sendToTopic('all_users', payload);
-      logger.info('Update notification sent successfully for version:', newData.latest_version);
+      const response = await admin.messaging().send(payload);
+      logger.info('Update notification sent successfully', {
+        messageId: response,
+        version: newData.latest_version
+      });
     } catch (error) {
       logger.error('Error sending update notification:', error);
     }
