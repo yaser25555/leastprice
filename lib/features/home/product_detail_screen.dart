@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/coupon.dart';
+import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({
     super.key,
     required this.group,
@@ -15,6 +17,48 @@ class ProductDetailScreen extends StatelessWidget {
 
   final GroupedProductCard group;
   final void Function(String url) onOpenStore;
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  final _service = const FirestoreCatalogService();
+  bool _isFavorite = false;
+  bool _favLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavorite();
+  }
+
+  void _checkFavorite() async {
+    final fav = await _service.isFavorite(widget.group.offers.first.productUrl);
+    if (mounted) setState(() { _isFavorite = fav; _favLoading = false; });
+  }
+
+  Future<void> _toggleFavorite() async {
+    final offer = widget.group.offers.first;
+    if (_isFavorite) {
+      await _service.removeFavorite(offer.productUrl);
+    } else {
+      await _service.addFavorite(
+        productTitle: widget.group.displayTitle,
+        productUrl: offer.productUrl,
+        price: widget.group.lowestPrice,
+        currency: offer.currency,
+        storeName: offer.storeName,
+        storeId: offer.storeId,
+        imageUrl: widget.group.displayImageUrl,
+      );
+    }
+    if (mounted) setState(() => _isFavorite = !_isFavorite);
+    HapticFeedback.mediumImpact();
+  }
+
+  GroupedProductCard get group => widget.group;
+  void Function(String url) get _onOpenStore => widget.onOpenStore;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +75,17 @@ class ProductDetailScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              _favLoading
+                  ? Icons.favorite_outline
+                  : _isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_outline,
+              color: _isFavorite ? Colors.redAccent : null,
+            ),
+            onPressed: _favLoading ? null : _toggleFavorite,
+          ),
           IconButton(
             icon: const Icon(Icons.share_outlined),
             onPressed: () => _shareProduct(context),
@@ -123,7 +178,7 @@ class ProductDetailScreen extends StatelessWidget {
             return _OfferCard(
               offer: offer,
               isCheapest: isCheapest,
-              onTap: () => onOpenStore(offer.productUrl),
+              onTap: () => _onOpenStore(offer.productUrl),
             );
           }),
           if (group.matchedCoupon != null) ...[

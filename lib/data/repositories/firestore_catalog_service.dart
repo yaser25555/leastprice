@@ -44,6 +44,8 @@ class FirestoreCatalogService {
       firestore.collection(LeastPriceDataConfig.systemHealthCollectionName);
   CollectionReference<Map<String, dynamic>> get _searchRequestsCollection =>
       firestore.collection(LeastPriceDataConfig.searchRequestsCollectionName);
+  CollectionReference<Map<String, dynamic>> get _favoritesCollection =>
+      firestore.collection(LeastPriceDataConfig.favoritesCollectionName);
 
   Stream<List<AdBannerItem>> watchAdBanners() {
     return _adBannersCollection.snapshots().map((snapshot) {
@@ -670,6 +672,57 @@ class FirestoreCatalogService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     });
+  }
+
+  Stream<List<Map<String, dynamic>>> watchFavorites(String userId) {
+    return _favoritesCollection
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => d.data()).toList());
+  }
+
+  Future<void> addFavorite({
+    required String productTitle,
+    required String productUrl,
+    required double price,
+    required String currency,
+    required String storeName,
+    required String storeId,
+    required String imageUrl,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final docId = '${user.uid}__${_encodeFavId(productUrl)}';
+    await _favoritesCollection.doc(docId).set({
+      'userId': user.uid,
+      'productTitle': productTitle,
+      'productUrl': productUrl,
+      'price': price,
+      'currency': currency,
+      'storeName': storeName,
+      'storeId': storeId,
+      'imageUrl': imageUrl,
+      'addedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> removeFavorite(String productUrl) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final docId = '${user.uid}__${_encodeFavId(productUrl)}';
+    await _favoritesCollection.doc(docId).delete();
+  }
+
+  Future<bool> isFavorite(String productUrl) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
+    final docId = '${user.uid}__${_encodeFavId(productUrl)}';
+    final snap = await _favoritesCollection.doc(docId).get();
+    return snap.exists;
+  }
+
+  String _encodeFavId(String productUrl) {
+    return productUrl.trim().replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
   }
 
   int _sortProducts(ProductComparison a, ProductComparison b) {

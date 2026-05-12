@@ -20,6 +20,7 @@ class LeastPriceDataConfig {
   static const String usersCollectionName = 'users';
   static const String popularProductsCollectionName = 'popular_products';
   static const String searchRequestsCollectionName = 'search_requests';
+  static const String favoritesCollectionName = 'favorites';
   static const String barcodeFeedbackCollectionName = 'barcode_feedback';
   static const String systemHealthCollectionName = 'system_health';
   static const String systemHealthDocumentId = 'daily_price_bot';
