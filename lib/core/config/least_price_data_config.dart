@@ -75,29 +75,13 @@ class LeastPriceDataConfig {
     'sa.puma.com': 'https://go.urtrackinglink.com/SH9HB',
   };
 
-  /// SerpApi key — pass via `--dart-define=SERPAPI_KEY=...` at build time.
-  static const String serpApiKey = String.fromEnvironment(
-    'SERPAPI_KEY',
-    defaultValue: '',
-  );
-
   static const String originalOnSaleTag = 'المنتج الأصلي عليه عرض حالياً';
   static const SearchProviderType searchProviderType =
       SearchProviderType.serper;
 
-  /// Serper API key — pass via `--dart-define=SERPER_API_KEY=...` at build time.
-  static const String serperApiKey = String.fromEnvironment(
-    'SERPER_API_KEY',
-    defaultValue: '',
-  );
-
   static const String tavilyApiKey =
       String.fromEnvironment('TAVILY_API_KEY', defaultValue: '');
   static const bool enableAutomaticPriceRefresh = true;
-  static const bool enableDirectClientSearchFallback = bool.fromEnvironment(
-    'ENABLE_DIRECT_CLIENT_SEARCH_FALLBACK',
-    defaultValue: false,
-  );
 
   static const String oneSignalAppId = '715316fc-13d0-4fee-b0f8-860b4d38dee6';
 }

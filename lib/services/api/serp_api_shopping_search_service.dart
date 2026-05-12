@@ -9,6 +9,8 @@ import 'package:leastprice/data/models/comparison_search_response.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/comparison_search_cache_entry.dart';
 import 'package:leastprice/services/preferences/local_search_cache_service.dart';
+import 'package:leastprice/services/api/search_results_parser.dart';
+import 'package:leastprice/services/api/search_results_filter.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
 class SerpApiShoppingSearchService {
@@ -21,73 +23,8 @@ class SerpApiShoppingSearchService {
   FirestoreCatalogService get _service =>
       _catalogService ?? const FirestoreCatalogService();
   final LocalSearchCacheService _localCache = const LocalSearchCacheService();
-  static const Set<String> _saudiSupportedStoreIds = {
-    'amazon',
-    'noon',
-    'hungerstation',
-    'panda',
-    'othaim',
-    'almazraa',
-    'lulu',
-    'carrefour',
-    'tamimi',
-    'danube',
-    'bindawood',
-    'toyou',
-    'keeta',
-    'nahdi',
-    'aldawaa',
-    'jarir',
-    'extra',
-    'namshi',
-    'ntshop',
-    'ikea',
-    'saco',
-    'niceone',
-    'goldenscent',
-    'abyat',
-    'homecentre',
-  };
-
-  static const Set<String> _foodRelatedKeywords = {
-    'مطعم',
-    'restaurant',
-    'قهوة',
-    'coffee',
-    'وجبة',
-    'meal',
-    'أكل',
-    'food',
-    'مشروب',
-    'drink',
-    'برجر',
-    'burger',
-    'بيتزا',
-    'pizza',
-    'دجاج',
-    'chicken',
-    'لحم',
-    'meat',
-    'حلويات',
-    'sweets',
-    'كيك',
-    'cake',
-    'عصير',
-    'juice',
-    'رز',
-    'ارز',
-    'شعير',
-    'مصري',
-    'شاي',
-    'tea',
-    'مكولات',
-    'snacks',
-  };
-
-  bool _isFoodRelatedQuery(String query) {
-    final normalized = normalizeArabic(query.toLowerCase());
-    return _foodRelatedKeywords.any((keyword) => normalized.contains(keyword));
-  }
+  final SearchResultsParser _parser = const SearchResultsParser();
+  final SearchResultsFilter _filter = const SearchResultsFilter();
 
   ComparisonSearchResponse _buildResponse({
     required List<ComparisonSearchResult> results,
@@ -172,7 +109,6 @@ class SerpApiShoppingSearchService {
         if (cachedEntry != null &&
             cachedEntry.results.isNotEmpty &&
             cachedEntry.isFresh) {
-          // Save to local cache for next time
           await _localCache.saveLocalSearchCache(
             query: trimmedQuery,
             results: cachedEntry.results,
@@ -193,49 +129,16 @@ class SerpApiShoppingSearchService {
       }
     }
 
-    final apiKey = LeastPriceDataConfig.serpApiKey.trim();
-    if (apiKey.isEmpty &&
-        LeastPriceDataConfig.enableDirectClientSearchFallback) {
-      return ComparisonSearchResponse(
-        results: cachedEntry?.results ?? const <ComparisonSearchResult>[],
-        fromCache: cachedEntry != null,
-        notice: 'Error: SerpAPI key missing - ${tr(
-          'عذراً، لم نجد نتائج حالياً',
-          'Sorry, we could not find results right now.',
-        )}',
-      );
-    }
-
-    final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     String effectiveQuery = trimmedQuery;
 
-    // -- BARCODE TRANSLATION --
-    if (RegExp(r'^[0-9]{8,14}$').hasMatch(effectiveQuery) &&
-        serperApiKey.isNotEmpty) {
-      effectiveQuery = await _translateBarcode(effectiveQuery, serperApiKey);
-    }
-
     try {
-      var results = await _fetchHybridResults(
+      final results = await _fetchHybridResults(
         effectiveQuery,
         city: city,
         targetStoreId: targetStoreId,
         startOffset: startOffset,
       );
-      if (!kIsWeb &&
-          results.isEmpty &&
-          apiKey.isNotEmpty &&
-          LeastPriceDataConfig.enableDirectClientSearchFallback) {
-        results = await _fetchDirectProviderResults(
-          effectiveQuery,
-          apiKey,
-          city: city,
-          targetStoreId: targetStoreId,
-          startOffset: startOffset,
-        );
-      }
       if (results.isNotEmpty && startOffset == 0) {
-        // Save to Local Cache
         try {
           await _localCache.saveLocalSearchCache(
             query: trimmedQuery,
@@ -247,7 +150,6 @@ class SerpApiShoppingSearchService {
           debugPrint('LeastPrice local cache save skipped: $error');
         }
 
-        // Save to Firestore Cache
         if (canUseFirestoreCache) {
           try {
             await _service.saveComparisonSearchCache(
@@ -278,34 +180,6 @@ class SerpApiShoppingSearchService {
         effectiveQuery: effectiveQuery,
       );
     } catch (e) {
-      if (!kIsWeb &&
-          apiKey.isNotEmpty &&
-          LeastPriceDataConfig.enableDirectClientSearchFallback) {
-        try {
-          final fallbackResults = await _fetchDirectProviderResults(
-            effectiveQuery,
-            apiKey,
-            city: city,
-            targetStoreId: targetStoreId,
-            startOffset: startOffset,
-          );
-          if (fallbackResults.isNotEmpty) {
-            return _buildResponse(
-              results: fallbackResults,
-              fromCache: false,
-              notice: tr(
-                'ØªÙ… Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…ØµØ¯Ø± Ø¨Ø­Ø« Ø¨Ø¯ÙŠÙ„ Ø¨Ø¹Ø¯ ØªØ¹Ø°Ø± Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ù‡Ø¬ÙŠÙ†.',
-                'A fallback search source was used after hybrid search was unavailable.',
-              ),
-              effectiveQuery: effectiveQuery,
-            );
-          }
-        } catch (fallbackError) {
-          debugPrint(
-              'LeastPrice direct search fallback failed: $fallbackError');
-        }
-      }
-
       if (cachedEntry != null && cachedEntry.results.isNotEmpty) {
         return _buildResponse(
           results: cachedEntry.results,
@@ -325,55 +199,6 @@ class SerpApiShoppingSearchService {
     }
   }
 
-  Future<String> _translateBarcode(String barcode, String serperApiKey) async {
-    try {
-      final uri = Uri.https('google.serper.dev', '/search');
-      final response = await http.post(
-        uri,
-        headers: {
-          'X-API-KEY': serperApiKey,
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'q': barcode,
-          'gl': 'sa',
-          'hl': 'ar',
-        }),
-      );
-      if (response.statusCode < 400) {
-        final payload = jsonDecode(response.body);
-        final organic = payload['organic'];
-        if (organic is List && organic.isNotEmpty) {
-          final title = stringValue(organic.first['title']) ?? '';
-          final snippet = stringValue(organic.first['snippet']) ?? '';
-
-          // Smarter title cleaning:
-          String cleanTitle = title
-              .replaceAll(
-                  RegExp(
-                      r'(بنده|بندة|Panda|العثيم|Othaim|كارفور|Carrefour|التميمي|Tamimi|لولو|Lulu|نون|Noon|امازون|Amazon|Jarir|جرير|Extra|اكسترا)',
-                      caseSensitive: false),
-                  '')
-              .split(RegExp(r'[|\-–]'))
-              .where((s) => s.trim().length > 3)
-              .join(' ')
-              .trim();
-
-          if (cleanTitle.length < 5 && snippet.isNotEmpty) {
-            cleanTitle = snippet.split(RegExp(r'[.\-–]')).first.trim();
-          }
-
-          if (cleanTitle.isNotEmpty && !RegExp(r'^\d+$').hasMatch(cleanTitle)) {
-            return cleanTitle;
-          }
-        }
-      }
-    } catch (error) {
-      debugPrint('Barcode translation via Serper failed: $error');
-    }
-    return barcode;
-  }
-
   Future<List<ComparisonSearchResult>> _fetchHybridResults(
     String effectiveQuery, {
     required MarketplaceSearchCity city,
@@ -391,15 +216,9 @@ class SerpApiShoppingSearchService {
       '${targetStoreId != null && targetStoreId.trim().isNotEmpty ? '&store=${Uri.encodeQueryComponent(targetStoreId)}' : ''}',
     );
 
-    final apiKey = LeastPriceDataConfig.serpApiKey.trim();
-    final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
     final response = await http.get(
       uri,
-      headers: {
-        'accept': 'application/json',
-        if (apiKey.isNotEmpty) 'x-serpapi-key': apiKey,
-        if (serperApiKey.isNotEmpty) 'x-serper-key': serperApiKey,
-      },
+      headers: {'accept': 'application/json'},
     ).timeout(const Duration(seconds: 25));
     if (response.statusCode >= 400) {
       throw Exception(
@@ -413,27 +232,13 @@ class SerpApiShoppingSearchService {
 
     final rows = payload['results'];
     final hybridResults = rows is List
-        ? rows
-            .whereType<Map>()
-            .map(
-              (row) => ComparisonSearchResult.fromJson(
-                Map<String, dynamic>.from(row),
-              ),
-            )
-            .where(
-              (result) =>
-                  result.title.trim().isNotEmpty &&
-                  result.productUrl.trim().isNotEmpty &&
-                  result.price > 0,
-            )
-            .toList()
+        ? _parser.parseHybridResponse(rows)
         : <ComparisonSearchResult>[];
 
-    final filteredHybridResults = _filterSupportedSaudiStoreResults(
+    final filteredHybridResults = _filter.filterSupportedSaudiStoreResults(
       hybridResults,
       targetStoreId: targetStoreId,
     );
-    filteredHybridResults.sort(_compareSearchResults);
     return filteredHybridResults;
   }
 
@@ -457,585 +262,4 @@ class SerpApiShoppingSearchService {
     return 'https://${LeastPriceDataConfig.functionsRegion}-leastprice-yaser.cloudfunctions.net/${LeastPriceDataConfig.hybridSearchFunctionName}';
   }
 
-  Future<List<ComparisonSearchResult>> _fetchDirectProviderResults(
-    String effectiveQuery,
-    String apiKey, {
-    required MarketplaceSearchCity city,
-    String? targetStoreId,
-    int startOffset = 0,
-  }) async {
-    final serperApiKey = LeastPriceDataConfig.serperApiKey.trim();
-    final results = <ComparisonSearchResult>[];
-
-    // Let local filtering handle the store filter to avoid breaking Google Shopping query
-
-    if (kIsWeb) {
-      final origin = Uri.base.origin;
-      final isLocalhost =
-          origin.contains('localhost') || origin.contains('127.0.0.1');
-      final baseUrl = isLocalhost
-          ? 'https://${LeastPriceDataConfig.functionsRegion}-leastprice-yaser.cloudfunctions.net/${LeastPriceDataConfig.hybridSearchFunctionName}'
-          : '$origin/api/${LeastPriceDataConfig.hybridSearchFunctionName}';
-
-      final pageNum = (startOffset / 20).floor() + 1;
-      final uri = Uri.parse(
-        '$baseUrl'
-        '?q=${Uri.encodeQueryComponent(effectiveQuery)}'
-        '&hl=${isAr ? 'ar' : 'en'}'
-        '&location=${Uri.encodeQueryComponent(city.serpApiLocation)}'
-        '&page=$pageNum'
-        '${targetStoreId != null && targetStoreId.trim().isNotEmpty ? '&store=${Uri.encodeQueryComponent(targetStoreId)}' : ''}',
-      );
-
-      final response = await http.get(
-        uri,
-        headers: {
-          if (apiKey.trim().isNotEmpty) 'x-serpapi-key': apiKey.trim(),
-          'accept': 'application/json',
-        },
-      );
-      if (response.statusCode >= 400) {
-        throw Exception(
-            'Hybrid marketplace search responded with ${response.statusCode}');
-      }
-
-      final payload = jsonDecode(response.body);
-      if (payload is! Map<String, dynamic>) {
-        throw const FormatException('Unexpected hybrid search payload');
-      }
-
-      final rows = payload['results'];
-      final hybridResults = rows is List
-          ? rows
-              .whereType<Map>()
-              .map(
-                (row) => ComparisonSearchResult.fromJson(
-                  Map<String, dynamic>.from(row),
-                ),
-              )
-              .where(
-                (result) =>
-                    result.title.trim().isNotEmpty &&
-                    result.productUrl.trim().isNotEmpty &&
-                    result.price > 0,
-              )
-              .toList()
-          : <ComparisonSearchResult>[];
-
-      final filteredHybridResults = _filterSupportedSaudiStoreResults(
-          hybridResults,
-          targetStoreId: targetStoreId);
-      filteredHybridResults.sort(_compareSearchResults);
-      return filteredHybridResults;
-    }
-
-    // Fetch from SerpApi
-    final serpApiResults = await _fetchSerpApiResults(effectiveQuery, apiKey,
-        city: city, startOffset: startOffset);
-    results.addAll(serpApiResults);
-
-    // Fetch from Serper if key is available
-    if (serperApiKey.isNotEmpty) {
-      try {
-        final pageNum = (startOffset / 10).floor() + 1;
-        final serperResults = await _fetchSerperResults(
-            effectiveQuery, serperApiKey,
-            city: city, page: pageNum);
-        results.addAll(serperResults);
-      } catch (error) {
-        debugPrint('Serper search failed: $error');
-      }
-    }
-
-    // Fetch from Google Local if food-related query
-    if (_isFoodRelatedQuery(effectiveQuery)) {
-      try {
-        final localResults =
-            await _fetchLocalResults(effectiveQuery, apiKey, city: city);
-        results.addAll(localResults);
-      } catch (error) {
-        debugPrint('Google Local search failed: $error');
-      }
-    }
-
-    final filteredResults =
-        _filterSupportedSaudiStoreResults(results, targetStoreId: targetStoreId)
-          ..sort(_compareSearchResults);
-
-    return filteredResults;
-  }
-
-  Future<List<ComparisonSearchResult>> _fetchSerpApiResults(
-    String query,
-    String apiKey, {
-    required MarketplaceSearchCity city,
-    int startOffset = 0,
-  }) async {
-    final uri = Uri.https('serpapi.com', '/search.json', {
-      'engine': 'google_shopping',
-      'q': query,
-      'location': city.serpApiLocation,
-      'gl': 'sa',
-      'hl': 'ar',
-      'api_key': apiKey,
-      'start': startOffset.toString(),
-    });
-
-    final response = await http.get(uri);
-    if (response.statusCode >= 400) {
-      throw Exception('SerpApi responded with ${response.statusCode}');
-    }
-
-    final payload = jsonDecode(response.body);
-    if (payload is! Map<String, dynamic>) {
-      throw const FormatException('Unexpected SerpApi payload');
-    }
-
-    return _parseResults(payload);
-  }
-
-  Future<List<ComparisonSearchResult>> _fetchSerperResults(
-    String query,
-    String apiKey, {
-    required MarketplaceSearchCity city,
-    int page = 1,
-  }) async {
-    if (apiKey.isEmpty) {
-      debugPrint('❌ SERPER ERROR: API Key is EMPTY! Please provide it.');
-      return [];
-    }
-
-    debugPrint('🌐 SERPER: Fetching results for "$query"...');
-
-    final uri = Uri.https('google.serper.dev', '/shopping');
-    final response = await http
-        .post(
-          uri,
-          headers: {
-            'X-API-KEY': apiKey,
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'q': query,
-            'gl': 'sa',
-            'hl': 'ar',
-            'location': city.serpApiLocation,
-            'page': page,
-          }),
-        )
-        .timeout(const Duration(seconds: 15));
-
-    debugPrint('📡 SERPER STATUS: ${response.statusCode}');
-
-    if (response.statusCode != 200) {
-      debugPrint('❌ SERPER ERROR BODY: ${response.body}');
-      return [];
-    }
-
-    final payload = jsonDecode(response.body);
-    if (payload is! Map<String, dynamic>) {
-      debugPrint('❌ SERPER ERROR: Unexpected payload format');
-      return [];
-    }
-
-    return _parseSerperResults(payload);
-  }
-
-  List<ComparisonSearchResult> _parseLocalResults(
-      Map<String, dynamic> payload) {
-    final results = <ComparisonSearchResult>[];
-    final seen = <String>{};
-
-    void addResult(dynamic rawItem) {
-      if (rawItem is! Map) {
-        return;
-      }
-
-      final item = rawItem as Map<String, dynamic>;
-      final title = stringValue(item['title'])?.trim() ?? '';
-      final link = stringValue(item['link'])?.trim() ?? '';
-
-      if (title.isEmpty || link.isEmpty) {
-        return;
-      }
-
-      final fingerprint = normalizeArabic('$title|$link');
-      if (!seen.add(fingerprint)) {
-        return;
-      }
-
-      // For local results, price might not be available, set to 0 or estimate
-      final price = 0.0; // Local results may not have prices
-
-      final result = ComparisonSearchResult(
-        title: title,
-        price: price,
-        storeName: title,
-        storeId: inferStoreIdFromUrl(link) ?? 'local',
-        storeLogoUrl: resolveStoreLogoUrl(
-            storeId: inferStoreIdFromUrl(link) ?? 'local', productUrl: link),
-        imageUrl: stringValue(item['thumbnail']) ?? '',
-        productUrl: link,
-        currency: 'SAR',
-        sourceType: ComparisonSearchSourceType.serpApi,
-        channelType:
-            ComparisonSearchChannelType.delivery, // Assume delivery for food
-        isLiveDirect: false,
-        tag: 'عرض وجبة', // Tag for food deals
-      );
-
-      results.add(result);
-    }
-
-    final localResults = payload['local_results'];
-    if (localResults is List) {
-      for (final item in localResults) {
-        addResult(item);
-      }
-    }
-
-    return results;
-  }
-
-  Future<List<ComparisonSearchResult>> _fetchLocalResults(
-    String query,
-    String apiKey, {
-    required MarketplaceSearchCity city,
-  }) async {
-    final uri = Uri.https('serpapi.com', '/search.json', {
-      'engine': 'google_local',
-      'q': query,
-      'location': city.serpApiLocation,
-      'gl': 'sa',
-      'hl': 'ar',
-      'api_key': apiKey,
-    });
-
-    final response = await http.get(uri);
-    if (response.statusCode >= 400) {
-      throw Exception('SerpApi Local responded with ${response.statusCode}');
-    }
-
-    final payload = jsonDecode(response.body);
-    if (payload is! Map<String, dynamic>) {
-      throw const FormatException('Unexpected SerpApi Local payload');
-    }
-
-    return _parseLocalResults(payload);
-  }
-
-  List<ComparisonSearchResult> _parseResults(Map<String, dynamic> payload) {
-    final results = <ComparisonSearchResult>[];
-    final seen = <String>{};
-
-    void addResult(dynamic rawItem) {
-      if (rawItem is! Map) {
-        return;
-      }
-
-      final item = ComparisonSearchResult.fromJson(
-        Map<String, dynamic>.from(rawItem),
-      );
-      if (item.title.trim().isEmpty ||
-          item.productUrl.trim().isEmpty ||
-          item.price <= 0) {
-        return;
-      }
-
-      final fingerprint = normalizeArabic(
-        '${item.title}|${item.storeName}|${item.price}',
-      );
-      if (!seen.add(fingerprint)) {
-        return;
-      }
-
-      results.add(item);
-    }
-
-    final directResults = payload['shopping_results'];
-    if (directResults is List) {
-      for (final item in directResults) {
-        if (item is! Map) {
-          continue;
-        }
-
-        addResult({
-          'title': item['title'],
-          'price': item['price'],
-          'priceValue': item['extracted_price'],
-          'thumbnail': item['thumbnail'],
-          'source': item['source'],
-          'link': item['link'] ?? item['product_link'],
-          'thumbnails': item['thumbnails'],
-          'currency': item['currency'] ?? 'SAR',
-        });
-      }
-    }
-
-    final categorizedResults = payload['categorized_shopping_results'];
-    if (categorizedResults is List) {
-      for (final category in categorizedResults) {
-        if (category is! Map) {
-          continue;
-        }
-        final categoryItems = category['shopping_results'];
-        if (categoryItems is! List) {
-          continue;
-        }
-        for (final item in categoryItems) {
-          if (item is! Map) {
-            continue;
-          }
-          addResult({
-            'title': item['title'],
-            'price': item['price'],
-            'priceValue': item['extracted_price'],
-            'thumbnail': item['thumbnail'],
-            'source': item['source'],
-            'link': item['link'] ?? item['product_link'],
-            'thumbnails': item['thumbnails'],
-            'currency': item['currency'] ?? 'SAR',
-          });
-        }
-      }
-    }
-
-    return results;
-  }
-
-  List<ComparisonSearchResult> _parseSerperResults(
-      Map<String, dynamic> payload) {
-    final results = <ComparisonSearchResult>[];
-    final seen = <String>{};
-
-    void addOrganicResult(dynamic rawItem) {
-      if (rawItem is! Map) {
-        return;
-      }
-
-      final item = rawItem as Map<String, dynamic>;
-      final title = stringValue(item['title'])?.trim() ?? '';
-      final link = stringValue(item['link'])?.trim() ?? '';
-      final snippet = stringValue(item['snippet'])?.trim() ?? '';
-
-      if (title.isEmpty || link.isEmpty) {
-        return;
-      }
-
-      final fingerprint = normalizeArabic('$title|$link');
-      if (!seen.add(fingerprint)) {
-        return;
-      }
-
-      // Try to extract price from snippet or title
-      final priceText =
-          extractMarketplacePrice(snippet) ?? extractMarketplacePrice(title);
-      if (priceText == null) {
-        return; // Skip if no price
-      }
-
-      final result = ComparisonSearchResult(
-        title: title,
-        price: priceText,
-        storeName: inferStoreIdFromUrl(link) ?? 'Google Search',
-        storeId: inferStoreIdFromUrl(link) ?? 'google',
-        storeLogoUrl: resolveStoreLogoUrl(
-            storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
-        imageUrl: '', // Serper may not have images in organic
-        productUrl: link,
-        currency: 'SAR',
-        sourceType: ComparisonSearchSourceType.serpApi,
-        channelType: ComparisonSearchChannelType.marketplace,
-        isLiveDirect: false,
-      );
-
-      results.add(result);
-    }
-
-    void addShoppingResult(dynamic rawItem) {
-      if (rawItem is! Map) return;
-
-      final item = rawItem as Map<String, dynamic>;
-      final title = stringValue(item['title'])?.trim() ?? '';
-      final link = stringValue(item['link'])?.trim() ?? '';
-      final priceString = stringValue(item['price'])?.trim() ?? '';
-      final imageUrl = stringValue(item['imageUrl'])?.trim() ?? '';
-      final source = stringValue(item['source'])?.trim() ?? '';
-
-      if (title.isEmpty || link.isEmpty || priceString.isEmpty) return;
-
-      final fingerprint = normalizeArabic('$title|$link');
-      if (!seen.add(fingerprint)) return;
-
-      final priceValue = extractMarketplacePrice(priceString);
-      if (priceValue == null || priceValue <= 0) return;
-
-      final result = ComparisonSearchResult(
-        title: title,
-        price: priceValue,
-        storeName: source.isNotEmpty
-            ? source
-            : (inferStoreIdFromUrl(link) ?? 'Google Shopping'),
-        storeId: inferStoreIdFromUrl(link) ?? 'google',
-        storeLogoUrl: resolveStoreLogoUrl(
-            storeId: inferStoreIdFromUrl(link) ?? 'google', productUrl: link),
-        imageUrl: imageUrl,
-        productUrl: link,
-        currency: 'SAR',
-        sourceType: ComparisonSearchSourceType.serpApi,
-        channelType: ComparisonSearchChannelType.marketplace,
-        isLiveDirect: false,
-      );
-
-      results.add(result);
-    }
-
-    // Try parsing shopping results first (more accurate)
-    final shoppingResults = payload['shopping'];
-    if (shoppingResults is List) {
-      for (final item in shoppingResults) {
-        addShoppingResult(item);
-      }
-    }
-
-    // Fallback to organic results
-    final organicResults = payload['organic'];
-    if (organicResults is List) {
-      for (final item in organicResults) {
-        addOrganicResult(item);
-      }
-    }
-
-    return results;
-  }
-
-  List<ComparisonSearchResult> _filterSupportedSaudiStoreResults(
-    List<ComparisonSearchResult> results, {
-    String? targetStoreId,
-  }) {
-    final filtered = results.where((result) {
-      final normalizedStoreId = result.storeId.trim().toLowerCase();
-
-      // Always show results from the explicitly selected store if they match
-      if (targetStoreId != null &&
-          targetStoreId.trim().isNotEmpty &&
-          normalizedStoreId == targetStoreId.trim().toLowerCase()) {
-        return true;
-      }
-
-      // If we are looking for a specific store, we still show other supported stores
-      // but they will be sorted lower later. This ensures 'No Results' is avoided.
-      final productHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
-      final storeNameLower = result.storeName.toLowerCase();
-      final storeIdLower = normalizedStoreId.toLowerCase();
-
-      // 1. Direct Whitelist Match (ID or Host)
-      if (_saudiSupportedStoreIds.contains(storeIdLower)) return true;
-
-      // 2. Name-based Match (Bilingual)
-      final inferredId =
-          inferStoreIdFromUrl('', fallbackName: result.storeName);
-      if (inferredId != null && _saudiSupportedStoreIds.contains(inferredId)) {
-        return true;
-      }
-
-      // 3. Domain-based Match for major Saudi retailers
-      if (productHost.contains('panda.sa') ||
-          productHost.contains('noon.com') ||
-          productHost.contains('amazon.sa') ||
-          productHost.contains('othaim') ||
-          productHost.contains('lulu') ||
-          productHost.contains('carrefour') ||
-          productHost.contains('danube') ||
-          productHost.contains('bindawood') ||
-          productHost.contains('tamimi')) {
-        return true;
-      }
-
-      // 4. Smart Google Fallback
-      if (productHost.contains('google')) {
-        if (storeNameLower.length > 2 && !storeNameLower.contains('http')) {
-          return true;
-        }
-      }
-
-      return false;
-    }).toList(growable: false);
-
-    if (targetStoreId != null && targetStoreId.trim().isNotEmpty) {
-      final strictMatches = filtered
-          .where((result) => _matchesTargetStore(result, targetStoreId))
-          .toList(growable: false);
-      strictMatches.sort(_compareSearchResults);
-      return strictMatches;
-    }
-
-    filtered.sort(_compareSearchResults);
-
-    return filtered;
-  }
-
-  bool _matchesTargetStore(
-    ComparisonSearchResult result,
-    String targetStoreId,
-  ) {
-    final normalizedTarget = targetStoreId.trim().toLowerCase();
-    if (normalizedTarget.isEmpty) {
-      return false;
-    }
-
-    if (result.storeId.trim().toLowerCase() == normalizedTarget) {
-      return true;
-    }
-
-    final inferredStoreId = inferStoreIdFromUrl(
-      result.productUrl,
-      fallbackName: result.storeName,
-    );
-    if ((inferredStoreId ?? '').trim().toLowerCase() == normalizedTarget) {
-      return true;
-    }
-
-    final targetDomain = domainForStoreId(normalizedTarget);
-    final resultHost = hostFromUrl(result.productUrl)?.toLowerCase() ?? '';
-    if (targetDomain != null &&
-        targetDomain.isNotEmpty &&
-        resultHost.contains(targetDomain.toLowerCase())) {
-      return true;
-    }
-
-    return false;
-  }
-
-  int _compareSearchResults(
-    ComparisonSearchResult first,
-    ComparisonSearchResult second,
-  ) {
-    final priceDifference = (first.price - second.price).abs();
-    final minPrice = first.price < second.price ? first.price : second.price;
-
-    // Give preferred stores a small tolerance (5% of the price or up to 15 SAR)
-    // to bubble them to the top if they are extremely close to the lowest price.
-    final tolerance = (minPrice * 0.05).clamp(2.0, 15.0);
-
-    if (priceDifference <= tolerance &&
-        first.isPreferredMarketplace != second.isPreferredMarketplace) {
-      return first.isPreferredMarketplace ? -1 : 1;
-    }
-
-    final priceCompare = first.price.compareTo(second.price);
-    if (priceCompare != 0) {
-      return priceCompare;
-    }
-
-    if (first.isPreferredMarketplace != second.isPreferredMarketplace) {
-      return first.isPreferredMarketplace ? -1 : 1;
-    }
-
-    if (first.isLiveDirect != second.isLiveDirect) {
-      return first.isLiveDirect ? -1 : 1;
-    }
-
-    return first.storeName.compareTo(second.storeName);
-  }
 }

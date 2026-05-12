@@ -5,7 +5,7 @@ const HYBRID_SEARCH_USER_AGENT =
 const REQUEST_TIMEOUT_MS = 8000;
 const MAX_RESULTS_PER_STORE = 8;
 const MAX_TOTAL_RESULTS = 40;
-const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key, X-Serper-Key, x-serper-key';
+const ALLOWED_CORS_HEADERS = 'Content-Type';
 const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
 const SAUDI_FAMOUS_STORES_ONLY = false;
 
@@ -305,10 +305,10 @@ export default {
     }
 
     const serpApiKey = String(
-      request.headers.get('x-serpapi-key') || env.SERPAPI_KEY || '',
+      env.SERPAPI_KEY || '',
     ).trim();
     const serperApiKey = String(
-      request.headers.get('x-serper-key') || env.SERPER_KEY || env.SERPER_API_KEY || '',
+      env.SERPER_KEY || env.SERPER_API_KEY || '',
     ).trim();
     const dataForSeoLogin = String(env.DATAFORSEO_LOGIN || '').trim();
     const dataForSeoPassword = String(env.DATAFORSEO_PASSWORD || '').trim();

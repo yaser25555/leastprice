@@ -1,0 +1,43 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:leastprice/data/models/user_savings_profile.dart';
+import 'package:leastprice/data/models/ad_banner_item.dart';
+import 'package:leastprice/data/models/automation_health_status.dart';
+import 'package:leastprice/data/models/product_comparison.dart';
+import 'package:leastprice/data/models/product_category_catalog.dart';
+import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
+import 'package:leastprice/data/repositories/product_repository.dart';
+
+final firestoreCatalogProvider = Provider<FirestoreCatalogService>((ref) {
+  return const FirestoreCatalogService();
+});
+
+final fallbackRepositoryProvider = Provider<ProductRepository>((ref) {
+  return const ProductRepository();
+});
+
+final userProfileStreamProvider = StreamProvider.family
+    .autoDispose<UserSavingsProfile?, String>((ref, userId) {
+  final catalog = ref.watch(firestoreCatalogProvider);
+  return catalog.watchUserProfile(userId);
+});
+
+final adBannersStreamProvider =
+    StreamProvider.autoDispose<List<AdBannerItem>>((ref) {
+  final catalog = ref.watch(firestoreCatalogProvider);
+  return catalog.watchAdBanners();
+});
+
+final systemHealthStreamProvider =
+    StreamProvider.autoDispose<AutomationHealthStatus?>((ref) {
+  final catalog = ref.watch(firestoreCatalogProvider);
+  return catalog.watchSystemHealth();
+});
+
+final productsStreamProvider =
+    StreamProvider.autoDispose<List<ProductComparison>>((ref) {
+  final catalog = ref.watch(firestoreCatalogProvider);
+  return catalog.watchProducts(
+    categoryId: ProductCategoryCatalog.allId,
+  );
+});

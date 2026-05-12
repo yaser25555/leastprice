@@ -17,15 +17,6 @@ class SearchAutomationClient {
 
   static SearchAutomationClient? fromConfig() {
     switch (LeastPriceDataConfig.searchProviderType) {
-      case SearchProviderType.serper:
-        final key = LeastPriceDataConfig.serperApiKey;
-        if (key.trim().isEmpty) {
-          return null;
-        }
-        return SearchAutomationClient._(
-          providerType: SearchProviderType.serper,
-          apiKey: key,
-        );
       case SearchProviderType.tavily:
         final key = LeastPriceDataConfig.tavilyApiKey;
         if (key.trim().isEmpty) {
@@ -35,6 +26,8 @@ class SearchAutomationClient {
           providerType: SearchProviderType.tavily,
           apiKey: key,
         );
+      case SearchProviderType.serper:
+        return null;
     }
   }
 

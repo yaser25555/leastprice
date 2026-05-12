@@ -464,6 +464,8 @@ extension ComparisonSearchSourceTypeLabel on ComparisonSearchSourceType {
         return tr('LeastPrice', 'LeastPrice');
       case ComparisonSearchSourceType.scraper:
         return tr('مباشر من المتجر', 'Direct store scrape');
+      case ComparisonSearchSourceType.amazon:
+        return 'Amazon';
     }
   }
 }

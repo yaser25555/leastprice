@@ -23,6 +23,23 @@ class _AdminNotificationPanelState extends State<AdminNotificationPanel> {
   Future<void> _send() async {
     if (!_formKey.currentState!.validate()) return;
 
+    if (!OneSignalApiService.hasApiKey) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr(
+                'مفتاح OneSignal مفقود. راجع تعليمات البناء.',
+                'OneSignal key is missing. Check build instructions.',
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     final success = await OneSignalApiService.sendGlobalNotification(

@@ -33,6 +33,7 @@ class ComparisonSearchResult {
   final String? tag;
 
   bool get isScraped => sourceType == ComparisonSearchSourceType.scraper;
+  bool get isAmazon => sourceType == ComparisonSearchSourceType.amazon;
   bool get isPreferredMarketplace {
     const preferred = {
       'noon',

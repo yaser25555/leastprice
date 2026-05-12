@@ -8,6 +8,7 @@ enum SearchProviderType {
 enum ComparisonSearchSourceType {
   serpApi,
   scraper,
+  amazon,
 }
 
 enum ComparisonSearchChannelType {

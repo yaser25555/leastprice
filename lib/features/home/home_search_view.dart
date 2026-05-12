@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leastprice/features/home/home_search_provider.dart';
 import 'package:leastprice/features/home/comparison_search_bar_section.dart';
 import 'package:leastprice/features/home/comparison_search_placeholder.dart';
-import 'package:leastprice/features/home/comparison_search_result_card.dart';
 import 'package:leastprice/features/home/search_suggestions_carousel.dart';
+import 'package:leastprice/features/home/search_result_grouper.dart';
+import 'package:leastprice/features/home/grouped_comparison_card.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
@@ -23,6 +24,8 @@ class HomeSearchView {
 
     final displayResults =
         isPaidPlanActive ? state.results : state.results.take(5).toList();
+    final groupedResults =
+        SearchResultGrouper.group(displayResults);
 
     return [
       SliverToBoxAdapter(
@@ -104,21 +107,24 @@ class HomeSearchView {
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final result = displayResults[index];
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index == displayResults.length - 1 ? 0 : 18,
-                  ),
-                  child: ComparisonSearchResultCard(
-                    result: result,
-                    onTap: () => onOpenExternalUrl(result.productUrl),
-                    onCopyCoupon: result.matchedCoupon == null
-                        ? null
-                        : () => onCopyCoupon(result.matchedCoupon!.code),
-                  ),
-                );
+                if (index < groupedResults.length) {
+                  final group = groupedResults[index];
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index == groupedResults.length - 1 ? 0 : 18,
+                    ),
+                    child: GroupedComparisonCard(
+                      group: group,
+                      onTapStore: (url) => onOpenExternalUrl(url),
+                      onCopyCoupon: group.matchedCoupon != null
+                          ? () => onCopyCoupon(group.matchedCoupon!.code)
+                          : null,
+                    ),
+                  );
+                }
+                return null;
               },
-              childCount: displayResults.length,
+              childCount: groupedResults.length,
             ),
           ),
         ),

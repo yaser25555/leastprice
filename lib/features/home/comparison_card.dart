@@ -218,19 +218,19 @@ class ComparisonCard extends StatelessWidget {
                           label: Text(tr('مشاركة التوفير', 'Share savings')),
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: onBuyTap,
-                          icon: const Icon(Icons.chat_rounded),
-                          label: Text(
-                            comparison.hasBuyUrl
-                                ? tr('فتح واتساب', 'Open WhatsApp')
-                                : tr('بدون واتساب', 'No WhatsApp'),
+                      if (comparison.hasBuyUrl) ...[
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: onBuyTap,
+                            icon: const Icon(Icons.chat_rounded),
+                            label: Text(
+                              tr('فتح واتساب', 'Open WhatsApp'),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   );
                 }
@@ -244,18 +244,18 @@ class ComparisonCard extends StatelessWidget {
                         label: Text(tr('مشاركة التوفير', 'Share savings')),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: onBuyTap,
-                        icon: const Icon(Icons.chat_rounded),
-                        label: Text(
-                          comparison.hasBuyUrl
-                              ? tr('فتح واتساب', 'Open WhatsApp')
-                              : tr('بدون واتساب', 'No WhatsApp'),
+                    if (comparison.hasBuyUrl) ...[
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: onBuyTap,
+                          icon: const Icon(Icons.chat_rounded),
+                          label: Text(
+                            tr('فتح واتساب', 'Open WhatsApp'),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 );
               },

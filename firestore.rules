@@ -1,177 +1,97 @@
 rules_version = '2';
-
 service cloud.firestore {
+  // IMPORTANT: daily_price_bot.py uses a Firebase service account
+  // (Admin SDK), which BYPASSES security rules entirely. The bot can
+  // write to all collections regardless of these rules.
   match /databases/{database}/documents {
-    function isSignedIn() {
+
+    // ========== HELPER FUNCTIONS ==========
+
+    function isAuth() {
       return request.auth != null;
     }
 
     function isAdmin() {
-      return isSignedIn() &&
-        request.auth.token.email != null &&
-        request.auth.token.email == 'yaser.haroon79@gmail.com';
+      return isAuth()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid))
+          .data.adminRole == 'marketing_manager';
     }
 
-    function isMarketingManager() {
-      return isSignedIn() &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.adminRole == 'marketing_manager';
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
     }
 
-    function isValidSearchText(value) {
-      return value is string &&
-        value.size() >= 2 &&
-        value.size() <= 120;
-    }
+    // ========== PUBLIC CATALOG (read for all auth users) ==========
 
-    function isValidSearchRequestCreate() {
-      return request.resource.data.keys().hasOnly([
-        'query',
-        'normalizedQuery',
-        'categoryId',
-        'categoryLabel',
-        'requestCount',
-        'status',
-        'source',
-        'firstRequestedAt',
-        'lastRequestedAt'
-      ]) &&
-      isValidSearchText(request.resource.data.query) &&
-      isValidSearchText(request.resource.data.normalizedQuery) &&
-      request.resource.data.categoryId is string &&
-      request.resource.data.categoryId.size() <= 40 &&
-      request.resource.data.categoryLabel is string &&
-      request.resource.data.categoryLabel.size() <= 80 &&
-      request.resource.data.requestCount == 1 &&
-      request.resource.data.status == 'pending' &&
-      request.resource.data.source == 'app_search';
-    }
-
-    function isValidSearchRequestUpdate() {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-        'query',
-        'normalizedQuery',
-        'categoryId',
-        'categoryLabel',
-        'requestCount',
-        'status',
-        'source',
-        'lastRequestedAt'
-      ]) &&
-      isValidSearchText(request.resource.data.query) &&
-      isValidSearchText(request.resource.data.normalizedQuery) &&
-      request.resource.data.categoryId is string &&
-      request.resource.data.categoryId.size() <= 40 &&
-      request.resource.data.categoryLabel is string &&
-      request.resource.data.categoryLabel.size() <= 80 &&
-      request.resource.data.requestCount is int &&
-      request.resource.data.requestCount >= resource.data.requestCount &&
-      request.resource.data.requestCount <= resource.data.requestCount + 1 &&
-      request.resource.data.requestCount <= 1000 &&
-      request.resource.data.status == 'pending' &&
-      request.resource.data.source == 'app_search';
-    }
-
-    function isValidBarcodeFeedbackCreate() {
-      return request.resource.data.keys().hasOnly([
-        'barcode',
-        'normalizedBarcode',
-        'productName',
-        'categoryLabel',
-        'cityLabel',
-        'selectedStore',
-        'status',
-        'source',
-        'userId',
-        'userEmail',
-        'createdAt',
-        'updatedAt'
-      ]) &&
-      request.resource.data.barcode is string &&
-      request.resource.data.barcode.size() >= 8 &&
-      request.resource.data.barcode.size() <= 32 &&
-      request.resource.data.normalizedBarcode is string &&
-      request.resource.data.normalizedBarcode.size() >= 8 &&
-      request.resource.data.normalizedBarcode.size() <= 32 &&
-      isValidSearchText(request.resource.data.productName) &&
-      (!('categoryLabel' in request.resource.data) ||
-        (request.resource.data.categoryLabel is string &&
-         request.resource.data.categoryLabel.size() <= 80)) &&
-      (!('cityLabel' in request.resource.data) ||
-        (request.resource.data.cityLabel is string &&
-         request.resource.data.cityLabel.size() <= 80)) &&
-      (!('selectedStore' in request.resource.data) ||
-        (request.resource.data.selectedStore is string &&
-         request.resource.data.selectedStore.size() <= 80)) &&
-      request.resource.data.status == 'pending_review' &&
-      request.resource.data.source == 'barcode_manual_help' &&
-      (!('userId' in request.resource.data) ||
-        request.resource.data.userId == request.auth.uid);
-    }
-
-    match /products/{productId} {
-      allow read: if true;
+    match /products/{document} {
+      allow read: if isAuth();
       allow create, update, delete: if isAdmin();
     }
 
-    match /ad_banners/{bannerId} {
-      allow read: if true;
+    match /ad_banners/{document} {
+      allow read: if isAuth();
       allow create, update, delete: if isAdmin();
     }
 
-    match /exclusive_deals/{dealId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin() || isMarketingManager();
-    }
-
-    match /coupons/{couponId} {
-      allow read: if true;
-      allow create, update, delete: if isAdmin() || isMarketingManager();
-    }
-
-    match /comparison_search_cache/{documentId} {
-      allow read: if true;
-      allow create, update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    match /popular_products/{documentId} {
-      allow read: if true;
+    match /exclusive_deals/{document} {
+      allow read: if isAuth();
       allow create, update, delete: if isAdmin();
     }
 
-    match /system_health/{documentId} {
-      allow read: if true;
+    match /coupons/{document} {
+      allow read: if isAuth();
       allow create, update, delete: if isAdmin();
     }
 
-    match /search_requests/{documentId} {
-      allow create: if isSignedIn() && isValidSearchRequestCreate();
-      allow update: if isSignedIn() && isValidSearchRequestUpdate();
-      allow read, delete: if isAdmin();
+    // ========== SYSTEM HEALTH (public read, bot writes via Admin SDK) ==========
+
+    match /system_health/{document} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
     }
 
-    match /barcode_feedback/{documentId} {
-      allow create: if isSignedIn() && isValidBarcodeFeedbackCreate();
-      allow read, update, delete: if isAdmin();
+    // ========== APP CONFIG (public read, admin write) ==========
+
+    match /config/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
+
+    // ========== USERS (own doc only, admin reads all) ==========
 
     match /users/{userId} {
-      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
-      allow create: if isAdmin() || (
-        isSignedIn() &&
-        request.auth.uid == userId &&
-        (!('adminRole' in request.resource.data) || request.resource.data.adminRole == 'user') &&
-        (!('planActivated' in request.resource.data) || request.resource.data.planActivated == false) &&
-        (!('planStatus' in request.resource.data) || request.resource.data.planStatus == 'inactive')
-      );
-      allow update: if isAdmin() || (
-        isSignedIn() &&
-        request.auth.uid == userId &&
-        request.resource.data.adminRole == resource.data.adminRole &&
-        request.resource.data.planActivated == resource.data.planActivated &&
-        request.resource.data.planStatus == resource.data.planStatus
-      );
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
+    }
+
+    // ========== SEARCH CACHE (auth users manage own entries) ==========
+
+    match /comparison_search_cache/{document} {
+      allow read: if isAuth();
+      allow create, update: if isAuth();
+      allow delete: if isAdmin();
+    }
+
+    // ========== USER SUBMISSIONS (any auth user can create) ==========
+
+    match /barcode_feedback/{document} {
+      allow create: if isAuth();
+      allow read: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    match /search_requests/{document} {
+      allow create: if isAuth();
+      allow read: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ========== UNUSED (declared but never accessed from client code) ==========
+
+    match /popular_products/{document} {
+      allow read, write: if false;
     }
   }
 }

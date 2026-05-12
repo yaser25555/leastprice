@@ -16,7 +16,7 @@ const HYBRID_SEARCH_USER_AGENT =
 const REQUEST_TIMEOUT_MS = 15000;
 const MAX_RESULTS_PER_STORE = 8;
 const MAX_TOTAL_RESULTS = 40;
-const ALLOWED_CORS_HEADERS = 'Content-Type, X-SerpApi-Key, x-serpapi-key';
+const ALLOWED_CORS_HEADERS = 'Content-Type';
 const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
 const SAUDI_FAMOUS_STORES_ONLY = true;
 
@@ -398,7 +398,7 @@ exports.hybridMarketplaceSearch = functionsV1
     }
 
     const serpApiKey = String(
-      request.get('x-serpapi-key') || process.env.SERPAPI_KEY || '',
+      process.env.SERPAPI_KEY || '',
     ).trim();
     const dataForSeoLogin = String(process.env.DATAFORSEO_LOGIN || '').trim();
     const dataForSeoPassword = String(process.env.DATAFORSEO_PASSWORD || '').trim();

@@ -1,0 +1,125 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:leastprice/data/models/coupon.dart';
+
+void main() {
+  group('Coupon', () {
+    test('fromJson parses correctly', () {
+      final json = {
+        'id': 'coupon-1',
+        'code': 'SAVE20',
+        'storeId': 'noon',
+        'storeName': 'Noon',
+        'discountLabel': '20% off',
+        'discountPercent': 20,
+        'expiresAt': '2026-12-31T23:59:59Z',
+        'active': true,
+      };
+
+      final coupon = Coupon.fromJson(json);
+
+      expect(coupon.id, 'coupon-1');
+      expect(coupon.code, 'SAVE20');
+      expect(coupon.storeId, 'noon');
+      expect(coupon.storeName, 'Noon');
+      expect(coupon.discountLabel, '20% off');
+      expect(coupon.discountPercent, 20);
+      expect(coupon.active, true);
+    });
+
+    test('isExpiredAt returns true for past expiry', () {
+      final coupon = Coupon(
+        id: 'test',
+        code: 'TEST',
+        storeId: 'amazon',
+        storeName: 'Amazon',
+        discountLabel: '10%',
+        expiresAt: DateTime(2020, 1, 1),
+      );
+
+      expect(coupon.isExpiredAt(DateTime(2025, 1, 1)), true);
+    });
+
+    test('isExpiredAt returns false for future expiry', () {
+      final coupon = Coupon(
+        id: 'test',
+        code: 'TEST',
+        storeId: 'amazon',
+        storeName: 'Amazon',
+        discountLabel: '10%',
+        expiresAt: DateTime(2027, 12, 31),
+      );
+
+      expect(coupon.isExpiredAt(DateTime(2025, 1, 1)), false);
+    });
+
+    test('copyWith replaces specified fields only', () {
+      final original = Coupon(
+        id: 'orig',
+        code: 'OLD',
+        storeId: 'amazon',
+        storeName: 'Amazon',
+        discountLabel: '5%',
+        discountPercent: 5,
+        expiresAt: DateTime(2025, 1, 1),
+      );
+
+      final updated = original.copyWith(
+        code: 'NEW',
+        discountPercent: 15,
+      );
+
+      expect(updated.id, 'orig');
+      expect(updated.code, 'NEW');
+      expect(updated.storeId, 'amazon');
+      expect(updated.discountPercent, 15);
+      expect(updated.expiresAt, DateTime(2025, 1, 1));
+    });
+
+    test('fromJson handles missing fields gracefully', () {
+      final coupon = Coupon.fromJson({'code': 'TEST', 'storeId': 'amazon'});
+
+      expect(coupon.code, 'TEST');
+      expect(coupon.storeId, isNotEmpty);
+      expect(coupon.active, true);
+      expect(coupon.expiresAt, isNotNull);
+    });
+
+    test('isSupportedFeaturedStore returns true for valid storeId', () {
+      final coupon = Coupon(
+        id: 'test',
+        code: 'TEST',
+        storeId: 'noon',
+        storeName: 'Noon',
+        discountLabel: '10%',
+        expiresAt: DateTime(2027, 1, 1),
+      );
+
+      expect(coupon.isSupportedFeaturedStore, true);
+    });
+
+    test('mockData has expected coupons', () {
+      expect(Coupon.mockData, hasLength(2));
+      expect(Coupon.mockData[0].storeId, 'noon');
+      expect(Coupon.mockData[1].storeId, 'namshi');
+    });
+
+    test('toFirestoreMap contains required fields', () {
+      final coupon = Coupon(
+        id: 'test',
+        code: 'FLASH50',
+        storeId: 'jarir',
+        storeName: 'Jarir',
+        discountLabel: '50% off',
+        discountPercent: 50,
+        expiresAt: DateTime(2026, 6, 15),
+      );
+
+      final map = coupon.toFirestoreMap();
+
+      expect(map['code'], 'FLASH50');
+      expect(map['storeId'], 'jarir');
+      expect(map['discountPercent'], 50);
+      expect(map['active'], true);
+    });
+  });
+}

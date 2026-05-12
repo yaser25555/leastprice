@@ -6,9 +6,14 @@ import 'package:leastprice/core/config/least_price_data_config.dart';
 class OneSignalApiService {
   static const String _baseUrl = 'https://onesignal.com/api/v1/notifications';
   
-  // We'll pass the REST API Key here. In a real production app, 
-  // you might want to fetch this from Firebase Remote Config or a secure function.
-  static const String _restApiKey = 'os_v2_app_ofjrn7at2bh65mhyqyfu2og64yqgeyfidt6er2mz4c3esbgv2hdvsiaxeg7pwxbjuvu2gbvc53aqaw7itw5rs772stjxo3oflihysai';
+  // Pass via `--dart-define=ONESIGNAL_REST_API_KEY=...` at build time.
+  // Default is empty — admin panel will show an error if missing.
+  static const String _restApiKey = String.fromEnvironment(
+    'ONESIGNAL_REST_API_KEY',
+    defaultValue: '',
+  );
+
+  static bool get hasApiKey => _restApiKey.isNotEmpty;
 
   static Future<bool> sendGlobalNotification({
     required String titleAr,
@@ -17,6 +22,12 @@ class OneSignalApiService {
     required String bodyEn,
     String? url,
   }) async {
+    if (_restApiKey.isEmpty) {
+      debugPrint('OneSignal REST API key is missing. '
+          'Pass --dart-define=ONESIGNAL_REST_API_KEY=... at build time.');
+      return false;
+    }
+
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
