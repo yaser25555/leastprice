@@ -46,6 +46,7 @@ DEFAULT_SEARCH_REQUESTS_COLLECTION = (
 DEFAULT_SYSTEM_HEALTH_COLLECTION = (
     os.getenv("SYSTEM_HEALTH_COLLECTION", "system_health").strip() or "system_health"
 )
+PRICE_HISTORY_COLLECTION = os.getenv("PRICE_HISTORY_COLLECTION", "price_history").strip() or "price_history"
 DEFAULT_REQUEST_LIMIT = int(os.getenv("SEARCH_REQUEST_LIMIT", "20"))
 DEFAULT_TOP_DEMAND_LIMIT = int(os.getenv("TOP_DEMAND_LIMIT", "12"))
 DEFAULT_MIN_REQUEST_COUNT = int(os.getenv("MIN_REQUEST_COUNT", "2"))
@@ -238,6 +239,7 @@ def main() -> int:
         if refresh_product_document(
             snapshot=snapshot,
             search_client=search_client,
+            database=database,
             dry_run=dry_run,
         ):
             stats["products_updated"] += 1
@@ -535,6 +537,7 @@ def refresh_product_document(
     *,
     snapshot: Any,
     search_client: SearchClient,
+    database: firestore.Client,
     dry_run: bool,
 ) -> bool:
     payload = snapshot.to_dict() or {}
@@ -598,7 +601,49 @@ def refresh_product_document(
         return True
 
     snapshot.reference.set(updates, merge=True)
+
+    save_price_snapshot(
+        database=database,
+        product_id=snapshot.id,
+        title=safe_string(payload.get("expensiveName")) or safe_string(payload.get("alternativeName")),
+        image_url=safe_string(payload.get("expensiveImageUrl")) or safe_string(payload.get("alternativeImageUrl")),
+        expensive_price=next_expensive_price,
+        alternative_price=next_alternative_price,
+    )
     return True
+
+
+def save_price_snapshot(
+    *,
+    database: firestore.Client,
+    product_id: str,
+    title: str,
+    image_url: str,
+    expensive_price: float,
+    alternative_price: float,
+) -> None:
+    now = firestore.SERVER_TIMESTAMP
+    collection = database.collection(PRICE_HISTORY_COLLECTION)
+
+    if expensive_price > 0:
+        collection.add({
+            "productId": product_id,
+            "title": title,
+            "imageUrl": image_url,
+            "price": round(expensive_price, 2),
+            "currency": "SAR",
+            "recordedAt": now,
+        })
+
+    if alternative_price > 0:
+        collection.add({
+            "productId": product_id,
+            "title": title,
+            "imageUrl": image_url,
+            "price": round(alternative_price, 2),
+            "currency": "SAR",
+            "recordedAt": now,
+        })
 
 
 def process_popular_product(

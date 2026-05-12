@@ -98,6 +98,14 @@ service cloud.firestore {
         && resource.data.userId == request.auth.uid;
     }
 
+    // ========== PRICE HISTORY (auth users read, bot creates via Admin SDK) ==========
+
+    match /price_history/{document} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update, delete: if isAdmin();
+    }
+
     // ========== UNUSED (declared but never accessed from client code) ==========
 
     match /popular_products/{document} {

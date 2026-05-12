@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:leastprice/core/config/least_price_data_config.dart';
+import 'package:leastprice/data/models/price_snapshot.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
 import 'package:leastprice/data/models/user_savings_profile.dart';
@@ -46,6 +47,8 @@ class FirestoreCatalogService {
       firestore.collection(LeastPriceDataConfig.searchRequestsCollectionName);
   CollectionReference<Map<String, dynamic>> get _favoritesCollection =>
       firestore.collection(LeastPriceDataConfig.favoritesCollectionName);
+  CollectionReference<Map<String, dynamic>> get _priceHistoryCollection =>
+      firestore.collection(LeastPriceDataConfig.priceHistoryCollectionName);
 
   Stream<List<AdBannerItem>> watchAdBanners() {
     return _adBannersCollection.snapshots().map((snapshot) {
@@ -723,6 +726,30 @@ class FirestoreCatalogService {
 
   String _encodeFavId(String productUrl) {
     return productUrl.trim().replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+  }
+
+  Stream<List<PriceSnapshot>> watchPriceHistory(String productId) {
+    return _priceHistoryCollection
+        .where('productId', isEqualTo: productId)
+        .orderBy('recordedAt', descending: false)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((d) => PriceSnapshot.fromFirestore(d))
+            .toList());
+  }
+
+  Future<List<PriceSnapshot>> fetchPriceHistory(String productId) async {
+    final snap = await _priceHistoryCollection
+        .where('productId', isEqualTo: productId)
+        .orderBy('recordedAt', descending: false)
+        .get();
+    return snap.docs
+        .map((d) => PriceSnapshot.fromFirestore(d))
+        .toList();
+  }
+
+  Future<void> savePriceSnapshot(PriceSnapshot snapshot) async {
+    await _priceHistoryCollection.add(snapshot.toFirestoreMap());
   }
 
   int _sortProducts(ProductComparison a, ProductComparison b) {

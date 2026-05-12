@@ -22,6 +22,7 @@ class LeastPriceDataConfig {
   static const String searchRequestsCollectionName = 'search_requests';
   static const String favoritesCollectionName = 'favorites';
   static const String barcodeFeedbackCollectionName = 'barcode_feedback';
+  static const String priceHistoryCollectionName = 'price_history';
   static const String systemHealthCollectionName = 'system_health';
   static const String systemHealthDocumentId = 'daily_price_bot';
   static const String remoteJsonUrl =

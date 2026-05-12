@@ -5,8 +5,10 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/coupon.dart';
+import 'package:leastprice/data/models/price_snapshot.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
+import 'package:leastprice/features/home/price_history_chart.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({
@@ -204,6 +206,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(height: 8),
             _CouponCard(coupon: group.matchedCoupon!),
           ],
+          const SizedBox(height: 32),
+          Text(
+            tr('سجل الأسعار', 'Price History'),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 8),
+          _PriceHistorySection(productId: group.uniqueKey),
         ],
       ),
     );
@@ -396,5 +405,53 @@ class _CouponCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _PriceHistorySection extends StatefulWidget {
+  const _PriceHistorySection({required this.productId});
+
+  final String productId;
+
+  @override
+  State<_PriceHistorySection> createState() => _PriceHistorySectionState();
+}
+
+class _PriceHistorySectionState extends State<_PriceHistorySection> {
+  final _service = const FirestoreCatalogService();
+  List<PriceSnapshot> _snapshots = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final data = await _service.fetchPriceHistory(widget.productId);
+      if (mounted) {
+        setState(() {
+          _snapshots = data;
+          _loading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
+    }
+    return PriceHistoryChart(snapshots: _snapshots);
   }
 }
