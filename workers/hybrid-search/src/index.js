@@ -1637,13 +1637,6 @@ function normalizeImageUrl(value) {
   return text;
 }
 
-  if (text.startsWith('//')) {
-    return `https:${text}`;
-  }
-
-  return text;
-}
-
 function extractHost(value) {
   const text = String(value || '').trim();
   if (!text) {
