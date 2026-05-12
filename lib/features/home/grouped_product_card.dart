@@ -19,4 +19,14 @@ class GroupedProductCard {
       .reduce((a, b) => a < b ? a : b);
 
   String get currency => offers.first.currency;
+
+  String get uniqueKey {
+    final parts = <String>[];
+    for (final o in offers.take(3)) {
+      if (o.storeId.isNotEmpty) parts.add(o.storeId);
+      if (o.price > 0) parts.add(o.price.toStringAsFixed(0));
+    }
+    final suffix = parts.isNotEmpty ? '__${parts.join('_')}' : '';
+    return '${displayTitle.replaceAll(RegExp(r'[^a-zA-Z0-9\u0600-\u06FF]'), '_')}$suffix';
+  }
 }
