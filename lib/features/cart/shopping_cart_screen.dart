@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -28,7 +29,17 @@ class ShoppingCartScreen extends ConsumerWidget {
           if (cartItems.isNotEmpty) ...[
             IconButton(
               icon: const Icon(Icons.share_rounded),
-              onPressed: () => notifier.shareCart(),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: notifier.shareText));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(tr('تم نسخ السلة، يمكنك مشاركتها الآن',
+                        'Cart copied, you can share it now')),
+                    backgroundColor: AppPalette.comparisonEmerald,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
               tooltip: tr('مشاركة', 'Share'),
             ),
             IconButton(

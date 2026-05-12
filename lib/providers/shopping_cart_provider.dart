@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:share_plus/share_plus.dart';
 
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/cart_item.dart';
@@ -100,7 +99,7 @@ class ShoppingCartNotifier extends Notifier<List<CartItem>> {
     return map;
   }
 
-  Future<void> shareCart() async {
+  String get shareText {
     final buffer = StringBuffer();
     buffer.writeln('🛒 ${tr('سلة التوفير من LeastPrice', 'LeastPrice Savings Cart')}');
     buffer.writeln('==============================');
@@ -115,10 +114,7 @@ class ShoppingCartNotifier extends Notifier<List<CartItem>> {
     );
     buffer.writeln();
     buffer.writeln('${tr('حمّل LeastPrice', 'Download LeastPrice')}: https://leastprice.app');
-
-    await SharePlus.instance.share(
-      ShareParams(text: buffer.toString()),
-    );
+    return buffer.toString();
   }
 
   /// Returns the quantity for a given productUrl, or 0 if not in cart.
