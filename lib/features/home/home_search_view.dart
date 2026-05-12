@@ -21,6 +21,7 @@ class HomeSearchView {
     required bool isPaidPlanActive,
     required VoidCallback onDetectCityTap,
     required VoidCallback onBarcodeTap,
+    required VoidCallback onFilterTap,
   }) {
     final state = ref.watch(homeSearchProvider);
     final notifier = ref.read(homeSearchProvider.notifier);
@@ -74,7 +75,7 @@ class HomeSearchView {
             },
             onDetectCityTap: onDetectCityTap,
             onBarcodeTap: onBarcodeTap,
-            onFilterTap: () => _showPriceFilter(context, notifier, state),
+            onFilterTap: onFilterTap,
           ),
         ),
       ),

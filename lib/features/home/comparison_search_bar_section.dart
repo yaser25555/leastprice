@@ -24,6 +24,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
     required this.onSubmitted,
     required this.onDetectCityTap,
     required this.onBarcodeTap,
+    this.onFilterTap,
   });
 
   final TextEditingController searchController;
