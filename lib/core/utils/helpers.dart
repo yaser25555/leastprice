@@ -308,18 +308,13 @@ String normalizedImageUrl(
 }) {
   final value = (rawUrl ?? '').trim();
 
-  // رابط فارغ أو localhost أو غير صالح → placeholder آمنة
   final isLocalhost = value.contains('localhost') ||
       value.contains('127.0.0.1') ||
       value.contains('0.0.0.0');
   final isValidScheme =
       value.startsWith('http://') || value.startsWith('https://');
 
-  if (value.isEmpty || isLocalhost || !isValidScheme) {
-    final encoded = Uri.encodeComponent(
-        fallbackLabel.isNotEmpty ? fallbackLabel : 'LeastPrice');
-    return 'https://placehold.co/900x600/EAF3EF/17332B?text=$encoded';
-  }
+  if (value.isEmpty || isLocalhost || !isValidScheme) return '';
 
   const brokenTokens = <String>[
     'photo-1570194065650-d99fb4d8a5c8',
@@ -328,10 +323,7 @@ String normalizedImageUrl(
   ];
 
   for (final token in brokenTokens) {
-    if (value.contains(token)) {
-      final encoded = Uri.encodeComponent(fallbackLabel);
-      return 'https://placehold.co/900x600/EAF3EF/17332B?text=$encoded';
-    }
+    if (value.contains(token)) return '';
   }
 
   return value;
