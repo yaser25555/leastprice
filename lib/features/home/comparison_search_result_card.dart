@@ -266,8 +266,11 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   Consumer(
                     builder: (context, ref, child) {
                       final cartItems = ref.watch(shoppingCartProvider);
-                      final isInCart = cartItems
-                          .any((item) => item.productUrl == result.productUrl);
+                      final cartNotifier =
+                          ref.read(shoppingCartProvider.notifier);
+                      final quantity =
+                          cartNotifier.quantityOf(result.productUrl);
+                      final isInCart = quantity > 0;
 
                       return Row(
                         children: [
@@ -289,61 +292,85 @@ class ComparisonSearchResultCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          FilledButton.icon(
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              if (isInCart) {
-                                ref
-                                    .read(shoppingCartProvider.notifier)
-                                    .removeItem(result.productUrl);
+                          if (isInCart) ...[
+                            // Quantity selector when in cart
+                            InkWell(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                cartNotifier
+                                    .decrementQuantity(result.productUrl);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppPalette.softOrange,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                    Icons.remove_rounded, size: 16),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: Text(
+                                '$quantity',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                cartNotifier
+                                    .incrementQuantity(result.productUrl);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppPalette
+                                      .paleOrange
+                                      .withValues(alpha: 0.3),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(Icons.add_rounded, size: 16),
+                              ),
+                            ),
+                          ] else ...[
+                            FilledButton.icon(
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                cartNotifier.addItem(result);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(tr(
-                                        'تمت إزالة المنتج من السلة',
-                                        'Item removed from cart')),
-                                    backgroundColor: Colors.redAccent,
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                              } else {
-                                ref
-                                    .read(shoppingCartProvider.notifier)
-                                    .addItem(result);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(tr('تمت إضافة المنتج للسلة',
+                                        'تمت إضافة المنتج للسلة',
                                         'Item added to cart')),
                                     backgroundColor:
                                         AppPalette.comparisonEmerald,
                                     duration: const Duration(seconds: 1),
                                   ),
                                 );
-                              }
-                            },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: isInCart
-                                  ? AppPalette.softOrange
-                                  : AppPalette.paleOrange
-                                      .withValues(alpha: 0.2),
-                              foregroundColor: isInCart
-                                  ? AppPalette.orange
-                                  : AppPalette.deepNavy,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
+                              },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppPalette
+                                    .paleOrange
+                                    .withValues(alpha: 0.2),
+                                foregroundColor: AppPalette.deepNavy,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
                               ),
+                              icon: const Icon(
+                                  Icons.add_shopping_cart_rounded,
+                                  size: 16),
+                              label: Text(tr('للسلة', 'To Cart'),
+                                  style: const TextStyle(fontSize: 12)),
                             ),
-                            icon: Icon(
-                                isInCart
-                                    ? Icons.shopping_cart_rounded
-                                    : Icons.add_shopping_cart_rounded,
-                                size: 16),
-                            label: Text(
-                                isInCart
-                                    ? tr('بالسلة', 'In Cart')
-                                    : tr('للسلة', 'To Cart'),
-                                style: const TextStyle(fontSize: 12)),
-                          ),
+                          ],
                         ],
                       );
                     },

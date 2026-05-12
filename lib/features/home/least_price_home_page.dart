@@ -720,3 +720,108 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
 }
 
 class _PriceFilterSheet extends StatefulWidget {
+  final double minPrice;
+  final double maxPrice;
+  final void Function(double min, double max) onApply;
+  final VoidCallback onClear;
+
+  const _PriceFilterSheet({
+    required this.minPrice,
+    required this.maxPrice,
+    required this.onApply,
+    required this.onClear,
+  });
+
+  @override
+  State<_PriceFilterSheet> createState() => _PriceFilterSheetState();
+}
+
+class _PriceFilterSheetState extends State<_PriceFilterSheet> {
+  late RangeValues _range;
+
+  @override
+  void initState() {
+    super.initState();
+    _range = RangeValues(widget.minPrice, widget.maxPrice);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                tr('فلترة السعر', 'Price Filter'),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              TextButton(
+                onPressed: widget.onClear,
+                child: Text(tr('إزالة الفلتر', 'Clear filter')),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          RangeSlider(
+            values: _range,
+            min: 0,
+            max: 5000,
+            divisions: 50,
+            labels: RangeLabels(
+              _range.start == 0
+                  ? tr('أقل', 'Min')
+                  : '${_range.start.toStringAsFixed(0)} SAR',
+              _range.end == 0
+                  ? tr('أعلى', 'Max')
+                  : '${_range.end.toStringAsFixed(0)} SAR',
+            ),
+            activeColor: AppPalette.comparisonEmerald,
+            onChanged: (v) => setState(() => _range = v),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '${tr('من', 'From')}: ${_range.start == 0 ? tr('أقل', 'Min') : '${_range.start.toStringAsFixed(0)} SAR'}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  '${tr('إلى', 'To')}: ${_range.end == 0 ? tr('أعلى', 'Max') : '${_range.end.toStringAsFixed(0)} SAR'}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () => widget.onApply(_range.start, _range.end),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppPalette.comparisonEmerald,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child: Text(
+                tr('تطبيق الفلتر', 'Apply Filter'),
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
