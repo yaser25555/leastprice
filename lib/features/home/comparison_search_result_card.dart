@@ -265,6 +265,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Consumer(
                     builder: (context, ref, child) {
+                      final cartItems = ref.watch(shoppingCartProvider);
                       final cartNotifier =
                           ref.read(shoppingCartProvider.notifier);
                       final quantity =
