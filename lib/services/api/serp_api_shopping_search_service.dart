@@ -230,6 +230,14 @@ class SerpApiShoppingSearchService {
       throw const FormatException('Unexpected hybrid search payload');
     }
 
+    final debug = payload['debug'];
+    if (debug is Map) {
+      debugPrint('[Worker] hasSerpApiKey: ${debug['hasSerpApiKey']}, '
+          'hasSerperApiKey: ${debug['hasSerperApiKey']}, '
+          'serpApiResults: ${payload['counts']['serpApi']}, '
+          'serperResults: ${payload['counts']['serper']}');
+    }
+
     final rows = payload['results'];
     final hybridResults = rows is List
         ? _parser.parseHybridResponse(rows)
