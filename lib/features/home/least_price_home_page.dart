@@ -240,6 +240,29 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     }
   }
 
+  void _showPriceFilter(BuildContext context) {
+    final notifier = ref.read(homeSearchProvider.notifier);
+    final state = ref.read(homeSearchProvider);
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => _PriceFilterSheet(
+        minPrice: state.filterMinPrice,
+        maxPrice: state.filterMaxPrice,
+        onApply: (min, max) {
+          notifier.setPriceFilter(min, max);
+          Navigator.pop(ctx);
+        },
+        onClear: () {
+          notifier.clearFilters();
+          Navigator.pop(ctx);
+        },
+      ),
+    );
+  }
+
   void _selectHomeSection(HomeCatalogSection section) {
     if (_selectedHomeSection == section) return;
     setState(() => _selectedHomeSection = section);
@@ -551,6 +574,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       onDetectCityTap: () => unawaited(
                           _detectCityFromCurrentLocation(showFeedback: true)),
                       onBarcodeTap: () => _openBarcodeScanner(context),
+                      onFilterTap: () => _showPriceFilter(context),
                     ),
                   if (showPlansSection)
                     SliverPadding(
@@ -694,3 +718,5 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     );
   }
 }
+
+class _PriceFilterSheet extends StatefulWidget {

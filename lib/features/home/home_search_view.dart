@@ -26,7 +26,7 @@ class HomeSearchView {
     final notifier = ref.read(homeSearchProvider.notifier);
 
     final displayResults =
-        isPaidPlanActive ? state.results : state.results.take(5).toList();
+        isPaidPlanActive ? state.filteredResults : state.filteredResults.take(5).toList();
     final groupedResults =
         SearchResultGrouper.group(displayResults);
 
@@ -74,6 +74,7 @@ class HomeSearchView {
             },
             onDetectCityTap: onDetectCityTap,
             onBarcodeTap: onBarcodeTap,
+            onFilterTap: () => _showPriceFilter(context, notifier, state),
           ),
         ),
       ),

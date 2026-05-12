@@ -18,6 +18,8 @@ class HomeSearchState {
   final int currentOffset;
   final bool isLoadingMore;
   final bool hasMoreResults;
+  final double filterMinPrice;
+  final double filterMaxPrice;
 
   const HomeSearchState({
     this.query = '',
@@ -33,7 +35,20 @@ class HomeSearchState {
     this.currentOffset = 0,
     this.isLoadingMore = false,
     this.hasMoreResults = true,
+    this.filterMinPrice = 0,
+    this.filterMaxPrice = 0,
   });
+
+  List<ComparisonSearchResult> get filteredResults {
+    var list = results;
+    if (filterMinPrice > 0) {
+      list = list.where((r) => r.price >= filterMinPrice).toList();
+    }
+    if (filterMaxPrice > 0) {
+      list = list.where((r) => r.price <= filterMaxPrice).toList();
+    }
+    return list;
+  }
 
   HomeSearchState copyWith({
     String? query,
@@ -49,6 +64,8 @@ class HomeSearchState {
     int? currentOffset,
     bool? isLoadingMore,
     bool? hasMoreResults,
+    double? filterMinPrice,
+    double? filterMaxPrice,
   }) {
     return HomeSearchState(
       query: query ?? this.query,
@@ -65,6 +82,8 @@ class HomeSearchState {
       currentOffset: currentOffset ?? this.currentOffset,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       hasMoreResults: hasMoreResults ?? this.hasMoreResults,
+      filterMinPrice: filterMinPrice ?? this.filterMinPrice,
+      filterMaxPrice: filterMaxPrice ?? this.filterMaxPrice,
     );
   }
 }
@@ -92,6 +111,14 @@ class HomeSearchNotifier extends Notifier<HomeSearchState> {
 
   void setStore(String store) {
     state = state.copyWith(selectedStore: store);
+  }
+
+  void setPriceFilter(double min, double max) {
+    state = state.copyWith(filterMinPrice: min, filterMaxPrice: max);
+  }
+
+  void clearFilters() {
+    state = state.copyWith(filterMinPrice: 0, filterMaxPrice: 0);
   }
 
   void setCategory(String? category) {

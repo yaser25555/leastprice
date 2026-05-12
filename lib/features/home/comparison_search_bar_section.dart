@@ -42,6 +42,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final ValueChanged<String> onSubmitted;
   final VoidCallback onDetectCityTap;
   final VoidCallback onBarcodeTap;
+  final VoidCallback? onFilterTap;
 
   @override
   Widget build(BuildContext context) {
@@ -192,6 +193,17 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (hasQuery || true)
+                        IconButton(
+                          onPressed: onFilterTap,
+                          icon: Icon(
+                            Icons.tune_rounded,
+                            color: AppPalette.orange,
+                          ),
+                          tooltip: tr('فلترة', 'Filter'),
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                        ),
                       IconButton(
                         onPressed: onBarcodeTap,
                         icon: Icon(
