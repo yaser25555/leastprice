@@ -23,6 +23,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
     required this.onClearSearch,
     required this.onSubmitted,
     required this.onDetectCityTap,
+    required this.onBarcodeTap,
   });
 
   final TextEditingController searchController;
@@ -40,6 +41,7 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final VoidCallback onClearSearch;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onDetectCityTap;
+  final VoidCallback onBarcodeTap;
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +192,14 @@ class ComparisonSearchBarSection extends StatelessWidget {
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      IconButton(
+                        onPressed: onBarcodeTap,
+                        icon: Icon(
+                          Icons.qr_code_scanner_rounded,
+                          color: AppPalette.orange,
+                        ),
+                        tooltip: tr('مسح الباركود', 'Scan barcode'),
+                      ),
                       if (hasQuery)
                         IconButton(
                           onPressed: onClearSearch,

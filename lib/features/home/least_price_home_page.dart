@@ -28,6 +28,8 @@ import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/features/home/favorites_screen.dart';
+import 'package:leastprice/features/search/barcode_scanner_screen.dart';
+import 'package:leastprice/services/api/open_food_facts_service.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
 class LeastPriceHomePage extends ConsumerStatefulWidget {
@@ -204,6 +206,37 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       }
     } finally {
       if (mounted) setState(() => _isDetectingCity = false);
+    }
+  }
+
+  void _openBarcodeScanner(BuildContext context) async {
+    final barcode = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => const BarcodeScannerScreen(),
+      ),
+    );
+    if (barcode == null || barcode.isEmpty || !context.mounted) return;
+
+    final productName = await OpenFoodFactsService.getProductNameFromBarcode(barcode);
+    if (productName != null && productName.isNotEmpty && context.mounted) {
+      _searchController.text = productName;
+      _searchController.selection = TextSelection.fromPosition(
+        TextPosition(offset: productName.length),
+      );
+      final notifier = ref.read(homeSearchProvider.notifier);
+      notifier.setQuery(productName);
+      notifier.performSearch(forceRefresh: true);
+      _searchFocusNode.unfocus();
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(tr(
+            'لم نتعرف على المنتج. جرّب البحث يدوياً.',
+            'Product not found. Try searching manually.',
+          )),
+          duration: const Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -517,6 +550,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       isPaidPlanActive: isPaidPlanActive,
                       onDetectCityTap: () => unawaited(
                           _detectCityFromCurrentLocation(showFeedback: true)),
+                      onBarcodeTap: () => _openBarcodeScanner(context),
                     ),
                   if (showPlansSection)
                     SliverPadding(
