@@ -249,6 +249,11 @@ for (const store of PRIORITY_STORES) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/api/image-proxy') {
+      return handleImageProxy(request, url);
+    }
+
     if (
       url.pathname !== '/' &&
       url.pathname !== '/api/hybridMarketplaceSearch' &&
@@ -461,6 +466,52 @@ function jsonResponse(payload, status, request) {
   return new Response(JSON.stringify(payload), {
     status,
     headers: buildCorsHeaders(request),
+  });
+}
+
+async function handleImageProxy(request, url) {
+  const imageUrl = url.searchParams.get('url');
+  if (!imageUrl) {
+    return new Response('Missing url parameter', { status: 400 });
+  }
+
+  let targetUrl;
+  try {
+    targetUrl = new URL(imageUrl);
+    if (targetUrl.protocol !== 'https:' && targetUrl.protocol !== 'http:') {
+      throw new Error('Invalid protocol');
+    }
+  } catch (_) {
+    return new Response('Invalid image URL', { status: 400 });
+  }
+
+  const response = await fetchWithTimeout(targetUrl.toString(), {
+    headers: {
+      'User-Agent': HYBRID_SEARCH_USER_AGENT,
+    },
+  });
+
+  if (!response.ok) {
+    return new Response('Failed to fetch image', {
+      status: response.status,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=3600',
+      },
+    });
+  }
+
+  const contentType = response.headers.get('Content-Type') || 'image/jpeg';
+  const imageBuffer = await response.arrayBuffer();
+
+  return new Response(imageBuffer, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Cache-Control': 'public, max-age=86400',
+      'Content-Type': contentType,
+      'Content-Length': imageBuffer.byteLength.toString(),
+    },
   });
 }
 

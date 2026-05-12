@@ -43,15 +43,8 @@ class GroupedComparisonCard extends StatelessWidget {
                     width: double.infinity,
                     color: Colors.grey.shade50,
                     child: Image.network(
-                      group.displayImageUrl,
+                      proxiedImageUrl(group.displayImageUrl),
                       fit: BoxFit.contain,
-                      loadingBuilder: (_, child, progress) =>
-                          progress == null ? child : Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppPalette.comparisonEmerald,
-                            ),
-                          ),
                       errorBuilder: (_, __, ___) => Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -218,7 +211,7 @@ class _StoreRow extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  offer.storeLogoUrl,
+                  proxiedImageUrl(offer.storeLogoUrl),
                   width: 28,
                   height: 28,
                   fit: BoxFit.contain,

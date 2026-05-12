@@ -59,7 +59,7 @@ class ExclusiveDealCard extends StatelessWidget {
                   Container(
                     color: AppPalette.softOrange,
                     child: Image.network(
-                      deal.imageUrl,
+                      proxiedImageUrl(deal.imageUrl),
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) {
                         return Icon(

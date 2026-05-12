@@ -59,7 +59,7 @@ class ProductPane extends StatelessWidget {
               child: DecoratedBox(
                 decoration: const BoxDecoration(color: Color(0xFFFFF0E6)),
                 child: Image.network(
-                  imageUrl,
+                  proxiedImageUrl(imageUrl),
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) {
                     return const Center(

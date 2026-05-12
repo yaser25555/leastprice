@@ -152,7 +152,7 @@ class ShoppingCartScreen extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(12),
                               child: item.imageUrl.isNotEmpty
                                   ? Image.network(
-                                      item.imageUrl,
+                                      proxiedImageUrl(item.imageUrl),
                                       width: 60,
                                       height: 60,
                                       fit: BoxFit.cover,

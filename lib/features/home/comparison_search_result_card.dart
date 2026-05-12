@@ -44,7 +44,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               child: result.imageUrl.trim().isNotEmpty
                   ? Image.network(
-                      result.imageUrl,
+                      proxiedImageUrl(result.imageUrl),
                       width: 72,
                       height: 72,
                       fit: BoxFit.cover,
@@ -234,7 +234,7 @@ class ComparisonSearchResultCard extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(999),
                           child: Image.network(
-                            result.storeLogoUrl,
+                            proxiedImageUrl(result.storeLogoUrl),
                             width: 18,
                             height: 18,
                             fit: BoxFit.cover,

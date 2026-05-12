@@ -125,19 +125,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               width: double.infinity,
               color: Colors.grey.shade50,
               child: Image.network(
-                group.displayImageUrl,
+                proxiedImageUrl(group.displayImageUrl),
                 fit: BoxFit.contain,
-                loadingBuilder: (_, child, progress) =>
-                    progress == null ? child : Center(
-                      child: CircularProgressIndicator(
-                        value: progress.expectedTotalBytes != null
-                            ? progress.cumulativeBytesLoaded /
-                                progress.expectedTotalBytes!
-                            : null,
-                        strokeWidth: 2,
-                        color: AppPalette.comparisonEmerald,
-                      ),
-                    ),
                 errorBuilder: (_, __, ___) => Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -268,7 +257,7 @@ class _OfferCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                offer.storeLogoUrl,
+                proxiedImageUrl(offer.storeLogoUrl),
                 width: 40,
                 height: 40,
                 fit: BoxFit.contain,

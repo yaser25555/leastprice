@@ -56,11 +56,11 @@ class ExclusiveCouponCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(999),
                 child: Image.network(
-                  resolveStoreLogoUrl(
+                  proxiedImageUrl(resolveStoreLogoUrl(
                     storeId: coupon.storeId,
                     productUrl: '',
                     fallbackName: coupon.storeName,
-                  ),
+                  )),
                   width: 28,
                   height: 28,
                   fit: BoxFit.cover,

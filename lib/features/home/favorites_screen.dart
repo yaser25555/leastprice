@@ -88,7 +88,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          imageUrl,
+                          proxiedImageUrl(imageUrl),
                           width: 64,
                           height: 64,
                           fit: BoxFit.contain,

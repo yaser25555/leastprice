@@ -275,6 +275,14 @@ MarketplaceSearchCity marketplaceSearchCityById(String? id) {
 
 // ─── لوحة المنتجات البسيطة ───────────────────────────────────────────────────
 
+String proxiedImageUrl(String url) {
+  if (!kIsWeb) return url;
+  if (url.isEmpty) return url;
+  final workerUrl = LeastPriceDataConfig.hybridSearchBaseUrlOverride;
+  final encoded = Uri.encodeComponent(url);
+  return '$workerUrl/api/image-proxy?url=$encoded';
+}
+
 String? formatSaudiPhoneNumber(String rawNumber) {
   final digits = rawNumber.replaceAll(RegExp(r'[^0-9+]'), '');
   if (digits.startsWith('+9665') && digits.length == 13) {
