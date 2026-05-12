@@ -9,7 +9,6 @@ export 'comparison_image_fallback.dart';
 export 'comparison_insights.dart';
 export 'comparison_search_bar_section.dart';
 export 'comparison_search_placeholder.dart';
-export 'comparison_search_result_card.dart';
 export 'coupons_list_section.dart';
 export 'coupons_paywall_section.dart';
 export 'empty_state.dart';

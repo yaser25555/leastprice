@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
@@ -9,6 +10,7 @@ import 'package:leastprice/data/models/price_snapshot.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
 import 'package:leastprice/features/home/price_history_chart.dart';
+import 'package:leastprice/providers/shopping_cart_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({
@@ -348,6 +350,51 @@ class _OfferCard extends StatelessWidget {
                 ),
                 child: Text(tr('فتح', 'Open')),
               ),
+            ),
+            const SizedBox(width: 4),
+            Consumer(
+              builder: (context, ref, child) {
+                final notifier = ref.read(shoppingCartProvider.notifier);
+                final qty = notifier.quantityOf(offer.productUrl);
+                final inCart = qty > 0;
+                return SizedBox(
+                  height: 38,
+                  width: 38,
+                  child: IconButton(
+                    onPressed: inCart
+                        ? null
+                        : () {
+                            notifier.addItem(offer);
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
+                                backgroundColor: AppPalette.comparisonEmerald,
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                    style: IconButton.styleFrom(
+                      backgroundColor: inCart
+                          ? AppPalette.comparisonEmerald.withValues(alpha: 0.12)
+                          : AppPalette.paleOrange.withValues(alpha: 0.2),
+                      foregroundColor: inCart
+                          ? AppPalette.comparisonEmerald
+                          : AppPalette.deepNavy,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: Icon(
+                      inCart
+                          ? Icons.check_circle
+                          : Icons.add_shopping_cart_outlined,
+                      size: 20,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
