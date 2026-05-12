@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'workers/hybrid-search/**'
   workflow_dispatch:
 
 jobs:
