@@ -26,6 +26,8 @@ import 'package:leastprice/features/home/home_search_view.dart';
 import 'package:leastprice/features/home/home_connectivity_provider.dart';
 import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
+import 'package:leastprice/features/home/grouped_product_card.dart';
+import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
 class LeastPriceHomePage extends ConsumerStatefulWidget {
@@ -490,6 +492,15 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       searchFocusNode: _searchFocusNode,
                       onOpenExternalUrl: (url) =>
                           _actions.openExternalUrl(context, url),
+                      onTapGroup: (group) => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ProductDetailScreen(
+                            group: group,
+                            onOpenStore: (url) =>
+                                _actions.openExternalUrl(context, url),
+                          ),
+                        ),
+                      ),
                       onCopyCoupon: (code) =>
                           _actions.copyCouponCode(context, code),
                       isPaidPlanActive: isPaidPlanActive,

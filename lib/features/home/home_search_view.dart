@@ -6,6 +6,7 @@ import 'package:leastprice/features/home/comparison_search_placeholder.dart';
 import 'package:leastprice/features/home/search_suggestions_carousel.dart';
 import 'package:leastprice/features/home/search_result_grouper.dart';
 import 'package:leastprice/features/home/grouped_comparison_card.dart';
+import 'package:leastprice/features/home/grouped_product_card.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
@@ -15,6 +16,7 @@ class HomeSearchView {
     required TextEditingController searchController,
     required FocusNode searchFocusNode,
     required Function(String) onOpenExternalUrl,
+    required Function(GroupedProductCard) onTapGroup,
     required Function(String) onCopyCoupon,
     required bool isPaidPlanActive,
     required VoidCallback onDetectCityTap,
@@ -113,12 +115,15 @@ class HomeSearchView {
                     padding: EdgeInsets.only(
                       bottom: index == groupedResults.length - 1 ? 0 : 18,
                     ),
-                    child: GroupedComparisonCard(
-                      group: group,
-                      onTapStore: (url) => onOpenExternalUrl(url),
-                      onCopyCoupon: group.matchedCoupon != null
-                          ? () => onCopyCoupon(group.matchedCoupon!.code)
-                          : null,
+                    child: GestureDetector(
+                      onTap: () => onTapGroup(group),
+                      child: GroupedComparisonCard(
+                        group: group,
+                        onTapStore: (url) => onOpenExternalUrl(url),
+                        onCopyCoupon: group.matchedCoupon != null
+                            ? () => onCopyCoupon(group.matchedCoupon!.code)
+                            : null,
+                      ),
                     ),
                   );
                 }
