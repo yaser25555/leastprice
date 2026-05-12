@@ -23,16 +23,15 @@ class PriceHistoryChart extends StatelessWidget {
     final prices = snapshots.map((s) => s.price).toList();
     final minPrice = prices.reduce((a, b) => a < b ? a : b);
     final maxPrice = prices.reduce((a, b) => a > b ? a : b);
-    final priceRange = maxPrice - minPrice;
-    final yAxisMin = (minPrice - priceRange * 0.1).clamp(0, double.infinity);
-    final yAxisMax = maxPrice + priceRange * 0.1;
-    final priceRange = maxPrice - minPrice;
-    final yAxisMin = (minPrice - priceRange * 0.1).clamp(0, double.infinity);
-    final yAxisMax = maxPrice + priceRange * 0.1;
+    final range = maxPrice - minPrice;
+    final yMin = (minPrice - range * 0.1).clamp(0, double.infinity).toDouble();
+    final yMax = (maxPrice + range * 0.1).toDouble();
 
     final spots = snapshots.asMap().entries.map((e) {
       return FlSpot(e.key.toDouble(), e.value.price);
     }).toList();
+
+    final interval = (snapshots.length / 5).ceil().toDouble();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,13 +40,13 @@ class PriceHistoryChart extends StatelessWidget {
           height: 200,
           child: LineChart(
             LineChartData(
-              minY: yAxisMin,
-              maxY: yAxisMax,
+              minY: yMin,
+              maxY: yMax,
               gridData: FlGridData(
                 show: true,
                 drawVerticalLine: false,
-                horizontalInterval: priceRange > 0
-                    ? priceRange / 4
+                horizontalInterval: range > 0
+                    ? range / 4
                     : maxPrice * 0.25,
                 getDrawingHorizontalLine: (value) => FlLine(
                   color: Colors.grey.shade200,
@@ -65,7 +64,7 @@ class PriceHistoryChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 30,
-                    interval: max(1, (snapshots.length / 5).floor()).toDouble(),
+                    interval: interval < 1 ? 1 : interval,
                     getTitlesWidget: (value, meta) {
                       final idx = value.toInt();
                       if (idx < 0 || idx >= snapshots.length) {
