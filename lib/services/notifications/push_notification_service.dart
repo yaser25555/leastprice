@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -41,6 +42,16 @@ class PushNotificationService {
       }
     } catch (e) {
       debugPrint('PushNotificationService: Failed to initialize. $e');
+    }
+  }
+
+  static void setExternalUserId(String userId) {
+    if (kIsWeb) return;
+    try {
+      OneSignal.User.addAlias("external_id", userId);
+      debugPrint('OneSignal: external_id set to $userId');
+    } catch (e) {
+      debugPrint('OneSignal: failed to set external_id: $e');
     }
   }
 

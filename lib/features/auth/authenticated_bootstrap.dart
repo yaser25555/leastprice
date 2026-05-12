@@ -8,6 +8,7 @@ import 'package:leastprice/features/home/least_price_home_page.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/core/widgets/app_update_dialog.dart';
 import 'package:leastprice/services/system/app_update_service.dart';
+import 'package:leastprice/services/notifications/push_notification_service.dart';
 import 'auth_exports.dart';
 
 class AuthenticatedBootstrap extends StatefulWidget {
@@ -32,6 +33,7 @@ class _AuthenticatedBootstrapState extends State<AuthenticatedBootstrap> {
   @override
   void initState() {
     super.initState();
+    PushNotificationService.setExternalUserId(widget.user.uid);
     _bootstrapFuture = _catalogService.ensureUserProfile(
       user: widget.user,
       pendingInviteCode: PendingAuthSession.consumeInviteCode(),

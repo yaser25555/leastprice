@@ -55,3 +55,12 @@ jobs:
           MIN_REQUEST_COUNT: 2
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
         run: python scripts/daily_firestore_price_bot.py --search-request-limit 20 --top-demand-limit 12 --min-request-count 2
+
+      - name: Check favorites for price drops
+        env:
+          FIREBASE_PROJECT_ID: leastprice-yaser
+          PRODUCTS_COLLECTION: products
+          FAVORITES_COLLECTION: favorites
+          ONESIGNAL_REST_API_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}
+          ONESIGNAL_APP_ID: 715316fc-13d0-4fee-b0f8-860b4d38dee6
+        run: python scripts/price_alert_notifier.py
