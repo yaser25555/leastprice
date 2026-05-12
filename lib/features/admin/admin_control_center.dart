@@ -94,6 +94,11 @@ class AdminControlCenter extends StatelessWidget {
                 icon: const Icon(Icons.manage_accounts_rounded),
                 text: tr('المستخدمون', 'Users'),
               ),
+            if (_isPrimaryAdmin)
+              Tab(
+                icon: const Icon(Icons.notifications_active_rounded),
+                text: tr('الإشعارات', 'Notifications'),
+              ),
           ];
 
           final pages = <Widget>[
@@ -107,6 +112,8 @@ class AdminControlCenter extends StatelessWidget {
                 service: service,
                 isPrimaryAdmin: true,
               ),
+            if (_isPrimaryAdmin)
+              const AdminNotificationPanel(),
           ];
 
           return DefaultTabController(
