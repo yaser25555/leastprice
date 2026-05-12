@@ -88,6 +88,16 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    // ========== FAVORITES (users manage their own) ==========
+
+    match /favorites/{document} {
+      allow read: if isOwner(resource.data.userId);
+      allow create, update: if isAuth()
+        && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAuth()
+        && resource.data.userId == request.auth.uid;
+    }
+
     // ========== UNUSED (declared but never accessed from client code) ==========
 
     match /popular_products/{document} {
