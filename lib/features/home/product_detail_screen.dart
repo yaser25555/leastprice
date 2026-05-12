@@ -43,16 +43,42 @@ class ProductDetailScreen extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              group.displayImageUrl,
+            child: Container(
               height: 220,
               width: double.infinity,
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => Container(
-                height: 220,
-                color: Colors.grey.shade100,
-                child: const Icon(Icons.image_outlined,
-                    size: 64, color: Colors.grey),
+              color: Colors.grey.shade50,
+              child: Image.network(
+                group.displayImageUrl,
+                fit: BoxFit.contain,
+                loadingBuilder: (_, child, progress) =>
+                    progress == null ? child : Center(
+                      child: CircularProgressIndicator(
+                        value: progress.expectedTotalBytes != null
+                            ? progress.cumulativeBytesLoaded /
+                                progress.expectedTotalBytes!
+                            : null,
+                        strokeWidth: 2,
+                        color: AppPalette.comparisonEmerald,
+                      ),
+                    ),
+                errorBuilder: (_, __, ___) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.image_outlined,
+                        size: 48, color: Colors.grey.shade300),
+                    const SizedBox(height: 8),
+                    Text(
+                      group.displayTitle,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

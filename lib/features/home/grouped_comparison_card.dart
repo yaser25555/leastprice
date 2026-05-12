@@ -38,16 +38,38 @@ class GroupedComparisonCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    group.displayImageUrl,
+                  child: Container(
                     height: 140,
                     width: double.infinity,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 140,
-                      color: Colors.grey.shade100,
-                      child: const Icon(Icons.image_outlined,
-                          size: 48, color: Colors.grey),
+                    color: Colors.grey.shade50,
+                    child: Image.network(
+                      group.displayImageUrl,
+                      fit: BoxFit.contain,
+                      loadingBuilder: (_, child, progress) =>
+                          progress == null ? child : Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppPalette.comparisonEmerald,
+                            ),
+                          ),
+                      errorBuilder: (_, __, ___) => Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image_outlined,
+                              size: 36, color: Colors.grey.shade300),
+                          const SizedBox(height: 4),
+                          Text(
+                            group.displayTitle,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
