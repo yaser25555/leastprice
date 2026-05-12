@@ -27,6 +27,7 @@ import 'package:leastprice/features/home/home_connectivity_provider.dart';
 import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
+import 'package:leastprice/features/home/favorites_screen.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
 class LeastPriceHomePage extends ConsumerStatefulWidget {
@@ -369,6 +370,17 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: [
+              FloatingActionButton.small(
+                heroTag: 'favorites-fab',
+                tooltip: tr('المفضلة', 'Favorites'),
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                ),
+                child: const Icon(Icons.favorite, size: 20),
+              ),
+              const SizedBox(height: 12),
               if (showAdminFab)
                 FloatingActionButton.small(
                   heroTag: 'admin-dashboard-fab',
