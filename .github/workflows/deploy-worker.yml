@@ -24,6 +24,22 @@ jobs:
         working-directory: workers/hybrid-search
         run: npm ci
 
+      - name: Set Worker secrets
+        working-directory: workers/hybrid-search
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
+        run: |
+          for secret in "SERPAPI_KEY" "SERPER_API_KEY"; do
+            value="${!secret}"
+            if [ -n "$value" ]; then
+              echo "Setting $secret..."
+              echo "$value" | npx wrangler secret put "$secret"
+            fi
+          done
+
       - name: Deploy Worker
         working-directory: workers/hybrid-search
         env:
