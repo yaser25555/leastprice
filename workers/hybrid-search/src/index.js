@@ -1631,9 +1631,11 @@ function absoluteUrl(value, baseUrl) {
 
 function normalizeImageUrl(value) {
   const text = String(value || '').trim();
-  if (!text) {
-    return '';
-  }
+  if (!text) return '';
+  if (text.startsWith('//')) return `https:${text}`;
+  if (text.startsWith('http://')) return `https://${text.slice(7)}`;
+  return text;
+}
 
   if (text.startsWith('//')) {
     return `https:${text}`;
