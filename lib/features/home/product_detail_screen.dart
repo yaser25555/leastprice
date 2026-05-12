@@ -33,27 +33,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _checkFavorite() async {
-    final fav = await _service.isFavorite(widget.group.offers.first.productUrl);
-    if (mounted) setState(() { _isFavorite = fav; _favLoading = false; });
+    try {
+      final fav = await _service.isFavorite(widget.group.offers.first.productUrl);
+      if (mounted) setState(() { _isFavorite = fav; _favLoading = false; });
+    } catch (_) {
+      if (mounted) setState(() => _favLoading = false);
+    }
   }
 
   Future<void> _toggleFavorite() async {
-    final offer = widget.group.offers.first;
-    if (_isFavorite) {
-      await _service.removeFavorite(offer.productUrl);
-    } else {
-      await _service.addFavorite(
-        productTitle: widget.group.displayTitle,
-        productUrl: offer.productUrl,
-        price: widget.group.lowestPrice,
-        currency: offer.currency,
-        storeName: offer.storeName,
-        storeId: offer.storeId,
-        imageUrl: widget.group.displayImageUrl,
-      );
+    try {
+      final offer = widget.group.offers.first;
+      if (_isFavorite) {
+        await _service.removeFavorite(offer.productUrl);
+      } else {
+        await _service.addFavorite(
+          productTitle: widget.group.displayTitle,
+          productUrl: offer.productUrl,
+          price: widget.group.lowestPrice,
+          currency: offer.currency,
+          storeName: offer.storeName,
+          storeId: offer.storeId,
+          imageUrl: widget.group.displayImageUrl,
+        );
+      }
+      if (mounted) setState(() => _isFavorite = !_isFavorite);
+      HapticFeedback.mediumImpact();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tr('حدث خطأ، حاول مرة أخرى', 'Error, try again'))),
+        );
+      }
     }
-    if (mounted) setState(() => _isFavorite = !_isFavorite);
-    HapticFeedback.mediumImpact();
   }
 
   GroupedProductCard get group => widget.group;
