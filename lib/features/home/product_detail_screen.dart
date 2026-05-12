@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
@@ -43,6 +44,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Future<void> _toggleFavorite() async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(tr('سجل دخول لحفظ المنتجات', 'Login to save favorites'))),
+          );
+        }
+        return;
+      }
+
       final offer = widget.group.offers.first;
       if (_isFavorite) {
         await _service.removeFavorite(offer.productUrl);
