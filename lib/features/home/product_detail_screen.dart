@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
-import 'package:leastprice/core/utils/url_utils.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/data/models/coupon.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
@@ -92,7 +91,6 @@ class ProductDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ...group.offers.asMap().entries.map((entry) {
-            final index = entry.key;
             final offer = entry.value;
             final isCheapest = offer.price == bestPrice;
 

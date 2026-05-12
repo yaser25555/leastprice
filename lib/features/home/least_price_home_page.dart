@@ -26,7 +26,6 @@ import 'package:leastprice/features/home/home_search_view.dart';
 import 'package:leastprice/features/home/home_connectivity_provider.dart';
 import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
-import 'package:leastprice/features/home/grouped_product_card.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
