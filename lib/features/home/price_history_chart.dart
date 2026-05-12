@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
@@ -22,8 +21,11 @@ class PriceHistoryChart extends StatelessWidget {
     }
 
     final prices = snapshots.map((s) => s.price).toList();
-    final minPrice = prices.reduce(min) as double;
-    final maxPrice = prices.reduce(max) as double;
+    final minPrice = prices.reduce((a, b) => a < b ? a : b);
+    final maxPrice = prices.reduce((a, b) => a > b ? a : b);
+    final priceRange = maxPrice - minPrice;
+    final yAxisMin = (minPrice - priceRange * 0.1).clamp(0, double.infinity);
+    final yAxisMax = maxPrice + priceRange * 0.1;
     final priceRange = maxPrice - minPrice;
     final yAxisMin = (minPrice - priceRange * 0.1).clamp(0, double.infinity);
     final yAxisMax = maxPrice + priceRange * 0.1;
