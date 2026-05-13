@@ -159,7 +159,7 @@ class PopularStoresSection extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 120,
+          height: 130,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             scrollDirection: Axis.horizontal,
@@ -188,26 +188,26 @@ class PopularStoresSection extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      width: 76,
-                      height: 76,
+                      width: 84,
+                      height: 84,
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(22),
+                        color: color.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withValues(alpha: 0.15),
-                            blurRadius: 12,
-                            offset: const Offset(0, 6),
+                            color: color.withValues(alpha: 0.25),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
                           ),
                           BoxShadow(
-                            color: AppPalette.navy.withValues(alpha: 0.04),
-                            blurRadius: 4,
+                            color: AppPalette.navy.withValues(alpha: 0.08),
+                            blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),
                         ],
                         border: Border.all(
-                          color: color.withValues(alpha: 0.1),
-                          width: 1,
+                          color: color.withValues(alpha: 0.2),
+                          width: 1.5,
                         ),
                       ),
                       child: Center(
@@ -220,8 +220,8 @@ class PopularStoresSection extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(16),
                                   child: Image.network(
                                     proxiedLogoUrl,
-                                    width: 48,
-                                    height: 48,
+                                    width: 60,
+                                    height: 60,
                                     fit: BoxFit.contain,
                                     errorBuilder: (_, __, ___) =>
                                         _buildLetter(store, color),
@@ -233,7 +233,7 @@ class PopularStoresSection extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     SizedBox(
-                      width: 76,
+                      width: 84,
                       child: Text(
                         tr(store['name'], store['nameEn']),
                         textAlign: TextAlign.center,

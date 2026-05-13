@@ -284,8 +284,8 @@ class BrandOffersSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Image.network(
           proxiedImageUrl(logoUrl),
-          width: 60,
-          height: 60,
+          width: 75,
+          height: 75,
           fit: BoxFit.contain,
           errorBuilder: (_, __, ___) => _buildLetterAvatar(store, color),
           loadingBuilder: (_, child, progress) {
@@ -318,8 +318,8 @@ class BrandOffersSection extends StatelessWidget {
     final name = (store['name'] as String? ?? '');
     final firstChar = name.isNotEmpty ? name.characters.first : '?';
     return Container(
-      width: 60,
-      height: 60,
+      width: 75,
+      height: 75,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
@@ -372,7 +372,7 @@ class BrandOffersSection extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 140,
+          height: 145,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             scrollDirection: Axis.horizontal,
@@ -387,28 +387,28 @@ class BrandOffersSection extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      width: 90,
-                      height: 90,
+                      width: 100,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: color.withValues(alpha: 0.15),
-                          width: 1,
+                          color: color.withValues(alpha: 0.25),
+                          width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withValues(alpha: 0.1),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                            color: color.withValues(alpha: 0.15),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
                           ),
                         ],
                       ),
                       child: Container(
-                        margin: const EdgeInsets.all(2),
+                        margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: color.withValues(alpha: hasCoupon ? 0.08 : 0.04),
-                          borderRadius: BorderRadius.circular(22),
+                          color: color.withValues(alpha: hasCoupon ? 0.12 : 0.08),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Stack(
                           children: [
@@ -440,7 +440,7 @@ class BrandOffersSection extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     SizedBox(
-                      width: 90,
+                      width: 100,
                       child: Text(
                         tr(store['name'], store['nameEn']),
                         textAlign: TextAlign.center,
