@@ -14,6 +14,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Dar Al-Amirat',
       'url': 'https://mtjr.at/FN2AIl2KWs',
       'color': Color(0xFFE91E63),
+      'logoUrl': 'https://cdn.files.salla.network/homepage/1945128061/614d2162-eb21-4042-b1e3-d6d7b9286f0e.webp',
       'hasCoupon': true,
     },
     {
@@ -21,6 +22,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Kabsh Najd',
       'url': 'https://mtjr.at/_2-N8J8JYq',
       'color': Color(0xFF8D6E63),
+      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/weVoN/0UmHZNzzcSTsJFxoUS7XUA44FKjBooAoaYdnBMRC.png',
       'hasCoupon': true,
     },
     {
