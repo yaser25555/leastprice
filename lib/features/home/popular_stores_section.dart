@@ -43,7 +43,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'logoUrl': 'https://icon.horse/icon/panda.sa',
+      'logoUrl': '',
     },
     {
       'id': 'othaim',
@@ -59,7 +59,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'logoUrl': 'https://icon.horse/icon/tamimimarkets.com',
+      'logoUrl': '',
     },
     {
       'id': 'extra',
@@ -91,7 +91,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://icon.horse/icon/aldawaa.com',
+      'logoUrl': '',
     },
     {
       'id': 'lulu',

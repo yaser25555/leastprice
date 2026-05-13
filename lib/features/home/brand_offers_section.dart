@@ -125,7 +125,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'logoUrl': 'https://icon.horse/icon/panda.sa',
+      'logoUrl': '',
       'hasCoupon': false,
     },
     {
@@ -141,7 +141,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'logoUrl': 'https://icon.horse/icon/tamimimarkets.com',
+      'logoUrl': '',
       'hasCoupon': false,
     },
     {
@@ -157,7 +157,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://icon.horse/icon/aldawaa.com',
+      'logoUrl': '',
       'hasCoupon': false,
     },
     {
