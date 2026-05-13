@@ -326,5 +326,18 @@ class Coupon {
         'Discount code for watches and accessories.',
       ),
     ),
+    Coupon(
+      id: 'coupon-qatret-asal',
+      code: 'F-P3XPV',
+      storeId: 'qatret-asal',
+      storeName: tr('قطرة عسل', 'Qatret Asal'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون قطرة عسل الحصري', 'Exclusive Qatret Asal coupon'),
+      description: tr(
+        'كود خصم على العسل والمنتجات الطبيعية.',
+        'Discount code for honey and natural products.',
+      ),
+    ),
   ];
 }

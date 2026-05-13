@@ -81,6 +81,14 @@ class BrandOffersSection extends StatelessWidget {
       'icon': Icons.watch_rounded,
       'hasCoupon': true,
     },
+    {
+      'name': 'قطرة عسل',
+      'nameEn': 'Qatret Asal',
+      'url': 'https://mtjr.at/zCUaC5F9e4',
+      'color': Color(0xFFFFB300),
+      'icon': Icons.auto_awesome_rounded,
+      'hasCoupon': true,
+    },
     // ── المتاجر السعودية ──
     {
       'name': 'أمازون',

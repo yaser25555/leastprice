@@ -98,7 +98,7 @@ void main() {
     });
 
     test('mockData has expected coupons', () {
-      expect(Coupon.mockData, hasLength(10));
+      expect(Coupon.mockData, hasLength(11));
       expect(Coupon.mockData[0].storeId, 'noon');
       expect(Coupon.mockData[1].storeId, 'namshi');
       expect(Coupon.mockData[2].storeId, 'dar-al-amirat');
@@ -109,6 +109,7 @@ void main() {
       expect(Coupon.mockData[7].storeId, 'roshen-tickets');
       expect(Coupon.mockData[8].storeId, 'al-reem');
       expect(Coupon.mockData[9].storeId, 'vibe');
+      expect(Coupon.mockData[10].storeId, 'qatret-asal');
     });
 
     test('toFirestoreMap contains required fields', () {

@@ -254,6 +254,18 @@ const coupons = [
     title: 'Exclusive Vibe coupon',
     description: 'Discount code for watches and accessories.',
   },
+  {
+    docId: 'coupon-qatret-asal',
+    code: 'F-P3XPV',
+    storeId: 'qatret-asal',
+    storeName: 'Qatret Asal',
+    discountLabel: 'Special discount',
+    discountPercent: null,
+    expiresAt: daysFromNow(60),
+    active: true,
+    title: 'Exclusive Qatret Asal coupon',
+    description: 'Discount code for honey and natural products.',
+  },
 ];
 
 // ==================== EXCLUSIVE DEALS ====================
