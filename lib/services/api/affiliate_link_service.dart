@@ -76,7 +76,13 @@ class AffiliateLinkService {
 
     final host = uri.host.toLowerCase();
 
-    // 1. Handle Redirect Strategy (DCMnetwork, ArabClicks, etc.)
+    // 1. Handle Noon referral link (personal referral, not DCMnetwork)
+    if (host.contains('noon.com') && !host.contains('s.noon.com')) {
+      final encodedTarget = Uri.encodeComponent(normalized);
+      return '${LeastPriceDataConfig.noonReferralLink}?url=$encodedTarget';
+    }
+
+    // 2. Handle Redirect Strategy (DCMnetwork, ArabClicks, etc.)
     if (LeastPriceDataConfig.affiliateStoreLinks.containsKey(host)) {
       final trackingBase = LeastPriceDataConfig.affiliateStoreLinks[host]!;
       // DCMnetwork uses ?url= or &url= for deep linking.
@@ -86,7 +92,7 @@ class AffiliateLinkService {
       return '$trackingBase${separator}url=$encodedTarget';
     }
 
-    // 2. Handle Amazon Strategy (Append ?tag=)
+    // 3. Handle Amazon Strategy (Append ?tag=)
     if (host.contains('amazon.sa')) {
       final parameters = Map<String, String>.from(uri.queryParameters);
       parameters['tag'] = LeastPriceDataConfig.affiliateTag;

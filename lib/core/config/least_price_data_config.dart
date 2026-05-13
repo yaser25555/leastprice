@@ -55,8 +55,6 @@ class LeastPriceDataConfig {
 
   /// DCMnetwork tracking links map
   static const Map<String, String> affiliateStoreLinks = {
-    'noon.com': 'https://go.urtrackinglink.com/SH9H0',
-    'www.noon.com': 'https://go.urtrackinglink.com/SH9H0',
     'yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
     'www.yslbeauty.sa': 'https://go.urtrackinglink.com/SH9H2',
     'sssports.com': 'https://go.urtrackinglink.com/SH9HA',
