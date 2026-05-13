@@ -657,6 +657,10 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                     ),
                   if (showOffersSection)
                     SliverToBoxAdapter(
+                      child: const PopularStoresSection(),
+                    ),
+                  if (showOffersSection)
+                    SliverToBoxAdapter(
                       child: AdBannersSection(
                         banners: activeBanners,
                         onBannerTap: (_) => _actions.openExternalUrl(

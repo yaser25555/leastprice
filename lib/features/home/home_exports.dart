@@ -29,3 +29,5 @@ export 'search_info_pill.dart';
 export 'status_banner.dart';
 export 'search_suggestions_carousel.dart';
 export 'package:leastprice/features/home/brand_offers_section.dart';
+export 'package:leastprice/features/home/popular_stores_section.dart';
+export 'package:leastprice/features/home/store_offers_screen.dart';
