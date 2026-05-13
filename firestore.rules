@@ -13,8 +13,13 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuth()
-        && get(/databases/$(database)/documents/users/$(request.auth.uid))
-          .data.adminRole == 'marketing_manager';
+        && (
+          // Primary admin (bypasses role check)
+          request.auth.token.email == 'yaser.haroon79@gmail.com'
+          // Marketing manager role
+          || get(/databases/$(database)/documents/users/$(request.auth.uid))
+               .data.adminRole == 'marketing_manager'
+        );
     }
 
     function isOwner(userId) {
