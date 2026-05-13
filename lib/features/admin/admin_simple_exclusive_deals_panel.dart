@@ -169,13 +169,12 @@ class _AdminSimpleExclusiveDealsPanelState
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          '${formatPrice(deal.beforePrice)} → ${formatPrice(deal.afterPrice)}\n'
-          '${tr('ينتهي', 'Ends')} ${formatDealExpiryLabel(deal.expiryDate)}'
-          '${expired ? ' • ${tr('منتهي', 'Expired')}' : ''}\n'
-          '${tr('أضيف بواسطة', 'Added by')}: '
-          '${deal.createdByEmail.trim().isEmpty ? tr('غير محدد', 'Unknown') : deal.createdByEmail}',
+          '${deal.beforePrice > 0 ? '${formatPrice(deal.beforePrice)} ${tr('ريال', 'SAR')}' : ''}'
+          '${deal.phone.trim().isNotEmpty ? '\n📞 ${deal.phone}' : ''}'
+          '${expired ? '\n${tr('منتهي', 'Expired')}' : ''}'
+          '${deal.createdByEmail.trim().isNotEmpty ? '\n${tr('بواسطة', 'By')}: ${deal.createdByEmail}' : ''}',
         ),
-        isThreeLine: true,
+        isThreeLine: deal.phone.trim().isNotEmpty || deal.createdByEmail.trim().isNotEmpty,
         trailing: Wrap(
           spacing: 4,
           children: [

@@ -25,10 +25,9 @@ class _AdminExclusiveDealEditorDialogState
     extends State<AdminExclusiveDealEditorDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
+  late final TextEditingController _phoneController;
   late final TextEditingController _imageUrlController;
-  late final TextEditingController _beforePriceController;
-  late final TextEditingController _afterPriceController;
-  late DateTime _expiryDate;
+  late final TextEditingController _priceController;
   bool _isUploadingImage = false;
 
   @override
@@ -36,23 +35,19 @@ class _AdminExclusiveDealEditorDialogState
     super.initState();
     final initial = widget.initialDeal;
     _titleController = TextEditingController(text: initial?.title ?? '');
+    _phoneController = TextEditingController(text: initial?.phone ?? '');
     _imageUrlController = TextEditingController(text: initial?.imageUrl ?? '');
-    _beforePriceController = TextEditingController(
+    _priceController = TextEditingController(
       text: initial != null ? initial.beforePrice.toString() : '',
     );
-    _afterPriceController = TextEditingController(
-      text: initial != null ? initial.afterPrice.toString() : '',
-    );
-    _expiryDate =
-        initial?.expiryDate ?? DateTime.now().add(const Duration(days: 7));
   }
 
   @override
   void dispose() {
     _titleController.dispose();
+    _phoneController.dispose();
     _imageUrlController.dispose();
-    _beforePriceController.dispose();
-    _afterPriceController.dispose();
+    _priceController.dispose();
     super.dispose();
   }
 
@@ -63,28 +58,14 @@ class _AdminExclusiveDealEditorDialogState
     return null;
   }
 
-  String? _validatePrice(String? value, String label) {
-    final parsed = double.tryParse(value?.trim() ?? '');
+  String? _validatePrice(String? value) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return null;
+    }
+    final parsed = double.tryParse(trimmed);
     if (parsed == null || parsed <= 0) {
-      return validValueMessage(label, label);
-    }
-    return null;
-  }
-
-  String? _validateDiscountPrice(String? value) {
-    final afterPrice = double.tryParse(value?.trim() ?? '');
-    final beforePrice = double.tryParse(_beforePriceController.text.trim());
-    if (afterPrice == null || afterPrice <= 0) {
-      return tr(
-        'أدخل قيمة صحيحة للسعر بعد الخصم.',
-        'Enter a valid value for the discounted price.',
-      );
-    }
-    if (beforePrice != null && afterPrice >= beforePrice) {
-      return tr(
-        'يجب أن يكون السعر بعد الخصم أقل من السعر قبل الخصم.',
-        'The discounted price must be lower than the original price.',
-      );
+      return tr('أدخل قيمة صحيحة', 'Enter a valid value');
     }
     return null;
   }
@@ -143,42 +124,24 @@ class _AdminExclusiveDealEditorDialogState
     }
   }
 
-  Future<void> _pickExpiryDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _expiryDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 1)),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (picked == null || !mounted) {
-      return;
-    }
-
-    setState(() {
-      _expiryDate = DateTime(
-        picked.year,
-        picked.month,
-        picked.day,
-        23,
-        59,
-      );
-    });
-  }
-
   void _save() {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
+
+    final priceInput = _priceController.text.trim();
+    final price = priceInput.isNotEmpty ? double.parse(priceInput) : 0.0;
+    final now = DateTime.now();
 
     Navigator.of(context).pop(
       ExclusiveDeal(
         id: widget.initialDeal?.id ?? '',
         title: _titleController.text.trim(),
         imageUrl: _imageUrlController.text.trim(),
-        beforePrice: double.parse(_beforePriceController.text.trim()),
-        afterPrice: double.parse(_afterPriceController.text.trim()),
-        expiryDate: _expiryDate,
-        active: true,
+        beforePrice: price,
+        afterPrice: 0,
+        expiryDate: now.add(const Duration(days: 365)),
+        phone: _phoneController.text.trim(),
       ),
     );
   }
@@ -189,7 +152,7 @@ class _AdminExclusiveDealEditorDialogState
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620),
+        constraints: const BoxConstraints(maxWidth: 480),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Form(
@@ -199,36 +162,54 @@ class _AdminExclusiveDealEditorDialogState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.initialDeal == null
-                        ? tr('إضافة عرض حصري', 'Add exclusive deal')
-                        : tr('تعديل العرض الحصري', 'Edit exclusive deal'),
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF1B2F5E),
-                    ),
+                  Row(
+                    children: [
+                      Icon(Icons.local_offer_rounded,
+                          color: AppPalette.orange, size: 28),
+                      const SizedBox(width: 10),
+                      Text(
+                        widget.initialDeal == null
+                            ? tr('إضافة عرض', 'Add deal')
+                            : tr('تعديل العرض', 'Edit deal'),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF1B2F5E),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
-                      labelText: tr('عنوان العرض', 'Deal title'),
-                      prefixIcon: Icon(Icons.title_rounded),
+                      labelText: tr('اسم المتجر', 'Store name'),
+                      hintText: tr('مثال: نون', 'e.g. Noon'),
+                      prefixIcon: Icon(Icons.store_rounded),
                     ),
                     validator: (value) => _validateRequired(
-                        value, tr('عنوان العرض', 'Deal title')),
+                        value, tr('اسم المتجر', 'Store name')),
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: tr('هاتف للتواصل', 'Contact phone'),
+                      hintText: tr('مثال: 0551234567', 'e.g. 0551234567'),
+                      prefixIcon: Icon(Icons.phone_rounded),
+                    ),
                   ),
                   const SizedBox(height: 14),
                   AdminImageInputSection(
                     controller: _imageUrlController,
-                    label: tr('إضافة صورة اختيارية', 'Optional image'),
+                    label: tr('صورة العرض', 'Deal image'),
                     uploading: _isUploadingImage,
                     validator: _validateUrl,
-                    textFieldLabel: tr('إضافة صورة اختيارية', 'Optional image'),
+                    textFieldLabel: tr('صورة العرض', 'Deal image'),
                     helperText: tr(
-                      'يمكنك رفع صورة للعرض أو تركها فارغة.',
-                      'You can upload a deal image or leave it empty.',
+                      'يمكنك رفع صورة أو لصق رابط صورة.',
+                      'Upload or paste an image URL.',
                     ),
                     onPickFromGallery: () =>
                         _pickAndUploadImage(ImageSource.gallery),
@@ -237,73 +218,17 @@ class _AdminExclusiveDealEditorDialogState
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
-                    controller: _beforePriceController,
+                    controller: _priceController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(
-                      labelText: tr('السعر قبل', 'Before price'),
-                      prefixIcon: Icon(Icons.money_off_csred_rounded),
+                      labelText: tr('السعر', 'Price'),
+                      hintText: tr('مثال: 299', 'e.g. 299'),
+                      prefixIcon: Icon(Icons.money_rounded),
                     ),
-                    validator: (value) =>
-                        _validatePrice(value, tr('السعر قبل', 'Before price')),
+                    validator: _validatePrice,
                   ),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _afterPriceController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      labelText: tr('السعر بعد', 'After price'),
-                      prefixIcon: Icon(Icons.local_offer_rounded),
-                    ),
-                    validator: _validateDiscountPrice,
-                  ),
-                  const SizedBox(height: 14),
-                  InkWell(
-                    onTap: _pickExpiryDate,
-                    borderRadius: BorderRadius.circular(18),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: AppPalette.dealsSoftRed,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: AppPalette.dealsBorder),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.event_available_rounded,
-                              color: AppPalette.dealsRed),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  tr('تاريخ انتهاء العرض', 'Deal expiry date'),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFF1B2F5E),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  formatDealExpiryLabel(_expiryDate),
-                                  style: const TextStyle(
-                                    color: Color(0xFF6B7A9A),
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(Icons.edit_calendar_rounded,
-                              color: AppPalette.dealsRed),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 24),
                   Row(
                     children: [
                       Expanded(
@@ -316,6 +241,10 @@ class _AdminExclusiveDealEditorDialogState
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _save,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppPalette.orange,
+                            foregroundColor: Colors.white,
+                          ),
                           child: Text(tr('حفظ', 'Save')),
                         ),
                       ),

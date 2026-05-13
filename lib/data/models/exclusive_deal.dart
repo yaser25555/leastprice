@@ -16,6 +16,7 @@ class ExclusiveDeal {
     this.lastUpdatedByUid = '',
     this.lastUpdatedByEmail = '',
     this.dealUrl = '',
+    this.phone = '',
   });
 
   final String id;
@@ -30,6 +31,7 @@ class ExclusiveDeal {
   final String lastUpdatedByUid;
   final String lastUpdatedByEmail;
   final String dealUrl;
+  final String phone;
 
   double get savingsAmount => beforePrice - afterPrice;
 
@@ -59,6 +61,7 @@ class ExclusiveDeal {
     String? lastUpdatedByUid,
     String? lastUpdatedByEmail,
     String? dealUrl,
+    String? phone,
   }) {
     return ExclusiveDeal(
       id: id ?? this.id,
@@ -73,6 +76,7 @@ class ExclusiveDeal {
       lastUpdatedByUid: lastUpdatedByUid ?? this.lastUpdatedByUid,
       lastUpdatedByEmail: lastUpdatedByEmail ?? this.lastUpdatedByEmail,
       dealUrl: dealUrl ?? this.dealUrl,
+      phone: phone ?? this.phone,
     );
   }
 
@@ -97,6 +101,7 @@ class ExclusiveDeal {
       lastUpdatedByUid: stringValue(json['lastUpdatedByUid']) ?? '',
       lastUpdatedByEmail: stringValue(json['lastUpdatedByEmail']) ?? '',
       dealUrl: stringValue(json['dealUrl']) ?? '',
+      phone: stringValue(json['phone']) ?? '',
     );
   }
 
@@ -125,6 +130,7 @@ class ExclusiveDeal {
       if (lastUpdatedByEmail.trim().isNotEmpty)
         'lastUpdatedByEmail': lastUpdatedByEmail.trim().toLowerCase(),
       if (dealUrl.trim().isNotEmpty) 'dealUrl': dealUrl.trim(),
+      if (phone.trim().isNotEmpty) 'phone': phone.trim(),
     };
   }
 

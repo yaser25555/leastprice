@@ -75,16 +75,6 @@ class AdminControlCenter extends StatelessWidget {
           }
 
           final tabs = <Tab>[
-            if (_isPrimaryAdmin)
-              Tab(
-                icon: const Icon(Icons.view_carousel_rounded),
-                text: tr('البنرات', 'Banners'),
-              ),
-            if (_isPrimaryAdmin)
-              Tab(
-                icon: const Icon(Icons.compare_arrows_rounded),
-                text: tr('المقارنات', 'Comparisons'),
-              ),
             Tab(
               icon: const Icon(Icons.local_offer_rounded),
               text: tr('العروض', 'Deals'),
@@ -102,10 +92,6 @@ class AdminControlCenter extends StatelessWidget {
           ];
 
           final pages = <Widget>[
-            if (_isPrimaryAdmin)
-              const AdminSimpleBannersPanel(service: service),
-            if (_isPrimaryAdmin)
-              const AdminSimpleProductsPanel(service: service),
             const AdminSimpleExclusiveDealsPanel(service: service),
             if (_isPrimaryAdmin)
               const AdminSimpleUsersPanel(

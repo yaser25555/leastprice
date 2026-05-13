@@ -160,9 +160,9 @@ class ExclusiveDealCard extends StatelessWidget {
                         },
                       ),
                       const Spacer(),
-                      if (deal.beforePrice > 0 && deal.afterPrice > 0) ...[
+                      if (deal.beforePrice > 0) ...[
                         Text(
-                          formatPrice(deal.afterPrice),
+                          formatPrice(deal.beforePrice),
                           style: TextStyle(
                             color: AppPalette.dealsRed,
                             fontSize: 24,
