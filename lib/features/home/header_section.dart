@@ -52,16 +52,6 @@ class HeaderSection extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              const Positioned(
-                top: -20,
-                left: -10,
-                child: BackgroundBubble(size: 96, color: Color(0x33FFA052)),
-              ),
-              const Positioned(
-                bottom: -28,
-                right: -10,
-                child: BackgroundBubble(size: 130, color: Color(0x267FB7E8)),
-              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -87,34 +77,43 @@ class HeaderSection extends StatelessWidget {
                       IconButton(
                         onPressed: onFavoritesTap,
                         style: IconButton.styleFrom(
-                          backgroundColor: AppPalette.pureWhiteOpacity(0.12),
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.08),
                           foregroundColor: AppPalette.orange,
                           padding: const EdgeInsets.all(8),
                           minimumSize: const Size(36, 36),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         icon: const Icon(Icons.favorite, size: 18),
                         tooltip: tr('المفضلة', 'Favorites'),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
                       IconButton(
                         onPressed: onPriceAlertsTap,
                         style: IconButton.styleFrom(
-                          backgroundColor: AppPalette.pureWhiteOpacity(0.12),
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.08),
                           foregroundColor: AppPalette.orange,
                           padding: const EdgeInsets.all(8),
                           minimumSize: const Size(36, 36),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         icon: const Icon(Icons.notifications_outlined, size: 18),
                         tooltip: tr('تنبيهات السعر', 'Price Alerts'),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
                       IconButton(
                         onPressed: onLogoutTap,
                         style: IconButton.styleFrom(
-                          backgroundColor: AppPalette.pureWhiteOpacity(0.12),
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.08),
                           foregroundColor: AppPalette.orange,
                           padding: const EdgeInsets.all(8),
                           minimumSize: const Size(36, 36),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         icon: const Icon(Icons.logout_rounded, size: 18),
                         tooltip: tr('تسجيل الخروج', 'Sign Out'),
@@ -286,16 +285,6 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
             ),
           child: Stack(
             children: [
-              const Positioned(
-                top: -8,
-                left: -4,
-                child: BackgroundBubble(size: 72, color: Color(0x30FFA052)),
-              ),
-              const Positioned(
-                bottom: -16,
-                right: -6,
-                child: BackgroundBubble(size: 88, color: Color(0x267FB7E8)),
-              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -354,53 +343,65 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                               UserPreferencesService.saveFeminineTheme(newVal);
                             },
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              foregroundColor: AppPalette.paleOrange,
+                              backgroundColor: AppPalette.pureWhiteOpacity(0.08),
+                              foregroundColor: AppPalette.pureWhiteOpacity(0.9),
                               padding: const EdgeInsets.all(6),
                               minimumSize: const Size(32, 32),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             icon: Icon(
                                 isFem
                                     ? Icons.spa_rounded
                                     : Icons.palette_rounded,
-                                size: 18),
+                                size: 16),
                             tooltip: tr('تغيير الثيم', 'Change Theme'),
                           ),
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 6),
                         IconButton(
                           onPressed: widget.onFavoritesTap,
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: AppPalette.pureWhiteOpacity(0.08),
                             foregroundColor: AppPalette.orange,
                             padding: const EdgeInsets.all(6),
                             minimumSize: const Size(32, 32),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          icon: const Icon(Icons.favorite, size: 18),
+                          icon: const Icon(Icons.favorite, size: 16),
                           tooltip: tr('المفضلة', 'Favorites'),
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 6),
                         IconButton(
                           onPressed: widget.onPriceAlertsTap,
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: AppPalette.pureWhiteOpacity(0.08),
                             foregroundColor: AppPalette.orange,
                             padding: const EdgeInsets.all(6),
                             minimumSize: const Size(32, 32),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          icon: const Icon(Icons.notifications_outlined, size: 18),
+                          icon: const Icon(Icons.notifications_outlined, size: 16),
                           tooltip: tr('تنبيهات السعر', 'Price Alerts'),
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 6),
                         IconButton(
                           onPressed: widget.onLogoutTap,
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: AppPalette.pureWhiteOpacity(0.08),
                             foregroundColor: AppPalette.orange,
                             padding: const EdgeInsets.all(6),
                             minimumSize: const Size(32, 32),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          icon: const Icon(Icons.logout_rounded, size: 18),
+                          icon: const Icon(Icons.logout_rounded, size: 16),
                           tooltip: tr('تسجيل الخروج', 'Sign Out'),
                         ),
                       ],

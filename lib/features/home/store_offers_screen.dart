@@ -55,7 +55,7 @@ class StoreOffersScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStoreDealCard(BuildContext context, ProductComparison product) {
+  Widget _buildStoreDealCard(ProductComparison product) {
     final savings = product.savingsAmount;
     final savingsPct = product.savingsPercent;
 
@@ -105,7 +105,7 @@ class StoreOffersScreen extends ConsumerWidget {
                   product.alternativeName,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                     color: AppPalette.navy,
@@ -152,7 +152,7 @@ class StoreOffersScreen extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       '${product.alternativePrice.toStringAsFixed(product.alternativePrice == product.alternativePrice.roundToDouble() ? 0 : 2)} ${tr('ريال', 'SAR')}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         color: AppPalette.orange,
@@ -374,7 +374,7 @@ class StoreOffersScreen extends ConsumerWidget {
         (context, index) {
           final product = storeProducts[index];
           if (product.generatedBy == 'store_deals_bot') {
-            return _buildStoreDealCard(context, product);
+            return _buildStoreDealCard(product);
           }
           return _buildProductCard(context, product);
         },
