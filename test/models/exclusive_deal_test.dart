@@ -117,9 +117,11 @@ void main() {
     });
 
     test('mockData has expected deals', () {
-      expect(ExclusiveDeal.mockData, hasLength(2));
+      expect(ExclusiveDeal.mockData, hasLength(4));
       expect(ExclusiveDeal.mockData[0].title, contains('سامسونج'));
       expect(ExclusiveDeal.mockData[1].title, contains('أبل'));
+      expect(ExclusiveDeal.mockData[2].title, contains('دار الأميرات'));
+      expect(ExclusiveDeal.mockData[3].title, contains('كبش نجد'));
     });
   });
 }
