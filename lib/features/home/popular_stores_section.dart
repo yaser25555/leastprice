@@ -13,7 +13,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Noon',
       'url': 'https://s.noon.com/HOTtsN31XfI',
       'color': Color(0xFFFEE70B),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=noon.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/noon.com',
     },
     {
       'id': 'amazon',
@@ -21,7 +21,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Amazon',
       'url': 'https://www.amazon.sa/',
       'color': Color(0xFFFF9900),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=amazon.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/amazon.sa',
     },
     {
       'id': 'keeta',
@@ -43,7 +43,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=panda.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/panda.sa',
     },
     {
       'id': 'othaim',
@@ -51,7 +51,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Othaim',
       'url': 'https://www.othaimmarkets.com/',
       'color': Color(0xFF1565C0),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=othaimmarkets.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/othaimmarkets.com',
     },
     {
       'id': 'tamimi',
@@ -59,7 +59,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=tamimimarkets.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/tamimimarkets.com',
     },
     {
       'id': 'extra',
@@ -67,7 +67,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Extra',
       'url': 'https://www.extra.com/',
       'color': Color(0xFF00695C),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=extra.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/extra.com',
     },
     {
       'id': 'jarir',
@@ -75,7 +75,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Jarir',
       'url': 'https://www.jarir.com/',
       'color': Color(0xFFC62828),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=jarir.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/jarir.com',
     },
     {
       'id': 'nahdi',
@@ -83,7 +83,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Nahdi',
       'url': 'https://www.nahdi.com.sa/',
       'color': Color(0xFF0D47A1),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=nahdi.com.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/nahdi.com.sa',
     },
     {
       'id': 'aldawaa',
@@ -91,7 +91,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=aldawaa.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/aldawaa.com',
     },
     {
       'id': 'lulu',
@@ -99,7 +99,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Lulu',
       'url': 'https://www.luluhypermarket.com/',
       'color': Color(0xFFD32F2F),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=luluhypermarket.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/luluhypermarket.com',
     },
     {
       'id': 'carrefour',
@@ -107,7 +107,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=carrefourksa.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/carrefourksa.com',
     },
   ];
 

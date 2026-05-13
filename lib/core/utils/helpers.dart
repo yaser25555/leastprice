@@ -278,6 +278,12 @@ MarketplaceSearchCity marketplaceSearchCityById(String? id) {
 String proxiedImageUrl(String url) {
   if (!kIsWeb) return url;
   if (url.isEmpty) return url;
+  
+  // URLs that natively support CORS or should not be proxied
+  if (url.contains('icon.horse') || url.contains('firebasestorage.googleapis.com')) {
+    return url;
+  }
+
   final encoded = Uri.encodeComponent(url);
   return 'https://wsrv.nl/?url=$encoded';
 }

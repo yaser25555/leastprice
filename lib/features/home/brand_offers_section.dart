@@ -85,7 +85,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Amazon',
       'url': 'https://www.amazon.sa/',
       'color': Color(0xFFFF9900),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=amazon.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/amazon.sa',
       'hasCoupon': false,
     },
     {
@@ -93,7 +93,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Noon',
       'url': 'https://www.noon.com/saudi-ar/',
       'color': Color(0xFFFEE70B),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=noon.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/noon.com',
       'hasCoupon': false,
     },
     {
@@ -101,7 +101,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Namshi',
       'url': 'https://www.namshi.com/',
       'color': Color(0xFFE91E63),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=namshi.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/namshi.com',
       'hasCoupon': false,
     },
     {
@@ -109,7 +109,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Jarir',
       'url': 'https://www.jarir.com/',
       'color': Color(0xFFC62828),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=jarir.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/jarir.com',
       'hasCoupon': false,
     },
     {
@@ -117,7 +117,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Extra',
       'url': 'https://www.extra.com/',
       'color': Color(0xFF00695C),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=extra.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/extra.com',
       'hasCoupon': false,
     },
     {
@@ -125,7 +125,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=panda.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/panda.sa',
       'hasCoupon': false,
     },
     {
@@ -133,7 +133,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Othaim',
       'url': 'https://www.othaimmarkets.com/',
       'color': Color(0xFF1565C0),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=othaimmarkets.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/othaimmarkets.com',
       'hasCoupon': false,
     },
     {
@@ -141,7 +141,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=tamimimarkets.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/tamimimarkets.com',
       'hasCoupon': false,
     },
     {
@@ -149,7 +149,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Nahdi',
       'url': 'https://www.nahdi.com.sa/',
       'color': Color(0xFF0D47A1),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=nahdi.com.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/nahdi.com.sa',
       'hasCoupon': false,
     },
     {
@@ -157,7 +157,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=aldawaa.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/aldawaa.com',
       'hasCoupon': false,
     },
     {
@@ -165,7 +165,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Lulu',
       'url': 'https://www.luluhypermarket.com/',
       'color': Color(0xFFD32F2F),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=luluhypermarket.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/luluhypermarket.com',
       'hasCoupon': false,
     },
     {
@@ -173,7 +173,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=carrefourksa.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/carrefourksa.com',
       'hasCoupon': false,
     },
     // ── متاجر عالمية (روابط أفليت) ──
@@ -182,7 +182,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Nike',
       'url': 'https://www.nike.sa/en/home/',
       'color': Colors.black,
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=nike.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/nike.com',
       'hasCoupon': false,
     },
     {
@@ -190,7 +190,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'H&M',
       'url': 'https://ae.hm.com/en/',
       'color': Color(0xFFCF1126),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=hm.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/hm.com',
       'hasCoupon': false,
     },
     {
@@ -198,7 +198,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Sun & Sand',
       'url': 'https://en-ae.sssports.com/',
       'color': Color(0xFFE30613),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=sssports.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/sssports.com',
       'hasCoupon': false,
     },
     {
@@ -206,7 +206,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Huda Beauty',
       'url': 'https://hudabeauty.com/en-sa/',
       'color': Color(0xFF231F20),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=hudabeauty.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/hudabeauty.com',
       'hasCoupon': false,
     },
     {
@@ -214,7 +214,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'YSL Beauty',
       'url': 'https://www.yslbeauty.sa/',
       'color': Colors.black,
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=yslbeauty.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/yslbeauty.sa',
       'hasCoupon': false,
     },
     {
@@ -222,7 +222,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Under Armour',
       'url': 'https://www.underarmour.ae/en/home',
       'color': Color(0xFF1D1D1D),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=underarmour.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/underarmour.com',
       'hasCoupon': false,
     },
     {
@@ -230,7 +230,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Mamas & Papas',
       'url': 'https://mamasandpapas.ae/',
       'color': Color(0xFF4A4A4A),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=mamasandpapas.ae&sz=128',
+      'logoUrl': 'https://icon.horse/icon/mamasandpapas.ae',
       'hasCoupon': false,
     },
     {
@@ -238,7 +238,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Bloomingdale\'s',
       'url': 'https://bloomingdales.ae/',
       'color': Colors.black,
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=bloomingdales.ae&sz=128',
+      'logoUrl': 'https://icon.horse/icon/bloomingdales.ae',
       'hasCoupon': false,
     },
     {
@@ -246,7 +246,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Puma',
       'url': 'https://sa.puma.com/en/',
       'color': Color(0xFFBA0C2F),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=puma.com&sz=128',
+      'logoUrl': 'https://icon.horse/icon/puma.com',
       'hasCoupon': false,
     },
     {
@@ -254,7 +254,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Natural Touch',
       'url': 'https://ntshop.sa/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://www.google.com/s2/favicons?domain=ntshop.sa&sz=128',
+      'logoUrl': 'https://icon.horse/icon/ntshop.sa',
       'hasCoupon': false,
     },
   ];
