@@ -4,7 +4,7 @@ const HYBRID_SEARCH_USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 LeastPriceBot/1.0';
 const REQUEST_TIMEOUT_MS = 8000;
 const MAX_RESULTS_PER_STORE = 8;
-const MAX_TOTAL_RESULTS = 40;
+const MAX_TOTAL_RESULTS = 120;
 const ALLOWED_CORS_HEADERS = 'Content-Type';
 const ALLOWED_CORS_METHODS = 'GET, OPTIONS';
 const SAUDI_FAMOUS_STORES_ONLY = false;
