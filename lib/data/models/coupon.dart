@@ -155,6 +155,8 @@ class Coupon {
         return tr('رشفة ذكرى', 'Rashfa Dhikra');
       case 'roshen':
         return tr('روشن', 'Roshen');
+      case 'roshen-tickets':
+        return tr('روشن تذاكر كاس العالم', 'Roshen World Cup Tickets');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -279,6 +281,19 @@ class Coupon {
       description: tr(
         'كود خصم على الألبسة.',
         'Discount code for clothing.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-roshen-tickets',
+      code: 'F-Z3K4V',
+      storeId: 'roshen-tickets',
+      storeName: tr('روشن تذاكر كاس العالم', 'Roshen World Cup Tickets'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون روشن لتذاكر كاس العالم', 'Exclusive Roshen World Cup coupon'),
+      description: tr(
+        'كود خصم على تذاكر كاس العالم.',
+        'Discount code for World Cup tickets.',
       ),
     ),
   ];

@@ -120,6 +120,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF1565C0),
       'icon': Icons.checkroom_rounded,
     },
+    {
+      'name': 'روشن تذاكر كاس العالم',
+      'nameEn': 'Roshen World Cup',
+      'url': 'https://mtjr.at/Q5bZQdUrJ4',
+      'color': Color(0xFF2E7D32),
+      'icon': Icons.sports_soccer_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {
