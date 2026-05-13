@@ -13,7 +13,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Noon',
       'url': 'https://s.noon.com/HOTtsN31XfI',
       'color': Color(0xFFFEE70B),
-      'logoUrl': 'https://logo.clearbit.com/noon.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=noon.com&sz=128',
     },
     {
       'id': 'amazon',
@@ -21,7 +21,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Amazon',
       'url': 'https://www.amazon.sa/',
       'color': Color(0xFFFF9900),
-      'logoUrl': 'https://logo.clearbit.com/amazon.sa',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=amazon.sa&sz=128',
     },
     {
       'id': 'keeta',
@@ -43,7 +43,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'logoUrl': 'https://logo.clearbit.com/panda.sa',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=panda.sa&sz=128',
     },
     {
       'id': 'othaim',
@@ -51,7 +51,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Othaim',
       'url': 'https://www.othaimmarkets.com/',
       'color': Color(0xFF1565C0),
-      'logoUrl': 'https://logo.clearbit.com/othaimmarkets.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=othaimmarkets.com&sz=128',
     },
     {
       'id': 'tamimi',
@@ -59,7 +59,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'logoUrl': 'https://logo.clearbit.com/tamimimarkets.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=tamimimarkets.com&sz=128',
     },
     {
       'id': 'extra',
@@ -67,7 +67,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Extra',
       'url': 'https://www.extra.com/',
       'color': Color(0xFF00695C),
-      'logoUrl': 'https://logo.clearbit.com/extra.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=extra.com&sz=128',
     },
     {
       'id': 'jarir',
@@ -75,7 +75,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Jarir',
       'url': 'https://www.jarir.com/',
       'color': Color(0xFFC62828),
-      'logoUrl': 'https://logo.clearbit.com/jarir.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=jarir.com&sz=128',
     },
     {
       'id': 'nahdi',
@@ -83,7 +83,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Nahdi',
       'url': 'https://www.nahdi.com.sa/',
       'color': Color(0xFF0D47A1),
-      'logoUrl': 'https://logo.clearbit.com/nahdi.com.sa',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=nahdi.com.sa&sz=128',
     },
     {
       'id': 'aldawaa',
@@ -91,7 +91,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://logo.clearbit.com/aldawaa.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=aldawaa.com&sz=128',
     },
     {
       'id': 'lulu',
@@ -99,7 +99,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Lulu',
       'url': 'https://www.luluhypermarket.com/',
       'color': Color(0xFFD32F2F),
-      'logoUrl': 'https://logo.clearbit.com/luluhypermarket.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=luluhypermarket.com&sz=128',
     },
     {
       'id': 'carrefour',
@@ -107,7 +107,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://logo.clearbit.com/carrefourksa.com',
+      'logoUrl': 'https://www.google.com/s2/favicons?domain=carrefourksa.com&sz=128',
     },
   ];
 
@@ -186,24 +186,36 @@ class PopularStoresSection extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      width: 80,
-                      height: 80,
+                      width: 76,
+                      height: 76,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.15),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                          BoxShadow(
+                            color: AppPalette.navy.withValues(alpha: 0.04),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                         border: Border.all(
-                          color: color.withValues(alpha: 0.2),
-                          width: 1.5,
+                          color: color.withValues(alpha: 0.1),
+                          width: 1,
                         ),
                       ),
                       child: Center(
                         child: logoUrl != null && logoUrl.isNotEmpty
                             ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(16),
                                 child: Image.network(
                                   logoUrl,
-                                  width: 44,
-                                  height: 44,
+                                  width: 48,
+                                  height: 48,
                                   fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) =>
                                       _buildLetter(store, color),
@@ -214,7 +226,7 @@ class PopularStoresSection extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     SizedBox(
-                      width: 80,
+                      width: 76,
                       child: Text(
                         tr(store['name'], store['nameEn']),
                         textAlign: TextAlign.center,
@@ -222,7 +234,7 @@ class PopularStoresSection extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                           color: AppPalette.navy,
                         ),
                       ),
