@@ -183,7 +183,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Carrefour_logo.svg',
+      'logoUrl': 'https://cdnprod.mafretailproxy.com/mafrp-web/assets/en/images/default/logo.svg',
       'hasCoupon': false,
     },
     // ── متاجر عالمية (روابط أفليت) ──
@@ -281,11 +281,11 @@ class BrandOffersSection extends StatelessWidget {
     final logoUrl = store['logoUrl'] as String?;
     if (logoUrl != null && logoUrl.isNotEmpty) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Image.network(
           proxiedImageUrl(logoUrl),
-          width: 44,
-          height: 44,
+          width: 60,
+          height: 60,
           fit: BoxFit.contain,
           errorBuilder: (_, __, ___) => _buildLetterAvatar(store, color),
           loadingBuilder: (_, child, progress) {
@@ -318,11 +318,11 @@ class BrandOffersSection extends StatelessWidget {
     final name = (store['name'] as String? ?? '');
     final firstChar = name.isNotEmpty ? name.characters.first : '?';
     return Container(
-      width: 44,
-      height: 44,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
         child: Text(
@@ -390,40 +390,52 @@ class BrandOffersSection extends StatelessWidget {
                       width: 90,
                       height: 90,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: hasCoupon ? 0.15 : 0.1),
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: hasCoupon
-                              ? color.withValues(alpha: 0.3)
-                              : color.withValues(alpha: 0.15),
-                          width: hasCoupon ? 1.5 : 1,
+                          color: color.withValues(alpha: 0.15),
+                          width: 1,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.1),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: Stack(
-                        children: [
-                          Center(child: _buildLogo(store, color)),
-                          if (hasCoupon)
-                            Positioned(
-                              top: 6,
-                              right: 6,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppPalette.orange,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  tr('كود', 'CODE'),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
+                      child: Container(
+                        margin: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: hasCoupon ? 0.08 : 0.04),
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: Stack(
+                          children: [
+                            Center(child: _buildLogo(store, color)),
+                            if (hasCoupon)
+                              Positioned(
+                                top: 6,
+                                right: 6,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppPalette.orange,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    tr('كود', 'CODE'),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
