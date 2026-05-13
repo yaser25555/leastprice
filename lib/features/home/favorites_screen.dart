@@ -79,7 +79,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: Colors.grey.shade200),
+                  side: BorderSide(color: AppPalette.brandCardBorder),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -94,7 +94,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           fit: BoxFit.contain,
                           errorBuilder: (_, __, ___) => Container(
                             width: 64, height: 64,
-                            color: Colors.grey.shade100,
+                            color: AppPalette.brandSurface,
                             child: Icon(Icons.image_outlined, color: Colors.grey.shade300),
                           ),
                         ),
@@ -116,7 +116,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                        icon: const Icon(Icons.delete_outline, color: AppPalette.orange),
                         onPressed: () => _service.removeFavorite(productUrl),
                       ),
                     ],

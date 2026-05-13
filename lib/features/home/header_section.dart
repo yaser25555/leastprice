@@ -201,7 +201,7 @@ class HeaderSection extends StatelessWidget {
                               backgroundColor:
                                   AppPalette.pureWhiteOpacity(0.06),
                             ),
-                            icon: const Icon(Icons.share_rounded),
+                            icon: Icon(Icons.share_rounded, color: AppPalette.orange),
                             label: Text(
                               tr(
                                 'ادعُ صديقاً للتوفير',
@@ -451,8 +451,8 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                                     ),
                                     tooltip:
                                         tr('مشاركة الدعوة', 'Share invite'),
-                                    icon: const Icon(Icons.share_rounded,
-                                        size: 18),
+                                    icon: Icon(Icons.share_rounded,
+                                        color: AppPalette.orange, size: 18),
                                   ),
                                 ],
                               ),

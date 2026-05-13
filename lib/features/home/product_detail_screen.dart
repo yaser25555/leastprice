@@ -108,12 +108,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   : _isFavorite
                       ? Icons.favorite
                       : Icons.favorite_outline,
-              color: _isFavorite ? Colors.redAccent : null,
+              color: _isFavorite ? AppPalette.orange : null,
             ),
             onPressed: _favLoading ? null : _toggleFavorite,
           ),
           IconButton(
-            icon: const Icon(Icons.share_outlined),
+            icon: Icon(Icons.share_outlined, color: AppPalette.orange),
             onPressed: () => _shareProduct(context),
           ),
           const SizedBox(width: 8),
@@ -127,7 +127,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: Container(
               height: 220,
               width: double.infinity,
-              color: Colors.grey.shade50,
+              color: AppPalette.brandSurface,
               child: Image.network(
                 proxiedImageUrl(group.displayImageUrl),
                 fit: BoxFit.contain,
@@ -143,7 +143,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.grey.shade400,
+                        color: AppPalette.brandCardBorder,
                         fontSize: 13,
                       ),
                     ),
@@ -328,7 +328,7 @@ class _OfferCard extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: AppPalette.brandSurface,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(Icons.store, size: 22, color: Colors.grey.shade400),

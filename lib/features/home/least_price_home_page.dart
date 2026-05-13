@@ -429,7 +429,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
               FloatingActionButton.small(
                 heroTag: 'favorites-fab',
                 tooltip: tr('المفضلة', 'Favorites'),
-                backgroundColor: Colors.redAccent,
+                backgroundColor: AppPalette.orange,
                 foregroundColor: Colors.white,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const FavoritesScreen()),

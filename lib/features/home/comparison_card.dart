@@ -214,7 +214,7 @@ class ComparisonCard extends StatelessWidget {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: onShareTap,
-                          icon: const Icon(Icons.share_rounded),
+                          icon: Icon(Icons.share_rounded, color: AppPalette.orange),
                           label: Text(tr('مشاركة التوفير', 'Share savings')),
                         ),
                       ),
@@ -240,7 +240,7 @@ class ComparisonCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onShareTap,
-                        icon: const Icon(Icons.share_rounded),
+                        icon: Icon(Icons.share_rounded, color: AppPalette.orange),
                         label: Text(tr('مشاركة التوفير', 'Share savings')),
                       ),
                     ),

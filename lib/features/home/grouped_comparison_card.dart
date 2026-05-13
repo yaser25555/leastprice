@@ -30,7 +30,7 @@ class GroupedComparisonCard extends ConsumerWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade100),
+        side: BorderSide(color: AppPalette.brandCardBorder),
       ),
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
@@ -49,12 +49,12 @@ class GroupedComparisonCard extends ConsumerWidget {
                       child: Container(
                         height: 100,
                         width: 100,
-                        color: Colors.grey.shade50,
+                        color: AppPalette.brandSurface,
                         child: Image.network(
                           proxiedImageUrl(group.displayImageUrl),
                           fit: BoxFit.contain,
                           errorBuilder: (_, __, ___) => Icon(Icons.image_outlined,
-                              size: 32, color: Colors.grey.shade200),
+                              size: 32, color: AppPalette.brandCardBorder),
                         ),
                       ),
                     ),
@@ -198,7 +198,7 @@ class GroupedComparisonCard extends ConsumerWidget {
             ),
           ),
           if (group.offers.length > 1) ...[
-            Divider(height: 1, color: Colors.grey.shade100),
+            Divider(height: 1, color: AppPalette.brandCardBorder),
             ...group.offers.asMap().entries.map((entry) {
               final index = entry.key;
               final offer = entry.value;
@@ -278,7 +278,7 @@ class _FavoriteShortcut extends ConsumerWidget {
         final isFavorite = favorites.any((f) => f['productUrl'] == offer.productUrl);
         return _ShortcutCircle(
           icon: isFavorite ? Icons.favorite : Icons.favorite_outline,
-          color: isFavorite ? Colors.redAccent : Colors.grey.shade600,
+          color: isFavorite ? AppPalette.orange : Colors.grey.shade600,
           onTap: () => _toggleFavorite(context, ref, isFavorite),
         );
       },
@@ -420,7 +420,7 @@ class _StoreRow extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: AppPalette.brandSurface,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(Icons.store, size: 16, color: Colors.grey.shade400),
@@ -535,7 +535,7 @@ class _StoreRow extends StatelessWidget {
           ),
         ),
         if (showDivider)
-          Divider(indent: 60, height: 1, color: Colors.grey.shade100),
+          Divider(indent: 60, height: 1, color: AppPalette.brandCardBorder),
       ],
     );
   }

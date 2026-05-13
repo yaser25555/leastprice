@@ -150,7 +150,7 @@ class ExclusiveDealCard extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: Icon(Icons.ios_share_rounded,
-                            color: AppPalette.deepNavy),
+                            color: AppPalette.orange),
                         onPressed: () {
                           SharePlus.instance.share(
                             ShareParams(
