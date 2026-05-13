@@ -159,5 +159,15 @@ class ExclusiveDeal {
       active: true,
       dealUrl: 'https://mtjr.at/FN2AIl2KWs',
     ),
+    ExclusiveDeal(
+      id: 'kabsh_najd_deal',
+      title: 'أضاحي كبش نجد - جودة ومصداقية',
+      imageUrl: 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=1000&auto=format&fit=crop',
+      beforePrice: 0,
+      afterPrice: 0,
+      expiryDate: DateTime.now().add(const Duration(days: 45)),
+      active: true,
+      dealUrl: 'https://mtjr.at/_2-N8J8JYq',
+    ),
   ];
 }

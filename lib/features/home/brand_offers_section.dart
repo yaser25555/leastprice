@@ -92,6 +92,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFFE91E63),
       'icon': Icons.auto_awesome_rounded,
     },
+    {
+      'name': 'اضاحي كبش نجد',
+      'nameEn': 'Kabsh Najd',
+      'url': 'https://mtjr.at/_2-N8J8JYq',
+      'color': Color(0xFF8D6E63),
+      'icon': Icons.restaurant_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {

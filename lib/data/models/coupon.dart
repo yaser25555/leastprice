@@ -147,6 +147,8 @@ class Coupon {
         return tr('التميمي', 'Tamimi');
       case 'dar-al-amirat':
         return tr('دار الأميرات', 'Dar Al-Amirat');
+      case 'kabsh-najd':
+        return tr('اضاحي كبش نجد', 'Kabsh Najd');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -219,6 +221,19 @@ class Coupon {
       description: tr(
         'انسخ الكود واستخدمه للحصول على خصم إضافي عند الدفع.',
         'Copy the code and use it at checkout for an extra discount.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-kabsh-najd',
+      code: 'F-EMYFS',
+      storeId: 'kabsh-najd',
+      storeName: tr('اضاحي كبش نجد', 'Kabsh Najd'),
+      discountLabel: tr('عرض خاص', 'Special offer'),
+      expiresAt: DateTime.now().add(const Duration(days: 30)),
+      title: tr('كوبون كبش نجد للحوم', 'Exclusive Kabsh Najd coupon'),
+      description: tr(
+        'وفر أكثر عند طلب الذبائح والأضاحي عبر التطبيق.',
+        'Save more on livestock and meat orders via the app.',
       ),
     ),
   ];
