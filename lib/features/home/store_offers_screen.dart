@@ -55,6 +55,171 @@ class StoreOffersScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildStoreDealCard(ProductComparison product) {
+    final savings = product.savingsAmount;
+    final savingsPct = product.savingsPercent;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: storeColor.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Category label ──
+          if (product.categoryLabel.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Row(
+                children: [
+                  Icon(Icons.local_offer_rounded, size: 14, color: storeColor),
+                  const SizedBox(width: 6),
+                  Text(
+                    product.categoryLabel,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: storeColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          // ── Product info ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Product name
+                Text(
+                  product.alternativeName,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: AppPalette.navy,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Original price (strikethrough)
+                if (product.expensivePrice > product.alternativePrice)
+                  Row(
+                    children: [
+                      Text(
+                        tr('السعر الأصلي:', 'Original:'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppPalette.navy.withValues(alpha: 0.4),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${product.expensivePrice.toStringAsFixed(product.expensivePrice == product.expensivePrice.roundToDouble() ? 0 : 2)} ${tr('ريال', 'SAR')}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppPalette.navy.withValues(alpha: 0.4),
+                          decoration: TextDecoration.lineThrough,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 4),
+                // Deal price
+                Row(
+                  children: [
+                    Text(
+                      tr('سعر العرض:', 'Deal price:'),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppPalette.orange,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${product.alternativePrice.toStringAsFixed(product.alternativePrice == product.alternativePrice.roundToDouble() ? 0 : 2)} ${tr('ريال', 'SAR')}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: AppPalette.orange,
+                      ),
+                    ),
+                  ],
+                ),
+                // Savings badge
+                if (savings > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppPalette.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppPalette.orange.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        savingsPct >= 40
+                            ? tr('توفير كبير $savingsPct%', 'Big saving $savingsPct%')
+                            : tr('وفر $savingsPct%', 'Save $savingsPct%'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: AppPalette.orange,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // ── Buy button ──
+          if (product.hasBuyUrl)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _openBuyUrl(context, product.buyUrl),
+                  icon: const Icon(Icons.shopping_cart_rounded, size: 16),
+                  label: Text(
+                    tr('اشتري من $storeName', 'Buy at $storeNameEn'),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: storeColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSliverAppBar(BuildContext context) {
     final hasLogo = storeLogoUrl != null && storeLogoUrl!.isNotEmpty;
     return SliverAppBar(
@@ -208,6 +373,9 @@ class StoreOffersScreen extends ConsumerWidget {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final product = storeProducts[index];
+          if (product.generatedBy == 'store_deals_bot') {
+            return _buildStoreDealCard(product);
+          }
           return _buildProductCard(context, product);
         },
         childCount: storeProducts.length,

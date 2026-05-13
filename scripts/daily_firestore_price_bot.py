@@ -303,19 +303,21 @@ def generate_store_deals(
                 stats["store_deals_skipped_no_results"] += 1
                 continue
 
+            # Pick the cheapest product from the store
             alternative = min(store_hits, key=lambda h: h.price or 0)
-            if not other_hits:
-                expensive = max(store_hits, key=lambda h: h.price or 0)
-            else:
-                expensive = max(other_hits, key=lambda h: h.price or 0)
-
-            expensive_price = extract_price_from_hit(expensive) or 0.0
             alternative_price = extract_price_from_hit(alternative) or 0.0
+
+            # Market reference price: highest among ALL priced results
+            all_priced = priced_hits
+            max_price_hit = max(all_priced, key=lambda h: h.price or 0)
+            expensive_price = extract_price_from_hit(max_price_hit) or 0.0
 
             if expensive_price <= 0 or alternative_price <= 0:
                 stats["store_deals_skipped_no_price"] += 1
                 continue
 
+            # Use the same product name for both sides (single-product card)
+            product_name = alternative.title[:200]
             buy_url = attach_affiliate_tag(store_buy_url)
             category_label = f"عروض {store_id}"
             tags = [
@@ -330,10 +332,10 @@ def generate_store_deals(
                 "categoryId": "all",
                 "category": category_label,
                 "is_automated": True,
-                "expensiveName": expensive.title[:200],
+                "expensiveName": product_name,
                 "expensivePrice": round(expensive_price, 2),
                 "expensiveImageUrl": "",
-                "alternativeName": alternative.title[:200],
+                "alternativeName": product_name,
                 "alternativePrice": round(alternative_price, 2),
                 "alternativeImageUrl": "",
                 "buyUrl": buy_url,
@@ -344,6 +346,7 @@ def generate_store_deals(
                     expensive_price=expensive_price,
                     alternative_price=alternative_price,
                 ),
+                "generatedBy": "store_deals_bot",
             }
 
             signature = build_product_signature(product)

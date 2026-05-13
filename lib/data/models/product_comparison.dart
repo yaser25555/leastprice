@@ -25,6 +25,7 @@ class ProductComparison {
     this.activeIngredients,
     this.localLocationLabel,
     this.localLocationUrl,
+    this.generatedBy,
   });
 
   final String? documentId;
@@ -45,6 +46,7 @@ class ProductComparison {
   final String? activeIngredients;
   final String? localLocationLabel;
   final String? localLocationUrl;
+  final String? generatedBy;
 
   String get uniqueKey => documentId?.trim().isNotEmpty == true
       ? documentId!
@@ -109,6 +111,7 @@ class ProductComparison {
     String? activeIngredients,
     String? localLocationLabel,
     String? localLocationUrl,
+    String? generatedBy,
   }) {
     return ProductComparison(
       documentId: documentId ?? this.documentId,
@@ -129,6 +132,7 @@ class ProductComparison {
       activeIngredients: activeIngredients ?? this.activeIngredients,
       localLocationLabel: localLocationLabel ?? this.localLocationLabel,
       localLocationUrl: localLocationUrl ?? this.localLocationUrl,
+      generatedBy: generatedBy ?? this.generatedBy,
     );
   }
 
@@ -196,6 +200,7 @@ class ProductComparison {
       activeIngredients: stringValue(json['activeIngredients']),
       localLocationLabel: stringValue(json['localLocationLabel']),
       localLocationUrl: stringValue(json['localLocationUrl']),
+      generatedBy: stringValue(json['generatedBy']),
     );
   }
 
@@ -234,6 +239,8 @@ class ProductComparison {
         'localLocationLabel': localLocationLabel,
       if (localLocationUrl != null && localLocationUrl!.trim().isNotEmpty)
         'localLocationUrl': localLocationUrl,
+      if (generatedBy != null && generatedBy!.trim().isNotEmpty)
+        'generatedBy': generatedBy,
     };
   }
 
