@@ -109,7 +109,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://cdnprod.mafretailproxy.com/mafrp-web/assets/en/images/default/logo.svg',
+      'logoUrl': '', // Using stylized text fallback to avoid 404/CORS issues
     },
   ];
 
@@ -258,21 +258,25 @@ class PopularStoresSection extends StatelessWidget {
 
   Widget _buildLetter(Map<String, dynamic> store, Color color) {
     final name = (store['name'] as String? ?? '');
-    final char = name.isNotEmpty ? name.characters.first : '?';
+    final isCarrefour = store['id'] == 'carrefour';
+    final textToShow = isCarrefour ? name : (name.isNotEmpty ? name.characters.first : '?');
+    
     return Container(
-      width: 44,
-      height: 44,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
         child: Text(
-          char,
+          textToShow,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: color,
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
+            fontSize: isCarrefour ? 14 : 24,
+            fontWeight: FontWeight.w900,
+            letterSpacing: isCarrefour ? -0.5 : 0,
             height: 1,
           ),
         ),

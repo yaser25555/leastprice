@@ -183,7 +183,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://cdnprod.mafretailproxy.com/mafrp-web/assets/en/images/default/logo.svg',
+      'logoUrl': '', // Using stylized text fallback to avoid 404/CORS issues
       'hasCoupon': false,
     },
     // ── متاجر عالمية (روابط أفليت) ──
@@ -316,7 +316,9 @@ class BrandOffersSection extends StatelessWidget {
 
   Widget _buildLetterAvatar(Map<String, dynamic> store, Color color) {
     final name = (store['name'] as String? ?? '');
-    final firstChar = name.isNotEmpty ? name.characters.first : '?';
+    final isCarrefour = name == 'كارفور' || (store['nameEn'] as String? ?? '').toLowerCase() == 'carrefour';
+    final textToShow = isCarrefour ? name : (name.isNotEmpty ? name.characters.first : '?');
+
     return Container(
       width: 75,
       height: 75,
@@ -326,11 +328,13 @@ class BrandOffersSection extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          firstChar,
+          textToShow,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: color,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
+            fontSize: isCarrefour ? 18 : 32,
+            fontWeight: FontWeight.w900,
+            letterSpacing: isCarrefour ? -0.5 : 0,
             height: 1,
           ),
         ),
