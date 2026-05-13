@@ -17,6 +17,7 @@ class HeaderSection extends StatelessWidget {
     required this.systemHealthLabel,
     required this.onInviteTap,
     required this.onLogoutTap,
+    required this.onFavoritesTap,
   });
 
   final String currentUserLabel;
@@ -26,6 +27,7 @@ class HeaderSection extends StatelessWidget {
   final String systemHealthLabel;
   final VoidCallback onInviteTap;
   final Future<void> Function() onLogoutTap;
+  final VoidCallback onFavoritesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -100,12 +102,27 @@ class HeaderSection extends StatelessWidget {
                       const SizedBox(width: 8),
                       const SizedBox(width: 6),
                       IconButton(
-                        onPressed: onLogoutTap,
+                        onPressed: onFavoritesTap,
                         style: IconButton.styleFrom(
-                          backgroundColor: Color(0x1AFFFFFF),
-                          foregroundColor: AppPalette.pureWhite,
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.15),
+                          foregroundColor: AppPalette.orange,
                         ),
-                        icon: const Icon(Icons.logout_rounded),
+                        icon: const Icon(Icons.favorite, size: 20),
+                        tooltip: tr('المفضلة', 'Favorites'),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: onLogoutTap,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppPalette.orange.withValues(alpha: 0.9),
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.logout_rounded, size: 16),
                         tooltip: tr('تسجيل الخروج', 'Sign Out'),
                       ),
                     ],
@@ -232,6 +249,7 @@ class CompactHeaderSection extends StatefulWidget {
     required this.systemHealthLabel,
     required this.onInviteTap,
     required this.onLogoutTap,
+    required this.onFavoritesTap,
   });
 
   final String currentUserLabel;
@@ -240,6 +258,7 @@ class CompactHeaderSection extends StatefulWidget {
   final String systemHealthLabel;
   final VoidCallback onInviteTap;
   final Future<void> Function() onLogoutTap;
+  final VoidCallback onFavoritesTap;
 
   @override
   State<CompactHeaderSection> createState() => _CompactHeaderSectionState();
@@ -371,14 +390,26 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                         ),
                         const SizedBox(width: 6),
                         IconButton(
-                          onPressed: widget.onLogoutTap,
+                          onPressed: widget.onFavoritesTap,
                           style: IconButton.styleFrom(
                             backgroundColor: Colors.transparent,
-                            foregroundColor: AppPalette.paleOrange,
-                            padding: const EdgeInsets.all(10),
-                            minimumSize: const Size(38, 38),
+                            foregroundColor: AppPalette.orange,
+                            padding: const EdgeInsets.all(8),
+                            minimumSize: const Size(32, 32),
                           ),
-                          icon: const Icon(Icons.logout_rounded, size: 18),
+                          icon: const Icon(Icons.favorite, size: 18),
+                          tooltip: tr('المفضلة', 'Favorites'),
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          onPressed: widget.onLogoutTap,
+                          style: IconButton.styleFrom(
+                            backgroundColor: AppPalette.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.all(8),
+                            minimumSize: const Size(32, 32),
+                          ),
+                          icon: const Icon(Icons.logout_rounded, size: 16),
                           tooltip: tr('تسجيل الخروج', 'Sign Out'),
                         ),
                       ],

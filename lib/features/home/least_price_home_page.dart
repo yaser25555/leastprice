@@ -426,17 +426,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: [
-              FloatingActionButton.small(
-                heroTag: 'favorites-fab',
-                tooltip: tr('المفضلة', 'Favorites'),
-                backgroundColor: AppPalette.orange,
-                foregroundColor: Colors.white,
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-                ),
-                child: const Icon(Icons.favorite, size: 20),
-              ),
-              const SizedBox(height: 12),
               if (showAdminFab)
                 FloatingActionButton.small(
                   heroTag: 'admin-dashboard-fab',
@@ -541,6 +530,10 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       onInviteTap: () => _actions.inviteFriend(
                           context, userProfile, products),
                       onLogoutTap: () => _actions.signOut(),
+                      onFavoritesTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => const FavoritesScreen()),
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(
