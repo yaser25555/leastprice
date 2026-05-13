@@ -14,7 +14,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Dar Al-Amirat',
       'url': 'https://mtjr.at/FN2AIl2KWs',
       'color': Color(0xFFE91E63),
-      'icon': Icons.auto_awesome_rounded,
       'hasCoupon': true,
     },
     {
@@ -22,7 +21,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Kabsh Najd',
       'url': 'https://mtjr.at/_2-N8J8JYq',
       'color': Color(0xFF8D6E63),
-      'icon': Icons.restaurant_rounded,
       'hasCoupon': true,
     },
     {
@@ -30,7 +28,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Vanier',
       'url': 'https://mtjr.at/llD-L7SGIe',
       'color': Color(0xFF9C27B0),
-      'icon': Icons.spa_rounded,
       'hasCoupon': true,
     },
     {
@@ -38,7 +35,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Rashfa Dhikra',
       'url': 'https://mtjr.at/dKbDAZu6uC',
       'color': Color(0xFF8B4513),
-      'icon': Icons.auto_awesome_rounded,
       'hasCoupon': true,
     },
     {
@@ -46,7 +42,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Roshen',
       'url': 'https://mtjr.at/yyIPYOIhZT',
       'color': Color(0xFF1565C0),
-      'icon': Icons.checkroom_rounded,
       'hasCoupon': true,
     },
     {
@@ -54,7 +49,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Roshen World Cup',
       'url': 'https://mtjr.at/Q5bZQdUrJ4',
       'color': Color(0xFF2E7D32),
-      'icon': Icons.sports_soccer_rounded,
       'hasCoupon': true,
     },
     {
@@ -62,7 +56,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Futbol',
       'url': 'https://mtjr.at/e7RHqtq2c5',
       'color': Color(0xFFE65100),
-      'icon': Icons.directions_run_rounded,
       'hasCoupon': true,
     },
     {
@@ -70,7 +63,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Al-Reem',
       'url': 'https://mtjr.at/ce3e1xVX7Y',
       'color': Color(0xFF4A148C),
-      'icon': Icons.style_rounded,
       'hasCoupon': true,
     },
     {
@@ -78,7 +70,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Vibe',
       'url': 'https://mtjr.at/1H0-ZC1QMn',
       'color': Color(0xFFFF8F00),
-      'icon': Icons.watch_rounded,
       'hasCoupon': true,
     },
     {
@@ -86,7 +77,6 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Qatret Asal',
       'url': 'https://mtjr.at/zCUaC5F9e4',
       'color': Color(0xFFFFB300),
-      'icon': Icons.auto_awesome_rounded,
       'hasCoupon': true,
     },
     // ── المتاجر السعودية ──
@@ -95,7 +85,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Amazon',
       'url': 'https://www.amazon.sa/',
       'color': Color(0xFFFF9900),
-      'icon': Icons.shopping_cart_rounded,
+      'logoUrl': 'https://logo.clearbit.com/amazon.sa',
       'hasCoupon': false,
     },
     {
@@ -103,7 +93,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Noon',
       'url': 'https://www.noon.com/saudi-ar/',
       'color': Color(0xFFFEE70B),
-      'icon': Icons.shopping_cart_rounded,
+      'logoUrl': 'https://logo.clearbit.com/noon.com',
       'hasCoupon': false,
     },
     {
@@ -111,7 +101,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Namshi',
       'url': 'https://www.namshi.com/',
       'color': Color(0xFFE91E63),
-      'icon': Icons.checkroom_rounded,
+      'logoUrl': 'https://logo.clearbit.com/namshi.com',
       'hasCoupon': false,
     },
     {
@@ -119,7 +109,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Jarir',
       'url': 'https://www.jarir.com/',
       'color': Color(0xFFC62828),
-      'icon': Icons.laptop_rounded,
+      'logoUrl': 'https://logo.clearbit.com/jarir.com',
       'hasCoupon': false,
     },
     {
@@ -127,7 +117,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Extra',
       'url': 'https://www.extra.com/',
       'color': Color(0xFF00695C),
-      'icon': Icons.devices_rounded,
+      'logoUrl': 'https://logo.clearbit.com/extra.com',
       'hasCoupon': false,
     },
     {
@@ -135,7 +125,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'icon': Icons.local_grocery_store_rounded,
+      'logoUrl': 'https://logo.clearbit.com/panda.sa',
       'hasCoupon': false,
     },
     {
@@ -143,7 +133,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Othaim',
       'url': 'https://www.othaimmarkets.com/',
       'color': Color(0xFF1565C0),
-      'icon': Icons.store_rounded,
+      'logoUrl': 'https://logo.clearbit.com/othaimmarkets.com',
       'hasCoupon': false,
     },
     {
@@ -151,7 +141,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'icon': Icons.local_grocery_store_rounded,
+      'logoUrl': 'https://logo.clearbit.com/tamimimarkets.com',
       'hasCoupon': false,
     },
     {
@@ -159,7 +149,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Nahdi',
       'url': 'https://www.nahdi.com.sa/',
       'color': Color(0xFF0D47A1),
-      'icon': Icons.local_pharmacy_rounded,
+      'logoUrl': 'https://logo.clearbit.com/nahdi.com.sa',
       'hasCoupon': false,
     },
     {
@@ -167,7 +157,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'icon': Icons.local_pharmacy_rounded,
+      'logoUrl': 'https://logo.clearbit.com/aldawaa.com',
       'hasCoupon': false,
     },
     {
@@ -175,7 +165,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Lulu',
       'url': 'https://www.luluhypermarket.com/',
       'color': Color(0xFFD32F2F),
-      'icon': Icons.storefront_rounded,
+      'logoUrl': 'https://logo.clearbit.com/luluhypermarket.com',
       'hasCoupon': false,
     },
     {
@@ -183,7 +173,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'icon': Icons.shopping_basket_rounded,
+      'logoUrl': 'https://logo.clearbit.com/carrefourksa.com',
       'hasCoupon': false,
     },
     // ── متاجر عالمية (روابط أفليت) ──
@@ -192,7 +182,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Nike',
       'url': 'https://www.nike.sa/en/home/',
       'color': Colors.black,
-      'icon': Icons.bolt_rounded,
+      'logoUrl': 'https://logo.clearbit.com/nike.com',
       'hasCoupon': false,
     },
     {
@@ -200,7 +190,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'H&M',
       'url': 'https://ae.hm.com/en/',
       'color': Color(0xFFCF1126),
-      'icon': Icons.checkroom_rounded,
+      'logoUrl': 'https://logo.clearbit.com/hm.com',
       'hasCoupon': false,
     },
     {
@@ -208,7 +198,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Sun & Sand',
       'url': 'https://en-ae.sssports.com/',
       'color': Color(0xFFE30613),
-      'icon': Icons.sports_soccer_rounded,
+      'logoUrl': 'https://logo.clearbit.com/sssports.com',
       'hasCoupon': false,
     },
     {
@@ -216,7 +206,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Huda Beauty',
       'url': 'https://hudabeauty.com/en-sa/',
       'color': Color(0xFF231F20),
-      'icon': Icons.face_retouching_natural_rounded,
+      'logoUrl': 'https://logo.clearbit.com/hudabeauty.com',
       'hasCoupon': false,
     },
     {
@@ -224,7 +214,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'YSL Beauty',
       'url': 'https://www.yslbeauty.sa/',
       'color': Colors.black,
-      'icon': Icons.auto_awesome_rounded,
+      'logoUrl': 'https://logo.clearbit.com/yslbeauty.sa',
       'hasCoupon': false,
     },
     {
@@ -232,7 +222,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Under Armour',
       'url': 'https://www.underarmour.ae/en/home',
       'color': Color(0xFF1D1D1D),
-      'icon': Icons.fitness_center_rounded,
+      'logoUrl': 'https://logo.clearbit.com/underarmour.com',
       'hasCoupon': false,
     },
     {
@@ -240,7 +230,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Mamas & Papas',
       'url': 'https://mamasandpapas.ae/',
       'color': Color(0xFF4A4A4A),
-      'icon': Icons.child_friendly_rounded,
+      'logoUrl': 'https://logo.clearbit.com/mamasandpapas.ae',
       'hasCoupon': false,
     },
     {
@@ -248,7 +238,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Bloomingdale\'s',
       'url': 'https://bloomingdales.ae/',
       'color': Colors.black,
-      'icon': Icons.storefront_rounded,
+      'logoUrl': 'https://logo.clearbit.com/bloomingdales.ae',
       'hasCoupon': false,
     },
     {
@@ -256,7 +246,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Puma',
       'url': 'https://sa.puma.com/en/',
       'color': Color(0xFFBA0C2F),
-      'icon': Icons.directions_run_rounded,
+      'logoUrl': 'https://logo.clearbit.com/puma.com',
       'hasCoupon': false,
     },
     {
@@ -264,7 +254,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Natural Touch',
       'url': 'https://ntshop.sa/',
       'color': Color(0xFF1B5E20),
-      'icon': Icons.spa_rounded,
+      'logoUrl': 'https://logo.clearbit.com/ntshop.sa',
       'hasCoupon': false,
     },
   ];
@@ -275,6 +265,67 @@ class BrandOffersSection extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
     }
+  }
+
+  Widget _buildLogo(Map<String, dynamic> store, Color color) {
+    final logoUrl = store['logoUrl'] as String?;
+    if (logoUrl != null && logoUrl.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          proxiedImageUrl(logoUrl),
+          width: 44,
+          height: 44,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => _buildLetterAvatar(store, color),
+          loadingBuilder: (_, child, progress) {
+            if (progress == null) return child;
+            return SizedBox(
+              width: 44,
+              height: 44,
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    value: progress.expectedTotalBytes != null
+                        ? progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return _buildLetterAvatar(store, color);
+  }
+
+  Widget _buildLetterAvatar(Map<String, dynamic> store, Color color) {
+    final name = (store['name'] as String? ?? '');
+    final firstChar = name.isNotEmpty ? name.characters.first : '?';
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Text(
+          firstChar,
+          style: TextStyle(
+            color: color,
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            height: 1,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -340,13 +391,7 @@ class BrandOffersSection extends StatelessWidget {
                       ),
                       child: Stack(
                         children: [
-                          Center(
-                            child: Icon(
-                              store['icon'],
-                              color: color,
-                              size: 38,
-                            ),
-                          ),
+                          Center(child: _buildLogo(store, color)),
                           if (hasCoupon)
                             Positioned(
                               top: 6,
