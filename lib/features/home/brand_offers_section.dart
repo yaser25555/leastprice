@@ -183,7 +183,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://cdnprod.mafretailproxy.com/mafrp-web/assets/en/images/default/logo.svg',
+      'logoUrl': 'https://upload.wikimedia.org/wikipedia/commons/5/5b/Carrefour_logo.svg',
       'hasCoupon': false,
     },
     // ── متاجر عالمية (روابط أفليت) ──
