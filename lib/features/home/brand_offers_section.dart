@@ -106,6 +106,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF9C27B0),
       'icon': Icons.spa_rounded,
     },
+    {
+      'name': 'رشفة ذكرى',
+      'nameEn': 'Rashfa Dhikra',
+      'url': 'https://mtjr.at/dKbDAZu6uC',
+      'color': Color(0xFF8B4513),
+      'icon': Icons.auto_awesome_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {

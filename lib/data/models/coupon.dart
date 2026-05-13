@@ -151,6 +151,8 @@ class Coupon {
         return tr('اضاحي كبش نجد', 'Kabsh Najd');
       case 'vanier':
         return tr('ڤانير', 'Vanier');
+      case 'rashfa-dhikra':
+        return tr('رشفة ذكرى', 'Rashfa Dhikra');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -249,6 +251,19 @@ class Coupon {
       description: tr(
         'كود خصم على منتجات العناية و المكياج و العطور.',
         'Discount code for skincare, makeup & perfume products.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-rashfa-dhikra',
+      code: 'F-JWEJF',
+      storeId: 'rashfa-dhikra',
+      storeName: tr('رشفة ذكرى', 'Rashfa Dhikra'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون رشفة ذكرى الحصري', 'Exclusive Rashfa Dhikra coupon'),
+      description: tr(
+        'كود خصم على العطور.',
+        'Discount code for perfumes.',
       ),
     ),
   ];
