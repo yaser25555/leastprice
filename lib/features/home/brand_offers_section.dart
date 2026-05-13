@@ -99,6 +99,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF8D6E63),
       'icon': Icons.restaurant_rounded,
     },
+    {
+      'name': 'ڤانير',
+      'nameEn': 'Vanier',
+      'url': 'https://mtjr.at/llD-L7SGIe',
+      'color': Color(0xFF9C27B0),
+      'icon': Icons.spa_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {

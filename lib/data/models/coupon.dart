@@ -149,6 +149,8 @@ class Coupon {
         return tr('دار الأميرات', 'Dar Al-Amirat');
       case 'kabsh-najd':
         return tr('اضاحي كبش نجد', 'Kabsh Najd');
+      case 'vanier':
+        return tr('ڤانير', 'Vanier');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -234,6 +236,19 @@ class Coupon {
       description: tr(
         'وفر أكثر عند طلب الذبائح والأضاحي عبر التطبيق.',
         'Save more on livestock and meat orders via the app.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-vanier',
+      code: 'F-NEEM0',
+      storeId: 'vanier',
+      storeName: tr('ڤانير', 'Vanier'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون ڤانير الحصري', 'Exclusive Vanier coupon'),
+      description: tr(
+        'كود خصم على منتجات العناية و المكياج و العطور.',
+        'Discount code for skincare, makeup & perfume products.',
       ),
     ),
   ];
