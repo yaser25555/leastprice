@@ -132,7 +132,7 @@ class ExclusiveDeal {
     ExclusiveDeal(
       id: 'mock_deal_1',
       title: 'عرض حصري على سامسونج جالكسي S24',
-      imageUrl: 'https://example.com/samsung-s24.jpg',
+      imageUrl: 'https://images.unsplash.com/photo-1610945264803-c22b62d2a7b3?q=80&w=1000&auto=format&fit=crop',
       beforePrice: 5000,
       afterPrice: 4500,
       expiryDate: DateTime.now().add(const Duration(days: 7)),
@@ -142,7 +142,7 @@ class ExclusiveDeal {
     ExclusiveDeal(
       id: 'mock_deal_2',
       title: 'خصم 20% على منتجات أبل',
-      imageUrl: 'https://example.com/apple-products.jpg',
+      imageUrl: 'https://images.unsplash.com/photo-1611186871348-b1f696febbb3?q=80&w=1000&auto=format&fit=crop',
       beforePrice: 3000,
       afterPrice: 2400,
       expiryDate: DateTime.now().add(const Duration(days: 5)),

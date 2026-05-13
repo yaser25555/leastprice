@@ -492,13 +492,8 @@ async function handleImageProxy(request, url) {
   });
 
   if (!response.ok) {
-    return new Response('Failed to fetch image', {
-      status: response.status,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    });
+    // Fallback: redirect to original URL so the image still works
+    return Response.redirect(targetUrl.toString(), 302);
   }
 
   const contentType = response.headers.get('Content-Type') || 'image/jpeg';
