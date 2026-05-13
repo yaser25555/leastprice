@@ -5,11 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
+import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/data/models/coupon.dart';
 import 'package:leastprice/data/models/price_snapshot.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
+import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/price_history_chart.dart';
+import 'package:leastprice/features/home/widgets/price_alert_button.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -115,6 +118,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           IconButton(
             icon: Icon(Icons.share_outlined, color: AppPalette.orange),
             onPressed: () => _shareProduct(context),
+          ),
+          Consumer(
+            builder: (context, ref, child) {
+              final user = FirebaseAuth.instance.currentUser;
+              UserSavingsProfile? userProfile;
+              if (user != null) {
+                userProfile = ref.watch(userProfileStreamProvider(user.uid)).value;
+              }
+              final isPaid = userProfile?.planActivated ?? false;
+              return PriceAlertButton(
+                productTitle: group.displayTitle,
+                productUrl: group.offers.first.productUrl,
+                imageUrl: group.displayImageUrl,
+                storeId: group.offers.first.storeId,
+                storeName: group.offers.first.storeName,
+                currentPrice: bestPrice,
+                isPaid: isPaid,
+              );
+            },
           ),
           const SizedBox(width: 8),
         ],

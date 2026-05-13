@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
+import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
 import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:leastprice/features/home/widgets/price_alert_button.dart';
 
 class GroupedComparisonCard extends ConsumerWidget {
   const GroupedComparisonCard({
@@ -25,6 +27,12 @@ class GroupedComparisonCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bestPrice = group.lowestPrice;
     final bestStore = group.offers.first;
+    final currentUser = FirebaseAuth.instance.currentUser;
+    UserSavingsProfile? userProfile;
+    if (currentUser != null) {
+      userProfile = ref.watch(userProfileStreamProvider(currentUser.uid)).value;
+    }
+    final isPaid = userProfile?.planActivated ?? false;
 
     return Card(
       elevation: 0,
@@ -67,6 +75,16 @@ class GroupedComparisonCard extends ConsumerWidget {
                           _CartShortcut(offer: bestStore),
                           const SizedBox(width: 4),
                           _FavoriteShortcut(group: group),
+                          const SizedBox(width: 4),
+                          PriceAlertButton(
+                            productTitle: group.displayTitle,
+                            productUrl: bestStore.productUrl,
+                            imageUrl: group.displayImageUrl,
+                            storeId: bestStore.storeId,
+                            storeName: bestStore.storeName,
+                            currentPrice: bestPrice,
+                            isPaid: isPaid,
+                          ),
                         ],
                       ),
                     ),

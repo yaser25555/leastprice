@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:leastprice/core/config/least_price_data_config.dart';
+import 'package:leastprice/data/models/price_alert.dart';
 import 'package:leastprice/data/models/price_snapshot.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
@@ -49,6 +50,8 @@ class FirestoreCatalogService {
       firestore.collection(LeastPriceDataConfig.favoritesCollectionName);
   CollectionReference<Map<String, dynamic>> get _priceHistoryCollection =>
       firestore.collection(LeastPriceDataConfig.priceHistoryCollectionName);
+  CollectionReference<Map<String, dynamic>> get _priceAlertsCollection =>
+      firestore.collection(LeastPriceDataConfig.priceAlertsCollectionName);
 
   Stream<List<AdBannerItem>> watchAdBanners() {
     return _adBannersCollection.snapshots().map((snapshot) {
@@ -750,6 +753,56 @@ class FirestoreCatalogService {
 
   Future<void> savePriceSnapshot(PriceSnapshot snapshot) async {
     await _priceHistoryCollection.add(snapshot.toFirestoreMap());
+  }
+
+  Stream<List<PriceAlert>> watchPriceAlerts(String userId) {
+    return _priceAlertsCollection
+        .where('userId', isEqualTo: userId)
+        .where('active', isEqualTo: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((d) => PriceAlert.fromFirestore(d))
+            .toList());
+  }
+
+  Future<void> setPriceAlert({
+    required String productTitle,
+    required String productUrl,
+    required String imageUrl,
+    required String storeId,
+    required String storeName,
+    required double targetPrice,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final docId = '${user.uid}__${_encodeFavId(productUrl)}';
+    await _priceAlertsCollection.doc(docId).set({
+      'userId': user.uid,
+      'productTitle': productTitle,
+      'productUrl': productUrl,
+      'imageUrl': imageUrl,
+      'storeId': storeId,
+      'storeName': storeName,
+      'targetPrice': targetPrice,
+      'active': true,
+      'createdAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> removePriceAlert(String productUrl) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final docId = '${user.uid}__${_encodeFavId(productUrl)}';
+    await _priceAlertsCollection.doc(docId).delete();
+  }
+
+  Future<PriceAlert?> hasPriceAlert(String productUrl) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return null;
+    final docId = '${user.uid}__${_encodeFavId(productUrl)}';
+    final snap = await _priceAlertsCollection.doc(docId).get();
+    if (!snap.exists) return null;
+    return PriceAlert.fromFirestore(snap);
   }
 
   int _sortProducts(ProductComparison a, ProductComparison b) {

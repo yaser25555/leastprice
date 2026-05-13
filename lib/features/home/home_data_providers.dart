@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:leastprice/data/models/user_savings_profile.dart';
+import 'package:leastprice/data/models/price_alert.dart';
 import 'package:leastprice/data/models/ad_banner_item.dart';
 import 'package:leastprice/data/models/automation_health_status.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
@@ -47,4 +48,11 @@ final favoritesStreamProvider = StreamProvider.autoDispose<List<Map<String, dyna
   if (user == null) return Stream.value([]);
   final catalog = ref.watch(firestoreCatalogProvider);
   return catalog.watchFavorites(user.uid);
+});
+
+final priceAlertsStreamProvider = StreamProvider.autoDispose<List<PriceAlert>>((ref) {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return Stream.value([]);
+  final catalog = ref.watch(firestoreCatalogProvider);
+  return catalog.watchPriceAlerts(user.uid);
 });

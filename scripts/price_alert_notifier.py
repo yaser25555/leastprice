@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Checks favorites for price drops and sends OneSignal notifications.
+Checks price_alerts for price drops and sends OneSignal notifications.
 
 Runs after daily_firestore_price_bot.py.
 Requires env vars:
@@ -20,7 +20,7 @@ ONESIGNAL_API = "https://onesignal.com/api/v1/notifications"
 ONESIGNAL_APP_ID = os.getenv("ONESIGNAL_APP_ID", "715316fc-13d0-4fee-b0f8-860b4d38dee6")
 ONESIGNAL_KEY = os.getenv("ONESIGNAL_REST_API_KEY", "")
 
-FAVORITES_COLLECTION = os.getenv("FAVORITES_COLLECTION", "favorites")
+PRICE_ALERTS_COLLECTION = os.getenv("PRICE_ALERTS_COLLECTION", "price_alerts")
 PRODUCTS_COLLECTION = os.getenv("PRODUCTS_COLLECTION", "products")
 
 
@@ -34,13 +34,13 @@ def main():
         firebase_admin.initialize_app(cred)
 
     db = firestore.client()
-    favorites_ref = db.collection(FAVORITES_COLLECTION)
+    alerts_ref = db.collection(PRICE_ALERTS_COLLECTION)
     products_ref = db.collection(PRODUCTS_COLLECTION)
 
-    # Read all favorites
-    fav_docs = list(favorites_ref.stream())
-    if not fav_docs:
-        print("No favorites found.")
+    # Read all active price alerts
+    alert_docs = list(alerts_ref.where("active", "==", True).stream())
+    if not alert_docs:
+        print("No active price alerts found.")
         return
 
     # Collect products that have been recently updated by the bot
@@ -53,29 +53,35 @@ def main():
             product_prices[url.strip()] = float(price)
 
     notified = 0
-    for doc in fav_docs:
-        fav = doc.to_dict()
-        product_url = (fav.get("productUrl") or "").strip()
-        user_id = fav.get("userId", "")
-        stored_price = float(fav.get("price") or 0)
+    for doc in alert_docs:
+        alert = doc.to_dict()
+        product_url = (alert.get("productUrl") or "").strip()
+        user_id = alert.get("userId", "")
+        target_price = float(alert.get("targetPrice") or 0)
 
-        if not product_url or not user_id or stored_price <= 0:
+        if not product_url or not user_id or target_price <= 0:
             continue
 
         current_price = product_prices.get(product_url)
         if current_price is None:
             continue
 
-        if current_price < stored_price:
-            savings = stored_price - current_price
+        # Update currentPrice on the alert document
+        doc_ref = alerts_ref.document(doc.id)
+        doc_ref.update({"currentPrice": current_price})
+
+        if current_price <= target_price:
+            savings = target_price - current_price
             _send_notification(
                 user_id=user_id,
                 title_ar="انخفاض السعر! 🎉",
                 title_en="Price Dropped! 🎉",
-                body_ar=f"انخفض سعر {fav.get('productTitle', '')} بمقدار {savings:.2f} SAR",
-                body_en=f"Price of {fav.get('productTitle', '')} dropped by {savings:.2f} SAR",
+                body_ar=f"وصل سعر {alert.get('productTitle', '')} إلى {current_price:.2f} SAR",
+                body_en=f"Price of {alert.get('productTitle', '')} is now {current_price:.2f} SAR",
             )
             notified += 1
+            # Deactivate the alert after notifying
+            doc_ref.update({"active": False})
 
     print(f"Price alerts sent: {notified}")
 
@@ -97,9 +103,9 @@ def _send_notification(user_id, title_ar, title_en, body_ar, body_en):
             },
             timeout=15,
         )
-        print(f"  → {user_id}: {resp.status_code}")
+        print(f"  -> {user_id}: {resp.status_code}")
     except Exception as e:
-        print(f"  → {user_id}: FAILED - {e}")
+        print(f"  -> {user_id}: FAILED - {e}")
 
 
 if __name__ == "__main__":

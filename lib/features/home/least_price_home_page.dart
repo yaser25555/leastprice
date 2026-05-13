@@ -28,6 +28,7 @@ import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/features/home/favorites_screen.dart';
+import 'package:leastprice/features/home/price_alerts_screen.dart';
 import 'package:leastprice/features/search/barcode_scanner_screen.dart';
 import 'package:leastprice/services/api/open_food_facts_service.dart';
 import 'package:leastprice/services/notifications/push_notification_service.dart';
@@ -533,6 +534,10 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                       onFavoritesTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (_) => const FavoritesScreen()),
+                      ),
+                      onPriceAlertsTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => const PriceAlertsScreen()),
                       ),
                     ),
                   ),

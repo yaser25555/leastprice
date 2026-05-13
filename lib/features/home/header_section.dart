@@ -18,6 +18,7 @@ class HeaderSection extends StatelessWidget {
     required this.onInviteTap,
     required this.onLogoutTap,
     required this.onFavoritesTap,
+    required this.onPriceAlertsTap,
   });
 
   final String currentUserLabel;
@@ -28,6 +29,7 @@ class HeaderSection extends StatelessWidget {
   final VoidCallback onInviteTap;
   final Future<void> Function() onLogoutTap;
   final VoidCallback onFavoritesTap;
+  final VoidCallback onPriceAlertsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -75,54 +77,49 @@ class HeaderSection extends StatelessWidget {
                       const AppBrandMark(size: 60, borderRadius: 20),
                       const SizedBox(width: 14),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              tr('أقل سعر - LP', 'LP'),
-                              style: TextStyle(
-                                color: AppPalette.pureWhite,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${tr('مرحباً', 'Hello')} $currentUserLabel',
-                              style: TextStyle(
-                                color: AppPalette.pureWhiteOpacity(0.85),
-                                fontSize: 13.5,
-                                height: 1.45,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          '${tr('مرحباً', 'Hello')} $currentUserLabel',
+                          style: TextStyle(
+                            color: AppPalette.pureWhiteOpacity(0.85),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const SizedBox(width: 6),
                       IconButton(
                         onPressed: onFavoritesTap,
                         style: IconButton.styleFrom(
-                          backgroundColor: AppPalette.pureWhiteOpacity(0.15),
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.12),
                           foregroundColor: AppPalette.orange,
+                          padding: const EdgeInsets.all(8),
+                          minimumSize: const Size(36, 36),
                         ),
-                        icon: const Icon(Icons.favorite, size: 20),
+                        icon: const Icon(Icons.favorite, size: 18),
                         tooltip: tr('المفضلة', 'Favorites'),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
+                      IconButton(
+                        onPressed: onPriceAlertsTap,
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.12),
+                          foregroundColor: AppPalette.orange,
+                          padding: const EdgeInsets.all(8),
+                          minimumSize: const Size(36, 36),
+                        ),
+                        icon: const Icon(Icons.notifications_outlined, size: 18),
+                        tooltip: tr('تنبيهات السعر', 'Price Alerts'),
+                      ),
+                      const SizedBox(width: 6),
                       IconButton(
                         onPressed: onLogoutTap,
-                        constraints: const BoxConstraints(
-                          minWidth: 32,
-                          minHeight: 32,
-                        ),
-                        padding: const EdgeInsets.all(6),
                         style: IconButton.styleFrom(
-                          backgroundColor: AppPalette.orange.withValues(alpha: 0.9),
-                          foregroundColor: Colors.white,
+                          backgroundColor: AppPalette.pureWhiteOpacity(0.12),
+                          foregroundColor: AppPalette.orange,
+                          padding: const EdgeInsets.all(8),
+                          minimumSize: const Size(36, 36),
                         ),
-                        icon: const Icon(Icons.logout_rounded, size: 16),
+                        icon: const Icon(Icons.logout_rounded, size: 18),
                         tooltip: tr('تسجيل الخروج', 'Sign Out'),
                       ),
                     ],
@@ -250,6 +247,7 @@ class CompactHeaderSection extends StatefulWidget {
     required this.onInviteTap,
     required this.onLogoutTap,
     required this.onFavoritesTap,
+    required this.onPriceAlertsTap,
   });
 
   final String currentUserLabel;
@@ -259,6 +257,7 @@ class CompactHeaderSection extends StatefulWidget {
   final VoidCallback onInviteTap;
   final Future<void> Function() onLogoutTap;
   final VoidCallback onFavoritesTap;
+  final VoidCallback onPriceAlertsTap;
 
   @override
   State<CompactHeaderSection> createState() => _CompactHeaderSectionState();
@@ -327,33 +326,18 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                         ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
+                              const Icon(Icons.person_rounded,
+                                  size: 14, color: Color(0xFFFFD9BA)),
+                              const SizedBox(width: 4),
                               Text(
-                                'LP',
-                                style: TextStyle(
-                                  color: AppPalette.paleOrange,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 0.2,
+                                '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
+                                style: const TextStyle(
+                                  color: Color(0xFFFFD9BA),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                              ),
-                              const SizedBox(height: 2),
-                              Row(
-                                children: [
-                                  const Icon(Icons.person_rounded,
-                                      size: 14, color: Color(0xFFFFD9BA)),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
-                                    style: const TextStyle(
-                                      color: Color(0xFFFFD9BA),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
                               ),
                             ],
                           ),
@@ -364,7 +348,6 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                               : Icons.keyboard_arrow_down_rounded,
                           color: AppPalette.paleOrange,
                         ),
-                        const SizedBox(width: 6),
                         const SizedBox(width: 6),
                         ValueListenableBuilder<bool>(
                           valueListenable: isFeminineTheme,
@@ -402,14 +385,26 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                         ),
                         const SizedBox(width: 4),
                         IconButton(
-                          onPressed: widget.onLogoutTap,
+                          onPressed: widget.onPriceAlertsTap,
                           style: IconButton.styleFrom(
-                            backgroundColor: AppPalette.orange,
-                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: AppPalette.orange,
                             padding: const EdgeInsets.all(8),
                             minimumSize: const Size(32, 32),
                           ),
-                          icon: const Icon(Icons.logout_rounded, size: 16),
+                          icon: const Icon(Icons.notifications_outlined, size: 18),
+                          tooltip: tr('تنبيهات السعر', 'Price Alerts'),
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          onPressed: widget.onLogoutTap,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: AppPalette.orange,
+                            padding: const EdgeInsets.all(8),
+                            minimumSize: const Size(32, 32),
+                          ),
+                          icon: const Icon(Icons.logout_rounded, size: 18),
                           tooltip: tr('تسجيل الخروج', 'Sign Out'),
                         ),
                       ],
