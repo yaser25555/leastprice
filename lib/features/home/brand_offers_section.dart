@@ -85,6 +85,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF1B5E20),
       'icon': Icons.spa_rounded,
     },
+    {
+      'name': 'دار الاميرات',
+      'nameEn': 'Dar Al-Amirat',
+      'url': 'https://mtjr.at/FN2AIl2KWs',
+      'color': Color(0xFFE91E63),
+      'icon': Icons.auto_awesome_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {

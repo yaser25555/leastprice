@@ -145,6 +145,8 @@ class Coupon {
         return tr('العثيم', 'Othaim');
       case 'tamimi':
         return tr('التميمي', 'Tamimi');
+      case 'dar-al-amirat':
+        return tr('دار الأميرات', 'Dar Al-Amirat');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -204,6 +206,19 @@ class Coupon {
       description: tr(
         'وفر أكثر على مشتريات الأزياء والعناية.',
         'Save more on fashion and beauty orders.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-dar-al-amirat',
+      code: 'F-URT3J',
+      storeId: 'dar-al-amirat',
+      storeName: tr('دار الأميرات', 'Dar Al-Amirat'),
+      discountLabel: tr('خصم إضافي', 'Extra discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون دار الأميرات الحصري', 'Exclusive Dar Al-Amirat coupon'),
+      description: tr(
+        'انسخ الكود واستخدمه للحصول على خصم إضافي عند الدفع.',
+        'Copy the code and use it at checkout for an extra discount.',
       ),
     ),
   ];

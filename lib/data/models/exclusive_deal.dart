@@ -149,5 +149,15 @@ class ExclusiveDeal {
       active: true,
       dealUrl: 'https://extra.com',
     ),
+    ExclusiveDeal(
+      id: 'dar_al_amirat_deal',
+      title: 'دار الأميرات - أكبر تجمع لمنتجات العناية',
+      imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=1000&auto=format&fit=crop',
+      beforePrice: 0,
+      afterPrice: 0,
+      expiryDate: DateTime.now().add(const Duration(days: 30)),
+      active: true,
+      dealUrl: 'https://mtjr.at/FN2AIl2KWs',
+    ),
   ];
 }
