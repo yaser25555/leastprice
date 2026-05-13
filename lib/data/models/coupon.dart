@@ -159,6 +159,8 @@ class Coupon {
         return tr('روشن تذاكر كاس العالم', 'Roshen World Cup Tickets');
       case 'al-reem':
         return tr('الريم للعبايات', 'Al-Reem Abayas');
+      case 'vibe':
+        return tr('فايب', 'Vibe');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -309,6 +311,19 @@ class Coupon {
       description: tr(
         'كود خصم على العبايات.',
         'Discount code for abayas.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-vibe',
+      code: 'F-ISGIW',
+      storeId: 'vibe',
+      storeName: tr('فايب', 'Vibe'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون فايب الحصري', 'Exclusive Vibe coupon'),
+      description: tr(
+        'كود خصم على الساعات والاكسسوارات.',
+        'Discount code for watches and accessories.',
       ),
     ),
   ];

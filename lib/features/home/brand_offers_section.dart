@@ -141,6 +141,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF4A148C),
       'icon': Icons.style_rounded,
     },
+    {
+      'name': 'فايب',
+      'nameEn': 'Vibe',
+      'url': 'https://mtjr.at/1H0-ZC1QMn',
+      'color': Color(0xFFFF8F00),
+      'icon': Icons.watch_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {
