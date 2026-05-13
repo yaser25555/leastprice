@@ -68,7 +68,7 @@ class PriceAlert {
       imageUrl: stringValue(json['imageUrl']) ?? '',
       storeId: stringValue(json['storeId']) ?? '',
       storeName: stringValue(json['storeName']) ?? '',
-      targetPrice: doubleValue(json['targetPrice']) ?? 0,
+      targetPrice: doubleValue(json['targetPrice']),
       currentPrice: doubleValue(json['currentPrice']),
       active: boolValue(json['active'], defaultValue: true),
       createdAt: dateTimeValue(json['createdAt']),
