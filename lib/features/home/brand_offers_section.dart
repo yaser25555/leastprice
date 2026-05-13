@@ -113,6 +113,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF8B4513),
       'icon': Icons.auto_awesome_rounded,
     },
+    {
+      'name': 'روشن',
+      'nameEn': 'Roshen',
+      'url': 'https://mtjr.at/yyIPYOIhZT',
+      'color': Color(0xFF1565C0),
+      'icon': Icons.checkroom_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {

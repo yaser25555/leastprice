@@ -153,6 +153,8 @@ class Coupon {
         return tr('ڤانير', 'Vanier');
       case 'rashfa-dhikra':
         return tr('رشفة ذكرى', 'Rashfa Dhikra');
+      case 'roshen':
+        return tr('روشن', 'Roshen');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -264,6 +266,19 @@ class Coupon {
       description: tr(
         'كود خصم على العطور.',
         'Discount code for perfumes.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-roshen',
+      code: 'F-TKFG7',
+      storeId: 'roshen',
+      storeName: tr('روشن', 'Roshen'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون روشن الحصري', 'Exclusive Roshen coupon'),
+      description: tr(
+        'كود خصم على الألبسة.',
+        'Discount code for clothing.',
       ),
     ),
   ];
