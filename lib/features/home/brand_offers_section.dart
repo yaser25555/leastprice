@@ -127,6 +127,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFF2E7D32),
       'icon': Icons.sports_soccer_rounded,
     },
+    {
+      'name': 'فتبول',
+      'nameEn': 'Futbol',
+      'url': 'https://mtjr.at/e7RHqtq2c5',
+      'color': Color(0xFFE65100),
+      'icon': Icons.directions_run_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {
