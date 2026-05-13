@@ -29,6 +29,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Keeta',
       'url': 'https://keeta.com/',
       'color': Color(0xFFFF6B35),
+      'logoUrl': 'https://img-ap-hongkong.mykeeta.net/sailorfempcpublic/keeta_icon.png',
     },
     {
       'id': 'hungerstation',
@@ -36,6 +37,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'HungerStation',
       'url': 'https://www.hungerstation.com/',
       'color': Color(0xFFE91E63),
+      'logoUrl': 'https://hungerstation.com/_next/static/media/hungerstation-logo-shadow.f55495d3.svg',
     },
     {
       'id': 'panda',
@@ -43,7 +45,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Panda',
       'url': 'https://www.panda.sa/',
       'color': Color(0xFF2E7D32),
-      'logoUrl': '',
+      'logoUrl': 'https://www.panda.sa/_next/static/media/logo.f85b0530.svg',
     },
     {
       'id': 'othaim',
@@ -59,7 +61,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Tamimi',
       'url': 'https://www.tamimimarkets.com/',
       'color': Color(0xFFE65100),
-      'logoUrl': '',
+      'logoUrl': 'https://www.tamimimarkets.com/__template/images/logo-01.png',
     },
     {
       'id': 'extra',
@@ -81,9 +83,9 @@ class PopularStoresSection extends StatelessWidget {
       'id': 'nahdi',
       'name': 'النهدي',
       'nameEn': 'Nahdi',
-      'url': 'https://www.nahdi.com.sa/',
+      'url': 'https://www.nahdionline.com/ar-sa/promo-flyer/clp',
       'color': Color(0xFF0D47A1),
-      'logoUrl': 'https://icon.horse/icon/nahdi.com.sa',
+      'logoUrl': 'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png',
     },
     {
       'id': 'aldawaa',
@@ -91,7 +93,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': '',
+      'logoUrl': 'https://stgprevapi.al-dawaa.com/medias/frame-2-3x.png?context=bWFzdGVyfGltYWdlc3wxMDEzOHxpbWFnZS9wbmd8YUdVMEwyZzVNUzg1TlRRM05ESXpNakU1TnpReUwyWnlZVzFsTFRKQU0zZ3VjRzVufGQxNzQ2N2I1MzUwODE1ODIxZGMxNTBjZWZmNjQ5MDg0ZWUxODUyZDY5ODdmZTVkZDNhZmJjMjIxNWUyODRkY2I',
     },
     {
       'id': 'lulu',
@@ -99,7 +101,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Lulu',
       'url': 'https://www.luluhypermarket.com/',
       'color': Color(0xFFD32F2F),
-      'logoUrl': 'https://icon.horse/icon/luluhypermarket.com',
+      'logoUrl': 'https://gcc.luluhypermarket.com/akn-logo-english.svg',
     },
     {
       'id': 'carrefour',
@@ -107,7 +109,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Carrefour',
       'url': 'https://www.carrefourksa.com/',
       'color': Color(0xFF004D99),
-      'logoUrl': 'https://icon.horse/icon/carrefourksa.com',
+      'logoUrl': 'https://cdnprod.mafretailproxy.com/mafrp-web/assets/en/images/default/logo.svg',
     },
   ];
 
