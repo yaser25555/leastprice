@@ -49,13 +49,6 @@ class HeaderSection extends StatelessWidget {
                   ? [Color(0xFF243B6B), AppPalette.navy]
                   : [AppPalette.navy, AppPalette.deepNavy],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
-                blurRadius: appleStyle ? 20 : 28,
-                offset: Offset(0, appleStyle ? 12 : 18),
-              ),
-            ],
           ),
           child: Stack(
             children: [
@@ -73,20 +66,24 @@ class HeaderSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const AppBrandMark(size: 60, borderRadius: 20),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Text(
-                          '${tr('مرحباً', 'Hello')} $currentUserLabel',
-                          style: TextStyle(
-                            color: AppPalette.pureWhiteOpacity(0.85),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const AppBrandMark(size: 60, borderRadius: 20),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${tr('مرحباً', 'Hello')} $currentUserLabel',
+                            style: TextStyle(
+                              color: AppPalette.pureWhiteOpacity(0.85),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
+                      const Spacer(),
                       IconButton(
                         onPressed: onFavoritesTap,
                         style: IconButton.styleFrom(
@@ -98,7 +95,7 @@ class HeaderSection extends StatelessWidget {
                         icon: const Icon(Icons.favorite, size: 18),
                         tooltip: tr('المفضلة', 'Favorites'),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 4),
                       IconButton(
                         onPressed: onPriceAlertsTap,
                         style: IconButton.styleFrom(
@@ -110,7 +107,7 @@ class HeaderSection extends StatelessWidget {
                         icon: const Icon(Icons.notifications_outlined, size: 18),
                         tooltip: tr('تنبيهات السعر', 'Price Alerts'),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 4),
                       IconButton(
                         onPressed: onLogoutTap,
                         style: IconButton.styleFrom(
@@ -273,27 +270,20 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
       bottom: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: appleStyle
-                  ? [Color(0xFF243B6B), AppPalette.navy]
-                  : [AppPalette.navy, AppPalette.deepNavy],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: appleStyle ? Color(0x101B2F5E) : AppPalette.shadow,
-                blurRadius: appleStyle ? 20 : 28,
-                offset: Offset(0, appleStyle ? 12 : 18),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: appleStyle
+                    ? [Color(0xFF243B6B), AppPalette.navy]
+                    : [AppPalette.navy, AppPalette.deepNavy],
               ),
-            ],
-          ),
+            ),
           child: Stack(
             children: [
               const Positioned(
@@ -317,38 +307,44 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppBrandMark(
-                          size: 54,
-                          padding: 6,
-                          borderRadius: 16,
-                          backgroundColor: AppPalette.softOrange,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              const Icon(Icons.person_rounded,
-                                  size: 14, color: Color(0xFFFFD9BA)),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
-                                style: const TextStyle(
-                                  color: Color(0xFFFFD9BA),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppBrandMark(
+                              size: 54,
+                              padding: 6,
+                              borderRadius: 16,
+                              backgroundColor: AppPalette.softOrange,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.person_rounded,
+                                    size: 14, color: Color(0xFFFFD9BA)),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
+                                  style: const TextStyle(
+                                    color: Color(0xFFFFD9BA),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                          ],
                         ),
+                        const Spacer(),
                         Icon(
                           _isExpanded
                               ? Icons.keyboard_arrow_up_rounded
                               : Icons.keyboard_arrow_down_rounded,
                           color: AppPalette.paleOrange,
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 4),
                         ValueListenableBuilder<bool>(
                           valueListenable: isFeminineTheme,
                           builder: (context, isFem, _) => IconButton(
@@ -360,8 +356,8 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                             style: IconButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               foregroundColor: AppPalette.paleOrange,
-                              padding: const EdgeInsets.all(10),
-                              minimumSize: const Size(38, 38),
+                              padding: const EdgeInsets.all(6),
+                              minimumSize: const Size(32, 32),
                             ),
                             icon: Icon(
                                 isFem
@@ -371,37 +367,37 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                             tooltip: tr('تغيير الثيم', 'Change Theme'),
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 2),
                         IconButton(
                           onPressed: widget.onFavoritesTap,
                           style: IconButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             foregroundColor: AppPalette.orange,
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(6),
                             minimumSize: const Size(32, 32),
                           ),
                           icon: const Icon(Icons.favorite, size: 18),
                           tooltip: tr('المفضلة', 'Favorites'),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 2),
                         IconButton(
                           onPressed: widget.onPriceAlertsTap,
                           style: IconButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             foregroundColor: AppPalette.orange,
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(6),
                             minimumSize: const Size(32, 32),
                           ),
                           icon: const Icon(Icons.notifications_outlined, size: 18),
                           tooltip: tr('تنبيهات السعر', 'Price Alerts'),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 2),
                         IconButton(
                           onPressed: widget.onLogoutTap,
                           style: IconButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             foregroundColor: AppPalette.orange,
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(6),
                             minimumSize: const Size(32, 32),
                           ),
                           icon: const Icon(Icons.logout_rounded, size: 18),
