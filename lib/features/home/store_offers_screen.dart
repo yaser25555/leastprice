@@ -14,7 +14,8 @@ class StoreOffersScreen extends ConsumerWidget {
     required this.storeName,
     required this.storeNameEn,
     required this.storeColor,
-    required this.storeLogoUrl,
+    this.storeLogoUrl,
+    this.storeUrl,
   });
 
   final String storeId;
@@ -22,6 +23,7 @@ class StoreOffersScreen extends ConsumerWidget {
   final String storeNameEn;
   final Color storeColor;
   final String? storeLogoUrl;
+  final String? storeUrl;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -151,19 +153,51 @@ class StoreOffersScreen extends ConsumerWidget {
     if (storeProducts.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 60),
+          padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 32),
           child: Column(
             children: [
               Icon(Icons.store_rounded, size: 64, color: storeColor.withValues(alpha: 0.3)),
               const SizedBox(height: 16),
               Text(
                 tr('لا توجد عروض متاحة حالياً', 'No offers available yet'),
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppPalette.navy.withValues(alpha: 0.5),
                 ),
               ),
+              const SizedBox(height: 8),
+              Text(
+                tr('زر موقع المتجر الرسمي للاطلاع على أحدث المنتجات',
+                    'Visit the store website for the latest products'),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppPalette.navy.withValues(alpha: 0.4),
+                ),
+              ),
+              if (storeUrl != null && storeUrl!.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _openStoreUrl(context),
+                    icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                    label: Text(
+                      tr('زيارة $storeName', 'Visit $storeNameEn'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: storeColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -377,6 +411,15 @@ class StoreOffersScreen extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  Future<void> _openStoreUrl(BuildContext context) async {
+    if (storeUrl == null || storeUrl!.isEmpty) return;
+    final prepared = AffiliateLinkService.prepareForOpen(storeUrl!);
+    final uri = Uri.parse(prepared);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Future<void> _openBuyUrl(BuildContext context, String url) async {

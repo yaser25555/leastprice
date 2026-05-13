@@ -11,15 +11,15 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function isAdmin() {
+    function isPrimaryAdmin() {
       return isAuth()
-        && (
-          // Primary admin (bypasses role check)
-          request.auth.token.email == 'yaser.haroon79@gmail.com'
-          // Marketing manager role
-          || get(/databases/$(database)/documents/users/$(request.auth.uid))
-               .data.adminRole == 'marketing_manager'
-        );
+        && request.auth.token.email == 'yaser.haroon79@gmail.com';
+    }
+
+    function isMarketingManager() {
+      return isAuth()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid))
+             .data.adminRole == 'marketing_manager';
     }
 
     function isOwner(userId) {
@@ -28,47 +28,51 @@ service cloud.firestore {
 
     // ========== PUBLIC CATALOG (read for all auth users) ==========
 
+    // ========== PRODUCTS & BANNERS (primary admin only) ==========
+
     match /products/{document} {
       allow read: if isAuth();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if isPrimaryAdmin();
     }
 
     match /ad_banners/{document} {
       allow read: if isAuth();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if isPrimaryAdmin();
     }
+
+    // ========== DEALS & COUPONS (primary admin + marketing manager) ==========
 
     match /exclusive_deals/{document} {
       allow read: if isAuth();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if isPrimaryAdmin() || isMarketingManager();
     }
 
     match /coupons/{document} {
       allow read: if isAuth();
-      allow create, update, delete: if isAdmin();
+      allow create, update, delete: if isPrimaryAdmin() || isMarketingManager();
     }
 
-    // ========== SYSTEM HEALTH (public read, bot writes via Admin SDK) ==========
+    // ========== SYSTEM HEALTH (primary admin only, bot writes via Admin SDK) ==========
 
     match /system_health/{document} {
       allow read: if isAuth();
-      allow write: if isAdmin();
+      allow write: if isPrimaryAdmin();
     }
 
-    // ========== APP CONFIG (public read, admin write) ==========
+    // ========== APP CONFIG (public read, primary admin write) ==========
 
     match /config/{document} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isPrimaryAdmin();
     }
 
-    // ========== USERS (own doc only, admin reads all) ==========
+    // ========== USERS (own doc only, primary admin reads all) ==========
 
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
+      allow read: if isOwner(userId) || isPrimaryAdmin() || isMarketingManager();
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
+      allow update: if isOwner(userId) || isPrimaryAdmin();
+      allow delete: if isPrimaryAdmin();
     }
 
     // ========== SEARCH CACHE (auth users manage own entries) ==========
@@ -76,21 +80,21 @@ service cloud.firestore {
     match /comparison_search_cache/{document} {
       allow read: if isAuth();
       allow create, update: if isAuth();
-      allow delete: if isAdmin();
+      allow delete: if isPrimaryAdmin();
     }
 
     // ========== USER SUBMISSIONS (any auth user can create) ==========
 
     match /barcode_feedback/{document} {
       allow create: if isAuth();
-      allow read: if isAdmin();
-      allow update, delete: if isAdmin();
+      allow read: if isPrimaryAdmin() || isMarketingManager();
+      allow update, delete: if isPrimaryAdmin();
     }
 
     match /search_requests/{document} {
       allow create: if isAuth();
-      allow read: if isAdmin();
-      allow update, delete: if isAdmin();
+      allow read: if isPrimaryAdmin() || isMarketingManager();
+      allow update, delete: if isPrimaryAdmin();
     }
 
     // ========== FAVORITES (users manage their own) ==========
@@ -108,7 +112,7 @@ service cloud.firestore {
     match /price_history/{document} {
       allow read: if isAuth();
       allow create: if isAuth();
-      allow update, delete: if isAdmin();
+      allow update, delete: if isPrimaryAdmin();
     }
 
     // ========== UNUSED (declared but never accessed from client code) ==========
