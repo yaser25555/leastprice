@@ -296,35 +296,42 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppBrandMark(
-                              size: 54,
-                              padding: 6,
-                              borderRadius: 16,
-                              backgroundColor: AppPalette.softOrange,
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.person_rounded,
-                                    size: 14, color: Color(0xFFFFD9BA)),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
-                                  style: const TextStyle(
-                                    color: Color(0xFFFFD9BA),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AppBrandMark(
+                                size: 44,
+                                padding: 5,
+                                borderRadius: 14,
+                                backgroundColor: AppPalette.softOrange,
+                              ),
+                              const SizedBox(height: 3),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.person_rounded,
+                                      size: 12, color: Color(0xFFFFD9BA)),
+                                  const SizedBox(width: 3),
+                                  Flexible(
+                                    child: Text(
+                                      '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
+                                      style: const TextStyle(
+                                        color: Color(0xFFFFD9BA),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                         const Spacer(),
                         Icon(
