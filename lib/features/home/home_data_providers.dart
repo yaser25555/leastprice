@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:leastprice/data/models/user_savings_profile.dart';
@@ -40,4 +41,10 @@ final productsStreamProvider =
   return catalog.watchProducts(
     categoryId: ProductCategoryCatalog.allId,
   );
+});
+final favoritesStreamProvider = StreamProvider.autoDispose<List<Map<String, dynamic>>>((ref) {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return Stream.value([]);
+  final catalog = ref.watch(firestoreCatalogProvider);
+  return catalog.watchFavorites(user.uid);
 });

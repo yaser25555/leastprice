@@ -6,8 +6,10 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/features/home/grouped_product_card.dart';
 import 'package:leastprice/providers/shopping_cart_provider.dart';
+import 'package:leastprice/features/home/home_data_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class GroupedComparisonCard extends StatelessWidget {
+class GroupedComparisonCard extends ConsumerWidget {
   const GroupedComparisonCard({
     super.key,
     required this.group,
@@ -20,7 +22,7 @@ class GroupedComparisonCard extends StatelessWidget {
   final VoidCallback? onCopyCoupon;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bestPrice = group.lowestPrice;
     final bestStore = group.offers.first;
 
@@ -40,19 +42,35 @@ class GroupedComparisonCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    color: Colors.grey.shade50,
-                    child: Image.network(
-                      proxiedImageUrl(group.displayImageUrl),
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => Icon(Icons.image_outlined,
-                          size: 32, color: Colors.grey.shade200),
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        color: Colors.grey.shade50,
+                        child: Image.network(
+                          proxiedImageUrl(group.displayImageUrl),
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Icon(Icons.image_outlined,
+                              size: 32, color: Colors.grey.shade200),
+                        ),
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _CartShortcut(offer: bestStore),
+                          const SizedBox(width: 4),
+                          _FavoriteShortcut(group: group),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -241,6 +259,128 @@ class GroupedComparisonCard extends StatelessWidget {
             ),
           const SizedBox(height: 8),
         ],
+      ),
+    );
+  }
+}
+
+class _FavoriteShortcut extends ConsumerWidget {
+  final GroupedProductCard group;
+  const _FavoriteShortcut({required this.group});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoritesAsync = ref.watch(favoritesStreamProvider);
+    final offer = group.offers.first;
+    
+    return favoritesAsync.when(
+      data: (favorites) {
+        final isFavorite = favorites.any((f) => f['productUrl'] == offer.productUrl);
+        return _ShortcutCircle(
+          icon: isFavorite ? Icons.favorite : Icons.favorite_outline,
+          color: isFavorite ? Colors.redAccent : Colors.grey.shade600,
+          onTap: () => _toggleFavorite(context, ref, isFavorite),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  Future<void> _toggleFavorite(BuildContext context, WidgetRef ref, bool isFavorite) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tr('سجل دخول لحفظ المنتجات', 'Login to save favorites'))),
+        );
+        return;
+      }
+
+      final catalog = ref.read(firestoreCatalogProvider);
+      final offer = group.offers.first;
+
+      if (isFavorite) {
+        await catalog.removeFavorite(offer.productUrl);
+      } else {
+        await catalog.addFavorite(
+          productTitle: group.displayTitle,
+          productUrl: offer.productUrl,
+          price: group.lowestPrice,
+          currency: offer.currency,
+          storeName: offer.storeName,
+          storeId: offer.storeId,
+          imageUrl: group.displayImageUrl,
+        );
+      }
+      HapticFeedback.mediumImpact();
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(tr('حدث خطأ، حاول مرة أخرى', 'Error, try again'))),
+      );
+    }
+  }
+}
+
+class _CartShortcut extends ConsumerWidget {
+  final ComparisonSearchResult offer;
+  const _CartShortcut({required this.offer});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.read(shoppingCartProvider.notifier);
+    final qty = ref.watch(shoppingCartProvider.select((cart) => 
+      notifier.quantityOf(offer.productUrl)));
+    final inCart = qty > 0;
+
+    return _ShortcutCircle(
+      icon: inCart ? Icons.check_circle : Icons.add_shopping_cart_rounded,
+      color: inCart ? AppPalette.comparisonEmerald : AppPalette.orange,
+      onTap: inCart ? null : () {
+        notifier.addItem(offer);
+        HapticFeedback.lightImpact();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
+            backgroundColor: AppPalette.comparisonEmerald,
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ShortcutCircle extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _ShortcutCircle({
+    required this.icon,
+    required this.color,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.9),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(icon, size: 14, color: color),
       ),
     );
   }
