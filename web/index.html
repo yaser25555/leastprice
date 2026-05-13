@@ -21,6 +21,52 @@
   <meta name="description" content="أقل سعر - تطبيقك الأول لمقارنة أسعار المنتجات في المتاجر السعودية (أمازون، نون، كارفور، لولو) لحظياً لتوفير المال والجهد.">
   <meta name="keywords" content="مقارنة أسعار, أرخص سعر, نون, أمازون, السعودية, توفير, عروض, كود خصم">
   <meta name="author" content="LeastPrice">
+  
+  <script>
+    // Suppress noisy 3rd-party and extension errors in console
+    (function() {
+      const originalError = console.error;
+      const originalWarn = console.warn;
+      const noise = [
+        'webextension.js',
+        'AbortError',
+        'connection was closed',
+        'prepareServiceWorker',
+        'OneSignalSDK',
+        'Event handler of \'message\' event',
+        'TypeError: Cannot read properties of null (reading \'1\')'
+      ];
+
+      function isNoise(args) {
+        const msg = Array.from(args).map(a => String(a)).join(' ');
+        return noise.some(n => msg.includes(n));
+      }
+
+      console.error = function() {
+        if (isNoise(arguments)) return;
+        originalError.apply(console, arguments);
+      };
+
+      console.warn = function() {
+        if (isNoise(arguments)) return;
+        originalWarn.apply(console, arguments);
+      };
+
+      window.addEventListener('error', (e) => {
+        if (e.message && noise.some(n => e.message.includes(n))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+
+      window.addEventListener('unhandledrejection', (e) => {
+        if (e.reason && String(e.reason).includes('AbortError')) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    })();
+  </script>
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -157,20 +203,23 @@
     }
 
     async function bootLatestVersion() {
-      let remoteVersionKey = `${Date.now()}`;
+      let remoteVersionKey = '1.0.0';
 
       try {
         remoteVersionKey = await getRemoteVersionKey();
         const previousVersionKey = localStorage.getItem(versionStorageKey);
 
         if (previousVersionKey && previousVersionKey !== remoteVersionKey) {
+          console.info('New version detected, clearing caches...');
           await clearFlutterWebCaches();
         }
 
         localStorage.setItem(versionStorageKey, remoteVersionKey);
         await refreshServiceWorkers();
       } catch (error) {
-        console.warn('LeastPrice latest-version check failed:', error);
+        // If version check fails, don't trigger a cache clear/refresh loop
+        console.warn('LeastPrice latest-version check failed (using local):', error);
+        remoteVersionKey = localStorage.getItem(versionStorageKey) || '1.0.0';
       }
 
       const script = document.createElement('script');

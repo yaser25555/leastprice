@@ -90,51 +90,106 @@ class GroupedComparisonCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppPalette.comparisonEmerald.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${tr('أقل سعر', 'Best price')}: ${formatAmountValue(bestPrice)} ${bestStore.currency}',
-                        style: TextStyle(
-                          color: AppPalette.comparisonEmerald,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppPalette.comparisonEmerald.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${tr('أقل سعر', 'Best price')}: ${formatAmountValue(bestPrice)} ${bestStore.currency}',
+                              style: TextStyle(
+                                color: AppPalette.comparisonEmerald,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          if (group.offers.length > 1) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              '${group.offers.length} ${tr('متجر', 'stores')}',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                    if (group.offers.length > 1) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        '${group.offers.length} ${tr('متجر', 'stores')}',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                    const SizedBox(width: 8),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final notifier = ref.read(shoppingCartProvider.notifier);
+                        final qty = notifier.quantityOf(bestStore.productUrl);
+                        final inCart = qty > 0;
+                        return ElevatedButton.icon(
+                          onPressed: inCart
+                              ? null
+                              : () {
+                                  notifier.addItem(bestStore);
+                                  HapticFeedback.lightImpact();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
+                                      backgroundColor: AppPalette.comparisonEmerald,
+                                      duration: const Duration(seconds: 1),
+                                    ),
+                                  );
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: inCart
+                                ? AppPalette.comparisonEmerald.withValues(alpha: 0.1)
+                                : AppPalette.orange,
+                            foregroundColor: inCart
+                                ? AppPalette.comparisonEmerald
+                                : Colors.white,
+                            elevation: inCart ? 0 : 2,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          icon: Icon(
+                            inCart ? Icons.check_circle : Icons.add_shopping_cart,
+                            size: 16,
+                          ),
+                          label: Text(
+                            inCart ? tr('في السلة', 'In Cart') : tr('أضف للسلة', 'Add'),
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],
             ),
           ),
-          Divider(height: 1, color: Colors.grey.shade200),
-          ...group.offers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final offer = entry.value;
-            final isCheapest = offer.price == bestPrice;
+          if (group.offers.length > 1) ...[
+            Divider(height: 1, color: Colors.grey.shade100),
+            ...group.offers.asMap().entries.map((entry) {
+              final index = entry.key;
+              final offer = entry.value;
+              final isCheapest = offer.price == bestPrice;
 
-            return _StoreRow(
-              offer: offer,
-              isCheapest: isCheapest,
-              onTap: () => onTapStore(offer.productUrl),
-              showDivider: index < group.offers.length - 1,
-              onCopyCoupon: offer.matchedCoupon != null ? onCopyCoupon : null,
-            );
-          }),
+              return _StoreRow(
+                offer: offer,
+                isCheapest: isCheapest,
+                onTap: () => onTapStore(offer.productUrl),
+                showDivider: index < group.offers.length - 1,
+                onCopyCoupon: offer.matchedCoupon != null ? onCopyCoupon : null,
+              );
+            }),
+          ],
           if (group.matchedCoupon != null && onCopyCoupon != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
@@ -179,9 +234,7 @@ class GroupedComparisonCard extends StatelessWidget {
                 ),
               ),
             ),
-          if (group.offers.length <= 1 ||
-              (group.matchedCoupon == null && group.offers.length > 1))
-            const SizedBox(height: 8),
+          const SizedBox(height: 8),
         ],
       ),
     );
@@ -234,104 +287,96 @@ class _StoreRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            offer.storeName,
+                            style: TextStyle(
+                              fontWeight: isCheapest ? FontWeight.bold : FontWeight.w500,
+                              fontSize: 13,
+                              color: isCheapest
+                                  ? AppPalette.comparisonEmerald
+                                  : Colors.black87,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isCheapest)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Text(
+                              tr('الأفضل', 'Best'),
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: AppPalette.comparisonEmerald,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                     Text(
-                      offer.storeName,
+                      '${formatAmountValue(offer.price)} ${offer.currency}',
                       style: TextStyle(
-                        fontWeight: isCheapest ? FontWeight.bold : FontWeight.w500,
-                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                         color: isCheapest
                             ? AppPalette.comparisonEmerald
-                            : Colors.black87,
+                            : Colors.black54,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    if (isCheapest)
-                      Text(
-                        tr('أقل سعر', 'Lowest price'),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppPalette.comparisonEmerald,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
                   ],
                 ),
               ),
-              Text(
-                '${formatAmountValue(offer.price)} ${offer.currency}',
-                style: TextStyle(
-                  fontWeight: isCheapest ? FontWeight.bold : FontWeight.w600,
-                  fontSize: 14,
-                  color: isCheapest
-                      ? AppPalette.comparisonEmerald
-                      : Colors.black87,
-                ),
-              ),
-              const SizedBox(width: 8),
-              SizedBox(
-                height: 32,
-                child: ElevatedButton(
-                  onPressed: onTap,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    backgroundColor: AppPalette.orange,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  child: Text(tr('فتح', 'Open')),
-                ),
-              ),
-              const SizedBox(width: 4),
               Consumer(
                 builder: (context, ref, child) {
                   final notifier = ref.read(shoppingCartProvider.notifier);
                   final qty = notifier.quantityOf(offer.productUrl);
                   final inCart = qty > 0;
-                  return SizedBox(
-                    height: 32,
-                    width: 32,
-                    child: IconButton(
-                      onPressed: inCart
-                          ? null
-                          : () {
-                              notifier.addItem(offer);
-                              HapticFeedback.lightImpact();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
-                                  backgroundColor: AppPalette.comparisonEmerald,
-                                  duration: const Duration(seconds: 1),
-                                ),
-                              );
-                            },
-                      style: IconButton.styleFrom(
-                        backgroundColor: inCart
-                            ? AppPalette.comparisonEmerald.withValues(alpha: 0.12)
-                            : AppPalette.paleOrange.withValues(alpha: 0.2),
-                        foregroundColor: inCart
-                            ? AppPalette.comparisonEmerald
-                            : AppPalette.deepNavy,
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      icon: Icon(
-                        inCart
-                            ? Icons.check_circle
-                            : Icons.add_shopping_cart_outlined,
-                        size: 18,
-                      ),
+                  return IconButton(
+                    onPressed: inCart
+                        ? null
+                        : () {
+                            notifier.addItem(offer);
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
+                                backgroundColor: AppPalette.comparisonEmerald,
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                    icon: Icon(
+                      inCart ? Icons.check_circle : Icons.add_shopping_cart_outlined,
+                      size: 18,
+                      color: inCart ? AppPalette.comparisonEmerald : AppPalette.navy.withValues(alpha: 0.6),
                     ),
+                    constraints: const BoxConstraints(),
+                    padding: const EdgeInsets.all(8),
                   );
                 },
+              ),
+              const SizedBox(width: 4),
+              SizedBox(
+                height: 32,
+                child: TextButton(
+                  onPressed: onTap,
+                  style: TextButton.styleFrom(
+                    backgroundColor: AppPalette.orange.withValues(alpha: 0.1),
+                    foregroundColor: AppPalette.orange,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    tr('فتح', 'Open'),
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
             ],
           ),

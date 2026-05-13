@@ -162,20 +162,72 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppPalette.comparisonEmerald.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              'أقل سعر: ${formatAmountValue(bestPrice)} ${group.currency}',
-              style: TextStyle(
-                color: AppPalette.comparisonEmerald,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppPalette.comparisonEmerald.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'أقل سعر: ${formatAmountValue(bestPrice)} ${group.currency}',
+                    style: TextStyle(
+                      color: AppPalette.comparisonEmerald,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Consumer(
+                builder: (context, ref, child) {
+                  final bestOffer = group.offers.first;
+                  final notifier = ref.read(shoppingCartProvider.notifier);
+                  final qty = notifier.quantityOf(bestOffer.productUrl);
+                  final inCart = qty > 0;
+                  return ElevatedButton.icon(
+                    onPressed: inCart
+                        ? null
+                        : () {
+                            notifier.addItem(bestOffer);
+                            HapticFeedback.lightImpact();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
+                                backgroundColor: AppPalette.comparisonEmerald,
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: inCart
+                          ? AppPalette.comparisonEmerald.withValues(alpha: 0.1)
+                          : AppPalette.orange,
+                      foregroundColor: inCart
+                          ? AppPalette.comparisonEmerald
+                          : Colors.white,
+                      elevation: inCart ? 0 : 4,
+                      shadowColor: AppPalette.orange.withValues(alpha: 0.3),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: Icon(
+                      inCart ? Icons.check_circle : Icons.add_shopping_cart,
+                      size: 18,
+                    ),
+                    label: Text(
+                      inCart ? tr('في السلة', 'In Cart') : tr('أضف للسلة', 'Add'),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 24),
           Text(
@@ -320,12 +372,12 @@ class _OfferCard extends StatelessWidget {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     '${formatAmountValue(offer.price)} ${offer.currency}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 15,
                       color: isCheapest
                           ? AppPalette.comparisonEmerald
                           : Colors.black87,
@@ -334,67 +386,53 @@ class _OfferCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            SizedBox(
-              height: 38,
-              child: FilledButton(
-                onPressed: onTap,
-                style: FilledButton.styleFrom(
-                  backgroundColor: isCheapest
-                      ? AppPalette.comparisonEmerald
-                      : AppPalette.orange,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(tr('فتح', 'Open')),
-              ),
-            ),
-            const SizedBox(width: 4),
             Consumer(
               builder: (context, ref, child) {
                 final notifier = ref.read(shoppingCartProvider.notifier);
                 final qty = notifier.quantityOf(offer.productUrl);
                 final inCart = qty > 0;
-                return SizedBox(
-                  height: 38,
-                  width: 38,
-                  child: IconButton(
-                    onPressed: inCart
-                        ? null
-                        : () {
-                            notifier.addItem(offer);
-                            HapticFeedback.lightImpact();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
-                                backgroundColor: AppPalette.comparisonEmerald,
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                    style: IconButton.styleFrom(
-                      backgroundColor: inCart
-                          ? AppPalette.comparisonEmerald.withValues(alpha: 0.12)
-                          : AppPalette.paleOrange.withValues(alpha: 0.2),
-                      foregroundColor: inCart
-                          ? AppPalette.comparisonEmerald
-                          : AppPalette.deepNavy,
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    icon: Icon(
-                      inCart
-                          ? Icons.check_circle
-                          : Icons.add_shopping_cart_outlined,
-                      size: 20,
-                    ),
+                return IconButton(
+                  onPressed: inCart
+                      ? null
+                      : () {
+                          notifier.addItem(offer);
+                          HapticFeedback.lightImpact();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(tr('تمت الإضافة للسلة', 'Added to cart')),
+                              backgroundColor: AppPalette.comparisonEmerald,
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                  icon: Icon(
+                    inCart ? Icons.check_circle : Icons.add_shopping_cart_outlined,
+                    size: 20,
+                    color: inCart ? AppPalette.comparisonEmerald : AppPalette.navy.withValues(alpha: 0.6),
                   ),
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.all(10),
                 );
               },
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              height: 38,
+              child: FilledButton(
+                onPressed: onTap,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppPalette.orange.withValues(alpha: 0.1),
+                  foregroundColor: AppPalette.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                child: Text(
+                  tr('فتح', 'Open'),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),
