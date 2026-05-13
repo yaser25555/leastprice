@@ -171,6 +171,168 @@ class CatalogCandidate:
     detail: Optional[str]
 
 
+STORE_DEALS_CONFIG: List[Dict[str, Any]] = [
+    {"id": "jarir", "domain": "jarir.com", "aliases": ["جرير", "jarir"]},
+    {"id": "extra", "domain": "extra.com", "aliases": ["اكسترا", "extra"]},
+    {"id": "noon", "domain": "noon.com", "aliases": ["نون", "noon"]},
+    {"id": "amazon", "domain": "amazon.sa", "aliases": ["امازون", "amazon"]},
+    {"id": "panda", "domain": "panda.sa", "aliases": ["بنده", "panda"]},
+    {"id": "othaim", "domain": "othaimmarkets.com", "aliases": ["العثيم", "othaim"]},
+    {"id": "tamimi", "domain": "tamimimarkets.com", "aliases": ["التميمي", "tamimi"]},
+    {"id": "lulu", "domain": "luluhypermarket.com", "aliases": ["لولو", "lulu"]},
+    {"id": "carrefour", "domain": "carrefourksa.com", "aliases": ["كارفور", "carrefour"]},
+    {"id": "nahdi", "domain": "nahdionline.com", "aliases": ["النهدي", "nahdi"]},
+    {"id": "aldawaa", "domain": "al-dawaa.com", "aliases": ["الدواء", "dawaa"]},
+    {"id": "keeta", "domain": "keeta.com.sa", "aliases": ["كيتا", "keeta"]},
+    {"id": "hungerstation", "domain": "hungerstation.com", "aliases": ["هنجرستيشن", "hungerstation"]},
+]
+
+# Maximum ~3 topics × 13 stores = 39 searches/day = ~1170/month.
+# Serper.dev free tier is 2500/month; existing bot uses ~50-100/day.
+STORE_DEALS_TOPICS = [
+    "لابتوب", "جوال", "شاشة",
+]
+
+MAX_DEALS_PER_STORE = 6
+
+
+def generate_store_deals(
+    *,
+    database: firestore.Client,
+    search_client: SearchClient,
+    existing_products: List[Dict[str, Any]],
+    existing_signatures: set[str],
+    dry_run: bool,
+    products_collection_name: str,
+) -> Dict[str, int]:
+    """Generate daily product comparisons for each popular store.
+
+    For each store, searches Serper.dev for popular product topics and
+    creates product comparison entries where the cheaper alternative is
+    linked to the store's domain, so that inferStoreIdFromUrl() in
+    the Flutter app can match products to stores.
+    """
+    stats: Dict[str, int] = {
+        "store_deals_searched": 0,
+        "store_deals_created": 0,
+        "store_deals_skipped_no_results": 0,
+        "store_deals_skipped_no_price": 0,
+        "store_deals_skipped_dup": 0,
+    }
+
+    products_collection = database.collection(products_collection_name)
+
+    for store in STORE_DEALS_CONFIG:
+        store_id: str = store["id"]
+        store_domain: str = store["domain"]
+        store_aliases: List[str] = store["aliases"]
+
+        created_for_store = 0
+        for topic in STORE_DEALS_TOPICS:
+            if created_for_store >= MAX_DEALS_PER_STORE:
+                break
+
+            for alias in store_aliases:
+                query = f"{topic} {alias} سعر السعودية"
+                stats["store_deals_searched"] += 1
+
+                try:
+                    hits = search_client.search(query)
+                except Exception as exc:
+                    print(f"  [WARN] search failed for '{query}': {exc}")
+                    continue
+
+                priced_hits = [h for h in hits if extract_price_from_hit(h) is not None]
+                if len(priced_hits) < 2:
+                    stats["store_deals_skipped_no_price"] += 1
+                    continue
+
+                store_hits = [
+                    h for h in priced_hits
+                    if store_domain in h.host
+                ]
+                other_hits = [
+                    h for h in priced_hits
+                    if store_domain not in h.host
+                ]
+
+                if not store_hits:
+                    stats["store_deals_skipped_no_results"] += 1
+                    continue
+
+                alternative = min(store_hits, key=lambda h: h.price or 0)
+                if not other_hits:
+                    expensive = max(store_hits, key=lambda h: h.price or 0)
+                else:
+                    expensive = max(other_hits, key=lambda h: h.price or 0)
+
+                expensive_price = extract_price_from_hit(expensive) or 0.0
+                alternative_price = extract_price_from_hit(alternative) or 0.0
+
+                if expensive_price <= 0 or alternative_price <= 0:
+                    stats["store_deals_skipped_no_price"] += 1
+                    continue
+
+                buy_url = attach_affiliate_tag(alternative.link)
+                category_label = f"عروض {store_id}"
+                tags = [
+                    category_label,
+                    "عرض يومي",
+                    topic,
+                    store_id,
+                    friendly_host(expensive.host),
+                    friendly_host(alternative.host),
+                ]
+
+                product: Dict[str, Any] = {
+                    "categoryId": "all",
+                    "category": category_label,
+                    "is_automated": True,
+                    "expensiveName": expensive.title[:200],
+                    "expensivePrice": round(expensive_price, 2),
+                    "expensiveImageUrl": "",
+                    "alternativeName": alternative.title[:200],
+                    "alternativePrice": round(alternative_price, 2),
+                    "alternativeImageUrl": "",
+                    "buyUrl": buy_url,
+                    "rating": 0.0,
+                    "reviewCount": 0,
+                    "tags": sync_offer_tags(
+                        tags,
+                        expensive_price=expensive_price,
+                        alternative_price=alternative_price,
+                    ),
+                }
+
+                signature = build_product_signature(product)
+                if not signature or signature in existing_signatures:
+                    stats["store_deals_skipped_dup"] += 1
+                    continue
+
+                if dry_run:
+                    print(f"[DRY RUN] would create store deal for {store_id}: {product['expensiveName']} vs {product['alternativeName']} @ {buy_url}")
+                    product["documentId"] = "dry-run"
+                else:
+                    _, ref = products_collection.add({
+                        **product,
+                        "createdAt": firestore.SERVER_TIMESTAMP,
+                        "updatedAt": firestore.SERVER_TIMESTAMP,
+                        "generatedBy": "store_deals_bot",
+                        "sourceType": "store_deals",
+                    })
+                    product["documentId"] = ref.id
+
+                existing_products.append(product)
+                existing_signatures.add(signature)
+                created_for_store += 1
+                stats["store_deals_created"] += 1
+                break  # one product per topic per store
+
+        print(f"  Store '{store_id}': {created_for_store} deals created")
+
+    return stats
+
+
 def main() -> int:
     arguments = parse_arguments()
     dry_run = arguments.dry_run or os.getenv("DRY_RUN", "").strip().lower() in {"1", "true", "yes"}
@@ -203,6 +365,11 @@ def main() -> int:
         "demand_updated": 0,
         "demand_skipped": 0,
         "demand_missing_product": 0,
+        "store_deals_searched": 0,
+        "store_deals_created": 0,
+        "store_deals_skipped_no_results": 0,
+        "store_deals_skipped_no_price": 0,
+        "store_deals_skipped_dup": 0,
     }
 
     product_snapshots = list(products_collection.stream())
@@ -283,6 +450,18 @@ def main() -> int:
         min_request_count=arguments.min_request_count,
     )
     for key, value in demand_stats.items():
+        stats[key] += value
+
+    print("\n── Generating daily store deals ──")
+    store_deal_stats = generate_store_deals(
+        database=database,
+        search_client=search_client,
+        existing_products=existing_products,
+        existing_signatures=existing_signatures,
+        dry_run=dry_run,
+        products_collection_name=arguments.products_collection,
+    )
+    for key, value in store_deal_stats.items():
         stats[key] += value
 
     write_system_health(
