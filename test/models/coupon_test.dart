@@ -98,18 +98,20 @@ void main() {
     });
 
     test('mockData has expected coupons', () {
-      expect(Coupon.mockData, hasLength(11));
+      expect(Coupon.mockData, hasLength(13));
       expect(Coupon.mockData[0].storeId, 'noon');
-      expect(Coupon.mockData[1].storeId, 'namshi');
-      expect(Coupon.mockData[2].storeId, 'dar-al-amirat');
-      expect(Coupon.mockData[3].storeId, 'kabsh-najd');
-      expect(Coupon.mockData[4].storeId, 'vanier');
-      expect(Coupon.mockData[5].storeId, 'rashfa-dhikra');
-      expect(Coupon.mockData[6].storeId, 'roshen');
-      expect(Coupon.mockData[7].storeId, 'roshen-tickets');
-      expect(Coupon.mockData[8].storeId, 'al-reem');
-      expect(Coupon.mockData[9].storeId, 'vibe');
-      expect(Coupon.mockData[10].storeId, 'qatret-asal');
+      expect(Coupon.mockData[1].storeId, 'noon');
+      expect(Coupon.mockData[2].storeId, 'noon');
+      expect(Coupon.mockData[3].storeId, 'namshi');
+      expect(Coupon.mockData[4].storeId, 'dar-al-amirat');
+      expect(Coupon.mockData[5].storeId, 'kabsh-najd');
+      expect(Coupon.mockData[6].storeId, 'vanier');
+      expect(Coupon.mockData[7].storeId, 'rashfa-dhikra');
+      expect(Coupon.mockData[8].storeId, 'roshen');
+      expect(Coupon.mockData[9].storeId, 'roshen-tickets');
+      expect(Coupon.mockData[10].storeId, 'al-reem');
+      expect(Coupon.mockData[11].storeId, 'vibe');
+      expect(Coupon.mockData[12].storeId, 'qatret-asal');
     });
 
     test('toFirestoreMap contains required fields', () {
