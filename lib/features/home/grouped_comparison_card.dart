@@ -315,6 +315,7 @@ class _FavoriteShortcut extends ConsumerWidget {
       }
       HapticFeedback.mediumImpact();
     } catch (_) {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr('حدث خطأ، حاول مرة أخرى', 'Error, try again'))),
       );
