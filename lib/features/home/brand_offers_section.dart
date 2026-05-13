@@ -134,6 +134,13 @@ class BrandOffersSection extends StatelessWidget {
       'color': Color(0xFFE65100),
       'icon': Icons.directions_run_rounded,
     },
+    {
+      'name': 'الريم للعبايات',
+      'nameEn': 'Al-Reem',
+      'url': 'https://mtjr.at/ce3e1xVX7Y',
+      'color': Color(0xFF4A148C),
+      'icon': Icons.style_rounded,
+    },
   ];
 
   Future<void> _launchBrand(String url) async {

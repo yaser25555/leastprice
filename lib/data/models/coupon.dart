@@ -157,6 +157,8 @@ class Coupon {
         return tr('روشن', 'Roshen');
       case 'roshen-tickets':
         return tr('روشن تذاكر كاس العالم', 'Roshen World Cup Tickets');
+      case 'al-reem':
+        return tr('الريم للعبايات', 'Al-Reem Abayas');
       default:
         return tr('متجر إلكتروني', 'Online store');
     }
@@ -294,6 +296,19 @@ class Coupon {
       description: tr(
         'كود خصم على تذاكر كاس العالم.',
         'Discount code for World Cup tickets.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-al-reem',
+      code: 'F-HZWMZ',
+      storeId: 'al-reem',
+      storeName: tr('الريم للعبايات', 'Al-Reem Abayas'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون الريم للعبايات الحصري', 'Exclusive Al-Reem coupon'),
+      description: tr(
+        'كود خصم على العبايات.',
+        'Discount code for abayas.',
       ),
     ),
   ];
