@@ -116,7 +116,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: AppPalette.orange),
+                        icon: Icon(Icons.delete_outline, color: AppPalette.orange),
                         onPressed: () => _service.removeFavorite(productUrl),
                       ),
                     ],
