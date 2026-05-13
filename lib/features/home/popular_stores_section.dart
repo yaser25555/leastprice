@@ -209,19 +209,24 @@ class PopularStoresSection extends StatelessWidget {
                         ),
                       ),
                       child: Center(
-                        child: logoUrl != null && logoUrl.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  proxiedImageUrl(logoUrl),
-                                  width: 48,
-                                  height: 48,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (_, __, ___) =>
-                                      _buildLetter(store, color),
-                                ),
-                              )
-                            : _buildLetter(store, color),
+                        child: Builder(builder: (context) {
+                          final proxiedLogoUrl =
+                              logoUrl != null ? proxiedImageUrl(logoUrl) : null;
+                          return proxiedLogoUrl != null &&
+                                  proxiedLogoUrl.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.network(
+                                    proxiedLogoUrl,
+                                    width: 48,
+                                    height: 48,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (_, __, ___) =>
+                                        _buildLetter(store, color),
+                                  ),
+                                )
+                              : _buildLetter(store, color);
+                        }),
                       ),
                     ),
                     const SizedBox(height: 8),

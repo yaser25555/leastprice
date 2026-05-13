@@ -278,12 +278,14 @@ MarketplaceSearchCity marketplaceSearchCityById(String? id) {
 String proxiedImageUrl(String url) {
   if (!kIsWeb) return url;
   if (url.isEmpty) return url;
-  
-  // URLs that natively support CORS or should not be proxied
-  if (url.contains('icon.horse') || url.contains('firebasestorage.googleapis.com')) {
+
+  // Firebase Storage natively supports CORS — pass through directly.
+  if (url.contains('firebasestorage.googleapis.com')) {
     return url;
   }
 
+  // All other external URLs (icon.horse, unsplash, etc.) are fetched
+  // server-side by wsrv.nl which adds Access-Control-Allow-Origin: * headers.
   final encoded = Uri.encodeComponent(url);
   return 'https://wsrv.nl/?url=$encoded';
 }
