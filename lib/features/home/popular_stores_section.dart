@@ -213,7 +213,7 @@ class PopularStoresSection extends StatelessWidget {
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
                                 child: Image.network(
-                                  logoUrl,
+                                  proxiedImageUrl(logoUrl),
                                   width: 48,
                                   height: 48,
                                   fit: BoxFit.contain,

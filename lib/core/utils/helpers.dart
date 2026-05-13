@@ -278,9 +278,8 @@ MarketplaceSearchCity marketplaceSearchCityById(String? id) {
 String proxiedImageUrl(String url) {
   if (!kIsWeb) return url;
   if (url.isEmpty) return url;
-  final workerUrl = LeastPriceDataConfig.hybridSearchBaseUrlOverride;
   final encoded = Uri.encodeComponent(url);
-  return '$workerUrl/api/image-proxy?url=$encoded';
+  return 'https://wsrv.nl/?url=$encoded';
 }
 
 String? formatSaudiPhoneNumber(String rawNumber) {
