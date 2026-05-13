@@ -49,6 +49,8 @@ class LeastPriceDataConfig {
   );
 
   static const String affiliateTag = 'leastprice09-21';
+  static const String noonReferralLink =
+      'https://s.noon.com/HOTtsN31XfI';
   static const int comparisonSearchCacheHours = 24;
 
   /// DCMnetwork tracking links map

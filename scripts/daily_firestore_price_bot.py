@@ -260,6 +260,10 @@ def generate_store_deals(
 
     products_collection = database.collection(products_collection_name)
 
+    STORE_REFERRAL_LINKS = {
+        "noon": "https://s.noon.com/HOTtsN31XfI",
+    }
+
     for store in STORE_DEALS_CONFIG:
         store_id: str = store["id"]
         store_domain: str = store["domain"]
@@ -267,7 +271,7 @@ def generate_store_deals(
         store_alias: str = store_id  # use store ID as alias
 
         # Build store homepage URL for buyUrl (Shopping API links are all Google)
-        store_buy_url = f"https://www.{store_domain}/"
+        store_buy_url = STORE_REFERRAL_LINKS.get(store_id) or f"https://www.{store_domain}/"
         topics = STORE_TYPE_TOPICS.get(store_type, STORE_DEALS_TOPICS)
 
         created_for_store = 0

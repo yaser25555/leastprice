@@ -11,7 +11,7 @@ class PopularStoresSection extends StatelessWidget {
       'id': 'noon',
       'name': 'نون',
       'nameEn': 'Noon',
-      'url': 'https://www.noon.com/saudi-ar/',
+      'url': 'https://s.noon.com/HOTtsN31XfI',
       'color': Color(0xFFFEE70B),
       'logoUrl': 'https://logo.clearbit.com/noon.com',
     },
