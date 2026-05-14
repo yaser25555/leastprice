@@ -1,7 +1,7 @@
 name: leastprice
 description: Price comparison and deal discovery app for Saudi Arabia - مقارنة الأسعار والبحث عن أفضل العروض في السعودية
 publish_to: "none"
-version: 1.0.1+131
+version: 1.0.1+132
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
