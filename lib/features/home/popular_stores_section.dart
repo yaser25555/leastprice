@@ -171,7 +171,6 @@ class PopularStoresSection extends StatelessWidget {
               final logoUrl = store['logoUrl'] as String?;
 
               final isAldawaa = store['id'] == 'aldawaa';
-              final isCarrefour = store['id'] == 'carrefour';
 
               return GestureDetector(
                 onTap: () {
