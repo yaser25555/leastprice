@@ -17,6 +17,7 @@ export 'exclusive_deals_section.dart';
 export 'exclusive_deal_card.dart';
 export 'exclusive_coupon_card.dart';
 export 'exclusive_coupons_section.dart';
+export 'price_alerts_screen.dart';
 export 'header_metrics.dart';
 export 'header_section.dart';
 export 'home_section_switcher.dart';

@@ -26,7 +26,6 @@ import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/features/home/favorites_screen.dart';
-import 'home_exports.dart';
 
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
@@ -355,6 +354,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     final userProfileAsync = ref.watch(
         userProfileStreamProvider(widget.currentUser.uid));
     final userProfile = userProfileAsync.value ?? widget.initialUserProfile;
+    final systemHealthAsync = ref.watch(systemHealthStreamProvider);
     final systemHealth = systemHealthAsync.value ?? AutomationHealthStatus.initial();
 
     final isPaidPlanActive = userProfile.planActivated;
