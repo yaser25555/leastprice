@@ -5,7 +5,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/widgets/app_brand_mark.dart';
 import 'package:leastprice/services/preferences/user_preferences_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
-import 'home_exports.dart';
+import 'header_metrics.dart';
+import 'metrics.dart';
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({

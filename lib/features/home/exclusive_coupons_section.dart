@@ -6,7 +6,8 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/coupon.dart';
 
-import 'home_exports.dart';
+import 'comparison_search_placeholder.dart';
+import 'exclusive_coupon_card.dart';
 
 class ExclusiveCouponsSection extends StatefulWidget {
   const ExclusiveCouponsSection({

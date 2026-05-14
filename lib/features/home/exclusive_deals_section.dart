@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/core/utils/helpers.dart';
-import 'home_exports.dart';
+import 'comparison_search_placeholder.dart';
+import 'exclusive_deals_carousel.dart';
 
 class ExclusiveDealsSection extends StatefulWidget {
   const ExclusiveDealsSection({

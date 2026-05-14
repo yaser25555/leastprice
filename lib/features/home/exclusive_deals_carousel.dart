@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/features/home/exclusive_deal_card.dart';
-import 'home_exports.dart';
 
 class ExclusiveDealsCarousel extends StatefulWidget {
   const ExclusiveDealsCarousel({

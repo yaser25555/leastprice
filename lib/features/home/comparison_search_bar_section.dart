@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/home/search_info_pill.dart';
-import 'home_exports.dart';
 
 class ComparisonSearchBarSection extends StatelessWidget {
   const ComparisonSearchBarSection({

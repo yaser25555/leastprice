@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/core/utils/helpers.dart';
-import 'home_exports.dart';
+import 'automated_comparison_badge.dart';
+import 'badges.dart';
+import 'product_pane.dart';
+import 'comparison_insights.dart';
+import 'rating_summary.dart';
 
 class ComparisonCard extends StatelessWidget {
   const ComparisonCard({

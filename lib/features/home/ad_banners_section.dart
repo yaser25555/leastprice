@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:leastprice/data/models/ad_banner_item.dart';
 import 'package:leastprice/features/home/banner_carousel.dart';
-import 'home_exports.dart';
 
 class AdBannersSection extends StatelessWidget {
   const AdBannersSection({
