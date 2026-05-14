@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/data/models/coupon.dart';
 import 'package:leastprice/features/home/store_offers_screen.dart';
+import 'package:leastprice/services/api/affiliate_link_service.dart';
 
 class PopularStoresSection extends StatelessWidget {
-  const PopularStoresSection({super.key});
+  const PopularStoresSection({
+    super.key,
+    this.isPaid = false,
+    this.onUpgradeTap,
+  });
+
+  final bool isPaid;
+  final VoidCallback? onUpgradeTap;
 
   static const List<Map<String, dynamic>> stores = [
     {
@@ -359,6 +370,198 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF6A1B9A),
       'logoUrl': 'https://cdn.salla.sa/bZEQj/M2CunBm0fqQ8AGxEN6uXNhAMPo8RDuApey35ClJ3.png',
     },
+    {
+      'id': 'odhia',
+      'name': 'أضحية',
+      'nameEn': 'Odhia',
+      'url': 'https://odhia.co/',
+      'color': Color(0xFF2E7D32),
+      'logoUrl': 'https://cdn.salla.sa/ZYqAQY/oS44KrQChZxdGQ0Iqd5faOage8eH4vlQe1VUo8vo.png',
+    },
+    {
+      'id': 'jawhara',
+      'name': 'جوهره أونلاين',
+      'nameEn': 'Jawhara Online',
+      'url': 'https://jawhara.online/',
+      'color': Color(0xFFB8860B),
+      'logoUrl': 'https://cdn.salla.sa/ydAVda/BK5s47EMDHPkWIsnAyRCvwEGS0aPfBxLApnGBJh7.png',
+    },
+    {
+      'id': 'knoadress',
+      'name': 'knoadress',
+      'nameEn': 'KNO A Dress',
+      'url': 'https://knoadress.com/',
+      'color': Color(0xFFD4A5C4),
+      'logoUrl': 'https://cdn.salla.sa/qjNzO/w1u09cVvL5NKd8Ai93u9lrCH1yr24ujxAtHkUQGI.jpg',
+    },
+    {
+      'id': 'babybeauty',
+      'name': 'بوتيك بيبي بيوتي',
+      'nameEn': 'Baby Beauty Boutique',
+      'url': 'https://babybeautyksa.com/',
+      'color': Color(0xFFE91E63),
+      'logoUrl': 'https://cdn.salla.sa/NGKEy/k5yRkshCjLgmy0YoSHwGmuaYamoYL2Zjje5ZpRSr.png',
+    },
+    {
+      'id': 'jolina',
+      'name': 'جولينا',
+      'nameEn': 'Jolina Fashion',
+      'url': 'https://jolinafashion.com/',
+      'color': Color(0xFF9C27B0),
+      'logoUrl': 'https://cdn.salla.sa/GgXea/bUMkk5HhVztx5GkFkwvxpR3pvep6Yr74boQfwSHf.png',
+    },
+    {
+      'id': 'mqueenex',
+      'name': 'كيونكس',
+      'nameEn': 'M Queenex',
+      'url': 'https://mqueenex.com/',
+      'color': Color(0xFF1565C0),
+      'logoUrl': 'https://cdn.salla.sa/lGZAVr/Tm1JpEGA5bmbY2s2J1R9L2bj6LwrAcfttOABWyXT.png',
+    },
+    {
+      'id': 'beyyak',
+      'name': 'بياك',
+      'nameEn': 'Beyyak',
+      'url': 'https://beyyak.com/',
+      'color': Color(0xFF6D4C41),
+      'logoUrl': 'https://cdn.salla.sa/mEGGZ/RSAfOBm0aCa9rcBKe4oilKxNYWvLU5Qt0dphgyv7.png',
+    },
+    {
+      'id': 'aslalfakama',
+      'name': 'أصل الفخامة',
+      'nameEn': 'Asl Al Fakama',
+      'url': 'https://aslalfakama.com/',
+      'color': Color(0xFFD4AF37),
+      'logoUrl': 'https://cdn.salla.sa/XoKyj/ny4iz11g0PJxiR4iMkXTz6jFWHUYyymKYFrjVXym.png',
+    },
+    {
+      'id': 'rozitaa',
+      'name': 'روزيتا',
+      'nameEn': 'Rozitaa',
+      'url': 'https://rozitaa.com/',
+      'color': Color(0xFFD81B60),
+      'logoUrl': 'https://cdn.salla.sa/rAezWw/nMPpJt9EnlI3pJWtVfxKhZwqympUm87S6WR5ozFc.png',
+    },
+    {
+      'id': 'foryou4laser',
+      'name': 'فور يو',
+      'nameEn': 'For You',
+      'url': 'https://mlay2022s.com/',
+      'color': Color(0xFFEC407A),
+      'logoUrl': 'https://cdn.salla.sa/ZBlnZ/OVXxxRHLLph6DyobrLdAcFYJ5FhZIlJWSxHoBpgR.jpg',
+    },
+    {
+      'id': 'cuupac',
+      'name': 'Cuupac',
+      'nameEn': 'Cuupac',
+      'url': 'https://cuupac.com/',
+      'color': Color(0xFF26A69A),
+      'logoUrl': 'https://cdn.salla.sa/OZOyo/Mc2rFRqmDrIgX3aT9OHIzggj1GIUMbjxkSFjxOQc.png',
+    },
+    {
+      'id': 'jborgnic',
+      'name': 'جي بي اورجانيك',
+      'nameEn': 'JB Organic',
+      'url': 'https://jb.sa/',
+      'color': Color(0xFF4CAF50),
+      'logoUrl': 'https://cdn.salla.sa/xAyjrK/E6nZawyHfTnuqtZen3eWk0fqHloGFXlwdyd43KSH.png',
+    },
+    {
+      'id': 'alesaei',
+      'name': 'العيسائي للإلكترونيات',
+      'nameEn': 'Al-Esaei Electronics',
+      'url': 'https://aecksa.com/',
+      'color': Color(0xFF1565C0),
+      'logoUrl': 'https://cdn.salla.sa/wWRQaK/1u3M49PZ7XXc2RXTFZHBpF40gs8jtqT4jUxRA7hE.png',
+    },
+    {
+      'id': 'hurufsa',
+      'name': 'تطريز',
+      'nameEn': 'Tatreez',
+      'url': 'https://hurufsa.com/',
+      'color': Color(0xFF7B1FA2),
+      'logoUrl': 'https://cdn.salla.sa/aZqED/xmdP3KkSYTkhyJGCmBx56HVi6maRu09VahbqyRU2.jpg',
+    },
+    {
+      'id': 'urslacare',
+      'name': 'اورسلا كير',
+      'nameEn': 'Ursla Care',
+      'url': 'https://urslacare.com/',
+      'color': Color(0xFFE91E63),
+      'logoUrl': 'https://cdn.salla.sa/AxwjD/JQI4zlZpdQUu4fxyJLIVsxj7X6ZSbNznNSCwFBFf.png',
+    },
+    {
+      'id': 'parsacoffee',
+      'name': 'بارسا كافيه',
+      'nameEn': 'Parsa Coffee',
+      'url': 'https://parsacoffee.com/',
+      'color': Color(0xFF5D4037),
+      'logoUrl': 'https://cdn.salla.sa/ZYlZNn/t6EYphOXtm6CHC7sU9yjwsJHl9EF61xp70wuNf5A.jpg',
+    },
+    {
+      'id': 'shrouqnay',
+      'name': 'شروق ناي',
+      'nameEn': 'Shrouq Nay',
+      'url': 'https://shrouqnay.com/',
+      'color': Color(0xFF9C27B0),
+      'logoUrl': 'https://cdn.salla.sa/bGbrj/jEV8rGpz35sXUdYZtUo49ovVybPXzbz8e70t5BUW.png',
+    },
+    {
+      'id': 'liftglo',
+      'name': 'LiftGlo',
+      'nameEn': 'LiftGlo',
+      'url': 'https://liftgloksa.com/',
+      'color': Color(0xFF00BCD4),
+      'logoUrl': 'https://cdn.salla.sa/zvwQGR/DSchqtRa409p3g4eRnKzgUQhJ6OQzqr2vUtnYj99.png',
+    },
+    {
+      'id': 'shmokfash',
+      'name': 'شموخ',
+      'nameEn': 'Shmokh Fashion',
+      'url': 'https://shmokfash.com/',
+      'color': Color(0xFFE91E63),
+      'logoUrl': 'https://cdn.salla.sa/PVemn/CCHTEp44vR23iEzRc32ILGZIj8VeYN4QXuyQ98vU.jpg',
+    },
+    {
+      'id': 'starblack',
+      'name': 'ستار بلاك',
+      'nameEn': 'Star Black',
+      'url': 'https://star-black.com/',
+      'color': Color(0xFF212121),
+      'logoUrl': 'https://cdn.salla.sa/XyApj/vOVHx99IMSxkJ8XKDTkJvO7snYGmxJH9JlYN7v92.jpg',
+    },
+    {
+      'id': 'dunyaalasar',
+      'name': 'دنيا الاسعار',
+      'nameEn': 'Dunya Al Asar',
+      'url': 'https://dunya-alasar.sa/',
+      'color': Color(0xFF00897B),
+      'logoUrl': 'https://cdn.salla.sa/gZPwmV/QnlbMCzERqXpHzH8VjR0zgXf4lzEdwIQuCVwGgu1.png',
+    },
+    {
+      'id': 'queenarad',
+      'name': 'Queen Arab',
+      'nameEn': 'Queen Arab',
+      'url': 'https://queenarad.com/',
+      'color': Color(0xFFFF6F00),
+      'logoUrl': 'https://cdn.salla.sa/XDEDY/6kjyvTPkj954PVRaziRg7HCeBZfmY6unEYi9t2Df.png',
+    },
+    {
+      'id': 'alesaeikids',
+      'name': 'العيسائي للأطفال',
+      'nameEn': 'Al-Esaei Kids',
+      'url': 'https://alesaei-aes.com/',
+      'color': Color(0xFF42A5F5),
+      'logoUrl': 'https://cdn.salla.sa/zvpXyK/z7xwXndn4InrwGVrfb1FVcnk0MINaPBX8wqhp0yC.png',
+    },
+    {
+      'id': 'goldenflora',
+      'name': 'قولدن فلورا',
+      'nameEn': 'Golden Flora',
+      'url': 'https://golden-flora.com/',
+      'color': Color(0xFFD4AF37),
+      'logoUrl': 'https://cdn.files.salla.network/theme/1526962400/a611630a-8bee-48f4-83e3-5862e881eb16.webp',
+    },
   ];
 
   @override
@@ -422,18 +625,36 @@ class PopularStoresSection extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => StoreOffersScreen(
-                        storeId: store['id'],
-                        storeName: store['name'],
-                        storeNameEn: store['nameEn'],
-                        storeColor: AppPalette.orange,
-                        storeLogoUrl: logoUrl,
-                        storeUrl: store['url'],
+                  final storeId = store['id'] as String;
+                  final hasCoupon = Coupon.mockData
+                      .any((c) => c.storeId == storeId);
+                  final storeUrl = store['url'] as String;
+
+                  if (hasCoupon) {
+                    if (!isPaid) {
+                      _showPaywall(context);
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => StoreOffersScreen(
+                          storeId: storeId,
+                          storeName: store['name'],
+                          storeNameEn: store['nameEn'],
+                          storeColor: AppPalette.orange,
+                          storeLogoUrl: logoUrl,
+                          storeUrl: storeUrl,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    final preparedUrl =
+                        AffiliateLinkService.prepareForOpen(storeUrl);
+                    launchUrl(
+                      Uri.parse(preparedUrl),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
                 },
                 child: Column(
                   children: [
@@ -509,6 +730,52 @@ class PopularStoresSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showPaywall(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.lock_rounded, color: AppPalette.orange, size: 28),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                tr('ميزة مدفوعة', 'Premium feature'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          tr(
+            'هذا المتجر يتطلب اشتراكاً مدفوعاً لعرض الكوبونات الحصرية. اشترك الآن واحصل على خصومات مذهلة!',
+            'This store requires a paid subscription to view exclusive coupons. Subscribe now and get amazing discounts!',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              tr('رجوع', 'Back'),
+              style: TextStyle(color: AppPalette.navy),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onUpgradeTap?.call();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppPalette.orange,
+              foregroundColor: AppPalette.pureWhite,
+            ),
+            child: Text(tr('اشترك الآن', 'Subscribe now')),
+          ),
+        ],
+      ),
     );
   }
 

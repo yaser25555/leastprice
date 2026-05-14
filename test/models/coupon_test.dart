@@ -98,7 +98,7 @@ void main() {
     });
 
     test('mockData has expected coupons', () {
-      expect(Coupon.mockData, hasLength(47));
+      expect(Coupon.mockData, hasLength(64));
       expect(Coupon.mockData[0].storeId, 'noon');
       expect(Coupon.mockData[1].storeId, 'noon');
       expect(Coupon.mockData[2].storeId, 'noon');
@@ -146,6 +146,23 @@ void main() {
       expect(Coupon.mockData[44].storeId, 'ayworlds');
       expect(Coupon.mockData[45].storeId, 'qzs');
       expect(Coupon.mockData[46].storeId, 'bazil');
+      expect(Coupon.mockData[47].storeId, 'odhia');
+      expect(Coupon.mockData[48].storeId, 'jawhara');
+      expect(Coupon.mockData[49].storeId, 'jolina');
+      expect(Coupon.mockData[50].storeId, 'beyyak');
+      expect(Coupon.mockData[51].storeId, 'rozitaa');
+      expect(Coupon.mockData[52].storeId, 'foryou4laser');
+      expect(Coupon.mockData[53].storeId, 'cuupac');
+      expect(Coupon.mockData[54].storeId, 'jborgnic');
+      expect(Coupon.mockData[55].storeId, 'alesaei');
+      expect(Coupon.mockData[56].storeId, 'hurufsa');
+      expect(Coupon.mockData[57].storeId, 'urslacare');
+      expect(Coupon.mockData[58].storeId, 'parsacoffee');
+      expect(Coupon.mockData[59].storeId, 'shrouqnay');
+      expect(Coupon.mockData[60].storeId, 'liftglo');
+      expect(Coupon.mockData[61].storeId, 'dunyaalasar');
+      expect(Coupon.mockData[62].storeId, 'queenarad');
+      expect(Coupon.mockData[63].storeId, 'goldenflora');
     });
 
     test('toFirestoreMap contains required fields', () {
