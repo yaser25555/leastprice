@@ -139,7 +139,6 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   itemBuilder: (context, index) {
                     final store = _getUniqueStores(coupons)[index];
                     final isAldawaa = store['nameEn'].toLowerCase() == 'al-dawaa';
-                    final isCarrefour = store['nameEn'].toLowerCase() == 'carrefour';
                     
                     return Column(
                       children: [
@@ -177,7 +176,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                 ),
               ),
               const SizedBox(height: 12),
-              const Divider(height: 1, alpha: 0.1),
+              Divider(height: 1, color: AppPalette.navy.withValues(alpha: 0.1)),
               const SizedBox(height: 20),
               ListView.separated(
                 shrinkWrap: true,
