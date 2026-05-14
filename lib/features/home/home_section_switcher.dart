@@ -39,6 +39,17 @@ class HomeSectionSwitcher extends StatelessWidget {
         children: [
           Expanded(
             child: HomeSectionSwitcherButton(
+              label: tr('إعلانات', 'Ads'),
+              icon: Icons.campaign_rounded,
+              isSelected: selectedSection == HomeCatalogSection.ads,
+              activeColor: AppPalette.navy,
+              activeBackground: AppPalette.softOrange,
+              onTap: () => onSectionSelected(HomeCatalogSection.ads),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: HomeSectionSwitcherButton(
               label: tr('العروض', 'Offers'),
               icon: Icons.local_offer_rounded,
               isSelected: selectedSection == HomeCatalogSection.offers,
@@ -47,7 +58,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               onTap: () => onSectionSelected(HomeCatalogSection.offers),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
           Expanded(
             child: HomeSectionSwitcherButton(
               label: tr('السعر الأقل', 'Lowest Price'),
@@ -58,7 +69,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               onTap: () => onSectionSelected(HomeCatalogSection.comparisons),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
           Expanded(
             child: HomeSectionSwitcherButton(
               label: tr('كوبونات', 'Coupons'),
@@ -69,7 +80,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               onTap: () => onSectionSelected(HomeCatalogSection.coupons),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
           Expanded(
             child: HomeSectionSwitcherButton(
               label: tr('الباقات', 'Plans'),
@@ -82,7 +93,7 @@ class HomeSectionSwitcher extends StatelessWidget {
               onTap: () => onSectionSelected(HomeCatalogSection.plans),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
           Expanded(
             child: HomeSectionSwitcherButton(
               label: tr('من نحن', 'About Us'),

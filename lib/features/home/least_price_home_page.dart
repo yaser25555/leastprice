@@ -485,6 +485,8 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
         builder: (context, snapshot) {
           final appleStyle = isAppleInterface(context);
           final products = snapshot.data ?? const <ProductComparison>[];
+          final showAdsSection =
+              _selectedHomeSection == HomeCatalogSection.ads;
           final showComparisonsSection =
               _selectedHomeSection == HomeCatalogSection.comparisons;
           final showOffersSection =
@@ -664,7 +666,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                     SliverToBoxAdapter(
                       child: const PopularStoresSection(),
                     ),
-                  if (showOffersSection)
+                  if (showAdsSection)
                     SliverToBoxAdapter(
                       child: AdBannersSection(
                         banners: activeBanners,

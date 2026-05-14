@@ -21,6 +21,7 @@ enum ComparisonSearchChannelType {
 }
 
 enum HomeCatalogSection {
+  ads,
   offers,
   comparisons,
   coupons,

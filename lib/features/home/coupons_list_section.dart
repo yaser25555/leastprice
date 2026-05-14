@@ -128,7 +128,57 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 20),
+              // Store Logos Quick Access
+              SizedBox(
+                height: 85,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _getUniqueStores(coupons).length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 14),
+                  itemBuilder: (context, index) {
+                    final store = _getUniqueStores(coupons)[index];
+                    final isAldawaa = store['nameEn'].toLowerCase() == 'al-dawaa';
+                    final isCarrefour = store['nameEn'].toLowerCase() == 'carrefour';
+                    
+                    return Column(
+                      children: [
+                        Container(
+                          width: 58,
+                          height: 58,
+                          decoration: BoxDecoration(
+                            color: isAldawaa 
+                                ? Colors.black.withValues(alpha: 0.05)
+                                : AppPalette.orange.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: isAldawaa 
+                                  ? Colors.black.withValues(alpha: 0.1)
+                                  : AppPalette.orange.withValues(alpha: 0.25),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Center(
+                            child: _buildStoreLogo(store),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          tr(store['name'], store['nameEn']),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: AppPalette.brandNavyDeep,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Divider(height: 1, alpha: 0.1),
+              const SizedBox(height: 20),
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -146,6 +196,93 @@ class _CouponsListSectionState extends State<CouponsListSection> {
             ],
           );
         },
+      ),
+  List<Map<String, dynamic>> _getUniqueStores(List<Coupon> coupons) {
+    // Primary application stores (Major retailers)
+    final List<Map<String, dynamic>> appStores = [
+      {'name': 'نون', 'nameEn': 'Noon', 'logoUrl': 'https://icon.horse/icon/noon.com'},
+      {'name': 'أمازون', 'nameEn': 'Amazon', 'logoUrl': 'https://icon.horse/icon/amazon.sa'},
+      {'name': 'نمشي', 'nameEn': 'Namshi', 'logoUrl': 'https://icon.horse/icon/namshi.com'},
+      {'name': 'جرير', 'nameEn': 'Jarir', 'logoUrl': 'https://icon.horse/icon/jarir.com'},
+      {'name': 'إكسترا', 'nameEn': 'Extra', 'logoUrl': 'https://icon.horse/icon/extra.com'},
+      {'name': 'بنده', 'nameEn': 'Panda', 'logoUrl': 'https://www.panda.sa/_next/static/media/logo.f85b0530.svg'},
+      {'name': 'العثيم', 'nameEn': 'Othaim', 'logoUrl': 'https://icon.horse/icon/othaimmarkets.com'},
+      {'name': 'التميمي', 'nameEn': 'Tamimi', 'logoUrl': 'https://www.tamimimarkets.com/__template/images/logo-01.png'},
+      {'name': 'النهدي', 'nameEn': 'Nahdi', 'logoUrl': 'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png'},
+      {'name': 'الدواء', 'nameEn': 'Al-Dawaa', 'logoUrl': ''},
+      {'name': 'لولو', 'nameEn': 'Lulu', 'logoUrl': 'https://gcc.luluhypermarket.com/akn-logo-english.svg'},
+      {'name': 'كارفور', 'nameEn': 'Carrefour', 'logoUrl': ''},
+    ];
+
+    final Map<String, Map<String, dynamic>> seen = {};
+
+    // 1. Add stores that currently have active coupons (Prioritize them)
+    for (var c in coupons) {
+      final name = c.storeName;
+      if (!seen.containsKey(name)) {
+        seen[name] = {
+          'name': name,
+          'nameEn': name,
+          'logoUrl': resolveStoreLogoUrl(
+            storeId: c.storeId,
+            productUrl: '',
+            fallbackName: name,
+          ),
+        };
+      }
+    }
+
+    // 2. Fill in with other major application stores
+    for (var s in appStores) {
+      if (!seen.containsKey(s['name'])) {
+        seen[s['name']] = s;
+      }
+    }
+
+    return seen.values.toList();
+  }
+
+  Widget _buildStoreLogo(Map<String, dynamic> store) {
+    final logoUrl = store['logoUrl'] as String? ?? '';
+    final name = store['name'] as String;
+    final nameEn = (store['nameEn'] as String).toLowerCase();
+    
+    final isAldawaa = nameEn == 'al-dawaa';
+    final isCarrefour = nameEn == 'carrefour';
+
+    if (logoUrl.isNotEmpty && !isAldawaa && !isCarrefour) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.network(
+          proxiedImageUrl(logoUrl),
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => _buildTextFallback(name, nameEn),
+        ),
+      );
+    }
+    
+    return _buildTextFallback(name, nameEn);
+  }
+
+  Widget _buildTextFallback(String name, String nameEn) {
+    final isCarrefour = nameEn == 'carrefour';
+    final isAldawaa = nameEn == 'al-dawaa';
+    
+    final text = (isCarrefour || isAldawaa) ? name : (name.isNotEmpty ? name.characters.first : '?');
+    
+    Color textColor = AppPalette.orange;
+    if (isCarrefour) textColor = const Color(0xFF003087);
+    if (isAldawaa) textColor = Colors.black;
+
+    return Center(
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: textColor,
+          fontSize: (isCarrefour || isAldawaa) ? 11 : 22,
+          fontWeight: FontWeight.w900,
+        ),
       ),
     );
   }
