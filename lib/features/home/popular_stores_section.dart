@@ -319,6 +319,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFFE53935),
       'logoUrl': 'https://cdn.salla.sa/nvrbb/ANcaTUwH8T6fXCeNrpdCuTbYCkkj5jl368JFCDuA.png',
     },
+    {
+      'id': 'mlay',
+      'name': 'ملاي',
+      'nameEn': 'Mlay',
+      'url': 'https://mlaystor.com/',
+      'color': Color(0xFF7B1FA2),
+      'logoUrl': 'https://cdn.salla.sa/YDdRl/VUtJDnuh75EkhGMbO0h2ad8VL3P3ZuR2xoZ87S3v.png',
+    },
   ];
 
   @override

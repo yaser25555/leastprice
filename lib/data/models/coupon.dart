@@ -744,5 +744,18 @@ class Coupon {
         'Discount code for men\'s and women\'s shoes and sneakers.',
       ),
     ),
+    Coupon(
+      id: 'coupon-mlay',
+      code: 'F-AUFM8',
+      storeId: 'mlay',
+      storeName: 'ملاي',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون ملاي الحصري', 'Exclusive Mlay coupon'),
+      description: tr(
+        'كود خصم على أجهزة الليزر المنزلي.',
+        'Discount code for home laser devices.',
+      ),
+    ),
   ];
 }
