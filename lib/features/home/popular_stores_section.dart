@@ -93,7 +93,7 @@ class PopularStoresSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://stgprevapi.al-dawaa.com/medias/frame-2-3x.png?context=bWFzdGVyfGltYWdlc3wxMDEzOHxpbWFnZS9wbmd8YUdVMEwyZzVNUzg1TlRRM05ESXpNakU1TnpReUwyWnlZVzFsTFRKQU0zZ3VjRzVufGQxNzQ2N2I1MzUwODE1ODIxZGMxNTBjZWZmNjQ5MDg0ZWUxODUyZDY5ODdmZTVkZDNhZmJjMjIxNWUyODRkY2I',
+      'logoUrl': '',
     },
     {
       'id': 'lulu',
@@ -170,6 +170,9 @@ class PopularStoresSection extends StatelessWidget {
               final color = store['color'] as Color;
               final logoUrl = store['logoUrl'] as String?;
 
+              final isAldawaa = store['id'] == 'aldawaa';
+              final isCarrefour = store['id'] == 'carrefour';
+
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
@@ -191,14 +194,18 @@ class PopularStoresSection extends StatelessWidget {
                       width: 84,
                       height: 84,
                       decoration: BoxDecoration(
-                        color: AppPalette.orange.withValues(alpha: 0.2),
+                        color: isAldawaa
+                            ? Colors.black.withValues(alpha: 0.05)
+                            : AppPalette.orange.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: AppPalette.orange.withValues(alpha: 0.4),
-                            blurRadius: 20,
+                            color: isAldawaa
+                                ? Colors.black.withValues(alpha: 0.15)
+                                : AppPalette.orange.withValues(alpha: 0.4),
+                            blurRadius: isAldawaa ? 12 : 20,
                             offset: const Offset(0, 8),
-                            spreadRadius: -2,
+                            spreadRadius: isAldawaa ? -1 : -2,
                           ),
                           BoxShadow(
                             color: AppPalette.navy.withValues(alpha: 0.08),
@@ -241,9 +248,10 @@ class PopularStoresSection extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: AppPalette.navy,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                          color: AppPalette.brandNavyDeep,
+                          height: 1.2,
                         ),
                       ),
                     ),
@@ -259,14 +267,24 @@ class PopularStoresSection extends StatelessWidget {
 
   Widget _buildLetter(Map<String, dynamic> store, Color color) {
     final name = (store['name'] as String? ?? '');
-    final isCarrefour = store['id'] == 'carrefour';
-    final textToShow = isCarrefour ? name : (name.isNotEmpty ? name.characters.first : '?');
-    
+    final storeId = store['id'];
+    final isCarrefour = storeId == 'carrefour';
+    final isAldawaa = storeId == 'aldawaa';
+    final textToShow = (isCarrefour || isAldawaa)
+        ? name
+        : (name.isNotEmpty ? name.characters.first : '?');
+
+    Color textColor = AppPalette.orange;
+    if (isCarrefour) textColor = const Color(0xFF003087);
+    if (isAldawaa) textColor = Colors.black;
+
     return Container(
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: AppPalette.orange.withValues(alpha: 0.15),
+        color: isAldawaa
+            ? Colors.black.withValues(alpha: 0.05)
+            : AppPalette.orange.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
@@ -274,10 +292,10 @@ class PopularStoresSection extends StatelessWidget {
           textToShow,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: AppPalette.orange,
-            fontSize: isCarrefour ? 14 : 24,
+            color: textColor,
+            fontSize: (isCarrefour || isAldawaa) ? 14 : 24,
             fontWeight: FontWeight.w900,
-            letterSpacing: isCarrefour ? -0.5 : 0,
+            letterSpacing: (isCarrefour || isAldawaa) ? -0.5 : 0,
             height: 1,
           ),
         ),

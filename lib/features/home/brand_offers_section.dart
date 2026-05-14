@@ -167,7 +167,7 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Al-Dawaa',
       'url': 'https://www.aldawaa.com/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://stgprevapi.al-dawaa.com/medias/frame-2-3x.png?context=bWFzdGVyfGltYWdlc3wxMDEzOHxpbWFnZS9wbmd8YUdVMEwyZzVNUzg1TlRRM05ESXpNakU1TnpReUwyWnlZVzFsTFRKQU0zZ3VjRzVufGQxNzQ2N2I1MzUwODE1ODIxZGMxNTBjZWZmNjQ5MDg0ZWUxODUyZDY5ODdmZTVkZDNhZmJjMjIxNWUyODRkY2I',
+      'logoUrl': '',
       'hasCoupon': false,
     },
     {
@@ -316,14 +316,24 @@ class BrandOffersSection extends StatelessWidget {
 
   Widget _buildLetterAvatar(Map<String, dynamic> store, Color color) {
     final name = (store['name'] as String? ?? '');
-    final isCarrefour = name == 'كارفور' || (store['nameEn'] as String? ?? '').toLowerCase() == 'carrefour';
-    final textToShow = isCarrefour ? name : (name.isNotEmpty ? name.characters.first : '?');
+    final nameEn = (store['nameEn'] as String? ?? '').toLowerCase();
+    final isCarrefour = name == 'كارفور' || nameEn == 'carrefour';
+    final isAldawaa = name == 'الدواء' || nameEn == 'al-dawaa';
+    final textToShow = (isCarrefour || isAldawaa)
+        ? name
+        : (name.isNotEmpty ? name.characters.first : '?');
+
+    Color textColor = AppPalette.orange;
+    if (isCarrefour) textColor = const Color(0xFF003087);
+    if (isAldawaa) textColor = Colors.black;
 
     return Container(
       width: 75,
       height: 75,
       decoration: BoxDecoration(
-        color: AppPalette.orange.withValues(alpha: 0.15),
+        color: isAldawaa
+            ? Colors.black.withValues(alpha: 0.05)
+            : AppPalette.orange.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
@@ -331,10 +341,10 @@ class BrandOffersSection extends StatelessWidget {
           textToShow,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: AppPalette.orange,
-            fontSize: isCarrefour ? 18 : 32,
+            color: textColor,
+            fontSize: (isCarrefour || isAldawaa) ? 18 : 32,
             fontWeight: FontWeight.w900,
-            letterSpacing: isCarrefour ? -0.5 : 0,
+            letterSpacing: (isCarrefour || isAldawaa) ? -0.5 : 0,
             height: 1,
           ),
         ),
@@ -386,6 +396,8 @@ class BrandOffersSection extends StatelessWidget {
               final store = stores[index];
               final color = store['color'] as Color;
               final hasCoupon = store['hasCoupon'] as bool;
+              final isAldawaa = store['name'] == 'الدواء' || (store['nameEn'] as String? ?? '').toLowerCase() == 'al-dawaa';
+
               return GestureDetector(
                 onTap: () => _launchBrand(store['url']),
                 child: Column(
@@ -394,16 +406,22 @@ class BrandOffersSection extends StatelessWidget {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: AppPalette.orange.withValues(alpha: 0.15),
+                        color: isAldawaa
+                            ? Colors.black.withValues(alpha: 0.05)
+                            : AppPalette.orange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: AppPalette.orange.withValues(alpha: 0.4),
+                          color: isAldawaa
+                              ? Colors.black.withValues(alpha: 0.15)
+                              : AppPalette.orange.withValues(alpha: 0.4),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppPalette.orange.withValues(alpha: 0.15),
-                            blurRadius: 20,
+                            color: isAldawaa
+                                ? Colors.black.withValues(alpha: 0.1)
+                                : AppPalette.orange.withValues(alpha: 0.15),
+                            blurRadius: isAldawaa ? 12 : 20,
                             offset: const Offset(0, 8),
                           ),
                         ],
@@ -411,7 +429,9 @@ class BrandOffersSection extends StatelessWidget {
                       child: Container(
                         margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: AppPalette.orange.withValues(alpha: hasCoupon ? 0.2 : 0.12),
+                          color: isAldawaa
+                              ? Colors.black.withValues(alpha: 0.05)
+                              : AppPalette.orange.withValues(alpha: hasCoupon ? 0.2 : 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Stack(
@@ -451,9 +471,9 @@ class BrandOffersSection extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppPalette.navy,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                          color: AppPalette.brandNavyDeep,
                           height: 1.2,
                         ),
                       ),

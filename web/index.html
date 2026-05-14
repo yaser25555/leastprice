@@ -38,8 +38,10 @@
       ];
 
       function isNoise(args) {
-        const msg = Array.from(args).map(a => String(a)).join(' ');
-        return noise.some(n => msg.includes(n));
+        try {
+          const msg = Array.from(args).map(a => String(a)).join(' ');
+          return noise.some(n => msg.includes(n));
+        } catch (e) { return false; }
       }
 
       console.error = function() {
@@ -60,7 +62,8 @@
       }, true);
 
       window.addEventListener('unhandledrejection', (e) => {
-        if (e.reason && String(e.reason).includes('AbortError')) {
+        const reason = String(e.reason || '');
+        if (reason.includes('AbortError') || noise.some(n => reason.includes(n))) {
           e.stopImmediatePropagation();
           e.preventDefault();
         }
@@ -123,23 +126,8 @@
     window.firebase = { app, db, auth, storage };
   </script>
 
-  <!-- OneSignal Web SDK -->
+  <!-- OneSignal Web SDK (Delayed initialization to prevent boot interference) -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      try {
-        await OneSignal.init({
-          appId: "715316fc-13d0-4fee-b0f8-860b4d38dee6",
-          safari_web_id: "web.onesignal.auto.5b1b15a7-d107-41ff-b02e-c379c8847bd2",
-          notifyButton: { enable: true },
-          allowLocalhostAsSecureOrigin: true,
-        });
-      } catch (e) {
-        console.warn('OneSignal init failed:', e);
-      }
-    });
-  </script>
 </head>
 <body>
   <script>
@@ -147,88 +135,94 @@
     const versionStorageKey = 'leastprice_web_build_version';
 
     async function getRemoteVersionKey() {
-      const response = await fetch(`${versionInfoUrl}?t=${Date.now()}`, {
-        cache: 'no-store',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Unable to fetch version.json (${response.status})`);
-      }
-
-      const payload = await response.json();
-      return [
-        payload.app_name || 'leastprice',
-        payload.version || '0',
-        payload.build_number || '0',
-      ].join('@');
+      try {
+        const response = await fetch(`${versionInfoUrl}?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+        });
+        if (!response.ok) return 'fallback-' + Date.now();
+        const payload = await response.json();
+        return [
+          payload.app_name || 'leastprice',
+          payload.version || '0',
+          payload.build_number || '0',
+        ].join('@');
+      } catch (e) { return 'error-' + Date.now(); }
     }
 
     async function clearFlutterWebCaches() {
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(
-          registrations.map(async (registration) => {
-            try {
-              await registration.unregister();
-            } catch (_) {}
-          }),
-        );
-      }
-
-      if ('caches' in window) {
-        const cacheKeys = await caches.keys();
-        await Promise.all(
-          cacheKeys.map(async (cacheKey) => {
-            try {
-              await caches.delete(cacheKey);
-            } catch (_) {}
-          }),
-        );
-      }
-    }
-
-    async function refreshServiceWorkers() {
-      if (!('serviceWorker' in navigator)) {
-        return;
-      }
-
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(
-        registrations.map(async (registration) => {
-          try {
-            await registration.update();
-          } catch (_) {}
-        }),
-      );
+      try {
+        // Unregister ALL service workers
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const reg of registrations) {
+            await reg.unregister();
+          }
+        }
+        // Delete ALL caches
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          for (const key of keys) {
+            await caches.delete(key);
+          }
+        }
+      } catch (_) {}
     }
 
     async function bootLatestVersion() {
-      let remoteVersionKey = '1.0.0';
+      let bootTriggered = false;
+
+      const triggerBoot = (vKey) => {
+        if (bootTriggered) return;
+        bootTriggered = true;
+        
+        const script = document.createElement('script');
+        // Aggressive Cache Busting: version key + timestamp
+        script.src = `flutter_bootstrap.js?v=${encodeURIComponent(vKey)}&t=${Date.now()}`;
+        script.async = true;
+        document.body.appendChild(script);
+
+        // Initialize OneSignal AFTER Flutter starts to avoid worker conflicts
+        setTimeout(() => {
+          if (window.OneSignalDeferred) {
+            window.OneSignalDeferred.push(async function(OneSignal) {
+              try {
+                await OneSignal.init({
+                  appId: "715316fc-13d0-4fee-b0f8-860b4d38dee6",
+                  safari_web_id: "web.onesignal.auto.5b1b15a7-d107-41ff-b02e-c379c8847bd2",
+                  notifyButton: { enable: false },
+                  allowLocalhostAsSecureOrigin: true,
+                });
+              } catch (e) {}
+            });
+          }
+        }, 4000);
+      };
+
+      // Failsafe: if anything hangs, boot after 2.5 seconds anyway
+      const failsafe = setTimeout(() => triggerBoot('failsafe-' + Date.now()), 2500);
 
       try {
-        remoteVersionKey = await getRemoteVersionKey();
+        const remoteVersionKey = await getRemoteVersionKey();
         const previousVersionKey = localStorage.getItem(versionStorageKey);
 
-        if (previousVersionKey && previousVersionKey !== remoteVersionKey) {
-          console.info('New version detected, clearing caches...');
+        // If version changed, clear EVERYTHING before booting
+        if (previousVersionKey !== remoteVersionKey) {
           await clearFlutterWebCaches();
+          localStorage.setItem(versionStorageKey, remoteVersionKey);
         }
-
-        localStorage.setItem(versionStorageKey, remoteVersionKey);
-        await refreshServiceWorkers();
-      } catch (error) {
-        // If version check fails, don't trigger a cache clear/refresh loop
-        console.warn('LeastPrice latest-version check failed (using local):', error);
-        remoteVersionKey = localStorage.getItem(versionStorageKey) || '1.0.0';
+        
+        clearTimeout(failsafe);
+        triggerBoot(remoteVersionKey);
+      } catch (e) {
+        clearTimeout(failsafe);
+        triggerBoot('error-' + Date.now());
       }
-
-      const script = document.createElement('script');
-      script.src = `flutter_bootstrap.js?v=${encodeURIComponent(remoteVersionKey)}`;
-      script.async = true;
-      document.body.appendChild(script);
     }
 
     bootLatestVersion();
   </script>
 </body>
+</html>
+</html>
 </html>
