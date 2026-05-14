@@ -155,8 +155,8 @@ class _CouponsListSectionState extends State<CouponsListSection> {
 
               // Coupons List Logic
               if (snapshot.connectionState == ConnectionState.waiting && coupons.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Center(
                     child: CircularProgressIndicator(color: AppPalette.orange),
                   ),
