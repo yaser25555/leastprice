@@ -29,6 +29,8 @@ import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/features/home/favorites_screen.dart';
 import 'package:leastprice/features/home/price_alerts_screen.dart';
+import 'package:leastprice/features/home/offers_center_section.dart';
+import 'package:leastprice/features/home/ads_center_section.dart';
 
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
@@ -488,13 +490,14 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: CompactHeaderSection(
-                      currentUserLabel: userProfile.phoneNumber.isNotEmpty
-                          ? userProfile.phoneNumber
-                          : (widget
-                                  .currentUser.email?.trim().isNotEmpty ==
-                                  true
-                              ? widget.currentUser.email!.trim()
-                              : tr('مستخدم موثّق', 'Verified user')),
+                      currentUserLabel: userProfile.displayName.trim().isNotEmpty
+                          ? userProfile.displayName.trim()
+                          : (userProfile.phoneNumber.isNotEmpty
+                              ? userProfile.phoneNumber
+                              : (widget.currentUser.email?.trim().isNotEmpty ==
+                                      true
+                                  ? widget.currentUser.email!.trim()
+                                  : tr('متسوق ذكي', 'Smart Shopper'))),
                       inviteCode: userProfile.inviteCode,
                       invitedFriendsCount: userProfile.invitedFriendsCount,
                       systemHealthLabel: systemHealth.statusLabel,
@@ -618,30 +621,16 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                     ),
                   // Removed ExclusiveDealsSection from here as per user request to move it to Ads section
                   if (showOffersSection)
-                    SliverToBoxAdapter(
-                      child: StoresByCategorySection(
-                        isPaid: isPaidPlanActive,
-                        onUpgradeTap: () =>
-                            _selectHomeSection(HomeCatalogSection.plans),
-                      ),
+                    const SliverToBoxAdapter(
+                      child: OffersCenterSection(),
                     ),
                   if (showAdsSection)
                     SliverToBoxAdapter(
-                      child: AdBannersSection(
-                        banners: activeBanners,
-                        onBannerTap: (_) => _actions.openExternalUrl(
-                          context,
-                          LeastPriceDataConfig.adminWhatsAppUrl,
-                        ),
-                      ),
-                    ),
-                  if (showAdsSection)
-                    SliverToBoxAdapter(
-                      child: ExclusiveDealsSection(
-                        stream: widget.firebaseReady
-                            ? _catalogService.watchExclusiveDeals()
-                            : Stream<List<ExclusiveDeal>>.value(
-                                ExclusiveDeal.mockData),
+                      child: AdsCenterSection(
+                        adsStream: _catalogService.watchAdBanners(),
+                        dealsStream: _catalogService.watchExclusiveDeals(),
+                        onAdTap: (ad) =>
+                            _actions.openExternalUrl(context, ad.targetUrl),
                       ),
                     ),
                   if (showCouponsSection && isPaidPlanActive)

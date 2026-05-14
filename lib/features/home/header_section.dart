@@ -321,9 +321,10 @@ class _CompactHeaderSectionState extends State<CompactHeaderSection> {
                                     child: Text(
                                       '${tr('مرحباً', 'Hello')} ${widget.currentUserLabel}',
                                       style: const TextStyle(
-                                        color: Color(0xFFFFD9BA),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.2,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,

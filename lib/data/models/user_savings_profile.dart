@@ -20,6 +20,8 @@ class UserSavingsProfile {
 
   final String userId;
   final String phoneNumber;
+  final String email;
+  final String displayName;
   final String inviteCode;
   final String invitedBy;
   final int invitedFriendsCount;
@@ -30,6 +32,8 @@ class UserSavingsProfile {
   final String planStatus;
   final String adminRole;
 
+  String get shortId => userId.length >= 8 ? userId.substring(0, 8).toUpperCase() : userId.toUpperCase();
+
   bool get isMarketingManager =>
       adminRole.trim().toLowerCase() == 'marketing_manager';
 
@@ -37,6 +41,8 @@ class UserSavingsProfile {
     return const UserSavingsProfile(
       userId: '',
       phoneNumber: '',
+      email: '',
+      displayName: '',
       inviteCode: 'LP-RIY-204',
       invitedBy: '',
       invitedFriendsCount: 0,
@@ -55,6 +61,8 @@ class UserSavingsProfile {
     return UserSavingsProfile(
       userId: stringValue(json['userId']) ?? '',
       phoneNumber: stringValue(json['phoneNumber']) ?? '',
+      email: stringValue(json['email']) ?? '',
+      displayName: stringValue(json['displayName'] ?? json['name']) ?? '',
       inviteCode: stringValue(json['referralCode'] ?? json['inviteCode']) ??
           'LP-RIY-204',
       invitedBy: stringValue(json['invitedBy']) ?? '',
@@ -89,6 +97,8 @@ class UserSavingsProfile {
   UserSavingsProfile copyWith({
     String? userId,
     String? phoneNumber,
+    String? email,
+    String? displayName,
     String? inviteCode,
     String? invitedBy,
     int? invitedFriendsCount,
@@ -102,6 +112,8 @@ class UserSavingsProfile {
     return UserSavingsProfile(
       userId: userId ?? this.userId,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      email: email ?? this.email,
+      displayName: displayName ?? this.displayName,
       inviteCode: inviteCode ?? this.inviteCode,
       invitedBy: invitedBy ?? this.invitedBy,
       invitedFriendsCount: invitedFriendsCount ?? this.invitedFriendsCount,
@@ -119,6 +131,8 @@ class UserSavingsProfile {
   Map<String, dynamic> toFirestoreMap() {
     return {
       'phoneNumber': phoneNumber,
+      'email': email,
+      'displayName': displayName,
       'referralCode': inviteCode,
       if (invitedBy.trim().isNotEmpty) 'invitedBy': invitedBy,
       'invitedCount': invitedFriendsCount,

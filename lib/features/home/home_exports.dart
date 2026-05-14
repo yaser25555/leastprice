@@ -32,3 +32,5 @@ export 'package:leastprice/features/home/brand_offers_section.dart';
 export 'package:leastprice/features/home/popular_stores_section.dart';
 export 'package:leastprice/features/home/store_offers_screen.dart';
 export 'package:leastprice/features/home/stores_by_category_section.dart';
+export 'offers_center_section.dart';
+export 'ads_center_section.dart';

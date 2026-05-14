@@ -316,6 +316,7 @@ class FirestoreCatalogService {
     String? pendingInviteCode,
     String? requiredPhoneNumber,
     String? emailAddress,
+    String? displayName,
   }) async {
     final userDocument = _usersCollection.doc(user.uid);
     final snapshot = await userDocument.get();
@@ -339,6 +340,7 @@ class FirestoreCatalogService {
               phoneNumber.isNotEmpty ? phoneNumber : currentProfile.phoneNumber,
           'referralCode': inviteCode,
           if (email.isNotEmpty) 'email': email,
+          if (displayName?.trim().isNotEmpty == true) 'displayName': displayName!.trim(),
           'shareBaseUrl': currentProfile.shareBaseUrl,
           'inviteMessageTemplate': currentProfile.inviteMessageTemplate,
           'lastLoginAt': FieldValue.serverTimestamp(),
@@ -350,6 +352,7 @@ class FirestoreCatalogService {
         userId: user.uid,
         phoneNumber:
             phoneNumber.isNotEmpty ? phoneNumber : currentProfile.phoneNumber,
+        displayName: displayName?.trim().isNotEmpty == true ? displayName!.trim() : currentProfile.displayName,
         inviteCode: inviteCode,
       );
     }
@@ -364,6 +367,8 @@ class FirestoreCatalogService {
     final profile = UserSavingsProfile(
       userId: user.uid,
       phoneNumber: phoneNumber,
+      email: email,
+      displayName: displayName?.trim() ?? '',
       inviteCode: referralCode,
       invitedBy: invitedBy,
       invitedFriendsCount: 0,

@@ -28,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _referralController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   bool _isRegisterMode = false;
   bool _isSubmitting = false;
   bool _isSendingPasswordReset = false;
@@ -173,6 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _referralController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -202,6 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
     final referralCode =
         _isRegisterMode ? _referralController.text.trim().toUpperCase() : '';
+    final displayName = _isRegisterMode ? _nameController.text.trim() : null;
 
     if (_isRegisterMode && normalizedPhone == null) {
       messenger.showSnackBar(
@@ -280,6 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
         pendingInviteCode: PendingAuthSession.consumeInviteCode(),
         requiredPhoneNumber: _isRegisterMode ? normalizedPhone : null,
         emailAddress: normalizedEmail,
+        displayName: displayName,
       );
       await _persistRememberedLoginInfo(normalizedEmail);
       if (!mounted) return;
@@ -545,6 +549,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   },
                           ),
+                          if (_isRegisterMode) ...[
+                            const SizedBox(height: 14),
+                            TextField(
+                              controller: _nameController,
+                              textCapitalization: TextCapitalization.words,
+                              decoration: InputDecoration(
+                                labelText: tr('الاسم الكامل', 'Full Name'),
+                                hintText: tr('أدخل اسمك الكريم', 'Enter your name'),
+                                prefixIcon: const Icon(Icons.person_outline_rounded),
+                              ),
+                            ),
+                          ],
                           if (_isRegisterMode) ...[
                             const SizedBox(height: 12),
                             TextField(

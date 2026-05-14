@@ -39,12 +39,12 @@ class HomeSectionSwitcher extends StatelessWidget {
         children: [
           Expanded(
             child: HomeSectionSwitcherButton(
-              label: tr('العروض والإعلانات', 'Offers & Ads'),
-              icon: Icons.campaign_rounded,
-              isSelected: selectedSection == HomeCatalogSection.ads,
-              activeColor: AppPalette.navy,
-              activeBackground: AppPalette.softOrange,
-              onTap: () => onSectionSelected(HomeCatalogSection.ads),
+              label: tr('أقل سعر', 'Lowest Price'),
+              icon: Icons.compare_arrows_rounded,
+              isSelected: selectedSection == HomeCatalogSection.comparisons,
+              activeColor: AppPalette.comparisonEmerald,
+              activeBackground: AppPalette.comparisonSoftEmerald,
+              onTap: () => onSectionSelected(HomeCatalogSection.comparisons),
             ),
           ),
           const SizedBox(width: 4),
@@ -61,12 +61,12 @@ class HomeSectionSwitcher extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: HomeSectionSwitcherButton(
-              label: tr('السعر الأقل', 'Lowest Price'),
-              icon: Icons.compare_arrows_rounded,
-              isSelected: selectedSection == HomeCatalogSection.comparisons,
-              activeColor: AppPalette.comparisonEmerald,
-              activeBackground: AppPalette.comparisonSoftEmerald,
-              onTap: () => onSectionSelected(HomeCatalogSection.comparisons),
+              label: tr('العروض والإعلانات', 'Offers & Ads'),
+              icon: Icons.campaign_rounded,
+              isSelected: selectedSection == HomeCatalogSection.ads,
+              activeColor: AppPalette.navy,
+              activeBackground: AppPalette.softOrange,
+              onTap: () => onSectionSelected(HomeCatalogSection.ads),
             ),
           ),
           const SizedBox(width: 4),

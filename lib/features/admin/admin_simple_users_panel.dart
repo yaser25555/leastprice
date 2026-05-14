@@ -168,15 +168,52 @@ class AdminSimpleUsersPanel extends StatelessWidget {
                               color: Colors.white,
                             ),
                           ),
-                          title: Text(
-                            phoneLabel,
-                            style: const TextStyle(fontWeight: FontWeight.w800),
+                          title: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppPalette.navy.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'ID: ${user.shortId}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppPalette.navy,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  phoneLabel,
+                                  style: const TextStyle(fontWeight: FontWeight.w800),
+                                ),
+                              ),
+                            ],
                           ),
-                          subtitle: Text(
-                            'UID: ${user.userId}\n'
-                            '${tr('الخطة', 'Plan')}: ${user.planStatus} • '
-                            '${tr('الدور', 'Role')}: ${user.adminRole}',
-                            style: const TextStyle(height: 1.5),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 4),
+                              if (user.email.isNotEmpty)
+                                Text(
+                                  user.email,
+                                  style: TextStyle(
+                                    color: AppPalette.brandNavyDeep,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${tr('الخطة', 'Plan')}: ${user.planStatus} • '
+                                '${tr('الدور', 'Role')}: ${user.adminRole}',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
                           ),
                           isThreeLine: true,
                           trailing: SizedBox(
