@@ -406,5 +406,18 @@ class Coupon {
         'Extra discount code for gold jewelry.',
       ),
     ),
+    Coupon(
+      id: 'coupon-algharbi',
+      code: 'F-GBVHF',
+      storeId: 'algharbi',
+      storeName: tr('الغربي', 'Al-Gharbi'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون الغربي الحصري', 'Exclusive Al-Gharbi coupon'),
+      description: tr(
+        'كود خصم على المكسرات والبهارات والعسل.',
+        'Discount code for nuts, spices, and honey.',
+      ),
+    ),
   ];
 }

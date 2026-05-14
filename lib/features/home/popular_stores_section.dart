@@ -127,6 +127,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFFB8860B),
       'logoUrl': 'https://cdn.salla.sa/form-builder/6O3ALxj3G9WBPCTaSWydXRDRwutZHHI153Jbxy5z.png',
     },
+    {
+      'id': 'algharbi',
+      'name': 'الغربي',
+      'nameEn': 'Al-Gharbi',
+      'url': 'https://algharbis.com/',
+      'color': Color(0xFF5D4037),
+      'logoUrl': 'https://cdn.files.salla.network/theme/2015884868/e6d46e9c-b114-4d9c-ac31-37522b369b3c.webp',
+    },
   ];
 
   @override
