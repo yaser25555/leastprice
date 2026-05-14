@@ -166,14 +166,14 @@ class ExclusiveDeal {
       dealUrl: 'https://mtjr.at/FN2AIl2KWs',
     ),
     ExclusiveDeal(
-      id: 'kabsh_najd_deal',
-      title: 'أضاحي كبش نجد - جودة ومصداقية',
-      imageUrl: 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=1000&auto=format&fit=crop',
+      id: 'nice_sa_deal',
+      title: 'متجر نايس - أقوى عروض المنزل والديكور',
+      imageUrl: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=1000&auto=format&fit=crop',
       beforePrice: 0,
       afterPrice: 0,
-      expiryDate: DateTime.now().add(const Duration(days: 45)),
+      expiryDate: DateTime.now().add(const Duration(days: 30)),
       active: true,
-      dealUrl: 'https://mtjr.at/_2-N8J8JYq',
+      dealUrl: 'https://go.urtrackinglink.com/SH9PN',
     ),
   ];
 }
