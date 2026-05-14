@@ -327,6 +327,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF7B1FA2),
       'logoUrl': 'https://cdn.salla.sa/YDdRl/VUtJDnuh75EkhGMbO0h2ad8VL3P3ZuR2xoZ87S3v.png',
     },
+    {
+      'id': 'laveen',
+      'name': 'لاڤين عباية',
+      'nameEn': 'Laveen Abaya',
+      'url': 'https://laveenabaya.com/',
+      'color': Color(0xFFAD1457),
+      'logoUrl': 'https://cdn.salla.sa/BYEEV/nwpvtKYcvRREjakwkM0BSgg2ogEawfsjNuPpi4Ki.png',
+    },
   ];
 
   @override

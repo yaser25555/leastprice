@@ -757,5 +757,18 @@ class Coupon {
         'Discount code for home laser devices.',
       ),
     ),
+    Coupon(
+      id: 'coupon-laveen',
+      code: 'F-FIYZ9',
+      storeId: 'laveen',
+      storeName: 'لاڤين عباية',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون لاڤين عباية الحصري', 'Exclusive Laveen Abaya coupon'),
+      description: tr(
+        'كود خصم على العبايات والبليزرات.',
+        'Discount code for abayas and blazers.',
+      ),
+    ),
   ];
 }
