@@ -98,7 +98,7 @@ void main() {
     });
 
     test('mockData has expected coupons', () {
-      expect(Coupon.mockData, hasLength(21));
+      expect(Coupon.mockData, hasLength(41));
       expect(Coupon.mockData[0].storeId, 'noon');
       expect(Coupon.mockData[1].storeId, 'noon');
       expect(Coupon.mockData[2].storeId, 'noon');
@@ -120,6 +120,26 @@ void main() {
       expect(Coupon.mockData[18].storeId, 'threeq');
       expect(Coupon.mockData[19].storeId, 'swanky');
       expect(Coupon.mockData[20].storeId, 'shaving360');
+      expect(Coupon.mockData[21].storeId, 'mtjr');
+      expect(Coupon.mockData[22].storeId, 'smarthub1');
+      expect(Coupon.mockData[23].storeId, 'ragroastery');
+      expect(Coupon.mockData[24].storeId, 'rakla');
+      expect(Coupon.mockData[25].storeId, 'burgundy');
+      expect(Coupon.mockData[26].storeId, 'takecard');
+      expect(Coupon.mockData[27].storeId, 'sadacards');
+      expect(Coupon.mockData[28].storeId, 'alanood');
+      expect(Coupon.mockData[29].storeId, 'herfitness');
+      expect(Coupon.mockData[30].storeId, 'eseven');
+      expect(Coupon.mockData[31].storeId, 'cozmazone');
+      expect(Coupon.mockData[32].storeId, 'bckyrdbbq');
+      expect(Coupon.mockData[33].storeId, 'freesia');
+      expect(Coupon.mockData[34].storeId, 'kilmananoud');
+      expect(Coupon.mockData[35].storeId, 'worldgivenchy');
+      expect(Coupon.mockData[36].storeId, 'bkam');
+      expect(Coupon.mockData[37].storeId, 'retskin');
+      expect(Coupon.mockData[38].storeId, 'retskin');
+      expect(Coupon.mockData[39].storeId, 'madyalteb');
+      expect(Coupon.mockData[40].storeId, 'marsil');
     });
 
     test('toFirestoreMap contains required fields', () {
