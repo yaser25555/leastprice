@@ -770,5 +770,18 @@ class Coupon {
         'Discount code for abayas and blazers.',
       ),
     ),
+    Coupon(
+      id: 'coupon-ayworlds',
+      code: 'F-8QU60',
+      storeId: 'ayworlds',
+      storeName: 'عالم ايوا',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون عالم ايوا الحصري', 'Exclusive Aywa World coupon'),
+      description: tr(
+        'كود خصم على بطاقات الشحن والمنتجات الرقمية.',
+        'Discount code for recharge cards and digital products.',
+      ),
+    ),
   ];
 }

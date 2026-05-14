@@ -335,6 +335,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFFAD1457),
       'logoUrl': 'https://cdn.salla.sa/BYEEV/nwpvtKYcvRREjakwkM0BSgg2ogEawfsjNuPpi4Ki.png',
     },
+    {
+      'id': 'ayworlds',
+      'name': 'عالم ايوا',
+      'nameEn': 'Aywa World',
+      'url': 'https://ayworlds.com/',
+      'color': Color(0xFF00695C),
+      'logoUrl': 'https://cdn.files.salla.network/theme/872576583/8489e417-0114-44b4-925c-2d0c9e37fb82.webp',
+    },
   ];
 
   @override
