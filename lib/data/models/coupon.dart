@@ -445,5 +445,18 @@ class Coupon {
         'Discount code for electronics and home appliances.',
       ),
     ),
+    Coupon(
+      id: 'coupon-swanky',
+      code: 'F-3YNKY',
+      storeId: 'swanky',
+      storeName: 'SWANKY',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون SWANKY الحصري', 'Exclusive SWANKY coupon'),
+      description: tr(
+        'كود خصم على آلات صنع القهوة.',
+        'Discount code for coffee machines.',
+      ),
+    ),
   ];
 }

@@ -159,6 +159,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF1565C0),
       'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/KyOpB/uueqzYPAWfI0mBIl20059dQbnbuh2JSOmIjnRGUu.png',
     },
+    {
+      'id': 'swanky',
+      'name': 'SWANKY',
+      'nameEn': 'SWANKY',
+      'url': 'https://swanky-road.sa/',
+      'color': Color(0xFF4E342E),
+      'logoUrl': 'https://cdn.files.salla.network/theme/511691211/797e0758-06c8-494a-92ce-35b20adc7e5b.webp',
+    },
   ];
 
   @override
