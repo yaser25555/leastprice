@@ -649,15 +649,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                         ),
                       ),
                     ),
-                  if (showOffersSection)
-                    SliverToBoxAdapter(
-                      child: ExclusiveDealsSection(
-                        stream: widget.firebaseReady
-                            ? _catalogService.watchExclusiveDeals()
-                            : Stream<List<ExclusiveDeal>>.value(
-                                ExclusiveDeal.mockData),
-                      ),
-                    ),
+                  // Removed ExclusiveDealsSection from here as per user request to move it to Ads section
                   if (showOffersSection)
                     SliverToBoxAdapter(
                       child: BrandOffersSection(),
@@ -674,6 +666,15 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                           context,
                           LeastPriceDataConfig.adminWhatsAppUrl,
                         ),
+                      ),
+                    ),
+                  if (showAdsSection)
+                    SliverToBoxAdapter(
+                      child: ExclusiveDealsSection(
+                        stream: widget.firebaseReady
+                            ? _catalogService.watchExclusiveDeals()
+                            : Stream<List<ExclusiveDeal>>.value(
+                                ExclusiveDeal.mockData),
                       ),
                     ),
                   if (showCouponsSection && isPaidPlanActive)

@@ -51,26 +51,6 @@ class _CouponsListSectionState extends State<CouponsListSection> {
       child: StreamBuilder<List<Coupon>>(
         stream: widget.stream,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting &&
-              !(snapshot.hasData && snapshot.data!.isNotEmpty)) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: Center(
-                child: CircularProgressIndicator(color: AppPalette.orange),
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return ComparisonSearchPlaceholder(
-              title: tr(
-                'تعذر تحميل الكوبونات حالياً.',
-                'Unable to load coupons right now.',
-              ),
-              icon: Icons.discount_outlined,
-            );
-          }
-
           final coupons = (snapshot.data ?? const <Coupon>[])
               .where(
                 (coupon) =>
@@ -80,15 +60,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
               )
               .toList();
 
-          if (coupons.isEmpty) {
-            return ComparisonSearchPlaceholder(
-              title: tr(
-                'لا توجد كوبونات نشطة حالياً. سنضيف المزيد قريبًا.',
-                'No active coupons right now. More are coming soon.',
-              ),
-              icon: Icons.local_offer_outlined,
-            );
-          }
+          final uniqueStores = _getUniqueStores(coupons);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,8 +76,8 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   Expanded(
                     child: Text(
                       tr(
-                        'كوبوناتك الحصرية (${coupons.length})',
-                        'Your exclusive coupons (${coupons.length})',
+                        'تصفح الكوبونات حسب المتجر',
+                        'Browse coupons by store',
                       ),
                       style: TextStyle(
                         color: AppPalette.panelText,
@@ -119,8 +91,8 @@ class _CouponsListSectionState extends State<CouponsListSection> {
               const SizedBox(height: 6),
               Text(
                 tr(
-                  'انسخ الكود قبل إتمام الطلب لتحصل على وفر إضافي.',
-                  'Copy the code before checkout to unlock extra savings.',
+                  'اختر المتجر المفضل لديك للحصول على أفضل الخصومات.',
+                  'Pick your favorite store to get the best discounts.',
                 ),
                 style: TextStyle(
                   color: AppPalette.mutedText,
@@ -129,16 +101,17 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Store Logos Quick Access
+              
+              // Store Logos Quick Access - ALWAYS VISIBLE
               SizedBox(
                 height: 85,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: _getUniqueStores(coupons).length,
+                  itemCount: uniqueStores.length,
                   separatorBuilder: (_, __) => const SizedBox(width: 14),
                   itemBuilder: (context, index) {
-                    final store = _getUniqueStores(coupons)[index];
-                    final isAldawaa = store['nameEn'].toLowerCase() == 'al-dawaa';
+                    final store = uniqueStores[index];
+                    final isAldawaa = (store['nameEn'] ?? '').toString().toLowerCase() == 'al-dawaa';
                     
                     return Column(
                       children: [
@@ -175,23 +148,42 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   },
                 ),
               ),
+              
               const SizedBox(height: 12),
               Divider(height: 1, color: AppPalette.navy.withValues(alpha: 0.1)),
               const SizedBox(height: 20),
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: coupons.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final coupon = coupons[index];
-                  return ExclusiveCouponCard(
-                    coupon: coupon,
-                    now: _now,
-                    onCopyCoupon: widget.onCopyCoupon,
-                  );
-                },
-              ),
+
+              // Coupons List Logic
+              if (snapshot.connectionState == ConnectionState.waiting && coupons.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32),
+                  child: Center(
+                    child: CircularProgressIndicator(color: AppPalette.orange),
+                  ),
+                )
+              else if (coupons.isEmpty)
+                ComparisonSearchPlaceholder(
+                  title: tr(
+                    'لا توجد كوبونات نشطة حالياً. سنضيف المزيد قريبًا.',
+                    'No active coupons right now. More are coming soon.',
+                  ),
+                  icon: Icons.local_offer_outlined,
+                )
+              else
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: coupons.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final coupon = coupons[index];
+                    return ExclusiveCouponCard(
+                      coupon: coupon,
+                      now: _now,
+                      onCopyCoupon: widget.onCopyCoupon,
+                    );
+                  },
+                ),
             ],
           );
         },
@@ -205,6 +197,8 @@ class _CouponsListSectionState extends State<CouponsListSection> {
       {'name': 'نون', 'nameEn': 'Noon', 'logoUrl': 'https://icon.horse/icon/noon.com'},
       {'name': 'أمازون', 'nameEn': 'Amazon', 'logoUrl': 'https://icon.horse/icon/amazon.sa'},
       {'name': 'نمشي', 'nameEn': 'Namshi', 'logoUrl': 'https://icon.horse/icon/namshi.com'},
+      {'name': 'شي إن', 'nameEn': 'SHEIN', 'logoUrl': 'https://icon.horse/icon/shein.com'},
+      {'name': 'آي هيرب', 'nameEn': 'iHerb', 'logoUrl': 'https://icon.horse/icon/iherb.com'},
       {'name': 'جرير', 'nameEn': 'Jarir', 'logoUrl': 'https://icon.horse/icon/jarir.com'},
       {'name': 'إكسترا', 'nameEn': 'Extra', 'logoUrl': 'https://icon.horse/icon/extra.com'},
       {'name': 'بنده', 'nameEn': 'Panda', 'logoUrl': 'https://www.panda.sa/_next/static/media/logo.f85b0530.svg'},
@@ -214,6 +208,9 @@ class _CouponsListSectionState extends State<CouponsListSection> {
       {'name': 'الدواء', 'nameEn': 'Al-Dawaa', 'logoUrl': ''},
       {'name': 'لولو', 'nameEn': 'Lulu', 'logoUrl': 'https://gcc.luluhypermarket.com/akn-logo-english.svg'},
       {'name': 'كارفور', 'nameEn': 'Carrefour', 'logoUrl': ''},
+      {'name': 'نايكي', 'nameEn': 'Nike', 'logoUrl': 'https://icon.horse/icon/nike.com'},
+      {'name': 'أديداس', 'nameEn': 'Adidas', 'logoUrl': 'https://icon.horse/icon/adidas.com'},
+      {'name': 'فانز', 'nameEn': 'Vans', 'logoUrl': 'https://icon.horse/icon/vans.com'},
     ];
 
     final Map<String, Map<String, dynamic>> seen = {};
