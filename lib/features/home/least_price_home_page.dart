@@ -10,7 +10,6 @@ import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/config/least_price_data_config.dart';
 import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/data/models/automation_health_status.dart';
-import 'package:leastprice/data/models/ad_banner_item.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/models/coupon.dart';
@@ -27,7 +26,6 @@ import 'package:leastprice/features/home/home_data_providers.dart';
 import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/features/home/favorites_screen.dart';
-import 'package:leastprice/features/home/price_alerts_screen.dart';
 import 'home_exports.dart';
 
 import 'package:leastprice/services/notifications/push_notification_service.dart';
@@ -356,9 +354,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     final hasInternet = ref.watch(connectivityProvider).value ?? true;
     final userProfileAsync = ref.watch(
         userProfileStreamProvider(widget.currentUser.uid));
-    final activeBannersAsync = ref.watch(adBannersStreamProvider);
-    final systemHealthAsync = ref.watch(systemHealthStreamProvider);
-
     final userProfile = userProfileAsync.value ?? widget.initialUserProfile;
     final systemHealth = systemHealthAsync.value ?? AutomationHealthStatus.initial();
 

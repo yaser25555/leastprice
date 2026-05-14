@@ -49,7 +49,7 @@ class AdsCenterSection extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 15),
               child: Text(
                 tr('عروض مميزة', 'Featured Ads'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppPalette.navy),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppPalette.navy),
               ),
             ),
             BannerCarousel(
@@ -76,7 +76,7 @@ class AdsCenterSection extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 15),
               child: Text(
                 tr('أقوى العروض الحصرية', 'Exclusive Deals'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppPalette.navy),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppPalette.navy),
               ),
             ),
             SizedBox(

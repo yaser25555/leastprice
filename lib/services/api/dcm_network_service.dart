@@ -18,19 +18,19 @@ class DcmNetworkService {
         final List<dynamic> data = json.decode(response.body);
         // هنا نقوم بتحويل البيانات القادمة من DCM إلى تنسيق ExclusiveDeal الخاص بتطبيقك
         return data.map((item) => ExclusiveDeal(
-          id: item['id'].toString(),
+          id: item['id']?.toString() ?? '',
           title: item['offer_name'] ?? '',
           imageUrl: item['image_url'] ?? '',
           dealUrl: item['tracking_url'] ?? '',
-          storeName: item['store_name'] ?? '',
-          description: item['description'] ?? '',
+          // storeName and description are not in ExclusiveDeal model, so we combine them into title if needed or omit
+          beforePrice: 0.0,
+          afterPrice: 0.0,
           expiryDate: DateTime.now().add(const Duration(days: 30)),
           active: true,
-          beforePrice: 0,
         )).toList();
       }
     } catch (e) {
-      print('Error fetching from DCM: $e');
+      // Error logging can be added here
     }
     return [];
   }
