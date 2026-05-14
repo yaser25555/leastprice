@@ -20,6 +20,13 @@ class ExclusiveCouponCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final remaining = coupon.expiresAt.difference(now);
     final remainingDays = remaining.inDays;
+    final logoUrl = (coupon.storeLogoUrl ?? '').trim().isNotEmpty
+        ? coupon.storeLogoUrl!.trim()
+        : resolveStoreLogoUrl(
+            storeId: coupon.storeId,
+            productUrl: coupon.storeUrl ?? '',
+            fallbackName: coupon.storeName,
+          );
     final expiryLabel = remaining.inHours >= 24
         ? tr(
             'ينتهي خلال ${remainingDays + 1} يوم',
@@ -56,11 +63,7 @@ class ExclusiveCouponCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(999),
                 child: Image.network(
-                  proxiedImageUrl(resolveStoreLogoUrl(
-                    storeId: coupon.storeId,
-                    productUrl: '',
-                    fallbackName: coupon.storeName,
-                  )),
+                  proxiedImageUrl(logoUrl),
                   width: 28,
                   height: 28,
                   fit: BoxFit.cover,

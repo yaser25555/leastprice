@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/data/seed/salla_affiliate_seed.dart';
 import 'package:leastprice/services/api/affiliate_link_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BrandOffersSection extends StatelessWidget {
   const BrandOffersSection({super.key});
 
-  static const List<Map<String, dynamic>> stores = [
+  static final List<Map<String, dynamic>> stores = [
     // ── الشركاء (لديهم كود خصم) ──
     {
       'name': 'دار الاميرات',
       'nameEn': 'Dar Al-Amirat',
       'url': 'https://mtjr.at/FN2AIl2KWs',
       'color': Color(0xFFE91E63),
-      'logoUrl': 'https://cdn.files.salla.network/homepage/1945128061/614d2162-eb21-4042-b1e3-d6d7b9286f0e.webp',
+      'logoUrl':
+          'https://cdn.files.salla.network/homepage/1945128061/614d2162-eb21-4042-b1e3-d6d7b9286f0e.webp',
       'hasCoupon': true,
     },
     {
@@ -22,7 +24,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Kabsh Najd',
       'url': 'https://mtjr.at/_2-N8J8JYq',
       'color': Color(0xFF8D6E63),
-      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/weVoN/0UmHZNzzcSTsJFxoUS7XUA44FKjBooAoaYdnBMRC.png',
+      'logoUrl':
+          'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/weVoN/0UmHZNzzcSTsJFxoUS7XUA44FKjBooAoaYdnBMRC.png',
       'hasCoupon': true,
     },
     {
@@ -30,7 +33,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Vanier',
       'url': 'https://mtjr.at/llD-L7SGIe',
       'color': Color(0xFF9C27B0),
-      'logoUrl': 'https://cdn.salla.sa/form-builder/PjqfVf7MC9Hk7RM5bnEot4UibG0L9y9x3ZgOvZfY.png',
+      'logoUrl':
+          'https://cdn.salla.sa/form-builder/PjqfVf7MC9Hk7RM5bnEot4UibG0L9y9x3ZgOvZfY.png',
       'hasCoupon': true,
     },
     {
@@ -38,7 +42,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Rashfa Dhikra',
       'url': 'https://mtjr.at/dKbDAZu6uC',
       'color': Color(0xFF8B4513),
-      'logoUrl': 'https://cdn.files.salla.network/theme/345471826/193dff3e-b377-4448-b706-3db43180a89c.webp',
+      'logoUrl':
+          'https://cdn.files.salla.network/theme/345471826/193dff3e-b377-4448-b706-3db43180a89c.webp',
       'hasCoupon': true,
     },
     {
@@ -46,7 +51,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Roshen',
       'url': 'https://mtjr.at/yyIPYOIhZT',
       'color': Color(0xFF1565C0),
-      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/YgzZmQ/I56MKkmn1AEjl84eqSzXmk2emQQus6kYLDRW1UEo.png',
+      'logoUrl':
+          'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/YgzZmQ/I56MKkmn1AEjl84eqSzXmk2emQQus6kYLDRW1UEo.png',
       'hasCoupon': true,
     },
     {
@@ -54,7 +60,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Roshen World Cup',
       'url': 'https://mtjr.at/Q5bZQdUrJ4',
       'color': Color(0xFF2E7D32),
-      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/YgzZmQ/I56MKkmn1AEjl84eqSzXmk2emQQus6kYLDRW1UEo.png',
+      'logoUrl':
+          'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/YgzZmQ/I56MKkmn1AEjl84eqSzXmk2emQQus6kYLDRW1UEo.png',
       'hasCoupon': true,
     },
     {
@@ -62,7 +69,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Futbol',
       'url': 'https://mtjr.at/e7RHqtq2c5',
       'color': Color(0xFFE65100),
-      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/wjRK/SfsYlKNePyTmQ7H7MkvaNErzbXPYy8hjY1M47OxT.png',
+      'logoUrl':
+          'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/wjRK/SfsYlKNePyTmQ7H7MkvaNErzbXPYy8hjY1M47OxT.png',
       'hasCoupon': true,
     },
     {
@@ -70,7 +78,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Al-Reem',
       'url': 'https://mtjr.at/ce3e1xVX7Y',
       'color': Color(0xFF4A148C),
-      'logoUrl': 'https://pps.whatsapp.net/v/t61.24694-24/473406790_1156112419527865_8391810256617029679_n.jpg?ccb=11-4&oh=01_Q5Aa4gHgZWvHYcvEtReDV3fGqekBSrEJR9oN_0GH5LIPtuqksw&oe=6A08D3E0&_nc_sid=5e03e0&_nc_cat=108',
+      'logoUrl':
+          'https://pps.whatsapp.net/v/t61.24694-24/473406790_1156112419527865_8391810256617029679_n.jpg?ccb=11-4&oh=01_Q5Aa4gHgZWvHYcvEtReDV3fGqekBSrEJR9oN_0GH5LIPtuqksw&oe=6A08D3E0&_nc_sid=5e03e0&_nc_cat=108',
       'hasCoupon': true,
     },
     {
@@ -78,7 +87,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Vibe',
       'url': 'https://mtjr.at/1H0-ZC1QMn',
       'color': Color(0xFFFF8F00),
-      'logoUrl': 'https://cdn.files.salla.network/theme/186398311/bd0cd056-72e4-41a8-af34-5177d3ac5b14.webp',
+      'logoUrl':
+          'https://cdn.files.salla.network/theme/186398311/bd0cd056-72e4-41a8-af34-5177d3ac5b14.webp',
       'hasCoupon': true,
     },
     {
@@ -86,7 +96,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Qatret Asal',
       'url': 'https://mtjr.at/zCUaC5F9e4',
       'color': Color(0xFFFFB300),
-      'logoUrl': 'https://cdn.files.salla.network/theme/601093752/565617a9-1dbd-456c-837c-e68b11434516.webp',
+      'logoUrl':
+          'https://cdn.files.salla.network/theme/601093752/565617a9-1dbd-456c-837c-e68b11434516.webp',
       'hasCoupon': true,
     },
     // ── المتاجر السعودية ──
@@ -159,7 +170,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Nahdi',
       'url': 'https://www.nahdionline.com/ar-sa/promo-flyer/clp',
       'color': Color(0xFF0D47A1),
-      'logoUrl': 'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png',
+      'logoUrl':
+          'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png',
       'hasCoupon': false,
     },
     {
@@ -240,7 +252,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Mamas & Papas',
       'url': 'https://mamasandpapas.ae/',
       'color': Color(0xFF4A4A4A),
-      'logoUrl': 'https://mamasandpapas.ae/on/demandware.static/Sites-MnP_AE-Site/-/default/dw8b06063c/images/logo.svg',
+      'logoUrl':
+          'https://mamasandpapas.ae/on/demandware.static/Sites-MnP_AE-Site/-/default/dw8b06063c/images/logo.svg',
       'hasCoupon': false,
     },
     {
@@ -256,7 +269,8 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Puma',
       'url': 'https://sa.puma.com/en/',
       'color': Color(0xFFBA0C2F),
-      'logoUrl': 'https://sa.puma.com/static/frontend/scandipwa/theme/en_US/Magento_Theme/static/media/puma.b1cfa416.svg',
+      'logoUrl':
+          'https://sa.puma.com/static/frontend/scandipwa/theme/en_US/Magento_Theme/static/media/puma.b1cfa416.svg',
       'hasCoupon': false,
     },
     {
@@ -264,10 +278,40 @@ class BrandOffersSection extends StatelessWidget {
       'nameEn': 'Natural Touch',
       'url': 'https://ntshop.sa/',
       'color': Color(0xFF1B5E20),
-      'logoUrl': 'https://media.zid.store/cdn-cgi/image/h=200,q=75,f=auto/https://media.zid.store/d3b973ce-4213-438e-a687-c37fd0413f43/3f4e438f-b022-4e27-8d1a-6171ffd640bf.png',
+      'logoUrl':
+          'https://media.zid.store/cdn-cgi/image/h=200,q=75,f=auto/https://media.zid.store/d3b973ce-4213-438e-a687-c37fd0413f43/3f4e438f-b022-4e27-8d1a-6171ffd640bf.png',
       'hasCoupon': false,
     },
+    ...SallaAffiliateSeed.stores.map(
+      (store) => {
+        'id': store['id'],
+        'name': store['name'],
+        'nameEn': store['nameEn'],
+        'url': store['url'],
+        'color': _affiliateCategoryColor(store['category'] as String?),
+        'logoUrl': store['logoUrl'],
+        'hasCoupon':
+            ((store['couponCode'] as String?)?.trim().isNotEmpty ?? false),
+      },
+    ),
   ];
+
+  static Color _affiliateCategoryColor(String? category) {
+    switch (category) {
+      case 'fashion':
+        return const Color(0xFFD81B60);
+      case 'shoes':
+        return const Color(0xFF1A237E);
+      case 'beauty':
+        return const Color(0xFF9C27B0);
+      case 'jewelry':
+        return const Color(0xFFB8860B);
+      case 'electronics':
+        return const Color(0xFF00695C);
+      default:
+        return AppPalette.orange;
+    }
+  }
 
   Future<void> _launchBrand(String url) async {
     final affiliateUrl = AffiliateLinkService.prepareForOpen(url);
@@ -396,7 +440,9 @@ class BrandOffersSection extends StatelessWidget {
               final store = stores[index];
               final color = store['color'] as Color;
               final hasCoupon = store['hasCoupon'] as bool;
-              final isAldawaa = store['name'] == 'الدواء' || (store['nameEn'] as String? ?? '').toLowerCase() == 'al-dawaa';
+              final isAldawaa = store['name'] == 'الدواء' ||
+                  (store['nameEn'] as String? ?? '').toLowerCase() ==
+                      'al-dawaa';
 
               return GestureDetector(
                 onTap: () => _launchBrand(store['url']),
@@ -431,7 +477,8 @@ class BrandOffersSection extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isAldawaa
                               ? Colors.black.withValues(alpha: 0.05)
-                              : AppPalette.orange.withValues(alpha: hasCoupon ? 0.2 : 0.12),
+                              : AppPalette.orange
+                                  .withValues(alpha: hasCoupon ? 0.2 : 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Stack(

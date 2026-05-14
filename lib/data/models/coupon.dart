@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:leastprice/core/utils/helpers.dart';
+import 'package:leastprice/data/seed/salla_affiliate_seed.dart';
 
 class Coupon {
   const Coupon({
@@ -14,6 +15,8 @@ class Coupon {
     this.active = true,
     this.title,
     this.description,
+    this.storeLogoUrl,
+    this.storeUrl,
   });
 
   final String id;
@@ -26,6 +29,8 @@ class Coupon {
   final bool active;
   final String? title;
   final String? description;
+  final String? storeLogoUrl;
+  final String? storeUrl;
 
   bool isExpiredAt(DateTime dateTime) => !expiresAt.isAfter(dateTime);
 
@@ -44,6 +49,8 @@ class Coupon {
     bool? active,
     String? title,
     String? description,
+    String? storeLogoUrl,
+    String? storeUrl,
   }) {
     return Coupon(
       id: id ?? this.id,
@@ -56,17 +63,21 @@ class Coupon {
       active: active ?? this.active,
       title: title ?? this.title,
       description: description ?? this.description,
+      storeLogoUrl: storeLogoUrl ?? this.storeLogoUrl,
+      storeUrl: storeUrl ?? this.storeUrl,
     );
   }
 
   factory Coupon.fromJson(Map<String, dynamic> json) {
     final code = stringValue(json['code'])?.trim() ?? '';
     final storeName = stringValue(json['storeName'])?.trim() ?? '';
-    final storeId = normalizeStoreIdToken(
-      stringValue(json['storeId']) ??
-          inferStoreIdFromUrl('', fallbackName: storeName) ??
-          '',
-    );
+    final rawStoreId = (stringValue(json['storeId']) ??
+            inferStoreIdFromUrl('', fallbackName: storeName) ??
+            '')
+        .trim();
+    final storeId = rawStoreId.startsWith('salla-')
+        ? rawStoreId
+        : normalizeStoreIdToken(rawStoreId);
     final discountLabel =
         stringValue(json['discountLabel'] ?? json['discount'])?.trim() ?? '';
     final discountPercent = _parseDiscountPercent(
@@ -87,6 +98,9 @@ class Coupon {
       active: boolValue(json['active'], defaultValue: true),
       title: stringValue(json['title'])?.trim(),
       description: stringValue(json['description'])?.trim(),
+      storeLogoUrl:
+          stringValue(json['storeLogoUrl'] ?? json['logoUrl'])?.trim(),
+      storeUrl: stringValue(json['storeUrl'] ?? json['url'])?.trim(),
     );
   }
 
@@ -110,7 +124,39 @@ class Coupon {
       if (title != null && title!.trim().isNotEmpty) 'title': title,
       if (description != null && description!.trim().isNotEmpty)
         'description': description,
+      if (storeLogoUrl != null && storeLogoUrl!.trim().isNotEmpty)
+        'storeLogoUrl': storeLogoUrl,
+      if (storeUrl != null && storeUrl!.trim().isNotEmpty) 'storeUrl': storeUrl,
     };
+  }
+
+  static Coupon _fromSallaAffiliateSeed(Map<String, Object?> store) {
+    final discountPercent = _parseDiscountPercent(store['discountPercent']);
+    final name = stringValue(store['name']) ?? '';
+    final nameEn = stringValue(store['nameEn']) ?? name;
+
+    return Coupon(
+      id: 'coupon-${stringValue(store['id'])}',
+      code: stringValue(store['couponCode'])?.trim() ?? '',
+      storeId: stringValue(store['id']) ?? '',
+      storeName: name,
+      discountLabel: tr(
+        stringValue(store['discountLabelAr']) ?? 'خصم إضافي',
+        stringValue(store['discountLabelEn']) ?? 'Extra discount',
+      ),
+      discountPercent: discountPercent,
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr(
+        'كوبون $name',
+        'Exclusive coupon from $nameEn',
+      ),
+      description: tr(
+        'انسخ الكود واستخدمه عند إتمام الطلب عبر رابط المتجر.',
+        'Copy the code and use it at checkout through the store link.',
+      ),
+      storeLogoUrl: stringValue(store['logoUrl'])?.trim(),
+      storeUrl: stringValue(store['url'])?.trim(),
+    );
   }
 
   static String _storeNameForId(String storeId) {
@@ -322,7 +368,8 @@ class Coupon {
       storeName: tr('روشن تذاكر كاس العالم', 'Roshen World Cup Tickets'),
       discountLabel: tr('خصم خاص', 'Special discount'),
       expiresAt: DateTime.now().add(const Duration(days: 60)),
-      title: tr('كوبون روشن لتذاكر كاس العالم', 'Exclusive Roshen World Cup coupon'),
+      title: tr(
+          'كوبون روشن لتذاكر كاس العالم', 'Exclusive Roshen World Cup coupon'),
       description: tr(
         'كود خصم على تذاكر كاس العالم.',
         'Discount code for World Cup tickets.',
@@ -400,7 +447,8 @@ class Coupon {
       storeName: tr('لمعة اللؤلؤة', 'Gold Lolwa'),
       discountLabel: tr('خصم إضافي', 'Extra discount'),
       expiresAt: DateTime.now().add(const Duration(days: 60)),
-      title: tr('كوبون لمعة اللؤلؤة الإضافي', 'Exclusive Gold Lolwa extra coupon'),
+      title:
+          tr('كوبون لمعة اللؤلؤة الإضافي', 'Exclusive Gold Lolwa extra coupon'),
       description: tr(
         'كود خصم إضافي على المشغولات الذهبية.',
         'Extra discount code for gold jewelry.',
@@ -569,7 +617,8 @@ class Coupon {
       storeName: 'العنود للأزياء',
       discountLabel: tr('خصم خاص', 'Special discount'),
       expiresAt: DateTime.now().add(const Duration(days: 60)),
-      title: tr('كوبون العنود للأزياء الحصري', 'Exclusive Al Anood Fashion coupon'),
+      title: tr(
+          'كوبون العنود للأزياء الحصري', 'Exclusive Al Anood Fashion coupon'),
       description: tr(
         'كود خصم على فساتين السهرة والمناسبات.',
         'Discount code for evening and occasion dresses.',
@@ -790,7 +839,8 @@ class Coupon {
       storeName: 'قمة زاوية الشفاء',
       discountLabel: tr('خصم خاص', 'Special discount'),
       expiresAt: DateTime.now().add(const Duration(days: 60)),
-      title: tr('كوبون قمة زاوية الشفاء الحصري', 'Exclusive Qimat Zawiya coupon'),
+      title:
+          tr('كوبون قمة زاوية الشفاء الحصري', 'Exclusive Qimat Zawiya coupon'),
       description: tr(
         'كود خصم على الذهب والمجوهرات.',
         'Discount code for gold and jewellery.',
@@ -1030,5 +1080,113 @@ class Coupon {
         'Discount code for luxury perfumes.',
       ),
     ),
+    Coupon(
+      id: 'coupon-zawya-beauty',
+      code: 'F-TLYHD',
+      storeId: 'zawya-beauty',
+      storeName: tr('زاوية التجميل', 'Zawya Beauty'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون زاوية التجميل الحصري', 'Exclusive Zawya Beauty coupon'),
+      description: tr(
+        'كود خصم على منتجات المكياج والجمال.',
+        'Discount code for makeup and beauty products.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-vanilla',
+      code: 'F-EIXNF',
+      storeId: 'vanilla',
+      storeName: tr('فانيلا', 'Vanilla'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون فانيلا الحصري', 'Exclusive Vanilla coupon'),
+      description: tr(
+        'كود خصم على العطور ومستحضرات التجميل الفاخرة.',
+        'Discount code for luxury perfumes and cosmetics.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-al-ajaeb',
+      code: 'F-7S0MB',
+      storeId: 'al-ajaeb',
+      storeName: tr('العجائب', 'Al-Ajaeb'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون العجائب الحصري', 'Exclusive Al-Ajaeb coupon'),
+      description: tr(
+        'كود خصم على منتجات العناية بالشعر.',
+        'Discount code for hair care products.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-vion',
+      code: 'F-CV511',
+      storeId: 'vion',
+      storeName: 'VION',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون VION الحصري', 'Exclusive VION coupon'),
+      description: tr(
+        'كود خصم على سيراميك الشعر ومكواة الشعر.',
+        'Discount code for hair straighteners and stylers.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-trendshoesksa',
+      code: 'F-MBUA0',
+      storeId: 'trendshoesksa',
+      storeName: tr('تريند شوز', 'TrendShoesKSA'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون حصري', 'Exclusive coupon'),
+      description: tr(
+        'كود خصم حصري.',
+        'Exclusive discount code.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-mass',
+      code: 'F-UOBZT',
+      storeId: 'mass',
+      storeName: tr('متجر ماس', 'MASS'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون حصري', 'Exclusive coupon'),
+      description: tr(
+        'كود خصم حصري.',
+        'Exclusive discount code.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-opera-fashion',
+      code: 'F-HDAYV',
+      storeId: 'opera-fashion',
+      storeName: tr('أوبرا فاشن', 'Opera Fashion'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون حصري', 'Exclusive coupon'),
+      description: tr(
+        'كود خصم حصري.',
+        'Exclusive discount code.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-housestore',
+      code: 'F-YZMCF',
+      storeId: 'housestore',
+      storeName: tr('هاوس ستور', 'HOUSE STORE'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون حصري', 'Exclusive coupon'),
+      description: tr(
+        'كود خصم حصري.',
+        'Exclusive discount code.',
+      ),
+    ),
+    ...SallaAffiliateSeed.stores
+        .where((store) =>
+            (stringValue(store['couponCode'])?.trim().isNotEmpty ?? false))
+        .map(_fromSallaAffiliateSeed),
   ];
 }

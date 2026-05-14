@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/theme/app_palette.dart';
 import 'core/theme/least_price_scroll_behavior.dart';
@@ -47,6 +48,9 @@ Future<void> main() async {
     firebaseBootstrapNotice =
         'تعذر تهيئة Firebase حالياً. تأكد من اكتمال ملفات FlutterFire وإعداد مشروع Firebase على المنصة الحالية.';
   }
+
+  // Initialize Hive for local caching
+  await Hive.initFlutter();
 
   // Load saved user preferences before running the app
   isFeminineTheme.value = await UserPreferencesService.loadFeminineTheme();

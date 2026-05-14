@@ -39,7 +39,7 @@ class HomeSectionSwitcher extends StatelessWidget {
         children: [
           Expanded(
             child: HomeSectionSwitcherButton(
-              label: tr('إعلانات', 'Ads'),
+              label: tr('العروض والإعلانات', 'Offers & Ads'),
               icon: Icons.campaign_rounded,
               isSelected: selectedSection == HomeCatalogSection.ads,
               activeColor: AppPalette.navy,
@@ -50,7 +50,7 @@ class HomeSectionSwitcher extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: HomeSectionSwitcherButton(
-              label: tr('العروض', 'Offers'),
+              label: tr('المتاجر', 'Stores'),
               icon: Icons.local_offer_rounded,
               isSelected: selectedSection == HomeCatalogSection.offers,
               activeColor: AppPalette.dealsRed,

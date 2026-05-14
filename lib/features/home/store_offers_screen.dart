@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
@@ -5,6 +7,7 @@ import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/services/api/affiliate_link_service.dart';
+import 'package:leastprice/services/cache/cache_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StoreOffersScreen extends ConsumerWidget {
@@ -608,6 +611,23 @@ class StoreOffersScreen extends ConsumerWidget {
   }
 }
 
-final allProductsStreamProvider = StreamProvider<List<ProductComparison>>((ref) {
-  return const FirestoreCatalogService().watchAllProducts();
+final allProductsStreamProvider = StreamProvider<List<ProductComparison>>((ref) async* {
+  final cache = CacheService.instance;
+  final firestoreService = const FirestoreCatalogService();
+
+  final cached = await cache.getCachedProducts();
+  if (cached != null && cached.isNotEmpty) {
+    yield cached
+        .map((json) => ProductComparison.fromJson(json))
+        .where((p) => p.buyUrl.trim().isNotEmpty)
+        .toList();
+  }
+
+  await for (final products in firestoreService.watchAllProducts()) {
+    final jsonList = products.map((p) => p.toFirestoreMap()).toList();
+    if (jsonList.isNotEmpty) {
+      unawaited(cache.cacheProducts(jsonList));
+    }
+    yield products;
+  }
 });

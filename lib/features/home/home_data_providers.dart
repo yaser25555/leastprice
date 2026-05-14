@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +11,7 @@ import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/data/repositories/product_repository.dart';
+import 'package:leastprice/services/cache/cache_service.dart';
 
 final firestoreCatalogProvider = Provider<FirestoreCatalogService>((ref) {
   return const FirestoreCatalogService();
@@ -25,9 +28,22 @@ final userProfileStreamProvider = StreamProvider.family
 });
 
 final adBannersStreamProvider =
-    StreamProvider.autoDispose<List<AdBannerItem>>((ref) {
+    StreamProvider.autoDispose<List<AdBannerItem>>((ref) async* {
   final catalog = ref.watch(firestoreCatalogProvider);
-  return catalog.watchAdBanners();
+  final cache = CacheService.instance;
+
+  final cached = await cache.getCachedBanners();
+  if (cached != null && cached.isNotEmpty) {
+    yield cached.map((json) => AdBannerItem.fromJson(json)).toList();
+  }
+
+  await for (final banners in catalog.watchAdBanners()) {
+    final jsonList = banners.map((b) => b.toFirestoreMap()).toList();
+    if (jsonList.isNotEmpty) {
+      unawaited(cache.cacheBanners(jsonList));
+    }
+    yield banners;
+  }
 });
 
 final systemHealthStreamProvider =
@@ -37,11 +53,26 @@ final systemHealthStreamProvider =
 });
 
 final productsStreamProvider =
-    StreamProvider.autoDispose<List<ProductComparison>>((ref) {
+    StreamProvider.autoDispose<List<ProductComparison>>((ref) async* {
   final catalog = ref.watch(firestoreCatalogProvider);
-  return catalog.watchProducts(
-    categoryId: ProductCategoryCatalog.allId,
-  );
+  final cache = CacheService.instance;
+
+  final cached = await cache.getCachedProducts();
+  if (cached != null && cached.isNotEmpty) {
+    yield cached
+        .map((json) => ProductComparison.fromJson(json))
+        .where((p) => p.buyUrl.trim().isNotEmpty)
+        .toList();
+  }
+
+  await for (final products
+      in catalog.watchProducts(categoryId: ProductCategoryCatalog.allId)) {
+    final jsonList = products.map((p) => p.toFirestoreMap()).toList();
+    if (jsonList.isNotEmpty) {
+      unawaited(cache.cacheProducts(jsonList));
+    }
+    yield products;
+  }
 });
 final favoritesStreamProvider = StreamProvider.autoDispose<List<Map<String, dynamic>>>((ref) {
   final user = FirebaseAuth.instance.currentUser;

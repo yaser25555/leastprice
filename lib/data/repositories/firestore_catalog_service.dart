@@ -151,9 +151,22 @@ class FirestoreCatalogService {
 
   Stream<List<Coupon>> watchFeaturedCoupons() {
     return watchCoupons().map((coupons) {
-      return coupons
+      final merged = <String, Coupon>{
+        for (final coupon in coupons) _couponMergeKey(coupon): coupon,
+      };
+      for (final coupon
+          in Coupon.mockData.where((c) => c.storeId.startsWith('salla-'))) {
+        if (coupon.active &&
+            !coupon.isExpiredAt(DateTime.now()) &&
+            coupon.code.trim().isNotEmpty) {
+          merged.putIfAbsent(_couponMergeKey(coupon), () => coupon);
+        }
+      }
+
+      return merged.values
           .where((coupon) => coupon.isSupportedFeaturedStore)
-          .toList();
+          .toList()
+        ..sort(_sortCoupons);
     });
   }
 
@@ -701,9 +714,8 @@ class FirestoreCatalogService {
         .where('productId', isEqualTo: productId)
         .orderBy('recordedAt', descending: false)
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => PriceSnapshot.fromFirestore(d))
-            .toList());
+        .map((snap) =>
+            snap.docs.map((d) => PriceSnapshot.fromFirestore(d)).toList());
   }
 
   Future<List<PriceSnapshot>> fetchPriceHistory(String productId) async {
@@ -711,9 +723,7 @@ class FirestoreCatalogService {
         .where('productId', isEqualTo: productId)
         .orderBy('recordedAt', descending: false)
         .get();
-    return snap.docs
-        .map((d) => PriceSnapshot.fromFirestore(d))
-        .toList();
+    return snap.docs.map((d) => PriceSnapshot.fromFirestore(d)).toList();
   }
 
   Future<void> savePriceSnapshot(PriceSnapshot snapshot) async {
@@ -725,9 +735,8 @@ class FirestoreCatalogService {
         .where('userId', isEqualTo: userId)
         .where('active', isEqualTo: true)
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => PriceAlert.fromFirestore(d))
-            .toList());
+        .map((snap) =>
+            snap.docs.map((d) => PriceAlert.fromFirestore(d)).toList());
   }
 
   Future<void> setPriceAlert({
@@ -793,6 +802,10 @@ class FirestoreCatalogService {
     }
 
     return a.code.compareTo(b.code);
+  }
+
+  String _couponMergeKey(Coupon coupon) {
+    return '${coupon.storeId.trim().toLowerCase()}__${coupon.code.trim().toUpperCase()}';
   }
 
   String _buildSearchRequestDocumentId({

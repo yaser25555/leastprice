@@ -32,3 +32,12 @@ tmp-*.jpg
 google-services.json
 android/app/google-services.json
 *-adminsdk*.json
+
+# Salla affiliate scrape temp files
+salla_affiliate_candidates.json
+salla_affiliate_results.json
+salla_affiliate_results.txt
+salla_affiliate_results_current_ar.txt
+salla_affiliate_results_current_ar.md
+.codex-salla-chrome-profile/
+tools/salla_affiliate_collect.mjs

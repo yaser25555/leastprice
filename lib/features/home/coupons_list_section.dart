@@ -101,7 +101,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Store Logos Quick Access - ALWAYS VISIBLE
               SizedBox(
                 height: 85,
@@ -111,20 +111,22 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   separatorBuilder: (_, __) => const SizedBox(width: 14),
                   itemBuilder: (context, index) {
                     final store = uniqueStores[index];
-                    final isAldawaa = (store['nameEn'] ?? '').toString().toLowerCase() == 'al-dawaa';
-                    
+                    final isAldawaa =
+                        (store['nameEn'] ?? '').toString().toLowerCase() ==
+                            'al-dawaa';
+
                     return Column(
                       children: [
                         Container(
                           width: 58,
                           height: 58,
                           decoration: BoxDecoration(
-                            color: isAldawaa 
+                            color: isAldawaa
                                 ? Colors.black.withValues(alpha: 0.05)
                                 : AppPalette.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
-                              color: isAldawaa 
+                              color: isAldawaa
                                   ? Colors.black.withValues(alpha: 0.1)
                                   : AppPalette.orange.withValues(alpha: 0.25),
                               width: 1.5,
@@ -148,13 +150,14 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   },
                 ),
               ),
-              
+
               const SizedBox(height: 12),
               Divider(height: 1, color: AppPalette.navy.withValues(alpha: 0.1)),
               const SizedBox(height: 20),
 
               // Coupons List Logic
-              if (snapshot.connectionState == ConnectionState.waiting && coupons.isEmpty)
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  coupons.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Center(
@@ -194,30 +197,122 @@ class _CouponsListSectionState extends State<CouponsListSection> {
   List<Map<String, dynamic>> _getUniqueStores(List<Coupon> coupons) {
     // Primary application stores (Major retailers)
     final List<Map<String, dynamic>> appStores = [
-      {'name': 'نون', 'nameEn': 'Noon', 'logoUrl': 'https://icon.horse/icon/noon.com'},
-      {'name': 'أمازون', 'nameEn': 'Amazon', 'logoUrl': 'https://icon.horse/icon/amazon.sa'},
-      {'name': 'نمشي', 'nameEn': 'Namshi', 'logoUrl': 'https://icon.horse/icon/namshi.com'},
-      {'name': 'شي إن', 'nameEn': 'SHEIN', 'logoUrl': 'https://icon.horse/icon/shein.com'},
-      {'name': 'آي هيرب', 'nameEn': 'iHerb', 'logoUrl': 'https://icon.horse/icon/iherb.com'},
-      {'name': 'سيـفورا', 'nameEn': 'Sephora', 'logoUrl': 'https://icon.horse/icon/sephora.com'},
-      {'name': 'جرير', 'nameEn': 'Jarir', 'logoUrl': 'https://icon.horse/icon/jarir.com'},
-      {'name': 'إكسترا', 'nameEn': 'Extra', 'logoUrl': 'https://icon.horse/icon/extra.com'},
-      {'name': 'بنده', 'nameEn': 'Panda', 'logoUrl': 'https://www.panda.sa/_next/static/media/logo.f85b0530.svg'},
-      {'name': 'العثيم', 'nameEn': 'Othaim', 'logoUrl': 'https://icon.horse/icon/othaimmarkets.com'},
-      {'name': 'التميمي', 'nameEn': 'Tamimi', 'logoUrl': 'https://www.tamimimarkets.com/__template/images/logo-01.png'},
-      {'name': 'النهدي', 'nameEn': 'Nahdi', 'logoUrl': 'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png'},
+      {
+        'name': 'نون',
+        'nameEn': 'Noon',
+        'logoUrl': 'https://icon.horse/icon/noon.com'
+      },
+      {
+        'name': 'أمازون',
+        'nameEn': 'Amazon',
+        'logoUrl': 'https://icon.horse/icon/amazon.sa'
+      },
+      {
+        'name': 'نمشي',
+        'nameEn': 'Namshi',
+        'logoUrl': 'https://icon.horse/icon/namshi.com'
+      },
+      {
+        'name': 'شي إن',
+        'nameEn': 'SHEIN',
+        'logoUrl': 'https://icon.horse/icon/shein.com'
+      },
+      {
+        'name': 'آي هيرب',
+        'nameEn': 'iHerb',
+        'logoUrl': 'https://icon.horse/icon/iherb.com'
+      },
+      {
+        'name': 'سيـفورا',
+        'nameEn': 'Sephora',
+        'logoUrl': 'https://icon.horse/icon/sephora.com'
+      },
+      {
+        'name': 'جرير',
+        'nameEn': 'Jarir',
+        'logoUrl': 'https://icon.horse/icon/jarir.com'
+      },
+      {
+        'name': 'إكسترا',
+        'nameEn': 'Extra',
+        'logoUrl': 'https://icon.horse/icon/extra.com'
+      },
+      {
+        'name': 'بنده',
+        'nameEn': 'Panda',
+        'logoUrl': 'https://www.panda.sa/_next/static/media/logo.f85b0530.svg'
+      },
+      {
+        'name': 'العثيم',
+        'nameEn': 'Othaim',
+        'logoUrl': 'https://icon.horse/icon/othaimmarkets.com'
+      },
+      {
+        'name': 'التميمي',
+        'nameEn': 'Tamimi',
+        'logoUrl': 'https://www.tamimimarkets.com/__template/images/logo-01.png'
+      },
+      {
+        'name': 'النهدي',
+        'nameEn': 'Nahdi',
+        'logoUrl':
+            'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png'
+      },
       {'name': 'الدواء', 'nameEn': 'Al-Dawaa', 'logoUrl': ''},
-      {'name': 'لولو', 'nameEn': 'Lulu', 'logoUrl': 'https://gcc.luluhypermarket.com/akn-logo-english.svg'},
+      {
+        'name': 'لولو',
+        'nameEn': 'Lulu',
+        'logoUrl': 'https://gcc.luluhypermarket.com/akn-logo-english.svg'
+      },
       {'name': 'كارفور', 'nameEn': 'Carrefour', 'logoUrl': ''},
-      {'name': 'نايكي', 'nameEn': 'Nike', 'logoUrl': 'https://icon.horse/icon/nike.com'},
-      {'name': 'أديداس', 'nameEn': 'Adidas', 'logoUrl': 'https://icon.horse/icon/adidas.com'},
-      {'name': 'فانز', 'nameEn': 'Vans', 'logoUrl': 'https://icon.horse/icon/vans.com'},
-      {'name': 'سن أند ساند', 'nameEn': 'Sun & Sand', 'logoUrl': 'https://icon.horse/icon/sssports.com'},
-      {'name': 'هدى بيوتي', 'nameEn': 'Huda Beauty', 'logoUrl': 'https://icon.horse/icon/hudabeauty.com'},
-      {'name': 'أندير آرمور', 'nameEn': 'Under Armour', 'logoUrl': 'https://icon.horse/icon/underarmour.com'},
-      {'name': 'ماماز آند باباز', 'nameEn': 'Mamas & Papas', 'logoUrl': 'https://mamasandpapas.ae/on/demandware.static/Sites-MnP_AE-Site/-/default/dw8b06063c/images/logo.svg'},
-      {'name': 'بوما', 'nameEn': 'Puma', 'logoUrl': 'https://sa.puma.com/static/frontend/scandipwa/theme/en_US/Magento_Theme/static/media/puma.b1cfa416.svg'},
-      {'name': 'ناتشورال تاتش', 'nameEn': 'Natural Touch', 'logoUrl': 'https://media.zid.store/cdn-cgi/image/h=200,q=75,f=auto/https://media.zid.store/d3b973ce-4213-438e-a687-c37fd0413f43/3f4e438f-b022-4e27-8d1a-6171ffd640bf.png'},
+      {
+        'name': 'نايكي',
+        'nameEn': 'Nike',
+        'logoUrl': 'https://icon.horse/icon/nike.com'
+      },
+      {
+        'name': 'أديداس',
+        'nameEn': 'Adidas',
+        'logoUrl': 'https://icon.horse/icon/adidas.com'
+      },
+      {
+        'name': 'فانز',
+        'nameEn': 'Vans',
+        'logoUrl': 'https://icon.horse/icon/vans.com'
+      },
+      {
+        'name': 'سن أند ساند',
+        'nameEn': 'Sun & Sand',
+        'logoUrl': 'https://icon.horse/icon/sssports.com'
+      },
+      {
+        'name': 'هدى بيوتي',
+        'nameEn': 'Huda Beauty',
+        'logoUrl': 'https://icon.horse/icon/hudabeauty.com'
+      },
+      {
+        'name': 'أندير آرمور',
+        'nameEn': 'Under Armour',
+        'logoUrl': 'https://icon.horse/icon/underarmour.com'
+      },
+      {
+        'name': 'ماماز آند باباز',
+        'nameEn': 'Mamas & Papas',
+        'logoUrl':
+            'https://mamasandpapas.ae/on/demandware.static/Sites-MnP_AE-Site/-/default/dw8b06063c/images/logo.svg'
+      },
+      {
+        'name': 'بوما',
+        'nameEn': 'Puma',
+        'logoUrl':
+            'https://sa.puma.com/static/frontend/scandipwa/theme/en_US/Magento_Theme/static/media/puma.b1cfa416.svg'
+      },
+      {
+        'name': 'ناتشورال تاتش',
+        'nameEn': 'Natural Touch',
+        'logoUrl':
+            'https://media.zid.store/cdn-cgi/image/h=200,q=75,f=auto/https://media.zid.store/d3b973ce-4213-438e-a687-c37fd0413f43/3f4e438f-b022-4e27-8d1a-6171ffd640bf.png'
+      },
     ];
 
     final Map<String, Map<String, dynamic>> seen = {};
@@ -229,11 +324,13 @@ class _CouponsListSectionState extends State<CouponsListSection> {
         seen[name] = {
           'name': name,
           'nameEn': name,
-          'logoUrl': resolveStoreLogoUrl(
-            storeId: c.storeId,
-            productUrl: '',
-            fallbackName: name,
-          ),
+          'logoUrl': (c.storeLogoUrl ?? '').trim().isNotEmpty
+              ? c.storeLogoUrl!.trim()
+              : resolveStoreLogoUrl(
+                  storeId: c.storeId,
+                  productUrl: c.storeUrl ?? '',
+                  fallbackName: name,
+                ),
         };
       }
     }
@@ -252,7 +349,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
     final logoUrl = store['logoUrl'] as String? ?? '';
     final name = store['name'] as String;
     final nameEn = (store['nameEn'] as String).toLowerCase();
-    
+
     final isAldawaa = nameEn == 'al-dawaa';
     final isCarrefour = nameEn == 'carrefour';
 
@@ -266,16 +363,18 @@ class _CouponsListSectionState extends State<CouponsListSection> {
         ),
       );
     }
-    
+
     return _buildTextFallback(name, nameEn);
   }
 
   Widget _buildTextFallback(String name, String nameEn) {
     final isCarrefour = nameEn == 'carrefour';
     final isAldawaa = nameEn == 'al-dawaa';
-    
-    final text = (isCarrefour || isAldawaa) ? name : (name.isNotEmpty ? name.characters.first : '?');
-    
+
+    final text = (isCarrefour || isAldawaa)
+        ? name
+        : (name.isNotEmpty ? name.characters.first : '?');
+
     Color textColor = AppPalette.orange;
     if (isCarrefour) textColor = const Color(0xFF003087);
     if (isAldawaa) textColor = Colors.black;

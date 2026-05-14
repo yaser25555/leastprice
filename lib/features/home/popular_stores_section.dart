@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:leastprice/core/theme/app_palette.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/data/models/coupon.dart';
+import 'package:leastprice/data/seed/salla_affiliate_seed.dart';
 import 'package:leastprice/features/home/store_offers_screen.dart';
 import 'package:leastprice/services/api/affiliate_link_service.dart';
 
@@ -17,7 +18,44 @@ class PopularStoresSection extends StatelessWidget {
   final bool isPaid;
   final VoidCallback? onUpgradeTap;
 
-  static const List<Map<String, dynamic>> stores = [
+  static const Color _catColorFashion = Color(0xFFD81B60);
+  static const Color _catColorBeauty = Color(0xFF9C27B0);
+  static const Color _catColorElectronics = Color(0xFF00695C);
+  static const Color _catColorJewelry = Color(0xFFB8860B);
+  static const Color _catColorShoes = Color(0xFF1A237E);
+  static const Color _catColorOther = Color(0xFF607D8B);
+
+  static Color _colorForCategory(String cat) {
+    switch (cat) {
+      case 'fashion':
+        return _catColorFashion;
+      case 'beauty':
+        return _catColorBeauty;
+      case 'electronics':
+        return _catColorElectronics;
+      case 'jewelry':
+        return _catColorJewelry;
+      case 'shoes':
+      case 'sports':
+        return _catColorShoes;
+      default:
+        return _catColorOther;
+    }
+  }
+
+  static List<Map<String, dynamic>> get stores {
+    final seedStores = SallaAffiliateSeed.stores.map((s) => {
+          'id': s['id'] as String? ?? '',
+          'name': s['name'] as String? ?? '',
+          'nameEn': s['nameEn'] as String? ?? '',
+          'url': s['url'] as String? ?? '',
+          'color': _colorForCategory(s['category'] as String? ?? 'other'),
+          'logoUrl': s['logoUrl'] as String? ?? '',
+        });
+    return [..._manualStores, ...seedStores];
+  }
+
+  static const List<Map<String, dynamic>> _manualStores = [
     {
       'id': 'noon',
       'name': 'نون',
@@ -561,6 +599,70 @@ class PopularStoresSection extends StatelessWidget {
       'url': 'https://golden-flora.com/',
       'color': Color(0xFFD4AF37),
       'logoUrl': 'https://cdn.files.salla.network/theme/1526962400/a611630a-8bee-48f4-83e3-5862e881eb16.webp',
+    },
+    {
+      'id': 'zawya-beauty',
+      'name': 'زاوية التجميل',
+      'nameEn': 'Zawya Beauty',
+      'url': 'https://mtjr.at/h17sGc_J_I',
+      'color': Color(0xFFE91E63),
+      'logoUrl': 'https://cdn.files.salla.network/theme/875954336/c95597e4-0c18-429d-ad44-f04ce1beb59b.webp',
+    },
+    {
+      'id': 'vanilla',
+      'name': 'فانيلا',
+      'nameEn': 'Vanilla',
+      'url': 'https://mtjr.at/bAqdtL0fsC',
+      'color': Color(0xFF7B1FA2),
+      'logoUrl': 'https://cdn.salla.sa/dqYz/29gFymuetLC5kPRrb6sk8lRPgDZlryKYf41dWCig.jpg',
+    },
+    {
+      'id': 'al-ajaeb',
+      'name': 'العجائب',
+      'nameEn': 'Al-Ajaeb',
+      'url': 'https://mtjr.at/nQjQwehVEG',
+      'color': Color(0xFF2E7D32),
+      'logoUrl': 'https://cdn.salla.sa/KPpXD/TA15bFHSZccw26t8zbknGC2Pe7xGZLaM6PzTAMZ6.png',
+    },
+    {
+      'id': 'vion',
+      'name': 'VION',
+      'nameEn': 'VION',
+      'url': 'https://mtjr.at/4mulF6oPTP',
+      'color': Color(0xFFE91E63),
+      'logoUrl': 'https://cdn.salla.sa/rNlBj/xGCxVYK42nlshUzuXi3WIwzlA8VL9zAt8KwNTEiH.png',
+    },
+    {
+      'id': 'trendshoesksa',
+      'name': 'تريند شوز',
+      'nameEn': 'TrendShoesKSA',
+      'url': 'https://mtjr.at/s-vty423A4',
+      'color': Color(0xFFFF5722),
+      'logoUrl': 'https://cdn.files.salla.network/theme/269331473/b088bf07-f65c-4da2-b7fa-23114bfdd363.webp',
+    },
+    {
+      'id': 'mass',
+      'name': 'متجر ماس',
+      'nameEn': 'MASS',
+      'url': 'https://mtjr.at/RWAJpS5n1w',
+      'color': Color(0xFF9C27B0),
+      'logoUrl': 'https://cdn.salla.sa/QvEwN/IKzQdOnMvdXCUhuy3H1bHVr4JNZd27XD9O1OZaUy.png',
+    },
+    {
+      'id': 'opera-fashion',
+      'name': 'أوبرا فاشن',
+      'nameEn': 'Opera Fashion',
+      'url': 'https://mtjr.at/WLpQYiflLI',
+      'color': Color(0xFF009688),
+      'logoUrl': 'https://cdn.salla.sa/KAdxD/JuCPlNIPeTa7CrMAT9iEymyovtynpJ77XHufOAZd.png',
+    },
+    {
+      'id': 'housestore',
+      'name': 'HOUSE STORE',
+      'nameEn': 'HOUSE STORE',
+      'url': 'https://mtjr.at/RxE9m4Ge6L',
+      'color': Color(0xFF795548),
+      'logoUrl': 'https://cdn.salla.sa/onpDqX/YVEN4bsU5bv7so4sSGkUcyn0FV2tp67Az1O4VprY.png',
     },
   ];
 
