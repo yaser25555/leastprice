@@ -30,6 +30,7 @@ class StoreOffersScreen extends ConsumerWidget {
     final productsAsync = ref.watch(allProductsStreamProvider);
 
     return Scaffold(
+      backgroundColor: AppPalette.orange.withValues(alpha: 0.03),
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
@@ -62,7 +63,7 @@ class StoreOffersScreen extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFFFBF8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -387,7 +388,7 @@ class StoreOffersScreen extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFFFFBF8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

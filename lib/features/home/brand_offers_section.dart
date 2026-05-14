@@ -394,10 +394,10 @@ class BrandOffersSection extends StatelessWidget {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: color.withValues(alpha: 0.25),
+                          color: color.withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                         boxShadow: [

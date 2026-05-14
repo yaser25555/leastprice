@@ -191,7 +191,7 @@ class PopularStoresSection extends StatelessWidget {
                       width: 84,
                       height: 84,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.05),
+                        color: color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -206,7 +206,7 @@ class PopularStoresSection extends StatelessWidget {
                           ),
                         ],
                         border: Border.all(
-                          color: color.withValues(alpha: 0.2),
+                          color: color.withValues(alpha: 0.25),
                           width: 1.5,
                         ),
                       ),
