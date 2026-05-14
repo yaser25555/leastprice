@@ -121,7 +121,7 @@ void main() {
       expect(ExclusiveDeal.mockData[0].title, contains('سامسونج'));
       expect(ExclusiveDeal.mockData[1].title, contains('أبل'));
       expect(ExclusiveDeal.mockData[2].title, contains('دار الأميرات'));
-      expect(ExclusiveDeal.mockData[3].title, contains('كبش نجد'));
+      expect(ExclusiveDeal.mockData[3].title, contains('نايس'));
     });
   });
 }
