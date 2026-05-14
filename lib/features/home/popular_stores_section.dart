@@ -143,6 +143,22 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF558B2F),
       'logoUrl': 'https://cdn.salla.sa/mmXOE/cSikL3jGCNx5pwaWgRBPQ6XyyHJcGHOM49yic0Ey.png',
     },
+    {
+      'id': 'alhawwaj',
+      'name': 'الحواج',
+      'nameEn': 'Al-Hawwaj',
+      'url': 'https://alhawwaj.com/',
+      'color': Color(0xFFBF360C),
+      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/rAQjG/kJhGt4Op8XpbKyoU72xA3TnXzl5ELkHMNkSIMyD2.png',
+    },
+    {
+      'id': 'threeq',
+      'name': 'ثلاث أرباع',
+      'nameEn': '3Q',
+      'url': 'https://3q.sa/',
+      'color': Color(0xFF1565C0),
+      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/KyOpB/uueqzYPAWfI0mBIl20059dQbnbuh2JSOmIjnRGUu.png',
+    },
   ];
 
   @override

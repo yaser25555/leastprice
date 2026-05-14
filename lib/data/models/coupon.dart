@@ -432,5 +432,18 @@ class Coupon {
         'Discount code for natural olive oil.',
       ),
     ),
+    Coupon(
+      id: 'coupon-threeq',
+      code: 'F-VVDLU',
+      storeId: 'threeq',
+      storeName: tr('ثلاث أرباع', '3Q'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون ثلاث أرباع الحصري', 'Exclusive 3Q coupon'),
+      description: tr(
+        'كود خصم على الأجهزة الكهربائية والإلكترونيات.',
+        'Discount code for electronics and home appliances.',
+      ),
+    ),
   ];
 }

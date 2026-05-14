@@ -41,6 +41,8 @@ class CouponsPaywallSection extends StatelessWidget {
         _PaywallStore('لمعة اللؤلؤة', Color(0xFFB8860B), AppPalette.pureWhite),
         _PaywallStore('الغربي', Color(0xFF5D4037), AppPalette.pureWhite),
         _PaywallStore('مشكاة مران', Color(0xFF558B2F), AppPalette.pureWhite),
+        _PaywallStore('الحواج', Color(0xFFBF360C), AppPalette.pureWhite),
+        _PaywallStore('ثلاث أرباع', Color(0xFF1565C0), AppPalette.pureWhite),
       ];
 
   @override
