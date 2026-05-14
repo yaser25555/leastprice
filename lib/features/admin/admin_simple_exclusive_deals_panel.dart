@@ -7,6 +7,7 @@ import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 import 'package:leastprice/features/admin/admin_exclusive_deal_editor_dialog.dart';
+import 'package:leastprice/services/api/dcm_network_service.dart';
 
 class AdminSimpleExclusiveDealsPanel extends StatefulWidget {
   const AdminSimpleExclusiveDealsPanel({super.key, required this.service});
@@ -21,6 +22,44 @@ class AdminSimpleExclusiveDealsPanel extends StatefulWidget {
 class _AdminSimpleExclusiveDealsPanelState
     extends State<AdminSimpleExclusiveDealsPanel> {
   User? get _actor => FirebaseAuth.instance.currentUser;
+
+  bool _isSyncing = false;
+
+  Future<void> _syncDcmOffers() async {
+    setState(() => _isSyncing = true);
+    try {
+      final dcmService = DcmNetworkService();
+      final offers = await dcmService.fetchLatestOffers();
+      
+      int count = 0;
+      for (final deal in offers) {
+        await widget.service.saveExclusiveDeal(
+          deal,
+          editorUserId: _actor?.uid,
+          editorEmail: _actor?.email,
+        );
+        count++;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              tr('تمت مزامنة $count عرضاً من DCM بنجاح.', 'Synced $count offers from DCM successfully.'),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(tr('خطأ في المزامنة: $e', 'Sync error: $e'))),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSyncing = false);
+    }
+  }
 
   Future<void> _add() async {
     final deal = await showDialog<ExclusiveDeal>(
@@ -228,10 +267,31 @@ class _AdminSimpleExclusiveDealsPanelState
                         color: Color(0xFF1B2F5E),
                       ),
                     ),
-                    FilledButton.icon(
-                      onPressed: _add,
-                      icon: const Icon(Icons.add_rounded),
-                      label: Text(tr('إضافة عرض', 'Add deal')),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_isSyncing)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        else
+                          TextButton.icon(
+                            onPressed: _syncDcmOffers,
+                            icon: const Icon(Icons.sync_rounded),
+                            label: Text(tr('مزامنة DCM', 'Sync DCM')),
+                          ),
+                        const SizedBox(width: 8),
+                        FilledButton.icon(
+                          onPressed: _add,
+                          icon: const Icon(Icons.add_rounded),
+                          label: Text(tr('إضافة عرض', 'Add deal')),
+                        ),
+                      ],
                     ),
                   ],
                 ),
