@@ -30,11 +30,18 @@ class StoreOffersScreen extends ConsumerWidget {
     final productsAsync = ref.watch(allProductsStreamProvider);
 
     return Scaffold(
-      backgroundColor: AppPalette.orange.withValues(alpha: 0.03),
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context),
-          SliverPadding(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppPalette.turquoise, AppPalette.navy],
+          ),
+        ),
+        child: CustomScrollView(
+          slivers: [
+            _buildSliverAppBar(context),
+            SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             sliver: productsAsync.when(
               loading: () => const SliverFillRemaining(
@@ -52,6 +59,7 @@ class StoreOffersScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

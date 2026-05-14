@@ -20,7 +20,6 @@ String? storeIdForHost(String? host) {
   if (normalizedHost.contains('amazon')) return 'amazon';
   if (normalizedHost.contains('noon')) return 'noon';
   if (normalizedHost.contains('namshi')) return 'namshi';
-  if (normalizedHost.contains('hungerstation')) return 'hungerstation';
   if (normalizedHost.contains('panda')) return 'panda';
   if (normalizedHost.contains('othaim')) return 'othaim';
   if (normalizedHost.contains('farm')) return 'almazraa';
@@ -28,7 +27,6 @@ String? storeIdForHost(String? host) {
   if (normalizedHost.contains('carrefour')) return 'carrefour';
   if (normalizedHost.contains('tamimi')) return 'tamimi';
   if (normalizedHost.contains('toyou')) return 'toyou';
-  if (normalizedHost.contains('keeta')) return 'keeta';
   if (normalizedHost.contains('nahdi')) return 'nahdi';
   if (normalizedHost.contains('dawaa')) return 'aldawaa';
   if (normalizedHost.contains('jarir')) return 'jarir';
@@ -56,8 +54,6 @@ String? domainForStoreId(String storeId) {
       return 'amazon.sa';
     case 'noon':
       return 'noon.com';
-    case 'hungerstation':
-      return 'hungerstation.com';
     case 'panda':
       return 'panda.sa';
     case 'othaim':
@@ -72,8 +68,6 @@ String? domainForStoreId(String storeId) {
       return 'tamimimarkets.com';
     case 'toyou':
       return 'toyou.io';
-    case 'keeta':
-      return 'keeta.com.sa';
     case 'nahdi':
       return 'nahdionline.com';
     case 'aldawaa':
@@ -127,10 +121,6 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   if (normalizedName.contains('نمشي') || normalizedName.contains('namshi')) {
     return 'namshi';
   }
-  if (normalizedName.contains('هنجرستيشن') ||
-      normalizedName.contains('hungerstation')) {
-    return 'hungerstation';
-  }
   if (normalizedName.contains('بنده') || normalizedName.contains('panda')) {
     return 'panda';
   }
@@ -154,9 +144,6 @@ String? inferStoreIdFromUrl(String url, {String? fallbackName}) {
   }
   if (normalizedName.contains('تويو') || normalizedName.contains('toyou')) {
     return 'toyou';
-  }
-  if (normalizedName.contains('كيتا') || normalizedName.contains('keeta')) {
-    return 'keeta';
   }
   if (normalizedName.contains('النهدي') || normalizedName.contains('nahdi')) {
     return 'nahdi';
@@ -234,12 +221,8 @@ String inferComparisonChannelType(
       normalized.contains('دواء')) {
     return 'pharmacy';
   }
-  if (normalized.contains('hungerstation') ||
-      normalized.contains('toyou') ||
-      normalized.contains('keeta') ||
-      normalized.contains('هنجرستيشن') ||
-      normalized.contains('تويو') ||
-      normalized.contains('كيتا')) {
+  if (normalized.contains('toyou') ||
+      normalized.contains('تويو')) {
     return 'delivery';
   }
   if (normalized.contains('amazon') ||
@@ -283,7 +266,6 @@ String resolveStoreLogoUrl({
     'amazon': 'amazon.sa',
     'noon': 'noon.com',
     'namshi': 'namshi.com',
-    'hungerstation': 'hungerstation.com',
     'panda': 'panda.sa',
     'othaim': 'othaimmarkets.com',
     'almazraa': 'farm.com.sa',
@@ -291,7 +273,6 @@ String resolveStoreLogoUrl({
     'carrefour': 'carrefourksa.com',
     'tamimi': 'tamimimarkets.com',
     'toyou': 'toyou.io',
-    'keeta': 'keeta.com',
     'nahdi': 'nahdionline.com',
     'aldawaa': 'al-dawaa.com',
   };

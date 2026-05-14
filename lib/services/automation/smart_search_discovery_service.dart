@@ -95,7 +95,7 @@ class SmartSearchDiscoveryService {
         : '${ProductCategoryCatalog.lookup(selectedCategoryId).label} ';
 
     return '$query $categoryHintسعر مكونات السعودية '
-        'site:amazon.sa OR site:noon.com OR site:nahdionline.com OR site:al-dawaa.com OR site:hungerstation.com OR site:jahez.net OR site:mrsool.co';
+        'site:amazon.sa OR site:noon.com OR site:nahdionline.com OR site:al-dawaa.com OR site:jahez.net OR site:mrsool.co';
   }
 
   SmartSearchCandidate? _buildCandidate(
@@ -283,7 +283,6 @@ class SmartSearchDiscoveryService {
     if (normalized.contains('noon')) return 'Noon';
     if (normalized.contains('nahdi')) return 'النهدي';
     if (normalized.contains('dawaa')) return 'الدواء';
-    if (normalized.contains('hungerstation')) return 'HungerStation';
     if (normalized.contains('jahez')) return 'جاهز';
     if (normalized.contains('mrsool')) return 'مرسول';
     return host;

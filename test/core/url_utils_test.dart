@@ -95,17 +95,6 @@ void main() {
       );
     });
 
-    test('returns delivery for hungerstation', () {
-      expect(
-        inferComparisonChannelType(
-          'hungerstation',
-          'https://hungerstation.com',
-          'HungerStation',
-        ),
-        'delivery',
-      );
-    });
-
     test('returns electronics for jarir', () {
       expect(
         inferComparisonChannelType('jarir', 'https://jarir.com', 'جرير'),

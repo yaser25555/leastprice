@@ -24,22 +24,6 @@ class PopularStoresSection extends StatelessWidget {
       'logoUrl': 'https://icon.horse/icon/amazon.sa',
     },
     {
-      'id': 'keeta',
-      'name': 'كيتا',
-      'nameEn': 'Keeta',
-      'url': 'https://keeta.com/',
-      'color': Color(0xFFFF6B35),
-      'logoUrl': 'https://img-ap-hongkong.mykeeta.net/sailorfempcpublic/keeta_icon.png',
-    },
-    {
-      'id': 'hungerstation',
-      'name': 'هنجرستيشن',
-      'nameEn': 'HungerStation',
-      'url': 'https://www.hungerstation.com/',
-      'color': Color(0xFFE91E63),
-      'logoUrl': 'https://hungerstation.com/_next/static/media/hungerstation-logo-shadow.f55495d3.svg',
-    },
-    {
       'id': 'panda',
       'name': 'بنده',
       'nameEn': 'Panda',

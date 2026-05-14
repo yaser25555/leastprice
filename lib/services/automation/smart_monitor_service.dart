@@ -82,7 +82,6 @@ class SmartMonitorService {
           'noon.com',
           'nahdionline.com',
           'al-dawaa.com',
-          'hungerstation.com',
           'jahez.net',
           'mrsool.co',
         ],
@@ -133,7 +132,7 @@ class SmartMonitorService {
 
   String _buildAlternativeQuery(ProductComparison product) {
     return '${product.alternativeName} السعودية سعر '
-        'site:noon.com OR site:amazon.sa OR site:nahdionline.com OR site:al-dawaa.com OR site:hungerstation.com OR site:jahez.net';
+        'site:noon.com OR site:amazon.sa OR site:nahdionline.com OR site:al-dawaa.com OR site:jahez.net';
   }
 
   SearchResultItem? _selectBestMatch(

@@ -338,7 +338,7 @@ class ProductComparison {
       alternativePrice: 18.00,
       alternativeImageUrl:
           'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80',
-      buyUrl: 'https://www.hungerstation.com/sa-en',
+      buyUrl: 'https://www.noon.com/saudi-ar',
       rating: 4.9,
       reviewCount: 278,
       tags: ['بيج ماك', 'برجر', 'الخبر', 'مطعم مميز', 'الشرقية'],

@@ -42,7 +42,6 @@ class ComparisonSearchResult {
       'extra',
       'nahdi',
       'aldawaa',
-      'hungerstation',
       'panda',
       'othaim',
       'carrefour',

@@ -124,11 +124,11 @@ class CouponsPaywallSection extends StatelessWidget {
                 );
               },
               child: Text(
-                key: ValueKey(couponCount),
+                key: const ValueKey('coupons_text'),
                 couponCount > 0
                     ? tr(
-                        'يوجد $couponCount كوبون بانتظارك',
-                        'There are $couponCount coupons waiting for you',
+                        'العديد من الكوبونات بنسب خصم مذهلة',
+                        'Many coupons with amazing discounts',
                       )
                     : tr(
                         'كوبونات حصرية في انتظارك',
@@ -156,13 +156,24 @@ class CouponsPaywallSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 18),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 10,
-              runSpacing: 10,
-              children: _featuredStores
-                  .map((store) => _StoreChip(store: store))
-                  .toList(growable: false),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                const columns = 4;
+                const spacing = 10.0;
+                final chipWidth =
+                    (constraints.maxWidth - (columns - 1) * spacing) / columns;
+                return Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: spacing,
+                  runSpacing: 10,
+                  children: _featuredStores
+                      .map((store) => SizedBox(
+                            width: chipWidth,
+                            child: _StoreChip(store: store),
+                          ))
+                      .toList(growable: false),
+                );
+              },
             ),
             const SizedBox(height: 18),
             Container(
@@ -274,19 +285,24 @@ class _StoreChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
       decoration: BoxDecoration(
         color: store.background,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppPalette.cardBorder.withValues(alpha: 0.4)),
       ),
-      child: Text(
-        store.label,
-        style: TextStyle(
-          color: store.foreground,
-          fontWeight: FontWeight.w900,
-          fontSize: 13,
-          letterSpacing: 0.4,
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            store.label,
+            style: TextStyle(
+              color: store.foreground,
+              fontWeight: FontWeight.w900,
+              fontSize: 13,
+              letterSpacing: 0.4,
+            ),
+          ),
         ),
       ),
     );

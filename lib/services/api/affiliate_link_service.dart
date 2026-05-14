@@ -13,8 +13,6 @@ class AffiliateLinkService {
     'www.nahdionline.com',
     'al-dawaa.com',
     'www.al-dawaa.com',
-    'hungerstation.com',
-    'www.hungerstation.com',
     'jahez.net',
     'www.jahez.net',
     'mrsool.co',
