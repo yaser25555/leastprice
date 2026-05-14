@@ -135,6 +135,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF5D4037),
       'logoUrl': 'https://cdn.files.salla.network/theme/2015884868/e6d46e9c-b114-4d9c-ac31-37522b369b3c.webp',
     },
+    {
+      'id': 'mshkatmran',
+      'name': 'مشكاة مران',
+      'nameEn': 'Mshkat Mran',
+      'url': 'https://mshkatmran.com/',
+      'color': Color(0xFF558B2F),
+      'logoUrl': 'https://cdn.salla.sa/mmXOE/cSikL3jGCNx5pwaWgRBPQ6XyyHJcGHOM49yic0Ey.png',
+    },
   ];
 
   @override

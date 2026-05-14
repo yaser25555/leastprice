@@ -419,5 +419,18 @@ class Coupon {
         'Discount code for nuts, spices, and honey.',
       ),
     ),
+    Coupon(
+      id: 'coupon-mshkatmran',
+      code: 'F-XUQOU',
+      storeId: 'mshkatmran',
+      storeName: tr('مشكاة مران', 'Mshkat Mran'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون مشكاة مران الحصري', 'Exclusive Mshkat Mran coupon'),
+      description: tr(
+        'كود خصم على زيت الزيتون الطبيعي.',
+        'Discount code for natural olive oil.',
+      ),
+    ),
   ];
 }
