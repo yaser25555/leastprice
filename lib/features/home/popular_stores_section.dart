@@ -343,6 +343,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF00695C),
       'logoUrl': 'https://cdn.files.salla.network/theme/872576583/8489e417-0114-44b4-925c-2d0c9e37fb82.webp',
     },
+    {
+      'id': 'qzs',
+      'name': 'قمة زاوية الشفاء',
+      'nameEn': 'Qimat Zawiya',
+      'url': 'https://qzs-ksa.com/',
+      'color': Color(0xFFB8860B),
+      'logoUrl': 'https://cdn.salla.sa/wvABj/LsnsCyJ13qp3ucuFvSQy23Z6cwMJmvsSSPOFkLBv.png',
+    },
   ];
 
   @override

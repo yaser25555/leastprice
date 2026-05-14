@@ -783,5 +783,18 @@ class Coupon {
         'Discount code for recharge cards and digital products.',
       ),
     ),
+    Coupon(
+      id: 'coupon-qzs',
+      code: 'F-VDHT1',
+      storeId: 'qzs',
+      storeName: 'قمة زاوية الشفاء',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون قمة زاوية الشفاء الحصري', 'Exclusive Qimat Zawiya coupon'),
+      description: tr(
+        'كود خصم على الذهب والمجوهرات.',
+        'Discount code for gold and jewellery.',
+      ),
+    ),
   ];
 }
