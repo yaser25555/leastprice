@@ -111,6 +111,22 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF004D99),
       'logoUrl': '', // Using stylized text fallback to avoid 404/CORS issues
     },
+    {
+      'id': 'itsmine',
+      'name': 'اتزماين',
+      'nameEn': 'Itsmine',
+      'url': 'https://itsminesa.com/',
+      'color': Color(0xFFD81B60),
+      'logoUrl': 'https://cdn.salla.sa/cdn-cgi/image/fit=scale-down,width=400,height=400,onerror=redirect,format=auto/RNqgx/g7t1WwklZEv0MBi1l8UXmI8wHHPVfhbYOt6hE2Em.png',
+    },
+    {
+      'id': 'goldlolwa',
+      'name': 'لمعة اللؤلؤة',
+      'nameEn': 'Gold Lolwa',
+      'url': 'https://goldlolwa.com/',
+      'color': Color(0xFFB8860B),
+      'logoUrl': 'https://cdn.salla.sa/form-builder/6O3ALxj3G9WBPCTaSWydXRDRwutZHHI153Jbxy5z.png',
+    },
   ];
 
   @override

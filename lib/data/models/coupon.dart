@@ -367,5 +367,44 @@ class Coupon {
         'Discount code for honey and natural products.',
       ),
     ),
+    Coupon(
+      id: 'coupon-itsmine',
+      code: 'F-Q2HLV',
+      storeId: 'itsmine',
+      storeName: tr('اتزماين', 'Itsmine'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون اتزماين الحصري', 'Exclusive Itsmine coupon'),
+      description: tr(
+        'كود خصم على الأزياء النسائية.',
+        'Discount code for women\'s fashion.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-goldlolwa-1',
+      code: 'F-Y520I',
+      storeId: 'goldlolwa',
+      storeName: tr('لمعة اللؤلؤة', 'Gold Lolwa'),
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون لمعة اللؤلؤة الحصري', 'Exclusive Gold Lolwa coupon'),
+      description: tr(
+        'كود خصم على المشغولات الذهبية.',
+        'Discount code for gold jewelry.',
+      ),
+    ),
+    Coupon(
+      id: 'coupon-goldlolwa-2',
+      code: 'F-L0DGK',
+      storeId: 'goldlolwa',
+      storeName: tr('لمعة اللؤلؤة', 'Gold Lolwa'),
+      discountLabel: tr('خصم إضافي', 'Extra discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون لمعة اللؤلؤة الإضافي', 'Exclusive Gold Lolwa extra coupon'),
+      description: tr(
+        'كود خصم إضافي على المشغولات الذهبية.',
+        'Extra discount code for gold jewelry.',
+      ),
+    ),
   ];
 }
