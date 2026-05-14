@@ -283,6 +283,20 @@ class Coupon {
       ),
     ),
     Coupon(
+      id: 'coupon-noon-ndz190',
+      code: 'NDZ190',
+      storeId: 'noon',
+      storeName: 'Noon',
+      discountLabel: tr('خصم خاص ٥٠ ريال', '50 SAR Special Discount'),
+      discountPercent: 10,
+      expiresAt: DateTime.now().add(const Duration(days: 30)),
+      title: tr('كوبون نون الجديد', 'New Noon coupon'),
+      description: tr(
+        'انسخ الكود NDZ190 واستخدمه عند إتمام الطلب.',
+        'Copy code NDZ190 and use it at checkout.',
+      ),
+    ),
+    Coupon(
       id: 'coupon-namshi',
       code: 'STYLE20',
       storeId: 'namshi',
