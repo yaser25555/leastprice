@@ -1,3 +1,4 @@
+import 'package:leastprice/services/api/affiliate_link_service.dart';
 import 'package:leastprice/data/models/comparison_search_result.dart';
 import 'package:leastprice/core/utils/helpers.dart';
 
@@ -66,10 +67,26 @@ class SearchResultsFilter {
     return false;
   }
 
+  int _affiliatePriority(ComparisonSearchResult result) {
+    final hasAffiliate =
+        AffiliateLinkService.hasAffiliateProgram(result.productUrl);
+    final hasCoupon = result.matchedCoupon != null;
+    if (hasAffiliate && hasCoupon) return 0;
+    if (hasAffiliate) return 1;
+    if (hasCoupon) return 2;
+    return 3;
+  }
+
   int _compareSearchResults(
     ComparisonSearchResult first,
     ComparisonSearchResult second,
   ) {
+    final firstPriority = _affiliatePriority(first);
+    final secondPriority = _affiliatePriority(second);
+    if (firstPriority != secondPriority) {
+      return firstPriority.compareTo(secondPriority);
+    }
+
     final priceCompare = first.price.compareTo(second.price);
     if (priceCompare != 0) return priceCompare;
 

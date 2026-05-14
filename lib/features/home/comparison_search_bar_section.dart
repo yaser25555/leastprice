@@ -22,7 +22,6 @@ class ComparisonSearchBarSection extends StatelessWidget {
     required this.onClearSearch,
     required this.onSubmitted,
     required this.onDetectCityTap,
-    required this.onBarcodeTap,
     this.onFilterTap,
   });
 
@@ -41,7 +40,6 @@ class ComparisonSearchBarSection extends StatelessWidget {
   final VoidCallback onClearSearch;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onDetectCityTap;
-  final VoidCallback onBarcodeTap;
   final VoidCallback? onFilterTap;
 
   @override
@@ -204,14 +202,6 @@ class ComparisonSearchBarSection extends StatelessWidget {
                           constraints: const BoxConstraints(),
                           padding: EdgeInsets.zero,
                         ),
-                      IconButton(
-                        onPressed: onBarcodeTap,
-                        icon: Icon(
-                          Icons.qr_code_scanner_rounded,
-                          color: AppPalette.orange,
-                        ),
-                        tooltip: tr('مسح الباركود', 'Scan barcode'),
-                      ),
                       if (hasQuery)
                         IconButton(
                           onPressed: onClearSearch,

@@ -20,7 +20,6 @@ class HomeSearchView {
     required Function(String) onCopyCoupon,
     required bool isPaidPlanActive,
     required VoidCallback onDetectCityTap,
-    required VoidCallback onBarcodeTap,
     required VoidCallback onFilterTap,
   }) {
     final state = ref.watch(homeSearchProvider);
@@ -74,7 +73,6 @@ class HomeSearchView {
               notifier.performSearch(forceRefresh: true);
             },
             onDetectCityTap: onDetectCityTap,
-            onBarcodeTap: onBarcodeTap,
             onFilterTap: onFilterTap,
           ),
         ),

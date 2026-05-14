@@ -104,6 +104,22 @@ class AffiliateLinkService {
     return supportedHosts.contains(uri.host.toLowerCase());
   }
 
+  static bool hasAffiliateProgram(String url) {
+    final normalized = normalizeContactLink(url);
+    final uri = Uri.tryParse(normalized);
+    if (uri == null || !uri.hasScheme || !uri.hasAuthority) return false;
+    if (isWhatsAppUri(uri)) return false;
+
+    final host = uri.host.toLowerCase();
+
+    if (host.contains('noon.com') && !host.contains('s.noon.com')) return true;
+    if (host.contains('amazon.sa')) return true;
+    if (LeastPriceDataConfig.affiliateStoreLinks.containsKey(host)) return true;
+    if (supportedHosts.contains(host)) return true;
+
+    return false;
+  }
+
   static String prepareForOpen(String rawUrl) {
     return attachAffiliateTag(rawUrl);
   }
