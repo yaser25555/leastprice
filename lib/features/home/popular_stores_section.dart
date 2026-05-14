@@ -311,6 +311,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFFE91E63),
       'logoUrl': 'https://cdn.salla.sa/DGQBBb/a0Ar4GvGMN00x58cO3MM0rUEhfwIXI2cGMPDVeHT.png',
     },
+    {
+      'id': 'almoqtas',
+      'name': 'المختص',
+      'nameEn': 'Almoqtas',
+      'url': 'https://almoqtas.com/',
+      'color': Color(0xFFE53935),
+      'logoUrl': 'https://cdn.salla.sa/nvrbb/ANcaTUwH8T6fXCeNrpdCuTbYCkkj5jl368JFCDuA.png',
+    },
   ];
 
   @override

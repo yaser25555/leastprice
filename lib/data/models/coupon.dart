@@ -731,5 +731,18 @@ class Coupon {
         'Discount code for dresses and children\'s clothing.',
       ),
     ),
+    Coupon(
+      id: 'coupon-almoqtas',
+      code: 'F-MOKTAS',
+      storeId: 'almoqtas',
+      storeName: 'المختص',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون المختص الحصري', 'Exclusive Almoqtas coupon'),
+      description: tr(
+        'كود خصم على الشوزات والسنيكرز الرجالية والنسائية.',
+        'Discount code for men\'s and women\'s shoes and sneakers.',
+      ),
+    ),
   ];
 }
