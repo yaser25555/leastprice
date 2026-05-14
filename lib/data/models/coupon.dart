@@ -287,13 +287,13 @@ class Coupon {
       code: 'NDZ190',
       storeId: 'noon',
       storeName: 'Noon',
-      discountLabel: tr('خصم خاص ٥٠ ريال', '50 SAR Special Discount'),
+      discountLabel: tr('خصم إضافي حصري', 'Exclusive Extra Discount'),
       discountPercent: 10,
       expiresAt: DateTime.now().add(const Duration(days: 30)),
-      title: tr('كوبون نون الجديد', 'New Noon coupon'),
+      title: tr('كوبون نون المعتمد', 'Verified Noon coupon'),
       description: tr(
-        'انسخ الكود NDZ190 واستخدمه عند إتمام الطلب.',
-        'Copy code NDZ190 and use it at checkout.',
+        'انسخ الكود NDZ190 واستخدمه للحصول على أفضل توفير متاح.',
+        'Copy code NDZ190 and use it for the best available savings.',
       ),
     ),
     Coupon(
