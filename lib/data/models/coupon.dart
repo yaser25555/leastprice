@@ -458,5 +458,18 @@ class Coupon {
         'Discount code for coffee machines.',
       ),
     ),
+    Coupon(
+      id: 'coupon-shaving360',
+      code: 'F-8VSNU',
+      storeId: 'shaving360',
+      storeName: 'Shaving360',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون Shaving360 الحصري', 'Exclusive Shaving360 coupon'),
+      description: tr(
+        'كود خصم على شنط وأدوات الحلاقة.',
+        'Discount code for shaving kits and tools.',
+      ),
+    ),
   ];
 }

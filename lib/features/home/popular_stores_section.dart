@@ -167,6 +167,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFF4E342E),
       'logoUrl': 'https://cdn.files.salla.network/theme/511691211/797e0758-06c8-494a-92ce-35b20adc7e5b.webp',
     },
+    {
+      'id': 'shaving360',
+      'name': 'Shaving360',
+      'nameEn': 'Shaving360',
+      'url': 'https://shaving360.com/',
+      'color': Color(0xFF263238),
+      'logoUrl': 'https://cdn.files.salla.network/theme/1734728887/22a54f79-a035-4490-afac-5e4bf40c1bea.webp',
+    },
   ];
 
   @override
