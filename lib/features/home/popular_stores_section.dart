@@ -351,6 +351,14 @@ class PopularStoresSection extends StatelessWidget {
       'color': Color(0xFFB8860B),
       'logoUrl': 'https://cdn.salla.sa/wvABj/LsnsCyJ13qp3ucuFvSQy23Z6cwMJmvsSSPOFkLBv.png',
     },
+    {
+      'id': 'bazil',
+      'name': 'بازل',
+      'nameEn': 'Bazil',
+      'url': 'https://bazilstore.com/',
+      'color': Color(0xFF6A1B9A),
+      'logoUrl': 'https://cdn.salla.sa/bZEQj/M2CunBm0fqQ8AGxEN6uXNhAMPo8RDuApey35ClJ3.png',
+    },
   ];
 
   @override

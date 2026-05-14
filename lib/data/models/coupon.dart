@@ -796,5 +796,18 @@ class Coupon {
         'Discount code for gold and jewellery.',
       ),
     ),
+    Coupon(
+      id: 'coupon-bazil',
+      code: 'F-7VSQ5',
+      storeId: 'bazil',
+      storeName: 'بازل',
+      discountLabel: tr('خصم خاص', 'Special discount'),
+      expiresAt: DateTime.now().add(const Duration(days: 60)),
+      title: tr('كوبون بازل الحصري', 'Exclusive Bazil coupon'),
+      description: tr(
+        'كود خصم على العطور ومستحضرات التجميل.',
+        'Discount code for perfumes and cosmetics.',
+      ),
+    ),
   ];
 }
