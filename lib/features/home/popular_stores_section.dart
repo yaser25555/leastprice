@@ -178,7 +178,7 @@ class PopularStoresSection extends StatelessWidget {
                         storeId: store['id'],
                         storeName: store['name'],
                         storeNameEn: store['nameEn'],
-                        storeColor: color,
+                        storeColor: AppPalette.orange,
                         storeLogoUrl: logoUrl,
                         storeUrl: store['url'],
                       ),
@@ -191,13 +191,14 @@ class PopularStoresSection extends StatelessWidget {
                       width: 84,
                       height: 84,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.12),
+                        color: AppPalette.orange.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withValues(alpha: 0.25),
-                            blurRadius: 16,
+                            color: AppPalette.orange.withValues(alpha: 0.4),
+                            blurRadius: 20,
                             offset: const Offset(0, 8),
+                            spreadRadius: -2,
                           ),
                           BoxShadow(
                             color: AppPalette.navy.withValues(alpha: 0.08),
@@ -206,8 +207,8 @@ class PopularStoresSection extends StatelessWidget {
                           ),
                         ],
                         border: Border.all(
-                          color: color.withValues(alpha: 0.25),
-                          width: 1.5,
+                          color: AppPalette.orange.withValues(alpha: 0.35),
+                          width: 2,
                         ),
                       ),
                       child: Center(
@@ -265,7 +266,7 @@ class PopularStoresSection extends StatelessWidget {
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: AppPalette.orange.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
@@ -273,7 +274,7 @@ class PopularStoresSection extends StatelessWidget {
           textToShow,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: color,
+            color: AppPalette.orange,
             fontSize: isCarrefour ? 14 : 24,
             fontWeight: FontWeight.w900,
             letterSpacing: isCarrefour ? -0.5 : 0,

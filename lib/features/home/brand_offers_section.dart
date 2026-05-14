@@ -323,7 +323,7 @@ class BrandOffersSection extends StatelessWidget {
       width: 75,
       height: 75,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: AppPalette.orange.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
@@ -331,7 +331,7 @@ class BrandOffersSection extends StatelessWidget {
           textToShow,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: color,
+            color: AppPalette.orange,
             fontSize: isCarrefour ? 18 : 32,
             fontWeight: FontWeight.w900,
             letterSpacing: isCarrefour ? -0.5 : 0,
@@ -394,16 +394,16 @@ class BrandOffersSection extends StatelessWidget {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
+                        color: AppPalette.orange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: color.withValues(alpha: 0.3),
-                          width: 1.5,
+                          color: AppPalette.orange.withValues(alpha: 0.4),
+                          width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withValues(alpha: 0.15),
-                            blurRadius: 16,
+                            color: AppPalette.orange.withValues(alpha: 0.15),
+                            blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
                         ],
@@ -411,7 +411,7 @@ class BrandOffersSection extends StatelessWidget {
                       child: Container(
                         margin: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: color.withValues(alpha: hasCoupon ? 0.12 : 0.08),
+                          color: AppPalette.orange.withValues(alpha: hasCoupon ? 0.2 : 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Stack(
