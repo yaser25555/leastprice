@@ -54,7 +54,7 @@ class AdsCenterSection extends StatelessWidget {
             ),
             BannerCarousel(
               banners: ads,
-              onBannerTap: onAdTap,
+              onTap: onAdTap,
             ),
           ],
         );
@@ -63,6 +63,7 @@ class AdsCenterSection extends StatelessWidget {
   }
 
   Widget _buildLiveDeals() {
+    final now = DateTime.now();
     return StreamBuilder<List<ExclusiveDeal>>(
       stream: dealsStream,
       builder: (context, snapshot) {
@@ -91,7 +92,7 @@ class AdsCenterSection extends StatelessWidget {
                       width: 220,
                       child: ExclusiveDealCard(
                         deal: deals[index],
-                        onTap: () => _launchUrl(deals[index].buyUrl),
+                        now: now,
                       ),
                     ),
                   );
@@ -125,7 +126,7 @@ class AdsCenterSection extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.campaign_rounded, size: 60, color: AppPalette.orange),
+            child: Icon(Icons.campaign_rounded, size: 60, color: AppPalette.orange),
           ),
           const SizedBox(height: 24),
           Text(
@@ -222,14 +223,6 @@ class AdsCenterSection extends StatelessWidget {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _launchUrl(String url) async {
-    if (url.isEmpty) return;
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
     }
   }
 }

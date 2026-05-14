@@ -330,7 +330,7 @@ class _OffersCenterScreenState extends State<OffersCenterScreen> {
                 right: 12,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppPalette.orange,
                     shape: BoxShape.circle,
                   ),

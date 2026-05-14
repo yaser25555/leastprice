@@ -242,7 +242,7 @@ class _OffersCenterSectionState extends State<OffersCenterSection> {
                 right: 12,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppPalette.orange,
                     shape: BoxShape.circle,
                   ),

@@ -7,6 +7,8 @@ class UserSavingsProfile {
   const UserSavingsProfile({
     required this.userId,
     required this.phoneNumber,
+    required this.email,
+    required this.displayName,
     required this.inviteCode,
     required this.invitedBy,
     required this.invitedFriendsCount,

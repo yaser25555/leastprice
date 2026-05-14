@@ -54,7 +54,7 @@ class AdsCenterScreen extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.campaign_rounded, size: 80, color: AppPalette.orange),
+              child: Icon(Icons.campaign_rounded, size: 80, color: AppPalette.orange),
             ),
             const SizedBox(height: 24),
             Text(

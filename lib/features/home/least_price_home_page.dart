@@ -12,7 +12,6 @@ import 'package:leastprice/data/models/user_savings_profile.dart';
 import 'package:leastprice/data/models/automation_health_status.dart';
 import 'package:leastprice/data/models/ad_banner_item.dart';
 import 'package:leastprice/data/models/product_category_catalog.dart';
-import 'package:leastprice/data/models/exclusive_deal.dart';
 import 'package:leastprice/data/models/product_comparison.dart';
 import 'package:leastprice/data/models/coupon.dart';
 import 'package:leastprice/data/repositories/firestore_catalog_service.dart';
@@ -29,8 +28,7 @@ import 'package:leastprice/features/home/home_page_actions.dart';
 import 'package:leastprice/features/home/product_detail_screen.dart';
 import 'package:leastprice/features/home/favorites_screen.dart';
 import 'package:leastprice/features/home/price_alerts_screen.dart';
-import 'package:leastprice/features/home/offers_center_section.dart';
-import 'package:leastprice/features/home/ads_center_section.dart';
+import 'home_exports.dart';
 
 import 'package:leastprice/services/notifications/push_notification_service.dart';
 
@@ -362,8 +360,6 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     final systemHealthAsync = ref.watch(systemHealthStreamProvider);
 
     final userProfile = userProfileAsync.value ?? widget.initialUserProfile;
-    final activeBanners =
-        activeBannersAsync.value ?? AdBannerItem.mockData;
     final systemHealth = systemHealthAsync.value ?? AutomationHealthStatus.initial();
 
     final isPaidPlanActive = userProfile.planActivated;
