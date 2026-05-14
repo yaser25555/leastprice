@@ -197,6 +197,9 @@ class _CouponsListSectionState extends State<CouponsListSection> {
           );
         },
       ),
+    );
+  }
+
   List<Map<String, dynamic>> _getUniqueStores(List<Coupon> coupons) {
     // Primary application stores (Major retailers)
     final List<Map<String, dynamic>> appStores = [
