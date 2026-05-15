@@ -18,7 +18,7 @@ class CouponsPaywallSection extends StatelessWidget {
         _PaywallStore('Noon', Color(0xFFFEEE00), Color(0xFF1F1F1F)),
         _PaywallStore('Namshi', Color(0xFF7E3CC0), AppPalette.pureWhite),
         _PaywallStore('SHEIN', Color(0xFF222222), AppPalette.pureWhite),
-        _PaywallStore('iHerb', Color(0xFF4FA72E), AppPalette.pureWhite),
+
         _PaywallStore('Sephora', Color(0xFF111111), AppPalette.pureWhite),
         _PaywallStore('Jarir', Color(0xFFC62828), AppPalette.pureWhite),
         _PaywallStore('Extra', Color(0xFF00695C), AppPalette.pureWhite),

@@ -86,8 +86,8 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   Expanded(
                     child: Text(
                       tr(
-                        'تصفح الكوبونات حسب المتجر',
-                        'Browse coupons by store',
+                        '🔥 كوبونات حصرية محدثة - Build 53.2',
+                        '🔥 Exclusive Updated Coupons - Build 53.2',
                       ),
                       style: TextStyle(
                         color: AppPalette.panelText,
@@ -171,10 +171,10 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                   hintText: tr('ابحث عن متجر أو كود خصم...', 'Search for a store or code...'),
                   prefixIcon: Icon(Icons.search_rounded, color: AppPalette.orange),
                   filled: true,
-                  fillColor: Colors.grey.withValues(alpha: 0.05),
+                  fillColor: AppPalette.orange.withValues(alpha: 0.1),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(color: AppPalette.orange.withValues(alpha: 0.4), width: 1.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 ),
@@ -251,100 +251,9 @@ class _CouponsListSectionState extends State<CouponsListSection> {
         'logoUrl': 'https://icon.horse/icon/namshi.com'
       },
       {
-        'name': 'شي إن',
-        'nameEn': 'SHEIN',
-        'logoUrl': 'https://icon.horse/icon/shein.com'
-      },
-      {
         'name': 'سيـفورا',
         'nameEn': 'Sephora',
         'logoUrl': 'https://icon.horse/icon/sephora.com'
-      },
-      {
-        'name': 'جرير',
-        'nameEn': 'Jarir',
-        'logoUrl': 'https://icon.horse/icon/jarir.com'
-      },
-      {
-        'name': 'إكسترا',
-        'nameEn': 'Extra',
-        'logoUrl': 'https://icon.horse/icon/extra.com'
-      },
-      {
-        'name': 'بنده',
-        'nameEn': 'Panda',
-        'logoUrl': 'https://www.panda.sa/_next/static/media/logo.f85b0530.svg'
-      },
-      {
-        'name': 'العثيم',
-        'nameEn': 'Othaim',
-        'logoUrl': 'https://icon.horse/icon/othaimmarkets.com'
-      },
-      {
-        'name': 'التميمي',
-        'nameEn': 'Tamimi',
-        'logoUrl': 'https://www.tamimimarkets.com/__template/images/logo-01.png'
-      },
-      {
-        'name': 'النهدي',
-        'nameEn': 'Nahdi',
-        'logoUrl':
-            'https://dam.nahdionline.com/m/64c5f9fc7961125c/original/nahdi-logo-footer.png'
-      },
-      {'name': 'الدواء', 'nameEn': 'Al-Dawaa', 'logoUrl': ''},
-      {
-        'name': 'لولو',
-        'nameEn': 'Lulu',
-        'logoUrl': 'https://gcc.luluhypermarket.com/akn-logo-english.svg'
-      },
-      {'name': 'كارفور', 'nameEn': 'Carrefour', 'logoUrl': ''},
-      {
-        'name': 'نايكي',
-        'nameEn': 'Nike',
-        'logoUrl': 'https://icon.horse/icon/nike.com'
-      },
-      {
-        'name': 'أديداس',
-        'nameEn': 'Adidas',
-        'logoUrl': 'https://icon.horse/icon/adidas.com'
-      },
-      {
-        'name': 'فانز',
-        'nameEn': 'Vans',
-        'logoUrl': 'https://icon.horse/icon/vans.com'
-      },
-      {
-        'name': 'سن أند ساند',
-        'nameEn': 'Sun & Sand',
-        'logoUrl': 'https://icon.horse/icon/sssports.com'
-      },
-      {
-        'name': 'هدى بيوتي',
-        'nameEn': 'Huda Beauty',
-        'logoUrl': 'https://icon.horse/icon/hudabeauty.com'
-      },
-      {
-        'name': 'أندير آرمور',
-        'nameEn': 'Under Armour',
-        'logoUrl': 'https://icon.horse/icon/underarmour.com'
-      },
-      {
-        'name': 'ماماز آند باباز',
-        'nameEn': 'Mamas & Papas',
-        'logoUrl':
-            'https://mamasandpapas.ae/on/demandware.static/Sites-MnP_AE-Site/-/default/dw8b06063c/images/logo.svg'
-      },
-      {
-        'name': 'بوما',
-        'nameEn': 'Puma',
-        'logoUrl':
-            'https://sa.puma.com/static/frontend/scandipwa/theme/en_US/Magento_Theme/static/media/puma.b1cfa416.svg'
-      },
-      {
-        'name': 'ناتشورال تاتش',
-        'nameEn': 'Natural Touch',
-        'logoUrl':
-            'https://media.zid.store/cdn-cgi/image/h=200,q=75,f=auto/https://media.zid.store/d3b973ce-4213-438e-a687-c37fd0413f43/3f4e438f-b022-4e27-8d1a-6171ffd640bf.png'
       },
     ];
 
