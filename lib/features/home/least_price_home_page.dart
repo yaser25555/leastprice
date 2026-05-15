@@ -119,7 +119,7 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                 children: [
                   Text(
                     tr('أهلاً بك في لست برايس', 'Welcome to LeastPrice'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                       color: AppPalette.navy,
