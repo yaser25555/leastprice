@@ -689,8 +689,12 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
                     ),
                   // Removed ExclusiveDealsSection from here as per user request to move it to Ads section
                   if (showOffersSection)
-                    const SliverToBoxAdapter(
-                      child: OffersCenterSection(),
+                    SliverToBoxAdapter(
+                      child: StoresByCategorySection(
+                        isPaid: isPaidPlanActive,
+                        onUpgradeTap: () =>
+                            _selectHomeSection(HomeCatalogSection.plans),
+                      ),
                     ),
                   if (showAdsSection)
                     SliverToBoxAdapter(
