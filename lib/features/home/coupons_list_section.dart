@@ -161,7 +161,9 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                           ),
                         ),
                         const SizedBox(height: 6),
-                  ],
+                      ],
+                    );
+                  },
                 ),
               ),
 
