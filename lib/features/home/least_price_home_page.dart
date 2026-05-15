@@ -74,6 +74,9 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         unawaited(_refreshCatalog(showSuccessMessage: false));
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showWelcomeDialog();
+      });
     }
   }
 
@@ -82,6 +85,80 @@ class _LeastPriceHomePageState extends ConsumerState<LeastPriceHomePage> {
     _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _showWelcomeDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        backgroundColor: AppPalette.cardBackground,
+        surfaceTintColor: Colors.transparent,
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 140,
+              decoration: BoxDecoration(
+                gradient: AppPalette.gradientWarmCta,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(Icons.stars_rounded, color: Colors.white.withValues(alpha: 0.2), size: 100),
+                  const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 50),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Column(
+                children: [
+                  Text(
+                    tr('أهلاً بك في لست برايس', 'Welcome to LeastPrice'),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: AppPalette.navy,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    tr(
+                      'صديقك المستهلك الذي يجمع لك كافة المتاجر التي تقدم عروض وكوبونات حصرية في مكان واحد. تسوق بذكاء ووفر أكثر مع لست برايس.',
+                      'Your smart shopping companion that brings all stores with exclusive deals and coupons together in one place. Shop smart and save more with LeastPrice.',
+                    ),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppPalette.mutedText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppPalette.navy,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(56),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                ),
+                child: Text(tr('ابدأ التوفير الآن', 'Start Saving Now')),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _detectCityFromCurrentLocation({
