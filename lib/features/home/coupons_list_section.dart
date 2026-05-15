@@ -215,6 +215,16 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                     );
                   },
                 ),
+              const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  'Build v53.2',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: AppPalette.mutedText.withValues(alpha: 0.5),
+                  ),
+                ),
+              ),
             ],
           );
         },
