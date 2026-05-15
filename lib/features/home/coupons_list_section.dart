@@ -24,6 +24,8 @@ class CouponsListSection extends StatefulWidget {
 }
 
 class _CouponsListSectionState extends State<CouponsListSection> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   Timer? _refreshTimer;
   DateTime _now = DateTime.now();
 
@@ -41,6 +43,7 @@ class _CouponsListSectionState extends State<CouponsListSection> {
   @override
   void dispose() {
     _refreshTimer?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -58,6 +61,13 @@ class _CouponsListSectionState extends State<CouponsListSection> {
                     !coupon.isExpiredAt(_now) &&
                     coupon.code.trim().isNotEmpty,
               )
+              .where((coupon) {
+                if (_searchQuery.isEmpty) return true;
+                final query = _searchQuery.toLowerCase();
+                return coupon.storeName.toLowerCase().contains(query) ||
+                    coupon.code.toLowerCase().contains(query) ||
+                    (coupon.title?.toLowerCase().contains(query) ?? false);
+              })
               .toList();
 
           final uniqueStores = _getUniqueStores(coupons);
@@ -152,6 +162,24 @@ class _CouponsListSectionState extends State<CouponsListSection> {
               ),
 
               const SizedBox(height: 12),
+              
+              // Search Bar
+              TextField(
+                controller: _searchController,
+                onChanged: (val) => setState(() => _searchQuery = val),
+                decoration: InputDecoration(
+                  hintText: tr('ابحث عن متجر أو كود خصم...', 'Search for a store or code...'),
+                  prefixIcon: Icon(Icons.search_rounded, color: AppPalette.orange),
+                  filled: true,
+                  fillColor: Colors.grey.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                ),
+              ),
+              const SizedBox(height: 12),
               Divider(height: 1, color: AppPalette.navy.withValues(alpha: 0.1)),
               const SizedBox(height: 20),
 
@@ -216,11 +244,6 @@ class _CouponsListSectionState extends State<CouponsListSection> {
         'name': 'شي إن',
         'nameEn': 'SHEIN',
         'logoUrl': 'https://icon.horse/icon/shein.com'
-      },
-      {
-        'name': 'آي هيرب',
-        'nameEn': 'iHerb',
-        'logoUrl': 'https://icon.horse/icon/iherb.com'
       },
       {
         'name': 'سيـفورا',
