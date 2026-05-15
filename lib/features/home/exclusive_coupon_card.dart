@@ -38,118 +38,239 @@ class ExclusiveCouponCard extends StatelessWidget {
           );
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(1), // Border width
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [Color(0xFFFFF8F1), Color(0xFFFFE7D1)],
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppPalette.orange.withValues(alpha: 0.15),
+            AppPalette.orange.withValues(alpha: 0.05),
+          ],
         ),
-        border: Border.all(color: AppPalette.dealsBorder),
-        boxShadow: [
-          BoxShadow(
-            color: AppPalette.shadow,
-            blurRadius: 22,
-            offset: Offset(0, 12),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(999),
-                child: Image.network(
-                  proxiedImageUrl(logoUrl),
-                  width: 28,
-                  height: 28,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Icon(
-                    Icons.storefront_rounded,
-                    color: AppPalette.navy,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(23),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppPalette.orange.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  coupon.title ??
-                      tr(
-                        'كوبون حصري من ${coupon.storeName}',
-                        'Exclusive coupon from ${coupon.storeName}',
-                      ),
-                  style: TextStyle(
-                    color: AppPalette.navy,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            coupon.discountLabel,
-            style: TextStyle(
-              color: AppPalette.orange,
-              fontSize: 24,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            coupon.description ??
-                tr(
-                  'انسخ الكود واستخدمه عند إتمام الطلب.',
-                  'Copy the code and use it at checkout.',
-                ),
-            style: TextStyle(
-              color: AppPalette.softNavy,
-              fontWeight: FontWeight.w700,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 14),
-          InkWell(
-            onTap: () => onCopyCoupon(coupon.code),
-            borderRadius: BorderRadius.circular(18),
-            child: Ink(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppPalette.cardBackground,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppPalette.comparisonBorder),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      coupon.code,
-                      style: TextStyle(
-                        color: AppPalette.navy,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 16,
-                        letterSpacing: 0.6,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      proxiedImageUrl(logoUrl),
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Icon(
+                        Icons.storefront_rounded,
+                        color: AppPalette.orange,
+                        size: 20,
                       ),
                     ),
                   ),
-                  Icon(Icons.copy_rounded, color: AppPalette.orange),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        coupon.storeName,
+                        style: TextStyle(
+                          color: AppPalette.orange,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      Text(
+                        coupon.title ?? tr('كوبون حصري', 'Exclusive coupon'),
+                        style: TextStyle(
+                          color: AppPalette.brandNavyDeep,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.verified_rounded, color: Colors.green, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        tr('موثوق', 'Verified'),
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: AppPalette.orange.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppPalette.orange.withValues(alpha: 0.2),
+                  width: 1.5,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        coupon.discountLabel,
+                        style: TextStyle(
+                          color: AppPalette.orange,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        tr('خصم إضافي عند الدفع', 'Extra discount at checkout'),
+                        style: TextStyle(
+                          color: AppPalette.softNavy,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            expiryLabel,
-            style: TextStyle(
-              color: AppPalette.softNavy,
-              fontWeight: FontWeight.w800,
+            const SizedBox(height: 18),
+            Text(
+              coupon.description ?? tr('انسخ الكود للحصول على الخصم.', 'Copy the code to get the discount.'),
+              style: TextStyle(
+                color: AppPalette.mutedText,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                height: 1.5,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            
+            // Code Copy Section with "Scissor/Coupon" look
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  onCopyCoupon(coupon.code);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(tr('تم نسخ الكود بنجاح!', 'Code copied successfully!')),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: AppPalette.orange,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: AppPalette.brandNavyDeep,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppPalette.brandNavyDeep.withValues(alpha: 0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          coupon.code,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.copy_rounded, color: Colors.white, size: 20),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.timer_outlined, color: remainingDays <= 2 ? Colors.red : AppPalette.softNavy, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      expiryLabel,
+                      style: TextStyle(
+                        color: remainingDays <= 2 ? Colors.red : AppPalette.softNavy,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  tr('تطبق الشروط', 'T&C Apply'),
+                  style: TextStyle(
+                    color: AppPalette.mutedText,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
